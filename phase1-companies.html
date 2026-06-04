@@ -63,11 +63,11 @@
   --gray:var(--muted);--gray2:var(--muted2);
   --gray3:rgba(34,211,238,0.15);--gray4:rgba(255,255,255,0.5);
 }
-body{font-family:var(--font);background:var(--bg-solid);background-image:var(--bg);color:var(--text);min-height:100vh}
+body{font-family:var(--font);background:#fff8f4;background-image:linear-gradient(145deg,#fff8f4 0%,#fef3ec 50%,#fdf6ff 100%);color:var(--text);min-height:100vh}
 .screen{display:none;width:100%;min-height:100vh;position:relative}
 .screen.active{display:flex}
 /* screens sit ON TOP of orbs but are transparent */
-#sc-co,#sc-login{background:transparent}
+#sc-co,#sc-login,#sc-app{background:transparent}
 #sc-app{background:transparent}
 
 /* ══ COMPANIES SCREEN ══ */
@@ -85,8 +85,8 @@ body{font-family:var(--font);background:var(--bg-solid);background-image:var(--b
 .co-dot{position:absolute;top:14px;left:14px;width:8px;height:8px;border-radius:50%}
 .dot-on{background:var(--gl)}.dot-off{background:var(--muted)}
 .cbg{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;margin-top:9px}
-.cbg-toll{background:var(--gbg);color:var(--gl);border:1px solid var(--green)}
-.cbg-factory{background:#0a1628;color:var(--blue);border:1px solid var(--blue)}
+.cbg-toll{background:var(--primary-xl);color:var(--primary-xd);border:1px solid var(--green)}
+.cbg-factory{background:var(--primary-xl);color:var(--primary-xd);border:1px solid var(--blue)}
 .dd{position:absolute;left:8px;top:44px;background:rgba(255,252,250,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.9);border-radius:14px;padding:5px;z-index:100;min-width:130px;box-shadow:0 12px 32px rgba(234,88,12,.12),0 2px 8px rgba(0,0,0,.08);display:none}
 .dd.show{display:block}
 .dd-item{display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--text);transition:.15s;border:none;background:transparent;font-family:var(--font);width:100%;text-align:right;font-weight:500}
@@ -109,7 +109,7 @@ body{font-family:var(--font);background:var(--bg-solid);background-image:var(--b
 .fg{margin-bottom:14px}
 .fl{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--muted)}
 .fl .req{color:var(--red)}
-.fi{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:border-color .15s}
+.fi{width:100%;background:rgba(255,255,255,.75);border:1.5px solid rgba(34,211,238,.2);border-radius:var(--r);padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:all .15s}
 .fi:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(34,211,238,0.15)}
 .fi::placeholder{color:var(--muted)}
 select.fi{cursor:pointer}
@@ -137,7 +137,7 @@ textarea.fi{resize:vertical;min-height:75px}
 .nitem.act::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:linear-gradient(180deg,var(--primary),var(--secondary-d));border-radius:3px 0 0 3px}
 .nitem.dim{opacity:.3;pointer-events:none}
 .nic{width:18px;text-align:center;font-size:14px}
-.sb-soon{margin-right:auto;font-size:10px;padding:1px 6px;background:#1c1500;color:var(--amber);border:1px solid var(--amber);border-radius:20px}
+.sb-soon{margin-right:auto;font-size:10px;padding:1px 6px;background:var(--amber-light);color:#92400e;border:1px solid var(--amber);border-radius:20px}
 .sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px;cursor:pointer;flex-shrink:0;transition:background .15s}
 .sb-foot:hover{background:var(--hover)}
 .uav{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary-d));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
@@ -153,7 +153,7 @@ textarea.fi{resize:vertical;min-height:75px}
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn-ok{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;border-color:var(--primary)}.btn-ok:hover:not(:disabled){background:linear-gradient(135deg,var(--primary-d),#0891b2)}
-.btn-o{background:transparent;color:var(--muted);border-color:var(--border)}.btn-o:hover{border-color:var(--text);color:var(--text)}
+.btn-o{background:transparent;color:var(--muted);border-color:rgba(34,211,238,.2)}.btn-o:hover{border-color:var(--text);color:var(--text)}
 .btn-bl{background:var(--blue);color:#fff;border-color:var(--blue)}.btn-bl:hover{opacity:.85}
 .btn-x{background:transparent;color:var(--red);border-color:var(--red)}.btn-x:hover{background:rgba(248,81,73,.1)}
 .btn-sm{padding:4px 9px;font-size:12px}
@@ -172,7 +172,7 @@ textarea.fi{resize:vertical;min-height:75px}
 .sinfo{font-size:12px;color:var(--muted)}.sic{position:absolute;top:14px;left:14px;font-size:20px;opacity:.4}
 table{width:100%;border-collapse:collapse}.tw{overflow-x:auto}
 thead th{padding:9px 14px;font-size:11px;font-weight:700;color:var(--muted);text-align:right;background:rgba(255,255,255,0.5);border-bottom:1px solid rgba(34,211,238,0.15);white-space:nowrap}
-tbody td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(34,211,238,.08);vertical-align:middle}
 tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(34,211,238,0.05)}
 .bdg{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px}
 .bdg-g{background:var(--bdg-active-bg);color:var(--bdg-active-txt);border:1px solid var(--bdg-active-bdr)}
@@ -184,7 +184,7 @@ tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(34,2
 .page-title{font-size:21px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:9px}
 
 /* CP TABS */
-.cp-tabs{display:flex;overflow-x:auto;gap:2px;background:var(--bg);border-radius:var(--r);padding:4px;margin-bottom:18px;flex-wrap:wrap;scrollbar-width:none}
+.cp-tabs{display:flex;overflow-x:auto;gap:2px;background:rgba(255,255,255,.35);backdrop-filter:blur(12px);border-radius:14px;padding:5px;margin-bottom:18px;flex-wrap:nowrap;scrollbar-width:none;border:1px solid rgba(255,255,255,.7)}
 .cp-tabs::-webkit-scrollbar{display:none}
 .cp-tab{background:none;border:none;padding:7px 14px;border-radius:7px;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:500;color:var(--muted);transition:all .15s;white-space:nowrap}
 .cp-tab:hover{color:var(--text)}
@@ -221,12 +221,12 @@ tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(34,2
 
 /* DOCS */
 .doc-drop{border:2px dashed var(--border);border-radius:var(--r);padding:22px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:12px}
-.doc-drop:hover{border-color:var(--blue);background:rgba(56,139,253,.05)}
+.doc-drop:hover{border-color:var(--primary);background:var(--primary-xl)}
 .doc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r);border:1px solid var(--border);margin-bottom:6px}
 .doc-icon{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
 
 /* BACKUP */
-.backup-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.backup-card{background:rgba(255,255,255,.6);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.8);border-radius:14px;padding:16px;margin-bottom:12px}
 
 /* EMPTY STATE */
 .es{text-align:center;padding:40px 18px;color:var(--muted)}
@@ -246,8 +246,8 @@ tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(34,2
 .cp-list{flex:1;overflow-y:auto;padding:12px}
 .cp-item{margin-bottom:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r);border-right:3px solid var(--amber)}
 .cp-form{padding:12px;border-top:1px solid var(--border)}
-.cp-form textarea{width:100%;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:13px;resize:none;outline:none;margin-bottom:8px}
-.cp-form button{width:100%;padding:8px;background:var(--amber);color:#000;border:none;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer}
+.cp-form textarea{width:100%;padding:8px;background:rgba(255,255,255,.7);border:1.5px solid rgba(34,211,238,.2);border-radius:10px;color:var(--text);font-family:var(--font);font-size:13px;resize:none;outline:none;margin-bottom:8px}
+.cp-form button{width:100%;padding:8px;background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer}
 
 /* TOAST */
 .tc{position:fixed;bottom:24px;left:18px;z-index:400;display:flex;flex-direction:column;gap:7px;pointer-events:none}
@@ -787,7 +787,7 @@ select.fi option{background:#fff;color:var(--text)}
   <div class="mhdr"><span class="mtitle">النسخ الاحتياطي</span><button class="mclose" onclick="closeModal('modal-backup')">✕</button></div>
   <div class="mbody">
     <div class="backup-card"><div style="font-size:14px;font-weight:700;margin-bottom:6px">⬇ تصدير نسخة احتياطية</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px">تصدير جميع البيانات في ملف JSON</div><button class="btn btn-ok btn-sm" onclick="exportBackup()">تنزيل النسخة الاحتياطية</button></div>
-    <div class="backup-card" style="margin-bottom:0"><div style="font-size:14px;font-weight:700;margin-bottom:6px">⬆ استيراد نسخة احتياطية</div><div style="background:#1c1500;border:1px solid var(--amber);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--amber);margin-bottom:12px">⚠️ سيتم استبدال البيانات الحالية</div><input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)"><button class="btn btn-o btn-sm" onclick="document.getElementById('import-file').click()">اختيار ملف JSON</button></div>
+    <div class="backup-card" style="margin-bottom:0"><div style="font-size:14px;font-weight:700;margin-bottom:6px">⬆ استيراد نسخة احتياطية</div><div style="background:var(--amber-light);border:1px solid rgba(217,119,6,.3);border-radius:7px;padding:9px 12px;font-size:12px;color:#92400e;margin-bottom:12px">⚠️ سيتم استبدال البيانات الحالية</div><input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)"><button class="btn btn-o btn-sm" onclick="document.getElementById('import-file').click()">اختيار ملف JSON</button></div>
   </div>
   <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-backup')">إغلاق</button></div>
 </div></div>
@@ -1011,11 +1011,21 @@ function startApp(){
 
 function go(page){
   document.querySelectorAll('.nitem').forEach(e=>e.classList.remove('act'));
-  document.getElementById('nav-'+page)?.classList.add('act');
+  const navEl=document.getElementById('nav-'+page);
+  if(navEl) navEl.classList.add('act');
   const titles={dashboard:'📊 لوحة التحكم',company:'🏢 بيانات الشركة','drug-reg':'💊 EDA — أدوية بشرية',users:'👥 المستخدمون',settings:'⚙️ إعدادات النظام'};
-  document.getElementById('page-title').textContent=titles[page]||page;
+  const titleEl=document.getElementById('page-title');
+  if(titleEl) titleEl.textContent=titles[page]||page;
   const m=document.getElementById('main-content');
-  ({dashboard:renderDashboard,company:renderCompanyPage,'drug-reg':function(c){window.renderDrugReg(c);},users:renderUsers,settings:renderSettings}[page]||renderDashboard)(m);
+  if(!m) return;
+  const pages={
+    dashboard:renderDashboard,
+    company:renderCompanyPage,
+    'drug-reg':function(c){if(window.renderDrugReg)window.renderDrugReg(c);else c.innerHTML='<div class="es"><p>جاري التحميل...</p></div>';},
+    users:renderUsers,
+    settings:renderSettings
+  };
+  (pages[page]||renderDashboard)(m);
   closeSidebar();
 }
 
@@ -1367,7 +1377,7 @@ async function renderUsers(c){
   <div class="tw"><table><thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>
   ${users.length?users.map(u=>`<tr>
     <td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary-d))">${u.nameAr.charAt(0)}</div><div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--muted)">${esc(u.nameEn||'')}</div></div></div></td>
-    <td><code style="font-size:11px;background:var(--card2);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
+    <td><code style="font-size:11px;background:rgba(34,211,238,.08);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
     <td><span class="bdg ${u.role==='admin'?'bdg-b':'bdg-m'}">${u.role==='admin'?'مدير':'مستخدم'}</span></td>
     <td style="color:var(--muted)">${esc(u.department||'—')}</td>
     <td style="font-size:11px;color:var(--muted)">${fmtDt(u.lastLogin)}</td>
@@ -1452,6 +1462,7 @@ function openModal(id){document.getElementById(id).classList.add('on')}
 function closeModal(id){document.getElementById(id).classList.remove('on')}
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay-bg').classList.add('show')}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
+document.querySelectorAll('.moverlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');});});
 document.addEventListener('keydown',e=>{
   if(e.key==='Escape')document.querySelectorAll('.moverlay.on').forEach(o=>o.classList.remove('on'));
   if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('active'))doLogin();
