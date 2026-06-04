@@ -821,12 +821,6 @@ const chips=txt=>txt?txt.split('\n').filter(t=>t.trim()).map(t=>`<span class="ch
 
 async function renderCompanyPage(c){
   const co=await dbGet('companies',S.companyId);
-  // parse partners
-  const partnersHtml=co.partners?co.partners.split('\n').filter(r=>r.trim()).map(r=>{
-    const parts=r.split('|').map(s=>s.trim());
-    return`<div class="partner-row"><span class="partner-share">${esc(parts[1]||'')}</span><span style="font-size:13px;font-weight:500">${esc(parts[0]||'')}</span><span style="font-size:12px;color:var(--gray);margin-right:auto">${esc(parts[2]||'')}</span></div>`;
-  }).join(''):'<span style="color:var(--gray2);font-size:12px">—</span>';
-
   c.innerHTML=`
   <div class="ph">
     <div class="ph-left">
@@ -836,16 +830,10 @@ async function renderCompanyPage(c){
         <span class="badge ${co.isActive?'bg':'br'}">${co.isActive?'نشطة':'موقوفة'}</span>
       </p>
     </div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-outline btn-sm" onclick="printCompany()">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-        طباعة
-      </button>
-      <button class="btn btn-primary btn-sm" onclick="openEditCompany()">
-        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-        تعديل
-      </button>
-    </div>
+    <button class="btn btn-outline btn-sm" onclick="printCompany()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      طباعة
+    </button>
   </div>
   <div class="card" style="margin-bottom:0">
     <div class="cp-tabs">
@@ -854,53 +842,144 @@ async function renderCompanyPage(c){
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-tax')">الضرائب</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-persons')">المسؤولون</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-partners')">الشركاء</button>
-      <button class="cp-tab" onclick="switchCoTab(this,'cpt-factories')">المصانع</button>
+      <button class="cp-tab" onclick="switchCoTab(this,'cpt-factories')">المصانع والموزعون</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-docs')">المستندات</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-history')">سجل التعديلات</button>
     </div>
+
+    <!-- ── القانونية ── -->
     <div id="cpt-legal" class="cpt active">
-      ${row('كود الشركة',co.code)}${row('الاسم بالعربي',co.nameAr)}${row('الاسم بالإنجليزي',co.nameEn)}
-      ${row('الشكل القانوني',co.legalForm)}${row('رقم السجل التجاري',co.comRegNo)}
-      ${row('تاريخ انتهاء السجل','',fmt(co.comRegExp)+expiryBadge(co.comRegExp))}
-      ${row('الرقم القومي للمنشأة',co.natNo)}${row('رأس المال',co.capital?co.capital+' جنيه':'')}
-      ${row('المدينة',co.city)}${row('المقر الرئيسي',co.addressAr)}
+      <div class="tab-form" style="padding:20px">
+        <div class="form-grid">
+          <div class="fg"><label class="fl">كود الشركة</label><input class="fc" id="cf-code" value="${esc(co.code||'')}" dir="ltr" disabled style="background:var(--gray4);color:var(--gray)"><div class="fh">الكود لا يمكن تغييره</div></div>
+          <div class="fg"><label class="fl">نوع الكيان</label>
+            <select class="fc" id="cf-companyType">
+              <option value="toll" ${(co.companyType||'toll')==='toll'?'selected':''}>شركة Toll — تصنيع لدى الغير</option>
+              <option value="factory" ${co.companyType==='factory'?'selected':''}>مصنع — رخصة تشغيل</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fc" id="cf-nameAr" value="${esc(co.nameAr||'')}"></div>
+          <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fc" id="cf-nameEn" value="${esc(co.nameEn||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">الشكل القانوني</label>
+            <select class="fc" id="cf-legalForm">
+              <option value="">اختر...</option>
+              <option ${co.legalForm==='شركة ذات مسؤولية محدودة (ش.ذ.م.م)'?'selected':''}>شركة ذات مسؤولية محدودة (ش.ذ.م.م)</option>
+              <option ${co.legalForm==='شركة توصية بسيطة'?'selected':''}>شركة توصية بسيطة</option>
+              <option ${co.legalForm==='شركة مساهمة'?'selected':''}>شركة مساهمة</option>
+              <option ${co.legalForm==='شركة شخص واحد'?'selected':''}>شركة شخص واحد</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fc" id="cf-comRegNo" value="${esc(co.comRegNo||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">تاريخ انتهاء السجل</label><input class="fc" id="cf-comRegExp" type="date" value="${co.comRegExp||''}"></div>
+          <div class="fg"><label class="fl">الرقم القومي للمنشأة</label><input class="fc" id="cf-natNo" value="${esc(co.natNo||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">رأس المال (جنيه)</label><input class="fc" id="cf-capital" type="number" value="${co.capital||''}" dir="ltr"></div>
+          <div class="fg"><label class="fl">المدينة</label><input class="fc" id="cf-city" value="${esc(co.city||'')}"></div>
+          <div class="fg"><label class="fl">الدولة</label><input class="fc" id="cf-country" value="${esc(co.country||'Egypt')}"></div>
+          <div class="fg full"><label class="fl">المقر الرئيسي</label><textarea class="fc" id="cf-addr" rows="2">${esc(co.addressAr||'')}</textarea></div>
+        </div>
+        ${saveBtn('legal')}
+      </div>
     </div>
+
+    <!-- ── EDA والترخيص ── -->
     <div id="cpt-eda" class="cpt">
-      ${row('نوع الترخيص',co.companyType==='factory'?'رخصة مصنع FM-LPM':'قيد Toll FM-LAD-15')}
-      ${row('رقم القيد / الرخصة',co.tollNo)}${row('تاريخ الإصدار',fmt(co.tollDate))}
-      ${row('تاريخ الانتهاء','',fmt(co.tollExp)+expiryBadge(co.tollExp))}
-      ${row('كود EDA',co.edaCode)}${row('شهادة GMP',co.gmp)}
-      ${row('انتهاء GMP','',fmt(co.gmpExp)+expiryBadge(co.gmpExp))}
-      ${row('خطوط الإنتاج',co.lines)}
+      <div class="tab-form" style="padding:20px">
+        <div style="margin-bottom:14px;padding:10px 14px;background:var(--blue-light);border-radius:8px;font-size:12px;color:var(--blue);font-weight:600">
+          ${co.companyType==='factory'?'نوع الترخيص: رخصة مصنع — FM-LPM-02':'نوع الترخيص: قيد Toll لدى الغير — FM-LAD-15'}
+        </div>
+        <div class="form-grid">
+          <div class="fg"><label class="fl">${co.companyType==='factory'?'رقم رخصة المصنع':'رقم قيد Toll'}</label><input class="fc" id="cf-tollNo" value="${esc(co.tollNo||'')}" dir="ltr" placeholder="${co.companyType==='factory'?'مثال: 00003/2017':'مثال: Toll/57'}"></div>
+          <div class="fg"><label class="fl">تاريخ الإصدار / القيد</label><input class="fc" id="cf-tollDate" type="date" value="${co.tollDate||''}"></div>
+          <div class="fg"><label class="fl">تاريخ الانتهاء ${co.companyType!=='factory'?'(كل 5 سنوات)':''}</label><input class="fc" id="cf-tollExp" type="date" value="${co.tollExp||''}"></div>
+          <div class="fg"><label class="fl">كود EDA</label><input class="fc" id="cf-edaCode" value="${esc(co.edaCode||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">رقم / اسم شهادة GMP</label><input class="fc" id="cf-gmp" value="${esc(co.gmp||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">تاريخ انتهاء GMP</label><input class="fc" id="cf-gmpExp" type="date" value="${co.gmpExpiry||co.gmpExp||''}"></div>
+          <div class="fg full"><label class="fl">خطوط الإنتاج</label><input class="fc" id="cf-lines" value="${esc(co.lines||co.productionLines||'')}" placeholder="صلبة، كبسولات، مسحوق في أكياس، فيلم قابل للذوبان..."></div>
+        </div>
+        ${saveBtn('eda')}
+      </div>
     </div>
+
+    <!-- ── الضرائب ── -->
     <div id="cpt-tax" class="cpt">
-      ${row('رقم التسجيل الضريبي',co.taxReg)}${row('رقم البطاقة الضريبية',co.taxCard)}
-      ${row('تاريخ إصدار البطاقة',fmt(co.taxDate))}
-      ${row('انتهاء البطاقة الضريبية','',fmt(co.taxExp)+expiryBadge(co.taxExp))}
-      ${row('المأمورية الضريبية',co.taxOfc)}${row('كود النشاط',co.actCode)}
-      ${row('رقم التأمينات الاجتماعية',co.socIns)}${row('ملف ضريبة الدخل',co.incTax)}
+      <div class="tab-form" style="padding:20px">
+        <div class="form-grid">
+          <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fc" id="cf-taxReg" value="${esc(co.taxReg||co.taxRegNo||'')}" dir="ltr" placeholder="مثال: 204-999-359"></div>
+          <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fc" id="cf-taxCard" value="${esc(co.taxCard||co.taxCardNo||'')}" dir="ltr" placeholder="مثال: 509-999-204"></div>
+          <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fc" id="cf-taxDate" type="date" value="${co.taxDate||co.taxCardDate||''}"></div>
+          <div class="fg"><label class="fl">تاريخ انتهاء البطاقة</label><input class="fc" id="cf-taxExp" type="date" value="${co.taxExp||co.taxCardExpiry||''}"></div>
+          <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fc" id="cf-taxOfc" value="${esc(co.taxOfc||co.taxOffice||'')}" placeholder="مثال: الاستثمار"></div>
+          <div class="fg"><label class="fl">كود النشاط</label><input class="fc" id="cf-actCode" value="${esc(co.actCode||co.activityCode||'')}" dir="ltr" placeholder="مثال: 4772"></div>
+          <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fc" id="cf-socIns" value="${esc(co.socIns||co.socialInsuranceNo||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">ملف ضريبة الدخل</label><input class="fc" id="cf-incTax" value="${esc(co.incTax||co.incomeTaxNo||'')}" dir="ltr"></div>
+        </div>
+        ${saveBtn('tax')}
+      </div>
     </div>
+
+    <!-- ── المسؤولون ── -->
     <div id="cpt-persons" class="cpt">
-      ${row('رئيس مجلس الإدارة',co.chairman)}${row('صاحب الترخيص EDA',co.licHolder)}
-      ${row('مدير الشركة',co.mgr)}${row('الاستشاري الفني',co.tech)}
-      ${row('مسؤول الجودة QC',co.qc)}${row('مسؤول الإنتاج',co.prod)}
-      ${row('مسؤول RA',co.ra)}
-      ${row('الهاتف',co.phone)}${row('البريد الإلكتروني',co.email)}
+      <div class="tab-form" style="padding:20px">
+        <div class="form-grid">
+          <div class="fg"><label class="fl">رئيس مجلس الإدارة / المدير</label><input class="fc" id="cf-chairman" value="${esc(co.chairman||'')}"></div>
+          <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fc" id="cf-licHolder" value="${esc(co.licHolder||co.licenseHolder||'')}"></div>
+          <div class="fg"><label class="fl">مدير الشركة</label><input class="fc" id="cf-mgr" value="${esc(co.mgr||co.companyManager||'')}"></div>
+          <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fc" id="cf-tech" value="${esc(co.tech||co.technicalConsultant||'')}"></div>
+          <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fc" id="cf-qc" value="${esc(co.qc||co.qcManager||'')}" placeholder="د. الاسم — رقم نقابة الصيادلة"></div>
+          <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fc" id="cf-prod" value="${esc(co.prod||co.productionManager||'')}" placeholder="د. الاسم — رقم نقابة الصيادلة"></div>
+          <div class="fg"><label class="fl">مسؤول الشؤون التنظيمية RA</label><input class="fc" id="cf-ra" value="${esc(co.ra||co.raManager||'')}"></div>
+          <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="cf-phone" value="${esc(co.phone||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">فاكس</label><input class="fc" id="cf-fax" value="${esc(co.fax||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fc" id="cf-email" value="${esc(co.email||'')}" type="email" dir="ltr"></div>
+          <div class="fg"><label class="fl">الموقع الإلكتروني</label><input class="fc" id="cf-web" value="${esc(co.website||co.web||'')}" dir="ltr"></div>
+          <div class="fg full"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fc" id="cf-edaAddr" rows="2">${esc(co.edaAddress||co.edaAddr||'')}</textarea></div>
+        </div>
+        ${saveBtn('persons')}
+      </div>
     </div>
+
+    <!-- ── الشركاء ── -->
     <div id="cpt-partners" class="cpt">
-      <div style="padding:16px 20px">
-        <div style="font-size:12px;color:var(--gray);font-weight:600;margin-bottom:12px">توزيع حصص الشركاء</div>
-        ${partnersHtml}
-        ${co.egyPct?`<div style="margin-top:12px;padding:10px 14px;background:var(--blue-light);border-radius:8px;font-size:13px;font-weight:600;color:var(--blue)">نسبة المشاركة المصرية: ${esc(co.egyPct)}</div>`:''}
+      <div class="tab-form" style="padding:20px">
+        <div class="alert alert-info" style="margin-bottom:16px">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          كل شريك في سطر بالصيغة: الاسم | النسبة% | الجنسية
+        </div>
+        <div class="fg">
+          <label class="fl">الشركاء وتوزيع الحصص</label>
+          <textarea class="fc" id="cf-partners" rows="7" dir="ltr" style="font-family:'Tajawal',sans-serif" placeholder="فايزة أحمد زاهر الحلو | 45% | مصري&#10;محمود محمد أحمد خروبة | 45.5% | مصري&#10;هيثم السيد أحمد متولي | 9.5% | مصري">${esc(co.partners||'')}</textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">نسبة المشاركة المصرية الإجمالية</label>
+          <input class="fc" id="cf-egyPct" value="${esc(co.egyPct||'')}" dir="ltr" placeholder="مثال: 100%">
+        </div>
+        <div id="partners-preview" style="margin-top:4px"></div>
+        ${saveBtn('partners')}
       </div>
     </div>
+
+    <!-- ── المصانع والموزعون ── -->
     <div id="cpt-factories" class="cpt">
-      <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px">
-        <div><div style="font-size:12px;color:var(--gray);font-weight:600;margin-bottom:8px">المصانع المتعاقد معها</div><div>${chips(co.factories)}</div></div>
-        <div><div style="font-size:12px;color:var(--gray);font-weight:600;margin-bottom:8px">أماكن التخزين</div><div>${chips(co.storage)}</div></div>
-        <div><div style="font-size:12px;color:var(--gray);font-weight:600;margin-bottom:8px">الموزعون المعتمدون</div><div>${chips(co.dist)}</div></div>
+      <div class="tab-form" style="padding:20px">
+        <div class="fg">
+          <label class="fl">المصانع المتعاقد معها</label>
+          <div class="fh" style="margin-bottom:6px">كل مصنع في سطر — يجب إخطار EDA عند إضافة أو تغيير مصنع</div>
+          <textarea class="fc" id="cf-factories" rows="7" placeholder="ريفا فارما&#10;بدر فارما للصناعات الدوائية&#10;ميديسنيا للصناعات الدوائية&#10;دلتا جراند فارما DGP&#10;ساجا فارماسوتيكالز إيجيبت&#10;نرهادو إنترناشيونال&#10;كريم فارما&#10;فارما باك">${esc(co.factories||co.contractedFactories||'')}</textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">أماكن التخزين المرخصة</label>
+          <div class="fh" style="margin-bottom:6px">لا تقل مساحة المخزن عن 100م²</div>
+          <textarea class="fc" id="cf-storage" rows="3" placeholder="اسم المخزن + العنوان الكامل">${esc(co.storage||co.storageLocations||'')}</textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">الموزعون المعتمدون</label>
+          <textarea class="fc" id="cf-dist" rows="3" placeholder="الشركة المتحدة UCP — مصر القديمة — القاهرة&#10;ابن سينا فارما — المنطقة الصناعية — مدينة العبور">${esc(co.dist||co.distributors||'')}</textarea>
+        </div>
+        ${saveBtn('factories')}
       </div>
     </div>
+
+    <!-- ── المستندات ── -->
     <div id="cpt-docs" class="cpt">
       <div style="padding:16px 20px">
         <div id="docs-list-${co.id}"></div>
@@ -922,9 +1001,12 @@ async function renderCompanyPage(c){
         </div>
       </div>
     </div>
+
+    <!-- ── سجل التعديلات ── -->
     <div id="cpt-history" class="cpt">
       <div id="co-history-list" style="padding:4px 0"></div>
     </div>
+
   </div>
   <div style="margin-top:10px;font-size:11px;color:var(--gray2)">
     إنشاء: ${fmtDt(co.createdAt)} &nbsp;|&nbsp; آخر تحديث: ${fmtDt(co.updatedAt)}
@@ -932,13 +1014,60 @@ async function renderCompanyPage(c){
 
   loadDocs(co.id);
   loadHistory(co.id);
+
+  // preview الشركاء عند التغيير
+  document.getElementById('cf-partners')?.addEventListener('input', previewPartners);
+  previewPartners();
 }
 
-function switchCoTab(btn,id){
-  document.querySelectorAll('.cp-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.cpt').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(id).classList.add('active');
+function saveBtn(tab){
+  return`<div style="display:flex;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--gray3)">
+    <button class="btn btn-primary" onclick="saveTab('${tab}')">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      حفظ التغييرات
+    </button>
+  </div>`;
+}
+
+function previewPartners(){
+  const el=document.getElementById('partners-preview');
+  const txt=document.getElementById('cf-partners')?.value||'';
+  if(!el||!txt.trim())return;
+  const rows=txt.split('\n').filter(r=>r.trim()).map(r=>{
+    const p=r.split('|').map(s=>s.trim());
+    return`<div class="partner-row"><span class="partner-share">${esc(p[1]||'')}</span><span style="font-size:13px;font-weight:500">${esc(p[0]||'')}</span><span style="font-size:12px;color:var(--gray);margin-right:auto">${esc(p[2]||'')}</span></div>`;
+  }).join('');
+  el.innerHTML=`<div style="margin-bottom:12px;font-size:12px;color:var(--gray);font-weight:600">معاينة التوزيع:</div>${rows}`;
+}
+
+async function saveTab(tab){
+  const coId=S.companyId;
+  const old=await dbGet('companies',coId);
+  let updates={};
+  if(tab==='legal'){
+    const nameAr=val('cf-nameAr');
+    if(!nameAr){toast('الاسم بالعربي مطلوب','e');return}
+    updates={nameAr,nameEn:val('cf-nameEn'),companyType:val('cf-companyType'),legalForm:val('cf-legalForm'),comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),natNo:val('cf-natNo'),capital:val('cf-capital'),city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')};
+  } else if(tab==='eda'){
+    updates={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines')};
+  } else if(tab==='tax'){
+    updates={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};
+  } else if(tab==='persons'){
+    updates={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web'),edaAddress:val('cf-edaAddr')};
+  } else if(tab==='partners'){
+    updates={partners:val('cf-partners'),egyPct:val('cf-egyPct')};
+  } else if(tab==='factories'){
+    updates={factories:val('cf-factories'),storage:val('cf-storage'),dist:val('cf-dist')};
+  }
+  const co={...old,...updates,updatedAt:now()};
+  await dbPut('companies',co);
+  await saveHistory(coId,'تعديل — '+{legal:'القانونية',eda:'EDA والترخيص',tax:'الضرائب',persons:'المسؤولون',partners:'الشركاء',factories:'المصانع'}[tab],{...old},{...updates});
+  if(tab==='legal'){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr}
+  toast('تم الحفظ بنجاح ✓');
+  // تحديث badge نوع الشركة في الأعلى
+  document.querySelector('.ph-left p').innerHTML=`
+    <span class="badge ${co.companyType==='factory'?'bb':'ba'}" style="margin-left:6px">${co.companyType==='factory'?'مصنع':'شركة Toll'}</span>
+    <span class="badge ${co.isActive?'bg':'br'}">${co.isActive?'نشطة':'موقوفة'}</span>`;
 }
 
 // ── HISTORY ──
