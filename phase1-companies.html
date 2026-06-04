@@ -514,40 +514,121 @@ textarea.fc{resize:vertical;min-height:70px}
 
 <!-- Edit Company -->
 <div class="overlay" id="modal-edit-co">
-  <div class="modal">
+  <div class="modal" style="max-width:720px">
     <div class="mh"><span class="mt">تعديل بيانات الشركة</span><button class="mc" onclick="closeModal('modal-edit-co')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mb">
       <div class="tabs">
-        <div class="tab active" onclick="stab(this,'tb-basic')">الأساسية</div>
-        <div class="tab" onclick="stab(this,'tb-reg')">التنظيمية</div>
+        <div class="tab active" onclick="stab(this,'tb-basic')">القانونية</div>
+        <div class="tab" onclick="stab(this,'tb-eda')">EDA والترخيص</div>
+        <div class="tab" onclick="stab(this,'tb-tax')">الضرائب والمالية</div>
+        <div class="tab" onclick="stab(this,'tb-persons')">المسؤولون</div>
+        <div class="tab" onclick="stab(this,'tb-factories')">المصانع والموزعون</div>
         <div class="tab" onclick="stab(this,'tb-contact')">التواصل</div>
       </div>
+
+      <!-- TAB: القانونية -->
       <div id="tb-basic" class="tp active">
         <div class="form-grid">
           <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fc" id="ec-nameAr"></div>
           <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fc" id="ec-nameEn" dir="ltr"></div>
+          <div class="fg"><label class="fl">الشكل القانوني</label>
+            <select class="fc" id="ec-legalForm">
+              <option value="">اختر...</option>
+              <option value="شركة ذات مسؤولية محدودة (ش.ذ.م.م)">ش.ذ.م.م</option>
+              <option value="شركة توصية بسيطة (ش.ت.ب)">شركة توصية بسيطة</option>
+              <option value="شركة مساهمة (ش.م.م)">شركة مساهمة</option>
+              <option value="شركة شخص واحد">شركة شخص واحد</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fc" id="ec-commercialRegNo" dir="ltr"></div>
+          <div class="fg"><label class="fl">تاريخ إصدار السجل</label><input class="fc" id="ec-commercialRegDate" type="date"></div>
+          <div class="fg"><label class="fl">تاريخ انتهاء السجل</label><input class="fc" id="ec-commercialRegExpiry" type="date"></div>
+          <div class="fg"><label class="fl">رقم الرقم القومي للمنشأة</label><input class="fc" id="ec-nationalEntityNo" dir="ltr"></div>
+          <div class="fg"><label class="fl">رأس المال المسجل (جنيه)</label><input class="fc" id="ec-capital" type="number" dir="ltr"></div>
           <div class="fg"><label class="fl">المدينة</label><input class="fc" id="ec-city"></div>
           <div class="fg"><label class="fl">الدولة</label><input class="fc" id="ec-country"></div>
-          <div class="fg full"><label class="fl">العنوان</label><textarea class="fc" id="ec-addr" rows="2"></textarea></div>
         </div>
       </div>
-      <div id="tb-reg" class="tp">
+
+      <!-- TAB: EDA -->
+      <div id="tb-eda" class="tp">
         <div class="form-grid">
-          <div class="fg"><label class="fl">رقم الترخيص</label><input class="fc" id="ec-lic" dir="ltr"></div>
-          <div class="fg"><label class="fl">تاريخ انتهاء الترخيص</label><input class="fc" id="ec-lic-exp" type="date"></div>
-          <div class="fg"><label class="fl">الرقم الضريبي</label><input class="fc" id="ec-tax" dir="ltr"></div>
-          <div class="fg"><label class="fl">كود هيئة الدواء EDA</label><input class="fc" id="ec-eda" dir="ltr"></div>
-          <div class="fg"><label class="fl">شهادة GMP</label><input class="fc" id="ec-gmp" dir="ltr"></div>
-          <div class="fg"><label class="fl">انتهاء GMP</label><input class="fc" id="ec-gmp-exp" type="date"></div>
+          <div class="fg"><label class="fl">رقم قيد Toll لدى الغير</label><input class="fc" id="ec-tollRegNo" dir="ltr" placeholder="مثال: Toll/57"></div>
+          <div class="fg"><label class="fl">تاريخ القيد</label><input class="fc" id="ec-tollRegDate" type="date"></div>
+          <div class="fg"><label class="fl">تاريخ انتهاء القيد (كل 5 سنوات)</label><input class="fc" id="ec-tollRegExpiry" type="date"></div>
+          <div class="fg"><label class="fl">كود EDA</label><input class="fc" id="ec-edaCode" dir="ltr"></div>
+          <div class="fg"><label class="fl">رقم رخصة المصنع المتعاقد</label><input class="fc" id="ec-factoryLicenseNo" dir="ltr"></div>
+          <div class="fg"><label class="fl">تاريخ إصدار رخصة المصنع</label><input class="fc" id="ec-factoryLicenseDate" type="date"></div>
+          <div class="fg"><label class="fl">رقم شهادة GMP</label><input class="fc" id="ec-gmpCertificate" dir="ltr"></div>
+          <div class="fg"><label class="fl">انتهاء GMP</label><input class="fc" id="ec-gmpExpiry" type="date"></div>
+          <div class="fg full"><label class="fl">خطوط الإنتاج</label><input class="fc" id="ec-productionLines" placeholder="مثال: صلبة، كبسولات، مسحوق في أكياس، فيلم قابل للذوبان"></div>
         </div>
       </div>
+
+      <!-- TAB: الضرائب -->
+      <div id="tb-tax" class="tp">
+        <div class="form-grid">
+          <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fc" id="ec-taxRegNo" dir="ltr" placeholder="مثال: 204-999-359"></div>
+          <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fc" id="ec-taxCardNo" dir="ltr" placeholder="مثال: 509-999-204"></div>
+          <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fc" id="ec-taxCardDate" type="date"></div>
+          <div class="fg"><label class="fl">انتهاء البطاقة الضريبية</label><input class="fc" id="ec-taxCardExpiry" type="date"></div>
+          <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fc" id="ec-taxOffice" placeholder="مثال: الاستثمار"></div>
+          <div class="fg"><label class="fl">كود النشاط</label><input class="fc" id="ec-activityCode" dir="ltr" placeholder="مثال: 4772"></div>
+          <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fc" id="ec-socialInsuranceNo" dir="ltr"></div>
+          <div class="fg"><label class="fl">رقم ملف ضريبة الدخل</label><input class="fc" id="ec-incomeTaxNo" dir="ltr"></div>
+        </div>
+      </div>
+
+      <!-- TAB: المسؤولون -->
+      <div id="tb-persons" class="tp">
+        <div class="form-grid">
+          <div class="fg"><label class="fl">رئيس مجلس الإدارة / المدير</label><input class="fc" id="ec-chairman" placeholder="الاسم + المؤهل"></div>
+          <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fc" id="ec-licenseHolder"></div>
+          <div class="fg"><label class="fl">مدير الشركة</label><input class="fc" id="ec-companyManager"></div>
+          <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fc" id="ec-technicalConsultant"></div>
+          <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fc" id="ec-qcManager" placeholder="د. الاسم — رقم نقابة صيادلة"></div>
+          <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fc" id="ec-productionManager" placeholder="د. الاسم — رقم نقابة صيادلة"></div>
+          <div class="fg full"><label class="fl">مسؤول الشؤون التنظيمية (RA)</label><input class="fc" id="ec-raManager"></div>
+        </div>
+      </div>
+
+      <!-- TAB: المصانع -->
+      <div id="tb-factories" class="tp">
+        <div class="fg">
+          <label class="fl">المصانع المتعاقد معها (كل مصنع في سطر)</label>
+          <textarea class="fc" id="ec-contractedFactories" rows="6" placeholder="ريفا فارما
+بدر فارما للصناعات الدوائية
+ميديسنيا للصناعات الدوائية
+دلتا جراند فارما DGP
+ساجا فارماسوتيكالز إيجيبت
+نرهادو إنترناشيونال للأدوية والمكملات
+كريم فارما
+فارما باك"></textarea>
+          <div class="fh">يجب إخطار EDA عند إضافة أو تغيير مصنع</div>
+        </div>
+        <div class="fg">
+          <label class="fl">أماكن التخزين المرخصة</label>
+          <textarea class="fc" id="ec-storageLocations" rows="3" placeholder="اسم المخزن + العنوان (لا تقل مساحته عن 100م²)"></textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">الموزعون المعتمدون</label>
+          <textarea class="fc" id="ec-distributors" rows="3" placeholder="مثال: الشركة المتحدة UCP - مصر القديمة
+ابن سينا فارما - مدينة العبور"></textarea>
+        </div>
+      </div>
+
+      <!-- TAB: التواصل -->
       <div id="tb-contact" class="tp">
         <div class="form-grid">
+          <div class="fg full"><label class="fl">المقر الرئيسي</label><textarea class="fc" id="ec-addr" rows="2"></textarea></div>
+          <div class="fg full"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fc" id="ec-edaAddress" rows="2"></textarea></div>
           <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="ec-phone" dir="ltr"></div>
+          <div class="fg"><label class="fl">فاكس</label><input class="fc" id="ec-fax" dir="ltr"></div>
           <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fc" id="ec-email" type="email" dir="ltr"></div>
-          <div class="fg full"><label class="fl">الموقع الإلكتروني</label><input class="fc" id="ec-web" dir="ltr" placeholder="https://"></div>
+          <div class="fg"><label class="fl">الموقع الإلكتروني</label><input class="fc" id="ec-web" dir="ltr" placeholder="https://"></div>
         </div>
       </div>
+
     </div>
     <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-edit-co')">إلغاء</button><button class="btn btn-primary" onclick="saveCompany()">حفظ التعديلات</button></div>
   </div>
@@ -848,26 +929,117 @@ async function renderDashboard(c){
 // ══════════════════════════════════════
 async function renderCompanyPage(c){
   const co=await dbGet('companies',S.companyId);
+  // expiry warning helper
+  const expiryBadge=(dateStr)=>{
+    if(!dateStr)return'';
+    const d=new Date(dateStr),now=new Date(),diff=Math.ceil((d-now)/(1000*60*60*24));
+    if(diff<0)return' <span class="badge br">منتهي</span>';
+    if(diff<90)return` <span class="badge ba">ينتهي خلال ${diff} يوم</span>`;
+    return' <span class="badge bg">ساري</span>';
+  };
   c.innerHTML=`
-  <div class="ph"><div class="ph-left"><h2>بيانات الشركة</h2><p>المعلومات الأساسية والتنظيمية</p></div>
-  <button class="btn btn-primary" onclick="openEditCompany()"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>تعديل</button></div>
+  <div class="ph"><div class="ph-left"><h2>بيانات الشركة</h2><p>المعلومات القانونية والتنظيمية والتشغيلية</p></div>
+  <button class="btn btn-primary" onclick="openEditCompany()">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+    تعديل البيانات
+  </button></div>
+
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-    <div class="card"><div class="card-header"><span class="card-title">المعلومات الأساسية</span><span class="badge ${co.isActive?'bg':'br'}">${co.isActive?'نشطة':'موقوفة'}</span></div>
-    <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
-      ${fi('الكود',co.code)}${fi('الاسم بالعربي',co.nameAr)}${fi('الاسم بالإنجليزي',co.nameEn)}${fi('المدينة',co.city)}${fi('الدولة',co.country)}${fi('العنوان',co.addressAr)}
-    </div></div>
-    <div class="card"><div class="card-header"><span class="card-title">البيانات التنظيمية</span></div>
-    <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
-      ${fi('رقم الترخيص',co.licenseNumber)}${fi('انتهاء الترخيص',fmt(co.licenseExpiry))}${fi('الرقم الضريبي',co.taxNumber)}${fi('كود EDA',co.edaCode)}${fi('شهادة GMP',co.gmpCertificate)}${fi('انتهاء GMP',fmt(co.gmpExpiry))}
-    </div></div>
-    <div class="card"><div class="card-header"><span class="card-title">التواصل</span></div>
-    <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
-      ${fi('الهاتف',co.phone)}${fi('البريد الإلكتروني',co.email)}${fi('الموقع',co.website)}
-    </div></div>
-    <div class="card"><div class="card-header"><span class="card-title">معلومات النظام</span></div>
-    <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
-      ${fi('تاريخ الإنشاء',fmtDt(co.createdAt))}${fi('آخر تحديث',fmtDt(co.updatedAt))}
-    </div></div>
+
+    <!-- البيانات القانونية -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">البيانات القانونية</span><span class="badge ${co.isActive?'bg':'br'}">${co.isActive?'نشطة':'موقوفة'}</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+        ${fi('كود الشركة',co.code)}
+        ${fi('الاسم بالعربي',co.nameAr)}
+        ${fi('الاسم بالإنجليزي',co.nameEn)}
+        ${fi('الشكل القانوني',co.legalForm)}
+        ${fi('رقم السجل التجاري',co.commercialRegNo)}
+        ${fi('تاريخ إصدار السجل',fmt(co.commercialRegDate))}
+        ${fi('تاريخ انتهاء السجل',co.commercialRegExpiry?fmt(co.commercialRegExpiry)+expiryBadge(co.commercialRegExpiry):'—')}
+        ${fi('رقم الرقم القومي للمنشأة',co.nationalEntityNo)}
+        ${fi('رأس المال المسجل',co.capital?co.capital+' جنيه':'—')}
+      </div>
+    </div>
+
+    <!-- بيانات EDA والترخيص الدوائي -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">الترخيص الدوائي — EDA</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+        ${fi('رقم قيد Toll لدى الغير',co.tollRegNo)}
+        ${fi('تاريخ القيد',fmt(co.tollRegDate))}
+        ${fi('تاريخ انتهاء القيد',co.tollRegExpiry?fmt(co.tollRegExpiry)+expiryBadge(co.tollRegExpiry):'—')}
+        ${fi('كود EDA',co.edaCode)}
+        ${fi('رخصة المصنع (للمصنع المتعاقد)',co.factoryLicenseNo)}
+        ${fi('تاريخ إصدار رخصة المصنع',fmt(co.factoryLicenseDate))}
+        ${fi('شهادة GMP',co.gmpCertificate)}
+        ${fi('انتهاء GMP',co.gmpExpiry?fmt(co.gmpExpiry)+expiryBadge(co.gmpExpiry):'—')}
+        ${fi('خطوط الإنتاج',co.productionLines)}
+      </div>
+    </div>
+
+    <!-- البيانات الضريبية والمالية -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">البيانات الضريبية والمالية</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+        ${fi('رقم التسجيل الضريبي',co.taxRegNo)}
+        ${fi('رقم البطاقة الضريبية',co.taxCardNo)}
+        ${fi('تاريخ إصدار البطاقة',fmt(co.taxCardDate))}
+        ${fi('انتهاء البطاقة الضريبية',co.taxCardExpiry?fmt(co.taxCardExpiry)+expiryBadge(co.taxCardExpiry):'—')}
+        ${fi('المأمورية الضريبية',co.taxOffice)}
+        ${fi('كود النشاط',co.activityCode)}
+        ${fi('رقم التأمينات الاجتماعية',co.socialInsuranceNo)}
+      </div>
+    </div>
+
+    <!-- الأشخاص المسؤولون -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">الأشخاص المسؤولون</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+        ${fi('رئيس مجلس الإدارة / المدير',co.chairman)}
+        ${fi('صاحب الترخيص',co.licenseHolder)}
+        ${fi('مدير الشركة',co.companyManager)}
+        ${fi('الاستشاري الفني',co.technicalConsultant)}
+        ${fi('مسؤول الجودة QC',co.qcManager)}
+        ${fi('مسؤول الإنتاج',co.productionManager)}
+        ${fi('مسؤول الشؤون التنظيمية',co.raManager)}
+      </div>
+    </div>
+
+    <!-- المصانع المتعاقد معها -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">المصانع المتعاقد معها (Toll)</span></div>
+      <div class="card-body">
+        ${co.contractedFactories?`<div style="display:flex;flex-direction:column;gap:6px">
+          ${co.contractedFactories.split('\n').filter(f=>f.trim()).map(f=>`
+          <div style="display:flex;align-items:center;gap:8px;padding:7px 10px;background:var(--gray4);border-radius:6px;font-size:13px">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0"></span>
+            ${esc(f.trim())}
+          </div>`).join('')}
+        </div>`:`<span style="color:var(--gray2);font-size:13px">لم تُسجَّل مصانع بعد</span>`}
+      </div>
+    </div>
+
+    <!-- الموزعون والتواصل -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">الموزعون والتواصل</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:12px">
+        ${fi('الموزعون المعتمدون',co.distributors)}
+        ${fi('المقر الرئيسي',co.addressAr)}
+        ${fi('المقر الرسمي (EDA)',co.edaAddress)}
+        ${fi('المدينة',co.city)}
+        ${fi('الهاتف',co.phone)}
+        ${fi('فاكس',co.fax)}
+        ${fi('البريد الإلكتروني',co.email)}
+        ${fi('الموقع الإلكتروني',co.website)}
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:14px;padding:12px 16px;background:var(--gray4);border-radius:8px;font-size:12px;color:var(--gray);display:flex;gap:16px;flex-wrap:wrap">
+    <span>تاريخ الإنشاء: ${fmtDt(co.createdAt)}</span>
+    <span>آخر تحديث: ${fmtDt(co.updatedAt)}</span>
   </div>`;
 }
 
@@ -877,40 +1049,87 @@ function fi(label,value){
 
 async function openEditCompany(){
   const co=await dbGet('companies',S.companyId);
-  set('ec-nameAr',co.nameAr);set('ec-nameEn',co.nameEn);set('ec-city',co.city);
-  set('ec-country',co.country||'Egypt');set('ec-addr',co.addressAr);
-  set('ec-lic',co.licenseNumber);set('ec-lic-exp',co.licenseExpiry);
-  set('ec-tax',co.taxNumber);set('ec-eda',co.edaCode);
-  set('ec-gmp',co.gmpCertificate);set('ec-gmp-exp',co.gmpExpiry);
-  set('ec-phone',co.phone);set('ec-email',co.email);set('ec-web',co.website);
+  document.getElementById('modal-edit-co').dataset.coId=S.companyId;
+  fillCoForm(co);
   openModal('modal-edit-co');
 }
 
 async function editCompanyFromList(id){
   const co=await dbGet('companies',id);if(!co)return;
-  // set all fields then open
-  set('ec-nameAr',co.nameAr);set('ec-nameEn',co.nameEn);set('ec-city',co.city);
-  set('ec-country',co.country||'Egypt');set('ec-addr',co.addressAr);
-  set('ec-lic',co.licenseNumber);set('ec-lic-exp',co.licenseExpiry);
-  set('ec-tax',co.taxNumber);set('ec-eda',co.edaCode);
-  set('ec-gmp',co.gmpCertificate);set('ec-gmp-exp',co.gmpExpiry);
-  set('ec-phone',co.phone);set('ec-email',co.email);set('ec-web',co.website);
-  // store which company we're editing
   document.getElementById('modal-edit-co').dataset.coId=id;
+  fillCoForm(co);
   openModal('modal-edit-co');
+}
+
+function fillCoForm(co){
+  // القانونية
+  set('ec-nameAr',co.nameAr);set('ec-nameEn',co.nameEn);
+  set('ec-legalForm',co.legalForm);set('ec-commercialRegNo',co.commercialRegNo);
+  set('ec-commercialRegDate',co.commercialRegDate);set('ec-commercialRegExpiry',co.commercialRegExpiry);
+  set('ec-nationalEntityNo',co.nationalEntityNo);set('ec-capital',co.capital);
+  set('ec-city',co.city);set('ec-country',co.country||'Egypt');
+  // EDA
+  set('ec-tollRegNo',co.tollRegNo);set('ec-tollRegDate',co.tollRegDate);
+  set('ec-tollRegExpiry',co.tollRegExpiry);set('ec-edaCode',co.edaCode);
+  set('ec-factoryLicenseNo',co.factoryLicenseNo);set('ec-factoryLicenseDate',co.factoryLicenseDate);
+  set('ec-gmpCertificate',co.gmpCertificate);set('ec-gmpExpiry',co.gmpExpiry);
+  set('ec-productionLines',co.productionLines);
+  // الضرائب
+  set('ec-taxRegNo',co.taxRegNo);set('ec-taxCardNo',co.taxCardNo);
+  set('ec-taxCardDate',co.taxCardDate);set('ec-taxCardExpiry',co.taxCardExpiry);
+  set('ec-taxOffice',co.taxOffice);set('ec-activityCode',co.activityCode);
+  set('ec-socialInsuranceNo',co.socialInsuranceNo);set('ec-incomeTaxNo',co.incomeTaxNo);
+  // المسؤولون
+  set('ec-chairman',co.chairman);set('ec-licenseHolder',co.licenseHolder);
+  set('ec-companyManager',co.companyManager);set('ec-technicalConsultant',co.technicalConsultant);
+  set('ec-qcManager',co.qcManager);set('ec-productionManager',co.productionManager);
+  set('ec-raManager',co.raManager);
+  // المصانع
+  set('ec-contractedFactories',co.contractedFactories);
+  set('ec-storageLocations',co.storageLocations);
+  set('ec-distributors',co.distributors);
+  // التواصل
+  set('ec-addr',co.addressAr);set('ec-edaAddress',co.edaAddress);
+  set('ec-phone',co.phone);set('ec-fax',co.fax);
+  set('ec-email',co.email);set('ec-web',co.website);
 }
 
 async function saveCompany(){
   const nameAr=val('ec-nameAr');
-  if(!nameAr){toast('الاسم مطلوب','e');return}
+  if(!nameAr){toast('الاسم بالعربي مطلوب','e');return}
   const coId=document.getElementById('modal-edit-co').dataset.coId||S?.companyId;
   if(!coId)return;
   const co=await dbGet('companies',coId);
-  Object.assign(co,{nameAr,nameEn:val('ec-nameEn'),city:val('ec-city'),country:val('ec-country'),addressAr:val('ec-addr'),licenseNumber:val('ec-lic'),licenseExpiry:val('ec-lic-exp'),taxNumber:val('ec-tax'),edaCode:val('ec-eda'),gmpCertificate:val('ec-gmp'),gmpExpiry:val('ec-gmp-exp'),phone:val('ec-phone'),email:val('ec-email'),website:val('ec-web'),updatedAt:now()});
+  Object.assign(co,{
+    nameAr, nameEn:val('ec-nameEn'),
+    legalForm:val('ec-legalForm'), commercialRegNo:val('ec-commercialRegNo'),
+    commercialRegDate:val('ec-commercialRegDate'), commercialRegExpiry:val('ec-commercialRegExpiry'),
+    nationalEntityNo:val('ec-nationalEntityNo'), capital:val('ec-capital'),
+    city:val('ec-city'), country:val('ec-country'),
+    tollRegNo:val('ec-tollRegNo'), tollRegDate:val('ec-tollRegDate'),
+    tollRegExpiry:val('ec-tollRegExpiry'), edaCode:val('ec-edaCode'),
+    factoryLicenseNo:val('ec-factoryLicenseNo'), factoryLicenseDate:val('ec-factoryLicenseDate'),
+    gmpCertificate:val('ec-gmpCertificate'), gmpExpiry:val('ec-gmpExpiry'),
+    productionLines:val('ec-productionLines'),
+    taxRegNo:val('ec-taxRegNo'), taxCardNo:val('ec-taxCardNo'),
+    taxCardDate:val('ec-taxCardDate'), taxCardExpiry:val('ec-taxCardExpiry'),
+    taxOffice:val('ec-taxOffice'), activityCode:val('ec-activityCode'),
+    socialInsuranceNo:val('ec-socialInsuranceNo'), incomeTaxNo:val('ec-incomeTaxNo'),
+    chairman:val('ec-chairman'), licenseHolder:val('ec-licenseHolder'),
+    companyManager:val('ec-companyManager'), technicalConsultant:val('ec-technicalConsultant'),
+    qcManager:val('ec-qcManager'), productionManager:val('ec-productionManager'),
+    raManager:val('ec-raManager'),
+    contractedFactories:val('ec-contractedFactories'),
+    storageLocations:val('ec-storageLocations'), distributors:val('ec-distributors'),
+    addressAr:val('ec-addr'), edaAddress:val('ec-edaAddress'),
+    phone:val('ec-phone'), fax:val('ec-fax'),
+    email:val('ec-email'), website:val('ec-web'),
+    updatedAt:now()
+  });
   await dbPut('companies',co);
   if(S&&coId===S.companyId){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr}
   closeModal('modal-edit-co');
-  toast('تم تحديث بيانات الشركة');
+  toast('تم حفظ بيانات الشركة بنجاح');
   if(S&&coId===S.companyId)renderCompanyPage(document.getElementById('page-content'));
   else renderCompanies();
 }
