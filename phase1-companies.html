@@ -4,245 +4,130 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quadra Pharma ERP</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --navy:#0f1f3d;--navy2:#162847;--navy3:#1e3a5f;
-  --blue:#2563eb;--blue2:#1d4ed8;--blue-light:#dbeafe;
-  --green:#059669;--green-light:#d1fae5;
-  --red:#dc2626;--red-light:#fee2e2;
+  --navy:#0f1f3d;--blue:#2563eb;--blue2:#1d4ed8;--blue-light:#dbeafe;
+  --green:#059669;--green-light:#d1fae5;--red:#dc2626;--red-light:#fee2e2;
   --amber:#d97706;--amber-light:#fef3c7;
   --gray:#64748b;--gray2:#94a3b8;--gray3:#e2e8f0;--gray4:#f8fafc;
-  --white:#fff;--text:#1e293b;
+  --text:#1e293b;--white:#fff;
 }
 body{font-family:'Tajawal',sans-serif;background:#f1f5f9;color:var(--text);font-size:14px;line-height:1.6}
 .screen{display:none}.screen.active{display:flex}
 
-/* ── COMPANIES LIST SCREEN ── */
-#screen-companies{
-  min-height:100vh;flex-direction:column;
-  background:var(--navy);
-}
-.co-top{
-  padding:32px 40px 24px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
-}
+/* ── COMPANIES SCREEN ── */
+#screen-companies{min-height:100vh;flex-direction:column;background:var(--navy)}
+.co-top{padding:28px 36px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
 .co-brand{display:flex;align-items:center;gap:14px}
-.co-brand-icon{
-  width:48px;height:48px;background:var(--blue);border-radius:12px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;font-weight:800;color:#fff;
-  box-shadow:0 4px 16px rgba(37,99,235,.4);
-}
-.co-brand h1{font-size:20px;font-weight:800;color:#fff}
-.co-brand p{font-size:12px;color:rgba(255,255,255,.4);margin-top:2px}
-.co-body{flex:1;padding:32px 40px;max-width:1000px;width:100%;margin:0 auto}
-.co-section-title{
-  font-size:13px;font-weight:700;color:rgba(255,255,255,.4);
-  text-transform:uppercase;letter-spacing:.6px;margin-bottom:16px;
-}
-.co-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;margin-bottom:14px}
-.co-card{
-  background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;padding:20px;cursor:pointer;
-  transition:.2s;position:relative;overflow:hidden;
-}
+.co-brand-icon{width:44px;height:44px;background:var(--blue);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff}
+.co-brand h1{font-size:18px;font-weight:800;color:#fff}
+.co-brand p{font-size:12px;color:rgba(255,255,255,.4)}
+.co-body{flex:1;padding:28px 36px;max-width:1000px;width:100%;margin:0 auto}
+.co-section-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
+.co-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:12px}
+.co-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;cursor:pointer;transition:.2s;position:relative}
 .co-card:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.15);transform:translateY(-2px)}
-.co-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px}
-.co-card-icon{
-  width:42px;height:42px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;font-weight:800;color:#fff;flex-shrink:0;
-}
-.co-card-menu{
-  width:28px;height:28px;display:flex;align-items:center;justify-content:center;
-  border-radius:6px;color:rgba(255,255,255,.3);cursor:pointer;
-  transition:.15s;background:transparent;border:none;font-size:18px;line-height:1;
-  position:relative;
-}
+.co-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
+.co-card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0}
+.co-card-menu{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:rgba(255,255,255,.3);cursor:pointer;transition:.15s;background:transparent;border:none;font-size:18px;position:relative}
 .co-card-menu:hover{background:rgba(255,255,255,.1);color:#fff}
-.co-card-name{font-size:15px;font-weight:700;color:#fff;margin-bottom:3px}
-.co-card-code{
-  font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;
-  background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);
-  display:inline-block;direction:ltr;margin-bottom:10px;
-}
-.co-card-meta{font-size:12px;color:rgba(255,255,255,.35);display:flex;gap:12px}
-.co-card-status{
-  position:absolute;top:14px;left:14px;
-  width:7px;height:7px;border-radius:50%;
-}
-.status-active{background:#10b981}
-.status-inactive{background:#6b7280}
-.btn-add-co{
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  background:rgba(37,99,235,.15);border:1.5px dashed rgba(37,99,235,.4);
-  border-radius:14px;padding:20px;cursor:pointer;
-  color:rgba(255,255,255,.5);font-family:'Tajawal',sans-serif;
-  font-size:14px;font-weight:600;transition:.2s;width:100%;
-}
-.btn-add-co:hover{background:rgba(37,99,235,.25);border-color:rgba(37,99,235,.7);color:#fff}
-.btn-add-co svg{width:20px;height:20px;opacity:.7}
+.co-card-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px}
+.co-card-code{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);display:inline-block;direction:ltr;margin-bottom:8px}
+.co-card-meta{font-size:12px;color:rgba(255,255,255,.35);display:flex;gap:10px;flex-wrap:wrap}
+.co-dot{position:absolute;top:14px;left:14px;width:7px;height:7px;border-radius:50%}
+.dot-on{background:#10b981}.dot-off{background:#6b7280}
+.dd{position:absolute;left:8px;top:40px;background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px;z-index:100;min-width:130px;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none}
+.dd.show{display:block}
+.dd-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);transition:.15s;border:none;background:transparent;font-family:'Tajawal',sans-serif;width:100%;text-align:right}
+.dd-item:hover{background:rgba(255,255,255,.08);color:#fff}
+.dd-item.red{color:#fca5a5}.dd-item.red:hover{background:rgba(220,38,38,.15)}
+.dd-div{height:1px;background:rgba(255,255,255,.07);margin:3px 4px}
+.btn-add-co{display:flex;align-items:center;justify-content:center;gap:10px;background:rgba(37,99,235,.12);border:1.5px dashed rgba(37,99,235,.35);border-radius:14px;padding:18px;cursor:pointer;color:rgba(255,255,255,.4);font-family:'Tajawal',sans-serif;font-size:14px;font-weight:600;transition:.2s;width:100%}
+.btn-add-co:hover{background:rgba(37,99,235,.22);border-color:rgba(37,99,235,.6);color:#fff}
 
-/* Dropdown menu */
-.dropdown{
-  position:absolute;left:8px;top:44px;
-  background:#1e293b;border:1px solid rgba(255,255,255,.1);
-  border-radius:8px;padding:4px;z-index:100;min-width:140px;
-  box-shadow:0 8px 24px rgba(0,0,0,.4);display:none;
-}
-.dropdown.show{display:block}
-.dropdown-item{
-  display:flex;align-items:center;gap:8px;padding:8px 12px;
-  border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;
-  color:rgba(255,255,255,.7);transition:.15s;border:none;background:transparent;
-  font-family:'Tajawal',sans-serif;width:100%;text-align:right;
-}
-.dropdown-item:hover{background:rgba(255,255,255,.08);color:#fff}
-.dropdown-item.danger{color:#fca5a5}
-.dropdown-item.danger:hover{background:rgba(220,38,38,.15)}
-.dropdown-divider{height:1px;background:rgba(255,255,255,.07);margin:3px 4px}
-
-/* ── LOGIN SCREEN ── */
-#screen-login{
-  min-height:100vh;align-items:center;justify-content:center;
-  background:var(--navy);position:relative;overflow:hidden;
-}
-#screen-login::before{
-  content:'';position:absolute;inset:0;
-  background:radial-gradient(ellipse 80% 60% at 50% 0%,#1e3a5f 0%,transparent 70%);
-}
-.login-card{
-  position:relative;z-index:1;
-  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);
-  border-radius:20px;padding:40px;width:400px;max-width:calc(100vw - 32px);
-  backdrop-filter:blur(20px);
-}
-.login-back{
-  display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.4);
-  font-size:13px;cursor:pointer;margin-bottom:24px;background:none;border:none;
-  font-family:'Tajawal',sans-serif;padding:0;transition:.15s;
-}
-.login-back:hover{color:rgba(255,255,255,.8)}
-.login-co-badge{
-  display:flex;align-items:center;gap:12px;
-  background:rgba(255,255,255,.06);border-radius:10px;padding:12px 16px;margin-bottom:28px;
-}
-.login-co-icon{
-  width:38px;height:38px;border-radius:9px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:800;color:#fff;flex-shrink:0;
-}
-.login-co-name{font-size:14px;font-weight:700;color:#fff}
-.login-co-code{font-size:11px;color:rgba(255,255,255,.35);direction:ltr}
-.login-field{margin-bottom:16px}
-.login-label{display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:7px;letter-spacing:.3px}
-.login-input{
-  width:100%;padding:11px 14px;
-  background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
-  border-radius:9px;color:#fff;font-family:'Tajawal',sans-serif;font-size:14px;
-  transition:.2s;outline:none;
-}
-.login-input:focus{border-color:var(--blue);background:rgba(37,99,235,.1);box-shadow:0 0 0 3px rgba(37,99,235,.2)}
-.login-input::placeholder{color:rgba(255,255,255,.2)}
-.btn-login{
-  width:100%;padding:12px;background:var(--blue);color:#fff;border:none;
-  border-radius:9px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;
-  cursor:pointer;transition:.2s;margin-top:4px;
-}
+/* ── LOGIN ── */
+#screen-login{min-height:100vh;align-items:center;justify-content:center;background:var(--navy);position:relative;overflow:hidden}
+#screen-login::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,#1e3a5f 0%,transparent 70%)}
+.lcard{position:relative;z-index:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:36px;width:390px;max-width:calc(100vw - 32px)}
+.lback{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer;margin-bottom:22px;background:none;border:none;font-family:'Tajawal',sans-serif;padding:0;transition:.15s}
+.lback:hover{color:rgba(255,255,255,.8)}
+.lco-badge{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border-radius:10px;padding:11px 15px;margin-bottom:24px}
+.lco-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
+.lco-name{font-size:14px;font-weight:700;color:#fff}
+.lco-code{font-size:11px;color:rgba(255,255,255,.35);direction:ltr}
+.lfield{margin-bottom:14px}
+.llabel{display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:6px}
+.linput{width:100%;padding:11px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#fff;font-family:'Tajawal',sans-serif;font-size:14px;transition:.2s;outline:none}
+.linput:focus{border-color:var(--blue);background:rgba(37,99,235,.1);box-shadow:0 0 0 3px rgba(37,99,235,.2)}
+.linput::placeholder{color:rgba(255,255,255,.2)}
+.btn-login{width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;margin-top:4px}
 .btn-login:hover{background:var(--blue2);box-shadow:0 6px 20px rgba(37,99,235,.4)}
-.login-err{
-  background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);
-  color:#fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;
-  margin-bottom:14px;display:none;
-}
-.login-err.show{display:block}
+.lerr{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);color:#fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.lerr.show{display:block}
 
-/* ── APP SCREEN ── */
+/* ── APP ── */
 #screen-app{min-height:100vh;flex-direction:row}
-.sidebar{
-  width:240px;background:var(--navy);flex-shrink:0;
-  display:flex;flex-direction:column;height:100vh;
-  position:sticky;top:0;overflow-y:auto;
-}
-.sb-brand{padding:18px 18px 14px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
+.sidebar{width:240px;background:var(--navy);flex-shrink:0;display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto}
+.sb-brand{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
 .sb-brand-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
 .sb-brand-name{font-size:13px;font-weight:800;color:#fff}
 .sb-brand-sub{font-size:10px;color:rgba(255,255,255,.3)}
-.sb-co{
-  padding:10px 18px;background:rgba(255,255,255,.04);
-  border-bottom:1px solid rgba(255,255,255,.07);
-  display:flex;align-items:center;gap:8px;cursor:pointer;transition:.15s;
-}
+.sb-co{padding:10px 18px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px;cursor:pointer;transition:.15s}
 .sb-co:hover{background:rgba(255,255,255,.08)}
-.sb-co-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff;flex-shrink:0}
 .sb-co-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.7);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-co-arrow{font-size:10px;color:rgba(255,255,255,.2)}
 .sb-nav{flex:1;padding:8px 0}
-.sb-section{padding:8px 18px 3px;font-size:10px;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
-.sb-item{
-  display:flex;align-items:center;gap:9px;padding:9px 18px;
-  cursor:pointer;color:rgba(255,255,255,.45);transition:.15s;
-  border-right:3px solid transparent;font-size:13px;font-weight:500;
-}
+.sb-sec{padding:8px 18px 3px;font-size:10px;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
+.sb-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;color:rgba(255,255,255,.45);transition:.15s;border-right:3px solid transparent;font-size:13px;font-weight:500}
 .sb-item:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
 .sb-item.active{color:#fff;background:rgba(37,99,235,.2);border-right-color:var(--blue)}
 .sb-item svg{width:15px;height:15px;flex-shrink:0}
 .sb-item.dim{opacity:.3;pointer-events:none}
 .sb-soon{margin-right:auto;font-size:10px;padding:1px 6px;background:rgba(245,158,11,.15);color:#fbbf24;border-radius:20px;font-weight:600}
-.sb-footer{padding:14px 18px;border-top:1px solid rgba(255,255,255,.07)}
+.sb-footer{padding:12px 18px;border-top:1px solid rgba(255,255,255,.07)}
 .sb-user{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .sb-avatar{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
 .sb-uname{font-size:12px;font-weight:600;color:rgba(255,255,255,.75)}
 .sb-urole{font-size:10px;color:rgba(255,255,255,.3)}
 .btn-logout{width:100%;padding:7px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.07);border-radius:7px;font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer;transition:.15s}
 .btn-logout:hover{background:rgba(220,38,38,.12);color:#fca5a5;border-color:rgba(220,38,38,.2)}
-
-/* MAIN */
 .main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
 .topbar{background:#fff;border-bottom:1px solid var(--gray3);padding:0 22px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
 .topbar-title{font-size:16px;font-weight:700}
-.menu-btn{display:none;padding:7px;background:none;border:none;cursor:pointer}
+.menu-btn{display:none;padding:7px;background:none;border:none;cursor:pointer;color:var(--text)}
 #page-content{flex:1;padding:22px;overflow-y:auto}
 
-/* COMPONENTS */
+/* ── COMPONENTS ── */
 .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid transparent;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:600;transition:.15s;white-space:nowrap}
 .btn:disabled{opacity:.5;cursor:not-allowed}
 .btn-primary{background:var(--blue);color:#fff}.btn-primary:hover:not(:disabled){background:var(--blue2)}
 .btn-outline{background:#fff;color:var(--text);border-color:var(--gray3)}.btn-outline:hover{background:var(--gray4)}
 .btn-red{background:var(--red);color:#fff}.btn-red:hover{background:#b91c1c}
 .btn-sm{padding:6px 12px;font-size:12px}.btn-xs{padding:4px 9px;font-size:11px;border-radius:6px}
-
 .card{background:#fff;border:1px solid var(--gray3);border-radius:12px;overflow:hidden}
 .card-header{padding:14px 18px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between;gap:12px}
 .card-title{font-size:14px;font-weight:700}
 .card-body{padding:18px}
-
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:20px}
 .stat{background:#fff;border:1px solid var(--gray3);border-radius:12px;padding:18px;position:relative;overflow:hidden}
 .stat::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--sc,var(--blue))}
 .stat-label{font-size:12px;color:var(--gray);font-weight:500;margin-bottom:6px}
 .stat-value{font-size:28px;font-weight:800;line-height:1}
 .stat-sub{font-size:11px;color:var(--gray2);margin-top:4px}
-
 table{width:100%;border-collapse:collapse}
 .table-wrap{overflow-x:auto}
 thead th{padding:10px 14px;text-align:right;font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;background:var(--gray4);border-bottom:1px solid var(--gray3);white-space:nowrap}
 tbody td{padding:12px 14px;border-bottom:1px solid var(--gray3);vertical-align:middle}
 tbody tr:last-child td{border-bottom:none}
 tbody tr:hover td{background:#f8fafc}
-
 .badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
 .bg{background:var(--green-light);color:var(--green)}
 .br{background:var(--red-light);color:var(--red)}
 .bb{background:var(--blue-light);color:var(--blue)}
 .bgr{background:var(--gray3);color:var(--gray)}
 .ba{background:var(--amber-light);color:var(--amber)}
-
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}
-.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 18px}
 .full{grid-column:1/-1}
 .fg{margin-bottom:16px}
 .fl{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px}
@@ -251,15 +136,13 @@ tbody tr:hover td{background:#f8fafc}
 .fc:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
 .fh{font-size:11px;color:var(--gray2);margin-top:4px}
 textarea.fc{resize:vertical;min-height:70px}
-
 .tabs{display:flex;border-bottom:2px solid var(--gray3);margin-bottom:18px}
-.tab{padding:9px 16px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s}
+.tab{padding:9px 16px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;font-family:'Tajawal',sans-serif}
 .tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 .tp{display:none}.tp.active{display:block}
-
 .overlay{position:fixed;inset:0;background:rgba(15,31,61,.65);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
 .overlay.show{display:flex}
-.modal{background:#fff;border-radius:14px;width:100%;max-width:600px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:su .2s ease}
+.modal{background:#fff;border-radius:14px;width:100%;max-width:640px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:su .2s ease}
 @keyframes su{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 .mh{padding:16px 20px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between}
 .mt{font-size:15px;font-weight:700}
@@ -267,116 +150,95 @@ textarea.fc{resize:vertical;min-height:70px}
 .mc:hover{background:var(--gray4)}
 .mb{padding:20px;overflow-y:auto;flex:1}
 .mf{padding:13px 20px;border-top:1px solid var(--gray3);display:flex;justify-content:flex-end;gap:8px}
-
 .alert{padding:11px 14px;border-radius:7px;font-size:13px;display:flex;align-items:flex-start;gap:8px;margin-bottom:14px}
 .alert-info{background:var(--blue-light);color:var(--blue);border:1px solid #bfdbfe}
 .alert-warn{background:var(--amber-light);color:var(--amber);border:1px solid #fde68a}
-
+.alert-danger{background:var(--red-light);color:var(--red);border:1px solid #fecaca}
 .search-wrap{position:relative}
 .search-wrap svg{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--gray2);pointer-events:none}
 .search-inp{padding:8px 36px 8px 12px;border:1px solid var(--gray3);border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;width:240px;outline:none;transition:.15s;background:var(--gray4)}
 .search-inp:focus{border-color:var(--blue);background:#fff}
-
 .ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
 .ph-left h2{font-size:19px;font-weight:800;margin-bottom:2px}
 .ph-left p{font-size:13px;color:var(--gray)}
-.empty{padding:44px 20px;text-align:center;color:var(--gray)}
+.empty{padding:40px 20px;text-align:center;color:var(--gray)}
 .empty h3{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
 
-/* Comments panel */
-.comment-toggle{
-  position:fixed;left:20px;bottom:20px;z-index:200;
-  background:var(--amber);color:#fff;border:none;border-radius:50px;
-  padding:10px 18px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;
-  cursor:pointer;box-shadow:0 4px 16px rgba(217,119,6,.4);display:flex;align-items:center;gap:7px;
-  transition:.2s;
-}
-.comment-toggle:hover{background:#b45309;transform:translateY(-2px)}
-.comment-panel{
-  position:fixed;left:0;bottom:0;top:0;width:320px;z-index:300;
-  background:#fff;border-right:1px solid var(--gray3);
-  display:flex;flex-direction:column;
-  box-shadow:4px 0 24px rgba(0,0,0,.12);
-  transform:translateX(-100%);transition:.3s;
-}
-.comment-panel.open{transform:translateX(0)}
-.cp-header{padding:16px 18px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between}
-.cp-title{font-size:14px;font-weight:700}
-.cp-close{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;cursor:pointer;background:none;border:none;color:var(--gray);transition:.15s}
-.cp-close:hover{background:var(--gray4)}
-.cp-list{flex:1;overflow-y:auto;padding:14px}
-.cp-empty{text-align:center;padding:32px 16px;color:var(--gray2);font-size:13px}
-.cp-item{margin-bottom:12px;padding:12px;background:var(--gray4);border-radius:8px;border-right:3px solid var(--amber)}
-.cp-item-meta{font-size:11px;color:var(--gray2);margin-bottom:5px;display:flex;justify-content:space-between}
-.cp-item-page{font-weight:600;color:var(--amber)}
-.cp-item-text{font-size:13px;color:var(--text);line-height:1.5}
-.cp-item-del{background:none;border:none;cursor:pointer;color:var(--gray2);font-size:12px;padding:2px 6px;border-radius:4px;transition:.15s}
-.cp-item-del:hover{background:var(--red-light);color:var(--red)}
-.cp-form{padding:14px;border-top:1px solid var(--gray3)}
-.cp-form textarea{width:100%;padding:9px 12px;border:1px solid var(--gray3);border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;resize:none;outline:none;margin-bottom:8px;transition:.15s}
-.cp-form textarea:focus{border-color:var(--amber);box-shadow:0 0 0 3px rgba(217,119,6,.1)}
-.cp-form button{width:100%;padding:9px;background:var(--amber);color:#fff;border:none;border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:.15s}
-.cp-form button:hover{background:#b45309}
-
-/* Confirm delete */
-.confirm-modal{max-width:380px}
-
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .25s;pointer-events:none;max-width:320px;text-align:center}
-#toast.show{opacity:1}
-
-.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .6s linear infinite;display:inline-block}
-@keyframes rot{to{transform:rotate(360deg)}}
-.cp-tabs{display:flex;overflow-x:auto;border-bottom:2px solid var(--gray3);padding:0 20px;gap:2px;scrollbar-width:none}
+/* ── COMPANY VIEW TABS ── */
+.cp-tabs{display:flex;overflow-x:auto;border-bottom:2px solid var(--gray3);padding:0;gap:0;scrollbar-width:none}
 .cp-tabs::-webkit-scrollbar{display:none}
-.cp-tab{padding:12px 16px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:'Tajawal',sans-serif;transition:.15s}
+.cp-tab{padding:12px 18px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:'Tajawal',sans-serif;transition:.15s}
 .cp-tab:hover{color:var(--text)}.cp-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 .cpt{display:none}.cpt.active{display:block}
-.fi-row{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:11px 20px;border-bottom:1px solid var(--gray3)}
+.fi-row{display:flex;align-items:baseline;padding:11px 20px;border-bottom:1px solid var(--gray3);gap:12px}
 .fi-row:last-child{border-bottom:none}
-.fi-label{font-size:12px;color:var(--gray);font-weight:500;min-width:170px;flex-shrink:0}
-.fi-val{font-size:13px;font-weight:500;text-align:left;word-break:break-word}
-.chip{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--gray4);border:1px solid var(--gray3);color:var(--text)}
-.doc-upload-area{border:2px dashed var(--gray3);border-radius:8px;padding:24px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:12px}
-.doc-upload-area:hover{border-color:var(--blue);background:var(--blue-light)}
+.fi-row:hover{background:#f8fafc}
+.fi-lbl{font-size:12px;color:var(--gray);font-weight:500;width:190px;flex-shrink:0}
+.fi-val{font-size:13px;font-weight:500;flex:1;word-break:break-word}
+.chip{display:inline-flex;align-items:center;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--gray4);border:1px solid var(--gray3);color:var(--text);margin:3px}
+
+/* ── ALERTS PANEL (انتهاء الوثائق) ── */
+.exp-panel{background:#fff;border:1px solid var(--gray3);border-radius:12px;margin-bottom:20px;overflow:hidden}
+.exp-header{padding:12px 18px;background:var(--amber-light);border-bottom:1px solid #fde68a;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--amber)}
+.exp-item{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--gray3);font-size:13px;gap:12px}
+.exp-item:last-child{border-bottom:none}
+
+/* ── DOCS ── */
+.doc-drop{border:2px dashed var(--gray3);border-radius:8px;padding:22px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:12px}
+.doc-drop:hover{border-color:var(--blue);background:var(--blue-light)}
+.doc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray4);border-radius:8px;border:1px solid var(--gray3);margin-bottom:6px}
+.doc-icon{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+
+/* ── BACKUP PANEL ── */
+.backup-card{background:#fff;border:1px solid var(--gray3);border-radius:12px;padding:20px;margin-bottom:16px}
+.backup-title{font-size:14px;font-weight:700;margin-bottom:6px}
+.backup-sub{font-size:12px;color:var(--gray);margin-bottom:14px}
+
+/* ── PARTNERS ── */
+.partner-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray4);border-radius:8px;border:1px solid var(--gray3);margin-bottom:6px}
+.partner-share{font-size:13px;font-weight:700;color:var(--blue);min-width:50px}
+
+/* ── COMMENTS ── */
+.comment-toggle{position:fixed;left:20px;bottom:20px;z-index:200;background:var(--amber);color:#fff;border:none;border-radius:50px;padding:10px 16px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(217,119,6,.4);display:flex;align-items:center;gap:7px;transition:.2s}
+.comment-toggle:hover{background:#b45309;transform:translateY(-2px)}
+.comment-panel{position:fixed;left:0;bottom:0;top:0;width:300px;z-index:300;background:#fff;border-right:1px solid var(--gray3);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.12);transform:translateX(-100%);transition:.3s}
+.comment-panel.open{transform:translateX(0)}
+.cp-hdr{padding:14px 16px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between}
+.cp-list{flex:1;overflow-y:auto;padding:12px}
+.cp-item{margin-bottom:10px;padding:10px 12px;background:var(--gray4);border-radius:8px;border-right:3px solid var(--amber)}
+.cp-item-meta{font-size:11px;color:var(--gray2);margin-bottom:4px;display:flex;justify-content:space-between}
+.cp-item-page{font-weight:600;color:var(--amber)}
+.cp-item-text{font-size:13px;color:var(--text);line-height:1.5}
+.cp-form{padding:12px;border-top:1px solid var(--gray3)}
+.cp-form textarea{width:100%;padding:8px 10px;border:1px solid var(--gray3);border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;resize:none;outline:none;margin-bottom:8px}
+.cp-form button{width:100%;padding:8px;background:var(--amber);color:#fff;border:none;border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
+
+/* ── MISC ── */
 .overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
-
-@media(max-width:860px){
-  .sidebar{position:fixed;height:100vh;transform:translateX(100%);transition:.3s;z-index:100}
-  .sidebar.open{transform:translateX(0)}
-  .menu-btn{display:flex}
-  .overlay-bg.show{display:block}
-  .form-grid,.form-grid-3{grid-template-columns:1fr}
-  .co-body,.co-top{padding:20px}
-  .co-grid{grid-template-columns:1fr}
-}
-@media(max-width:480px){
-  .stats-grid{grid-template-columns:1fr 1fr}
-  .comment-panel{width:100%}
-}
-
-/* Color palette for company icons */
-.c0{background:#2563eb}.c1{background:#059669}.c2{background:#7c3aed}
-.c3{background:#dc2626}.c4{background:#d97706}.c5{background:#0891b2}
-.c6{background:#be185d}.c7{background:#374151}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .25s;pointer-events:none;max-width:320px;text-align:center}
+#toast.show{opacity:1}
+.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .6s linear infinite;display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+.c0{background:#2563eb}.c1{background:#059669}.c2{background:#7c3aed}.c3{background:#dc2626}.c4{background:#d97706}.c5{background:#0891b2}.c6{background:#be185d}.c7{background:#374151}
+@media(max-width:860px){.sidebar{position:fixed;height:100vh;transform:translateX(100%);transition:.3s;z-index:100}.sidebar.open{transform:translateX(0)}.menu-btn{display:flex}.overlay-bg.show{display:block}.form-grid{grid-template-columns:1fr}#page-content{padding:16px}}
+@media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr}.comment-panel{width:100%}.fi-lbl{width:130px}}
 </style>
 </head>
 <body>
 
-<!-- ══ COMPANIES SCREEN ══ -->
+<!-- COMPANIES -->
 <div id="screen-companies" class="screen active">
   <div class="co-top">
     <div class="co-brand">
       <div class="co-brand-icon">Q</div>
-      <div>
-        <h1>Quadra Pharma ERP</h1>
-        <p>اختر شركة لتسجيل الدخول</p>
-      </div>
+      <div><h1>Quadra Pharma ERP</h1><p>اختر شركة لتسجيل الدخول</p></div>
     </div>
     <div style="display:flex;gap:8px">
-      <button class="btn btn-primary" onclick="openModal('modal-add-co')" style="background:rgba(37,99,235,.8);border-color:transparent">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        إنشاء شركة
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:none" onclick="openModal('modal-backup')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        نسخ احتياطي
       </button>
+      <button class="btn btn-primary btn-sm" onclick="openModal('modal-add-co')">+ إنشاء شركة</button>
     </div>
   </div>
   <div class="co-body">
@@ -385,28 +247,22 @@ textarea.fc{resize:vertical;min-height:70px}
   </div>
 </div>
 
-<!-- ══ LOGIN SCREEN ══ -->
+<!-- LOGIN -->
 <div id="screen-login" class="screen">
-  <div class="login-card">
-    <button class="login-back" onclick="showScreen('companies')">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+  <div class="lcard">
+    <button class="lback" onclick="showScreen('companies')">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       العودة للشركات
     </button>
-    <div class="login-co-badge" id="login-co-badge"></div>
-    <div id="login-err" class="login-err"></div>
-    <div class="login-field">
-      <label class="login-label">اسم المستخدم</label>
-      <input class="login-input" id="f-user" dir="ltr" placeholder="username" autocomplete="username">
-    </div>
-    <div class="login-field">
-      <label class="login-label">كلمة المرور</label>
-      <input class="login-input" id="f-pass" type="password" dir="ltr" placeholder="••••••••" autocomplete="current-password">
-    </div>
+    <div class="lco-badge" id="lco-badge"></div>
+    <div id="lerr" class="lerr"></div>
+    <div class="lfield"><label class="llabel">اسم المستخدم</label><input class="linput" id="f-user" dir="ltr" autocomplete="username"></div>
+    <div class="lfield"><label class="llabel">كلمة المرور</label><input class="linput" id="f-pass" type="password" dir="ltr" autocomplete="current-password"></div>
     <button class="btn-login" id="btn-login" onclick="doLogin()">دخول</button>
   </div>
 </div>
 
-<!-- ══ APP SCREEN ══ -->
+<!-- APP -->
 <div id="screen-app" class="screen">
   <div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
   <nav class="sidebar" id="sidebar">
@@ -415,16 +271,16 @@ textarea.fc{resize:vertical;min-height:70px}
       <div><div class="sb-brand-name" id="sb-coname">—</div><div class="sb-brand-sub">Pharma ERP</div></div>
     </div>
     <div class="sb-co" onclick="doLogout()">
-      <svg width="13" height="13" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+      <svg width="12" height="12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
       <span class="sb-co-name" style="font-size:11px;color:rgba(255,255,255,.35)">تغيير الشركة</span>
     </div>
     <div class="sb-nav">
-      <div class="sb-section">الرئيسية</div>
+      <div class="sb-sec">الرئيسية</div>
       <div class="sb-item active" id="nav-dashboard" onclick="go('dashboard')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         لوحة التحكم
       </div>
-      <div class="sb-section">الإعدادات</div>
+      <div class="sb-sec">الإعدادات</div>
       <div class="sb-item" id="nav-company" onclick="go('company')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
         بيانات الشركة
@@ -434,13 +290,12 @@ textarea.fc{resize:vertical;min-height:70px}
         المستخدمون
       </div>
       <div class="sb-item" id="nav-settings" onclick="go('settings')">
-        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
         إعدادات النظام
       </div>
-      <div class="sb-section">الإنتاج</div>
+      <div class="sb-sec">الإنتاج</div>
       <div class="sb-item dim"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>المواد الخام<span class="sb-soon">قريباً</span></div>
-      <div class="sb-item dim"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>المنتجات<span class="sb-soon">قريباً</span></div>
-      <div class="sb-item dim"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>سجلات الإنتاج<span class="sb-soon">قريباً</span></div>
+      <div class="sb-item dim"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>المنتجات<span class="sb-soon">قريباً</span></div>
     </div>
     <div class="sb-footer">
       <div class="sb-user">
@@ -453,9 +308,7 @@ textarea.fc{resize:vertical;min-height:70px}
   <div class="main">
     <header class="topbar">
       <div style="display:flex;align-items:center;gap:10px">
-        <button class="menu-btn" onclick="openSidebar()">
-          <svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
-        </button>
+        <button class="menu-btn" onclick="openSidebar()"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
         <span class="topbar-title" id="page-title">لوحة التحكم</span>
       </div>
     </header>
@@ -463,22 +316,19 @@ textarea.fc{resize:vertical;min-height:70px}
   </div>
 </div>
 
-<!-- COMMENTS PANEL -->
+<!-- COMMENTS -->
 <button class="comment-toggle" id="comment-toggle" onclick="toggleComments()" style="display:none">
-  <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-  تعليقاتي
-  <span id="comment-count" style="background:rgba(255,255,255,.25);border-radius:20px;padding:1px 7px;font-size:11px">0</span>
+  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+  تعليقاتي <span id="comment-count" style="background:rgba(255,255,255,.25);border-radius:20px;padding:1px 7px;font-size:11px">0</span>
 </button>
 <div class="comment-panel" id="comment-panel">
-  <div class="cp-header">
-    <span class="cp-title">تعليقات المراجعة</span>
-    <button class="cp-close" onclick="toggleComments()">
-      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
+  <div class="cp-hdr">
+    <span style="font-size:14px;font-weight:700">تعليقات المراجعة</span>
+    <button class="mc" onclick="toggleComments()"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
   </div>
   <div class="cp-list" id="cp-list"></div>
   <div class="cp-form">
-    <textarea id="cp-text" rows="3" placeholder="اكتب تعليقك على هذه الصفحة..."></textarea>
+    <textarea id="cp-text" rows="3" placeholder="تعليقك على هذه الصفحة..."></textarea>
     <button onclick="addComment()">إضافة تعليق</button>
   </div>
 </div>
@@ -490,48 +340,40 @@ textarea.fc{resize:vertical;min-height:70px}
   <div class="modal">
     <div class="mh"><span class="mt">إنشاء شركة جديدة</span><button class="mc" onclick="closeModal('modal-add-co')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mb">
-      <div class="alert alert-info"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>سيتم إنشاء حساب مدير تلقائياً</div>
+      <div class="alert alert-info"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>سيتم إنشاء حساب مدير تلقائياً مع الشركة</div>
       <div class="form-grid">
-        <div class="fg">
-          <label class="fl">كود الشركة <span class="req">*</span></label>
-          <input class="fc" id="nc-code" placeholder="QUAD" maxlength="20" style="text-transform:uppercase;direction:ltr">
-          <div class="fh">حروف إنجليزية وأرقام فقط</div>
+        <div class="fg"><label class="fl">كود الشركة <span class="req">*</span></label><input class="fc" id="nc-code" placeholder="QUAD" maxlength="20" style="text-transform:uppercase;direction:ltr"><div class="fh">حروف إنجليزية وأرقام فقط</div></div>
+        <div class="fg"><label class="fl">نوع الكيان <span class="req">*</span></label>
+          <select class="fc" id="nc-type"><option value="toll">شركة Toll — تصنيع لدى الغير</option><option value="factory">مصنع — رخصة تشغيل</option></select>
         </div>
-        <div class="fg">
-          <label class="fl">نوع الكيان <span class="req">*</span></label>
-          <select class="fc" id="nc-type">
-            <option value="toll">شركة Toll — تصنيع لدى الغير</option>
-            <option value="factory">مصنع — رخصة تشغيل</option>
-          </select>
-        </div>
-        <div class="fg"><label class="fl">اسم الشركة بالعربي <span class="req">*</span></label><input class="fc" id="nc-name" placeholder="شركة كوادرا فارما"></div>
-        <div class="fg"><label class="fl">رقم الترخيص</label><input class="fc" id="nc-lic" placeholder="رقم الترخيص"></div>
+        <div class="fg full"><label class="fl">اسم الشركة بالعربي <span class="req">*</span></label><input class="fc" id="nc-name"></div>
+        <div class="fg"><label class="fl">رقم الترخيص / Toll</label><input class="fc" id="nc-lic" dir="ltr"></div>
         <div class="fg"><label class="fl">المدينة</label><input class="fc" id="nc-city" value="Cairo"></div>
         <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="nc-phone" dir="ltr"></div>
         <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fc" id="nc-email" type="email" dir="ltr"></div>
       </div>
       <div style="height:1px;background:var(--gray3);margin:4px 0 16px"></div>
-      <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">بيانات المدير</p>
+      <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:12px;text-transform:uppercase;letter-spacing:.4px">بيانات المدير الأول</p>
       <div class="form-grid">
-        <div class="fg"><label class="fl">الاسم <span class="req">*</span></label><input class="fc" id="nc-aname" placeholder="مدير النظام"></div>
-        <div class="fg"><label class="fl">اسم المستخدم <span class="req">*</span></label><input class="fc" id="nc-auser" placeholder="admin" dir="ltr"></div>
-        <div class="fg full"><label class="fl">كلمة المرور <span class="req">*</span></label><input class="fc" id="nc-apass" type="password" placeholder="8 أحرف على الأقل" dir="ltr"></div>
+        <div class="fg"><label class="fl">الاسم <span class="req">*</span></label><input class="fc" id="nc-aname"></div>
+        <div class="fg"><label class="fl">اسم المستخدم <span class="req">*</span></label><input class="fc" id="nc-auser" dir="ltr"></div>
+        <div class="fg full"><label class="fl">كلمة المرور <span class="req">*</span></label><input class="fc" id="nc-apass" type="password" dir="ltr"></div>
       </div>
     </div>
     <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-add-co')">إلغاء</button><button class="btn btn-primary" id="btn-add-co" onclick="doAddCompany()">إنشاء الشركة</button></div>
   </div>
 </div>
 
-<!-- Delete Company Confirm -->
+<!-- Delete Company -->
 <div class="overlay" id="modal-del-co">
-  <div class="modal confirm-modal">
+  <div class="modal" style="max-width:380px">
     <div class="mh"><span class="mt">حذف الشركة</span><button class="mc" onclick="closeModal('modal-del-co')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mb">
-      <div class="alert alert-warn"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>سيتم حذف جميع بيانات الشركة والمستخدمين. هذا الإجراء لا يمكن التراجع عنه.</div>
-      <p style="font-size:14px;margin-bottom:10px">هل أنت متأكد من حذف شركة: <strong id="del-co-name"></strong>؟</p>
-      <div class="fg"><label class="fl">اكتب كود الشركة للتأكيد: <strong id="del-co-code-hint"></strong></label><input class="fc" id="del-co-confirm" placeholder="اكتب الكود هنا" dir="ltr" style="text-transform:uppercase"></div>
+      <div class="alert alert-warn"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>سيتم حذف جميع البيانات والمستندات نهائياً</div>
+      <p style="font-size:13px;margin-bottom:10px">هل أنت متأكد من حذف: <strong id="del-co-name"></strong>؟</p>
+      <div class="fg"><label class="fl">اكتب كود الشركة للتأكيد: <strong id="del-co-hint"></strong></label><input class="fc" id="del-co-inp" dir="ltr" style="text-transform:uppercase"></div>
     </div>
-    <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-del-co')">إلغاء</button><button class="btn btn-red" id="btn-confirm-del" onclick="doDeleteCompany()">حذف نهائي</button></div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-del-co')">إلغاء</button><button class="btn btn-red" onclick="doDeleteCompany()">حذف نهائي</button></div>
   </div>
 </div>
 
@@ -540,124 +382,91 @@ textarea.fc{resize:vertical;min-height:70px}
   <div class="modal" style="max-width:720px">
     <div class="mh"><span class="mt">تعديل بيانات الشركة</span><button class="mc" onclick="closeModal('modal-edit-co')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
     <div class="mb">
-      <div class="tabs">
+      <div class="tabs" style="margin-bottom:16px">
         <div class="tab active" onclick="stab(this,'tb-basic')">القانونية</div>
         <div class="tab" onclick="stab(this,'tb-eda')">EDA والترخيص</div>
-        <div class="tab" onclick="stab(this,'tb-tax')">الضرائب والمالية</div>
+        <div class="tab" onclick="stab(this,'tb-tax')">الضرائب</div>
         <div class="tab" onclick="stab(this,'tb-persons')">المسؤولون</div>
-        <div class="tab" onclick="stab(this,'tb-factories')">المصانع والموزعون</div>
+        <div class="tab" onclick="stab(this,'tb-partners')">الشركاء</div>
+        <div class="tab" onclick="stab(this,'tb-factories')">المصانع</div>
         <div class="tab" onclick="stab(this,'tb-contact')">التواصل</div>
       </div>
-
-      <!-- TAB: القانونية -->
       <div id="tb-basic" class="tp active">
         <div class="form-grid">
           <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fc" id="ec-nameAr"></div>
           <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fc" id="ec-nameEn" dir="ltr"></div>
-          <div class="fg"><label class="fl">نوع الكيان <span class="req">*</span></label>
-            <select class="fc" id="ec-companyType">
-              <option value="toll">شركة Toll — تصنيع لدى الغير</option>
-              <option value="factory">مصنع — رخصة تشغيل</option>
-            </select>
+          <div class="fg"><label class="fl">نوع الكيان</label>
+            <select class="fc" id="ec-companyType"><option value="toll">شركة Toll</option><option value="factory">مصنع</option></select>
           </div>
           <div class="fg"><label class="fl">الشكل القانوني</label>
-            <select class="fc" id="ec-legalForm">
-              <option value="">اختر...</option>
-              <option value="شركة ذات مسؤولية محدودة (ش.ذ.م.م)">ش.ذ.م.م</option>
-              <option value="شركة توصية بسيطة (ش.ت.ب)">شركة توصية بسيطة</option>
-              <option value="شركة مساهمة (ش.م.م)">شركة مساهمة</option>
-              <option value="شركة شخص واحد">شركة شخص واحد</option>
-            </select>
+            <select class="fc" id="ec-legalForm"><option value="">اختر...</option><option>شركة ذات مسؤولية محدودة (ش.ذ.م.م)</option><option>شركة توصية بسيطة</option><option>شركة مساهمة</option><option>شركة شخص واحد</option></select>
           </div>
-          <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fc" id="ec-commercialRegNo" dir="ltr"></div>
-          <div class="fg"><label class="fl">تاريخ إصدار السجل</label><input class="fc" id="ec-commercialRegDate" type="date"></div>
-          <div class="fg"><label class="fl">تاريخ انتهاء السجل</label><input class="fc" id="ec-commercialRegExpiry" type="date"></div>
-          <div class="fg"><label class="fl">رقم الرقم القومي للمنشأة</label><input class="fc" id="ec-nationalEntityNo" dir="ltr"></div>
-          <div class="fg"><label class="fl">رأس المال المسجل (جنيه)</label><input class="fc" id="ec-capital" type="number" dir="ltr"></div>
+          <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fc" id="ec-comRegNo" dir="ltr"></div>
+          <div class="fg"><label class="fl">تاريخ انتهاء السجل</label><input class="fc" id="ec-comRegExp" type="date"></div>
+          <div class="fg"><label class="fl">الرقم القومي للمنشأة</label><input class="fc" id="ec-natNo" dir="ltr"></div>
+          <div class="fg"><label class="fl">رأس المال (جنيه)</label><input class="fc" id="ec-capital" type="number" dir="ltr"></div>
           <div class="fg"><label class="fl">المدينة</label><input class="fc" id="ec-city"></div>
           <div class="fg"><label class="fl">الدولة</label><input class="fc" id="ec-country"></div>
+          <div class="fg full"><label class="fl">المقر الرئيسي</label><textarea class="fc" id="ec-addr" rows="2"></textarea></div>
         </div>
       </div>
-
-      <!-- TAB: EDA -->
       <div id="tb-eda" class="tp">
         <div class="form-grid">
-          <div class="fg"><label class="fl">رقم قيد Toll لدى الغير</label><input class="fc" id="ec-tollRegNo" dir="ltr" placeholder="مثال: Toll/57"></div>
-          <div class="fg"><label class="fl">تاريخ القيد</label><input class="fc" id="ec-tollRegDate" type="date"></div>
-          <div class="fg"><label class="fl">تاريخ انتهاء القيد (كل 5 سنوات)</label><input class="fc" id="ec-tollRegExpiry" type="date"></div>
+          <div class="fg"><label class="fl">رقم قيد Toll / رخصة مصنع</label><input class="fc" id="ec-tollNo" dir="ltr"></div>
+          <div class="fg"><label class="fl">تاريخ القيد / الإصدار</label><input class="fc" id="ec-tollDate" type="date"></div>
+          <div class="fg"><label class="fl">تاريخ الانتهاء</label><input class="fc" id="ec-tollExp" type="date"></div>
           <div class="fg"><label class="fl">كود EDA</label><input class="fc" id="ec-edaCode" dir="ltr"></div>
-          <div class="fg"><label class="fl">رقم رخصة المصنع المتعاقد</label><input class="fc" id="ec-factoryLicenseNo" dir="ltr"></div>
-          <div class="fg"><label class="fl">تاريخ إصدار رخصة المصنع</label><input class="fc" id="ec-factoryLicenseDate" type="date"></div>
-          <div class="fg"><label class="fl">رقم شهادة GMP</label><input class="fc" id="ec-gmpCertificate" dir="ltr"></div>
-          <div class="fg"><label class="fl">انتهاء GMP</label><input class="fc" id="ec-gmpExpiry" type="date"></div>
-          <div class="fg full"><label class="fl">خطوط الإنتاج</label><input class="fc" id="ec-productionLines" placeholder="مثال: صلبة، كبسولات، مسحوق في أكياس، فيلم قابل للذوبان"></div>
+          <div class="fg"><label class="fl">شهادة GMP</label><input class="fc" id="ec-gmp" dir="ltr"></div>
+          <div class="fg"><label class="fl">انتهاء GMP</label><input class="fc" id="ec-gmpExp" type="date"></div>
+          <div class="fg full"><label class="fl">خطوط الإنتاج</label><input class="fc" id="ec-lines" placeholder="صلبة، كبسولات، سائل، مسحوق في أكياس..."></div>
         </div>
       </div>
-
-      <!-- TAB: الضرائب -->
       <div id="tb-tax" class="tp">
         <div class="form-grid">
-          <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fc" id="ec-taxRegNo" dir="ltr" placeholder="مثال: 204-999-359"></div>
-          <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fc" id="ec-taxCardNo" dir="ltr" placeholder="مثال: 509-999-204"></div>
-          <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fc" id="ec-taxCardDate" type="date"></div>
-          <div class="fg"><label class="fl">انتهاء البطاقة الضريبية</label><input class="fc" id="ec-taxCardExpiry" type="date"></div>
-          <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fc" id="ec-taxOffice" placeholder="مثال: الاستثمار"></div>
-          <div class="fg"><label class="fl">كود النشاط</label><input class="fc" id="ec-activityCode" dir="ltr" placeholder="مثال: 4772"></div>
-          <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fc" id="ec-socialInsuranceNo" dir="ltr"></div>
-          <div class="fg"><label class="fl">رقم ملف ضريبة الدخل</label><input class="fc" id="ec-incomeTaxNo" dir="ltr"></div>
+          <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fc" id="ec-taxReg" dir="ltr"></div>
+          <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fc" id="ec-taxCard" dir="ltr"></div>
+          <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fc" id="ec-taxDate" type="date"></div>
+          <div class="fg"><label class="fl">انتهاء البطاقة الضريبية</label><input class="fc" id="ec-taxExp" type="date"></div>
+          <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fc" id="ec-taxOfc"></div>
+          <div class="fg"><label class="fl">كود النشاط</label><input class="fc" id="ec-actCode" dir="ltr"></div>
+          <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fc" id="ec-socIns" dir="ltr"></div>
+          <div class="fg"><label class="fl">ملف ضريبة الدخل</label><input class="fc" id="ec-incTax" dir="ltr"></div>
         </div>
       </div>
-
-      <!-- TAB: المسؤولون -->
       <div id="tb-persons" class="tp">
         <div class="form-grid">
-          <div class="fg"><label class="fl">رئيس مجلس الإدارة / المدير</label><input class="fc" id="ec-chairman" placeholder="الاسم + المؤهل"></div>
-          <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fc" id="ec-licenseHolder"></div>
-          <div class="fg"><label class="fl">مدير الشركة</label><input class="fc" id="ec-companyManager"></div>
-          <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fc" id="ec-technicalConsultant"></div>
-          <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fc" id="ec-qcManager" placeholder="د. الاسم — رقم نقابة صيادلة"></div>
-          <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fc" id="ec-productionManager" placeholder="د. الاسم — رقم نقابة صيادلة"></div>
-          <div class="fg full"><label class="fl">مسؤول الشؤون التنظيمية (RA)</label><input class="fc" id="ec-raManager"></div>
+          <div class="fg"><label class="fl">رئيس مجلس الإدارة</label><input class="fc" id="ec-chairman"></div>
+          <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fc" id="ec-licHolder"></div>
+          <div class="fg"><label class="fl">مدير الشركة</label><input class="fc" id="ec-mgr"></div>
+          <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fc" id="ec-tech"></div>
+          <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fc" id="ec-qc" placeholder="د. الاسم — رقم نقابة"></div>
+          <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fc" id="ec-prod" placeholder="د. الاسم — رقم نقابة"></div>
+          <div class="fg full"><label class="fl">مسؤول الشؤون التنظيمية RA</label><input class="fc" id="ec-ra"></div>
         </div>
       </div>
-
-      <!-- TAB: المصانع -->
+      <div id="tb-partners" class="tp">
+        <div class="alert alert-info" style="margin-bottom:14px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>كل شريك في سطر بالصيغة: الاسم | النسبة% | الجنسية</div>
+        <div class="fg"><label class="fl">الشركاء وتوزيع الحصص</label>
+          <textarea class="fc" id="ec-partners" rows="6" dir="ltr" placeholder="فايزة أحمد زاهر الحلو | 45% | مصري&#10;محمود محمد أحمد خروبة | 45.5% | مصري&#10;هيثم السيد أحمد متولي | 9.5% | مصري"></textarea>
+        </div>
+        <div class="fg"><label class="fl">نسبة المشاركة المصرية الإجمالية</label><input class="fc" id="ec-egyPct" dir="ltr" placeholder="100%"></div>
+      </div>
       <div id="tb-factories" class="tp">
-        <div class="fg">
-          <label class="fl">المصانع المتعاقد معها (كل مصنع في سطر)</label>
-          <textarea class="fc" id="ec-contractedFactories" rows="6" placeholder="ريفا فارما
-بدر فارما للصناعات الدوائية
-ميديسنيا للصناعات الدوائية
-دلتا جراند فارما DGP
-ساجا فارماسوتيكالز إيجيبت
-نرهادو إنترناشيونال للأدوية والمكملات
-كريم فارما
-فارما باك"></textarea>
-          <div class="fh">يجب إخطار EDA عند إضافة أو تغيير مصنع</div>
+        <div class="fg"><label class="fl">المصانع المتعاقد معها (كل مصنع في سطر)</label>
+          <textarea class="fc" id="ec-factories" rows="6" placeholder="ريفا فارما&#10;بدر فارما للصناعات الدوائية&#10;ميديسنيا للصناعات الدوائية&#10;نرهادو إنترناشيونال"></textarea><div class="fh">يجب إخطار EDA عند إضافة أو تغيير مصنع</div>
         </div>
-        <div class="fg">
-          <label class="fl">أماكن التخزين المرخصة</label>
-          <textarea class="fc" id="ec-storageLocations" rows="3" placeholder="اسم المخزن + العنوان (لا تقل مساحته عن 100م²)"></textarea>
-        </div>
-        <div class="fg">
-          <label class="fl">الموزعون المعتمدون</label>
-          <textarea class="fc" id="ec-distributors" rows="3" placeholder="مثال: الشركة المتحدة UCP - مصر القديمة
-ابن سينا فارما - مدينة العبور"></textarea>
-        </div>
+        <div class="fg"><label class="fl">أماكن التخزين المرخصة</label><textarea class="fc" id="ec-storage" rows="3" placeholder="اسم المخزن + العنوان (لا تقل مساحته عن 100م²)"></textarea></div>
+        <div class="fg"><label class="fl">الموزعون المعتمدون</label><textarea class="fc" id="ec-dist" rows="3" placeholder="الشركة المتحدة UCP - مصر القديمة&#10;ابن سينا فارما - العبور"></textarea></div>
       </div>
-
-      <!-- TAB: التواصل -->
       <div id="tb-contact" class="tp">
         <div class="form-grid">
-          <div class="fg full"><label class="fl">المقر الرئيسي</label><textarea class="fc" id="ec-addr" rows="2"></textarea></div>
-          <div class="fg full"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fc" id="ec-edaAddress" rows="2"></textarea></div>
+          <div class="fg full"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fc" id="ec-edaAddr" rows="2"></textarea></div>
           <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="ec-phone" dir="ltr"></div>
           <div class="fg"><label class="fl">فاكس</label><input class="fc" id="ec-fax" dir="ltr"></div>
           <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fc" id="ec-email" type="email" dir="ltr"></div>
           <div class="fg"><label class="fl">الموقع الإلكتروني</label><input class="fc" id="ec-web" dir="ltr" placeholder="https://"></div>
         </div>
       </div>
-
     </div>
     <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-edit-co')">إلغاء</button><button class="btn btn-primary" onclick="saveCompany()">حفظ التعديلات</button></div>
   </div>
@@ -677,24 +486,51 @@ textarea.fc{resize:vertical;min-height:70px}
         <div class="fg"><label class="fl">الدور</label><select class="fc" id="u-role"><option value="user">مستخدم</option><option value="admin">مدير النظام</option></select></div>
         <div class="fg"><label class="fl">القسم</label><input class="fc" id="u-dept"></div>
         <div class="fg"><label class="fl">المسمى الوظيفي</label><input class="fc" id="u-title"></div>
-        <div class="fg"><label class="fl">رقم الموظف</label><input class="fc" id="u-emp" dir="ltr"></div>
         <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="u-phone" dir="ltr"></div>
-        <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fc" id="u-email" type="email" dir="ltr"></div>
+        <div class="fg full"><label class="fl">البريد الإلكتروني</label><input class="fc" id="u-email" type="email" dir="ltr"></div>
       </div>
     </div>
     <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-user')">إلغاء</button><button class="btn btn-primary" id="btn-su" onclick="saveUser()">حفظ</button></div>
   </div>
 </div>
 
+<!-- Backup Modal -->
+<div class="overlay" id="modal-backup">
+  <div class="modal" style="max-width:480px">
+    <div class="mh"><span class="mt">النسخ الاحتياطي والاستيراد</span><button class="mc" onclick="closeModal('modal-backup')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button></div>
+    <div class="mb">
+      <div class="backup-card">
+        <div class="backup-title">تصدير نسخة احتياطية</div>
+        <div class="backup-sub">يتم تصدير جميع البيانات (شركات، مستخدمون، مستندات) في ملف JSON</div>
+        <button class="btn btn-primary btn-sm" onclick="exportBackup()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          تنزيل النسخة الاحتياطية
+        </button>
+      </div>
+      <div class="backup-card" style="margin-bottom:0">
+        <div class="backup-title">استيراد نسخة احتياطية</div>
+        <div class="backup-sub">سيتم استبدال جميع البيانات الحالية بالنسخة المستوردة</div>
+        <div class="alert alert-warn" style="margin-bottom:12px"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>هذا الإجراء لا يمكن التراجع عنه</div>
+        <input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)">
+        <button class="btn btn-outline btn-sm" onclick="document.getElementById('import-file').click()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          اختيار ملف JSON
+        </button>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-backup')">إغلاق</button></div>
+  </div>
+</div>
+
 <div id="toast"></div>
 
 <script>
-// ══════════════════════════════════════
+// ══════════════════════════════
 // DB
-// ══════════════════════════════════════
+// ══════════════════════════════
 let DB;
 const openDB=()=>new Promise((ok,fail)=>{
-  const r=indexedDB.open('pharma_erp',2);
+  const r=indexedDB.open('pharma_erp',3);
   r.onupgradeneeded=e=>{
     const d=e.target.result;
     if(!d.objectStoreNames.contains('companies')){const s=d.createObjectStore('companies',{keyPath:'id'});s.createIndex('code','code',{unique:true})}
@@ -702,6 +538,7 @@ const openDB=()=>new Promise((ok,fail)=>{
     if(!d.objectStoreNames.contains('audit')){const s=d.createObjectStore('audit',{keyPath:'id',autoIncrement:true});s.createIndex('companyId','companyId')}
     if(!d.objectStoreNames.contains('comments')){d.createObjectStore('comments',{keyPath:'id',autoIncrement:true})}
     if(!d.objectStoreNames.contains('documents')){const s=d.createObjectStore('documents',{keyPath:'id'});s.createIndex('companyId','companyId')}
+    if(!d.objectStoreNames.contains('history')){const s=d.createObjectStore('history',{keyPath:'id',autoIncrement:true});s.createIndex('recordId','recordId')}
   };
   r.onsuccess=e=>{DB=e.target.result;ok()};
   r.onerror=e=>fail(e.target.error);
@@ -720,19 +557,19 @@ const val=id=>(document.getElementById(id)?.value??'').trim();
 const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};
 const COLORS=['c0','c1','c2','c3','c4','c5','c6','c7'];
 const coColor=code=>COLORS[code.charCodeAt(0)%COLORS.length];
-
-const hashPw=async pw=>{
-  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw+'qp25'));
-  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-};
+const hashPw=async pw=>{const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw+'qp25'));return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')};
 const chkPw=async(pw,h)=>(await hashPw(pw))===h;
 
-let S=null; // session
-let delCoId=null;
+// History tracking
+async function saveHistory(recordId,action,oldData,newData){
+  await dbPut('history',{recordId,action,oldData,newData,at:now(),userId:S?.userId,userName:S?.nameAr});
+}
 
-// ══════════════════════════════════════
-// COMPANIES SCREEN
-// ══════════════════════════════════════
+let S=null,delCoId=null;
+
+// ══════════════════════════════
+// COMPANIES
+// ══════════════════════════════
 async function renderCompanies(){
   const cos=await dbGetAll('companies');
   const active=cos.filter(c=>!c.deletedAt);
@@ -745,46 +582,42 @@ async function renderCompanies(){
     </div>`;
     return;
   }
-  grid.innerHTML=active.map((co,i)=>{
+  grid.innerHTML=active.map(co=>{
     const cc=coColor(co.code);
+    const typeLabel=co.companyType==='factory'?'مصنع':'Toll';
+    const typeColor=co.companyType==='factory'?'var(--blue)':'var(--amber)';
     return`<div class="co-card" id="cocard-${co.id}">
-      <div class="co-card-status ${co.isActive?'status-active':'status-inactive'}"></div>
+      <div class="co-dot ${co.isActive?'dot-on':'dot-off'}"></div>
       <div class="co-card-top">
         <div class="co-card-icon ${cc}">${co.nameAr.charAt(0)}</div>
         <div style="position:relative">
-          <button class="co-card-menu" onclick="event.stopPropagation();toggleDropdown('dd-${co.id}')">⋮</button>
-          <div class="dropdown" id="dd-${co.id}">
-            <button class="dropdown-item" onclick="event.stopPropagation();closeAllDD();selectCompanyLogin('${co.id}')">
-              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
-              دخول
+          <button class="co-card-menu" onclick="event.stopPropagation();toggleDD('dd-${co.id}')">⋮</button>
+          <div class="dd" id="dd-${co.id}">
+            <button class="dd-item" onclick="event.stopPropagation();closeAllDD();loginCo('${co.id}')">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>دخول
             </button>
-            <button class="dropdown-item" onclick="event.stopPropagation();closeAllDD();editCompanyFromList('${co.id}')">
-              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-              تعديل
+            <button class="dd-item" onclick="event.stopPropagation();closeAllDD();editCoFromList('${co.id}')">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>تعديل
             </button>
-            <div class="dropdown-divider"></div>
-            <button class="dropdown-item danger" onclick="event.stopPropagation();closeAllDD();confirmDeleteCompany('${co.id}')">
-              <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>
-              حذف
+            <div class="dd-div"></div>
+            <button class="dd-item red" onclick="event.stopPropagation();closeAllDD();confirmDelCo('${co.id}')">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a1 1 0 011-1h4a1 1 0 011 1v2"/></svg>حذف
             </button>
           </div>
         </div>
       </div>
-      <div class="co-card-name" onclick="selectCompanyLogin('${co.id}')">${esc(co.nameAr)}</div>
+      <div class="co-card-name" onclick="loginCo('${co.id}')">${esc(co.nameAr)}</div>
       <span class="co-card-code">${esc(co.code)}</span>
       <div class="co-card-meta">
+        <span style="color:${typeColor};font-weight:600">${typeLabel}</span>
         <span>${esc(co.city||'—')}</span>
-        <span>${esc(co.licenseNumber?'مرخصة':'بدون ترخيص')}</span>
       </div>
     </div>`;
   }).join('');
 }
 
-function toggleDropdown(id){
-  closeAllDD();
-  document.getElementById(id)?.classList.add('show');
-}
-function closeAllDD(){document.querySelectorAll('.dropdown.show').forEach(d=>d.classList.remove('show'))}
+function toggleDD(id){closeAllDD();document.getElementById(id)?.classList.add('show')}
+function closeAllDD(){document.querySelectorAll('.dd.show').forEach(d=>d.classList.remove('show'))}
 document.addEventListener('click',closeAllDD);
 
 async function doAddCompany(){
@@ -799,10 +632,11 @@ async function doAddCompany(){
   btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
   try{
     const coId=uid(),uId=uid();
-    await dbPut('companies',{id:coId,code,nameAr:name,nameEn:'',companyType:val('nc-type')||'toll',licenseNumber:val('nc-lic'),city:val('nc-city'),country:'Egypt',phone:val('nc-phone'),email:val('nc-email'),isActive:true,createdAt:now(),updatedAt:now()});
+    const co={id:coId,code,nameAr:name,nameEn:'',companyType:val('nc-type')||'toll',city:val('nc-city'),country:'Egypt',phone:val('nc-phone'),email:val('nc-email'),isActive:true,createdAt:now(),updatedAt:now()};
+    await dbPut('companies',co);
     await dbPut('users',{id:uId,companyId:coId,nameAr:aname,username:auser,passwordHash:await hashPw(apass),role:'admin',isActive:true,failedAttempts:0,createdAt:now(),updatedAt:now()});
     closeModal('modal-add-co');
-    ['nc-code','nc-name','nc-lic','nc-phone','nc-email','nc-aname','nc-auser','nc-apass'].forEach(id=>set(id,''));
+    ['nc-code','nc-name','nc-phone','nc-email','nc-aname','nc-auser','nc-apass'].forEach(id=>set(id,''));
     set('nc-city','Cairo');
     toast('تم إنشاء الشركة بنجاح');
     renderCompanies();
@@ -810,57 +644,49 @@ async function doAddCompany(){
   btn.innerHTML='إنشاء الشركة';btn.disabled=false;
 }
 
-function confirmDeleteCompany(id){
+function confirmDelCo(id){
   delCoId=id;
   dbGet('companies',id).then(co=>{
     if(!co)return;
     document.getElementById('del-co-name').textContent=co.nameAr;
-    document.getElementById('del-co-code-hint').textContent=co.code;
-    set('del-co-confirm','');
+    document.getElementById('del-co-hint').textContent=co.code;
+    set('del-co-inp','');
     openModal('modal-del-co');
   });
 }
-
 async function doDeleteCompany(){
   if(!delCoId)return;
   const co=await dbGet('companies',delCoId);
   if(!co)return;
-  const typed=val('del-co-confirm').toUpperCase();
-  if(typed!==co.code){toast('كود الشركة غير صحيح','e');return}
-  // soft delete company
+  if(val('del-co-inp').toUpperCase()!==co.code){toast('كود الشركة غير صحيح','e');return}
   co.deletedAt=now();co.isActive=false;
   await dbPut('companies',co);
-  // soft delete users
   const users=await dbGetAll('users','companyId',delCoId);
   for(const u of users){u.deletedAt=now();await dbPut('users',u)}
-  closeModal('modal-del-co');
-  delCoId=null;
-  toast('تم حذف الشركة وجميع بياناتها');
-  renderCompanies();
+  closeModal('modal-del-co');delCoId=null;
+  toast('تم حذف الشركة');renderCompanies();
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════
 // LOGIN
-// ══════════════════════════════════════
+// ══════════════════════════════
 let loginCoId=null;
-
-function selectCompanyLogin(id){
+function loginCo(id){
   loginCoId=id;
   dbGet('companies',id).then(co=>{
     if(!co)return;
     const cc=coColor(co.code);
-    document.getElementById('login-co-badge').innerHTML=`
-      <div class="login-co-icon ${cc}">${co.nameAr.charAt(0)}</div>
-      <div><div class="login-co-name">${esc(co.nameAr)}</div><div class="login-co-code">${esc(co.code)}</div></div>`;
+    document.getElementById('lco-badge').innerHTML=`
+      <div class="lco-icon ${cc}">${co.nameAr.charAt(0)}</div>
+      <div><div class="lco-name">${esc(co.nameAr)}</div><div class="lco-code">${esc(co.code)}</div></div>`;
     set('f-user','');set('f-pass','');
-    document.getElementById('login-err').classList.remove('show');
+    document.getElementById('lerr').classList.remove('show');
     showScreen('login');
   });
 }
-
 async function doLogin(){
   const username=val('f-user'),password=val('f-pass');
-  const err=document.getElementById('login-err');
+  const err=document.getElementById('lerr');
   err.classList.remove('show');
   if(!username||!password){err.textContent='يرجى ملء جميع الحقول';err.classList.add('show');return}
   const btn=document.getElementById('btn-login');
@@ -888,19 +714,16 @@ async function doLogin(){
   }catch(e){err.textContent='خطأ: '+e.message;err.classList.add('show')}
   btn.innerHTML='دخول';btn.disabled=false;
 }
-
 function doLogout(){
-  S=null;sessionStorage.removeItem('S');
-  loginCoId=null;
-  showScreen('companies');
-  renderCompanies();
+  S=null;sessionStorage.removeItem('S');loginCoId=null;
+  showScreen('companies');renderCompanies();
   document.getElementById('comment-toggle').style.display='none';
   document.getElementById('comment-panel').classList.remove('open');
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════
 // APP
-// ══════════════════════════════════════
+// ══════════════════════════════
 function startApp(){
   const cc=coColor(S.coCode);
   document.getElementById('sb-icon').className='sb-brand-icon '+cc;
@@ -911,12 +734,8 @@ function startApp(){
   document.getElementById('sb-un').textContent=S.nameAr;
   document.getElementById('sb-ur').textContent=S.role==='admin'?'مدير النظام':'مستخدم';
   document.getElementById('comment-toggle').style.display='flex';
-  showScreen('app');
-  go('dashboard');
-  renderComments();
-  applySettings();
+  showScreen('app');go('dashboard');renderComments();
 }
-
 const TITLES={dashboard:'لوحة التحكم',company:'بيانات الشركة',users:'المستخدمون',settings:'إعدادات النظام'};
 function go(page){
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
@@ -930,16 +749,49 @@ function go(page){
   closeSidebar();
 }
 
-// ══════════════════════════════════════
-// DASHBOARD
-// ══════════════════════════════════════
+// ══════════════════════════════
+// DASHBOARD — مع تنبيهات انتهاء الوثائق
+// ══════════════════════════════
 async function renderDashboard(c){
   const users=await dbGetAll('users','companyId',S.companyId);
   const au=users.filter(u=>u.isActive&&!u.deletedAt).length;
   const logs=await dbGetAll('audit','companyId',S.companyId);
+  const co=await dbGet('companies',S.companyId);
   const recent=logs.slice(-6).reverse();
+
+  // حساب الوثائق المنتهية أو القريبة من الانتهاء
+  const expiryFields=[
+    {key:'comRegExp',label:'السجل التجاري'},
+    {key:'tollExp',label:'قيد Toll / رخصة المصنع'},
+    {key:'gmpExp',label:'شهادة GMP'},
+    {key:'taxExp',label:'البطاقة الضريبية'},
+  ];
+  const warnings=[];
+  for(const f of expiryFields){
+    const d=co[f.key];
+    if(!d)continue;
+    const diff=Math.ceil((new Date(d)-new Date())/(864e5));
+    if(diff<90)warnings.push({label:f.label,date:fmt(d),diff,expired:diff<0});
+  }
+
+  const expPanel=warnings.length?`
+  <div class="exp-panel">
+    <div class="exp-header">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      ${warnings.filter(w=>w.expired).length} وثيقة منتهية — ${warnings.filter(w=>!w.expired).length} تنتهي قريباً
+    </div>
+    ${warnings.map(w=>`
+    <div class="exp-item">
+      <span style="font-weight:600">${esc(w.label)}</span>
+      <span style="color:var(--gray);font-size:12px">${esc(w.date)}</span>
+      <span class="badge ${w.expired?'br':'ba'}">${w.expired?'منتهي':'ينتهي خلال '+w.diff+' يوم'}</span>
+      <button class="btn btn-xs btn-outline" onclick="go('company')">عرض</button>
+    </div>`).join('')}
+  </div>`:'';
+
   c.innerHTML=`
   <div class="ph"><div class="ph-left"><h2>مرحباً، ${esc(S.nameAr)}</h2><p>${esc(S.companyNameAr)}</p></div></div>
+  ${expPanel}
   <div class="stats-grid">
     <div class="stat" style="--sc:var(--blue)"><div class="stat-label">المستخدمون النشطون</div><div class="stat-value">${au}</div><div class="stat-sub">من ${users.filter(u=>!u.deletedAt).length} إجمالي</div></div>
     <div class="stat" style="--sc:var(--amber)"><div class="stat-label">المواد الخام</div><div class="stat-value" style="font-size:18px;color:var(--gray2);padding-top:4px">قريباً</div><div class="stat-sub">المرحلة 2</div></div>
@@ -954,25 +806,26 @@ async function renderDashboard(c){
   </div>`;
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════
 // COMPANY PAGE
-// ══════════════════════════════════════
+// ══════════════════════════════
+const expiryBadge=d=>{
+  if(!d)return'';
+  const diff=Math.ceil((new Date(d)-new Date())/(864e5));
+  if(diff<0)return' <span class="badge br">منتهي</span>';
+  if(diff<90)return` <span class="badge ba">ينتهي ${diff} يوم</span>`;
+  return' <span class="badge bg">ساري</span>';
+};
+const row=(lbl,val,raw)=>`<div class="fi-row"><span class="fi-lbl">${esc(lbl)}</span><span class="fi-val">${raw||esc(val)||'<span style="color:var(--gray2)">—</span>'}</span></div>`;
+const chips=txt=>txt?txt.split('\n').filter(t=>t.trim()).map(t=>`<span class="chip">${esc(t.trim())}</span>`).join(''):'<span style="color:var(--gray2);font-size:12px">—</span>';
+
 async function renderCompanyPage(c){
   const co=await dbGet('companies',S.companyId);
-  const expiryBadge=(d)=>{
-    if(!d)return'';
-    const diff=Math.ceil((new Date(d)-new Date())/(864e5));
-    if(diff<0)return' <span class="badge br">منتهي</span>';
-    if(diff<90)return` <span class="badge ba">ينتهي خلال ${diff} يوم</span>`;
-    return' <span class="badge bg">ساري</span>';
-  };
-  const row=(label,value,raw)=>`
-    <div class="fi-row">
-      <span class="fi-label">${esc(label)}</span>
-      <span class="fi-val">${raw||esc(value)||'<span style="color:var(--gray2)">—</span>'}</span>
-    </div>`;
-  const chips=(text,color='var(--green)')=>text?text.split('\n').filter(t=>t.trim()).map(t=>`
-    <span class="chip" style="--cc:${color}">${esc(t.trim())}</span>`).join(''):'<span style="color:var(--gray2);font-size:12px">—</span>';
+  // parse partners
+  const partnersHtml=co.partners?co.partners.split('\n').filter(r=>r.trim()).map(r=>{
+    const parts=r.split('|').map(s=>s.trim());
+    return`<div class="partner-row"><span class="partner-share">${esc(parts[1]||'')}</span><span style="font-size:13px;font-weight:500">${esc(parts[0]||'')}</span><span style="font-size:12px;color:var(--gray);margin-right:auto">${esc(parts[2]||'')}</span></div>`;
+  }).join(''):'<span style="color:var(--gray2);font-size:12px">—</span>';
 
   c.innerHTML=`
   <div class="ph">
@@ -983,134 +836,102 @@ async function renderCompanyPage(c){
         <span class="badge ${co.isActive?'bg':'br'}">${co.isActive?'نشطة':'موقوفة'}</span>
       </p>
     </div>
-    <button class="btn btn-primary" onclick="openEditCompany()">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-      تعديل
-    </button>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline btn-sm" onclick="printCompany()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+        طباعة
+      </button>
+      <button class="btn btn-primary btn-sm" onclick="openEditCompany()">
+        <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+        تعديل
+      </button>
+    </div>
   </div>
-
   <div class="card" style="margin-bottom:0">
-    <div class="cp-tabs" id="cp-tabs">
+    <div class="cp-tabs">
       <button class="cp-tab active" onclick="switchCoTab(this,'cpt-legal')">القانونية</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-eda')">EDA والترخيص</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-tax')">الضرائب</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-persons')">المسؤولون</button>
+      <button class="cp-tab" onclick="switchCoTab(this,'cpt-partners')">الشركاء</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-factories')">المصانع</button>
       <button class="cp-tab" onclick="switchCoTab(this,'cpt-docs')">المستندات</button>
+      <button class="cp-tab" onclick="switchCoTab(this,'cpt-history')">سجل التعديلات</button>
     </div>
-
-    <!-- القانونية -->
     <div id="cpt-legal" class="cpt active">
-      ${row('كود الشركة',co.code)}
-      ${row('الاسم بالعربي',co.nameAr)}
-      ${row('الاسم بالإنجليزي',co.nameEn)}
-      ${row('نوع الكيان',co.companyType==='factory'?'مصنع':'شركة Toll تصنيع لدى الغير')}
-      ${row('الشكل القانوني',co.legalForm)}
-      ${row('رقم السجل التجاري',co.commercialRegNo)}
-      ${row('تاريخ إصدار السجل',fmt(co.commercialRegDate))}
-      ${row('تاريخ انتهاء السجل','',fmt(co.commercialRegExpiry)+expiryBadge(co.commercialRegExpiry))}
-      ${row('الرقم القومي للمنشأة',co.nationalEntityNo)}
-      ${row('رأس المال المسجل',co.capital?co.capital+' جنيه':'')}
-      ${row('المدينة',co.city)}
-      ${row('المقر الرئيسي',co.addressAr)}
+      ${row('كود الشركة',co.code)}${row('الاسم بالعربي',co.nameAr)}${row('الاسم بالإنجليزي',co.nameEn)}
+      ${row('الشكل القانوني',co.legalForm)}${row('رقم السجل التجاري',co.comRegNo)}
+      ${row('تاريخ انتهاء السجل','',fmt(co.comRegExp)+expiryBadge(co.comRegExp))}
+      ${row('الرقم القومي للمنشأة',co.natNo)}${row('رأس المال',co.capital?co.capital+' جنيه':'')}
+      ${row('المدينة',co.city)}${row('المقر الرئيسي',co.addressAr)}
     </div>
-
-    <!-- EDA والترخيص -->
     <div id="cpt-eda" class="cpt">
-      ${row('نوع الترخيص',co.companyType==='factory'?'رخصة مصنع — FM-LPM':'قيد Toll — FM-LAD-15')}
-      ${co.companyType==='factory'?`
-      ${row('رقم رخصة المصنع',co.factoryLicenseNo)}
-      ${row('تاريخ أول ترخيص',fmt(co.factoryLicenseDate))}
-      `:`
-      ${row('رقم قيد Toll',co.tollRegNo)}
-      ${row('تاريخ القيد',fmt(co.tollRegDate))}
-      ${row('انتهاء القيد (5 سنوات)','',fmt(co.tollRegExpiry)+expiryBadge(co.tollRegExpiry))}
-      `}
-      ${row('كود EDA',co.edaCode)}
-      ${row('شهادة GMP',co.gmpCertificate)}
-      ${row('انتهاء GMP','',fmt(co.gmpExpiry)+expiryBadge(co.gmpExpiry))}
-      ${row('خطوط الإنتاج',co.productionLines)}
+      ${row('نوع الترخيص',co.companyType==='factory'?'رخصة مصنع FM-LPM':'قيد Toll FM-LAD-15')}
+      ${row('رقم القيد / الرخصة',co.tollNo)}${row('تاريخ الإصدار',fmt(co.tollDate))}
+      ${row('تاريخ الانتهاء','',fmt(co.tollExp)+expiryBadge(co.tollExp))}
+      ${row('كود EDA',co.edaCode)}${row('شهادة GMP',co.gmp)}
+      ${row('انتهاء GMP','',fmt(co.gmpExp)+expiryBadge(co.gmpExp))}
+      ${row('خطوط الإنتاج',co.lines)}
     </div>
-
-    <!-- الضرائب -->
     <div id="cpt-tax" class="cpt">
-      ${row('رقم التسجيل الضريبي',co.taxRegNo)}
-      ${row('رقم البطاقة الضريبية',co.taxCardNo)}
-      ${row('تاريخ إصدار البطاقة',fmt(co.taxCardDate))}
-      ${row('انتهاء البطاقة الضريبية','',fmt(co.taxCardExpiry)+expiryBadge(co.taxCardExpiry))}
-      ${row('المأمورية الضريبية',co.taxOffice)}
-      ${row('كود النشاط',co.activityCode)}
-      ${row('رقم التأمينات الاجتماعية',co.socialInsuranceNo)}
-      ${row('رقم ملف ضريبة الدخل',co.incomeTaxNo)}
+      ${row('رقم التسجيل الضريبي',co.taxReg)}${row('رقم البطاقة الضريبية',co.taxCard)}
+      ${row('تاريخ إصدار البطاقة',fmt(co.taxDate))}
+      ${row('انتهاء البطاقة الضريبية','',fmt(co.taxExp)+expiryBadge(co.taxExp))}
+      ${row('المأمورية الضريبية',co.taxOfc)}${row('كود النشاط',co.actCode)}
+      ${row('رقم التأمينات الاجتماعية',co.socIns)}${row('ملف ضريبة الدخل',co.incTax)}
     </div>
-
-    <!-- المسؤولون -->
     <div id="cpt-persons" class="cpt">
-      ${row('رئيس مجلس الإدارة / المدير',co.chairman)}
-      ${row('صاحب الترخيص (EDA)',co.licenseHolder)}
-      ${row('مدير الشركة',co.companyManager)}
-      ${row('الاستشاري الفني',co.technicalConsultant)}
-      ${row('مسؤول الجودة QC',co.qcManager)}
-      ${row('مسؤول الإنتاج',co.productionManager)}
-      ${row('مسؤول الشؤون التنظيمية RA',co.raManager)}
-      <div class="fi-row" style="border-top:2px solid var(--gray3);margin-top:8px;padding-top:12px">
-        <span class="fi-label">الهاتف</span><span class="fi-val">${esc(co.phone||'—')}</span>
-      </div>
-      ${row('البريد الإلكتروني',co.email)}
-      ${row('الفاكس',co.fax)}
-      ${row('الموقع الإلكتروني',co.website)}
+      ${row('رئيس مجلس الإدارة',co.chairman)}${row('صاحب الترخيص EDA',co.licHolder)}
+      ${row('مدير الشركة',co.mgr)}${row('الاستشاري الفني',co.tech)}
+      ${row('مسؤول الجودة QC',co.qc)}${row('مسؤول الإنتاج',co.prod)}
+      ${row('مسؤول RA',co.ra)}
+      ${row('الهاتف',co.phone)}${row('البريد الإلكتروني',co.email)}
     </div>
-
-    <!-- المصانع -->
+    <div id="cpt-partners" class="cpt">
+      <div style="padding:16px 20px">
+        <div style="font-size:12px;color:var(--gray);font-weight:600;margin-bottom:12px">توزيع حصص الشركاء</div>
+        ${partnersHtml}
+        ${co.egyPct?`<div style="margin-top:12px;padding:10px 14px;background:var(--blue-light);border-radius:8px;font-size:13px;font-weight:600;color:var(--blue)">نسبة المشاركة المصرية: ${esc(co.egyPct)}</div>`:''}
+      </div>
+    </div>
     <div id="cpt-factories" class="cpt">
-      <div style="margin-bottom:16px">
-        <div class="fi-label" style="margin-bottom:8px">المصانع المتعاقد معها</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">${chips(co.contractedFactories,'var(--blue)')}</div>
-      </div>
-      <div style="margin-bottom:16px">
-        <div class="fi-label" style="margin-bottom:8px">أماكن التخزين المرخصة</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">${chips(co.storageLocations,'var(--green)')}</div>
-      </div>
-      <div>
-        <div class="fi-label" style="margin-bottom:8px">الموزعون المعتمدون</div>
-        <div style="display:flex;flex-wrap:wrap;gap:6px">${chips(co.distributors,'var(--amber)')}</div>
+      <div style="padding:16px 20px;display:flex;flex-direction:column;gap:14px">
+        <div><div style="font-size:12px;color:var(--gray);font-weight:600;margin-bottom:8px">المصانع المتعاقد معها</div><div>${chips(co.factories)}</div></div>
+        <div><div style="font-size:12px;color:var(--gray);font-weight:600;margin-bottom:8px">أماكن التخزين</div><div>${chips(co.storage)}</div></div>
+        <div><div style="font-size:12px;color:var(--gray);font-weight:600;margin-bottom:8px">الموزعون المعتمدون</div><div>${chips(co.dist)}</div></div>
       </div>
     </div>
-
-    <!-- المستندات -->
     <div id="cpt-docs" class="cpt">
-      <div id="docs-list-${co.id}"></div>
-      <div style="margin-top:16px">
-        <label class="fl" style="margin-bottom:8px">رفع مستند جديد</label>
-        <div class="doc-upload-area" onclick="document.getElementById('doc-file-input').click()">
-          <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 8px;display:block;opacity:.4"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <div style="font-size:13px;color:var(--gray)">اضغط لرفع ملف PDF أو صورة</div>
-          <div style="font-size:11px;color:var(--gray2);margin-top:4px">يتم ضغط الصور تلقائياً — الحد الأقصى 5MB</div>
-        </div>
-        <input type="file" id="doc-file-input" accept=".pdf,image/*" style="display:none" onchange="uploadDoc('${co.id}',this)">
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <input class="fc" id="doc-name-input" placeholder="اسم المستند (مثال: سجل تجاري 2025)" style="flex:1">
-          <select class="fc" id="doc-type-input" style="width:180px">
-            <option value="سجل تجاري">سجل تجاري</option>
-            <option value="بطاقة ضريبية">بطاقة ضريبية</option>
-            <option value="ترخيص EDA">ترخيص EDA</option>
-            <option value="شهادة GMP">شهادة GMP</option>
-            <option value="عقد تأسيس">عقد تأسيس</option>
-            <option value="صحيفة استثمار">صحيفة استثمار</option>
-            <option value="عقد تصنيع">عقد تصنيع</option>
-            <option value="تأمينات اجتماعية">تأمينات اجتماعية</option>
-            <option value="أخرى">أخرى</option>
-          </select>
+      <div style="padding:16px 20px">
+        <div id="docs-list-${co.id}"></div>
+        <div style="margin-top:14px">
+          <div class="doc-drop" onclick="document.getElementById('doc-inp').click()">
+            <svg width="26" height="26" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin:0 auto 8px;display:block;opacity:.4"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <div style="font-size:13px;color:var(--gray)">اضغط لرفع PDF أو صورة</div>
+            <div style="font-size:11px;color:var(--gray2);margin-top:3px">الصور تُضغط تلقائياً — الحد 5MB</div>
+          </div>
+          <input type="file" id="doc-inp" accept=".pdf,image/*" style="display:none" onchange="uploadDoc('${co.id}',this)">
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <input class="fc" id="doc-name" placeholder="اسم المستند..." style="flex:1">
+            <select class="fc" id="doc-type" style="width:170px">
+              <option>سجل تجاري</option><option>بطاقة ضريبية</option><option>ترخيص EDA</option>
+              <option>شهادة GMP</option><option>عقد تأسيس</option><option>صحيفة استثمار</option>
+              <option>عقد تصنيع</option><option>تأمينات اجتماعية</option><option>أخرى</option>
+            </select>
+          </div>
         </div>
       </div>
+    </div>
+    <div id="cpt-history" class="cpt">
+      <div id="co-history-list" style="padding:4px 0"></div>
     </div>
   </div>
-
-  <div style="margin-top:12px;font-size:11px;color:var(--gray2)">
-    تاريخ الإنشاء: ${fmtDt(co.createdAt)} &nbsp;|&nbsp; آخر تحديث: ${fmtDt(co.updatedAt)}
+  <div style="margin-top:10px;font-size:11px;color:var(--gray2)">
+    إنشاء: ${fmtDt(co.createdAt)} &nbsp;|&nbsp; آخر تحديث: ${fmtDt(co.updatedAt)}
   </div>`;
 
   loadDocs(co.id);
+  loadHistory(co.id);
 }
 
 function switchCoTab(btn,id){
@@ -1120,187 +941,104 @@ function switchCoTab(btn,id){
   document.getElementById(id).classList.add('active');
 }
 
-// ── DOCUMENTS ──
-async function loadDocs(coId){
-  const el=document.getElementById('docs-list-'+coId);
+// ── HISTORY ──
+async function loadHistory(coId){
+  const el=document.getElementById('co-history-list');
   if(!el)return;
-  const docs=await dbGetAll('documents');
-  const coDocs=docs.filter(d=>d.companyId===coId&&!d.deletedAt);
-  if(!coDocs.length){el.innerHTML='<div style="text-align:center;padding:20px;color:var(--gray2);font-size:13px">لا توجد مستندات مرفوعة بعد</div>';return}
-  el.innerHTML=`<div style="display:flex;flex-direction:column;gap:6px">
-  ${coDocs.map(d=>`
-  <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray4);border-radius:8px;border:1px solid var(--gray3)">
-    <div style="width:36px;height:36px;border-radius:7px;background:${d.type==='pdf'?'var(--red-light)':'var(--blue-light)'};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:${d.type==='pdf'?'var(--red)':'var(--blue)'};flex-shrink:0">${d.type==='pdf'?'PDF':'IMG'}</div>
-    <div style="flex:1;min-width:0">
-      <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div>
-      <div style="font-size:11px;color:var(--gray2)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div>
+  const all=await dbGetAll('history');
+  const items=all.filter(h=>h.recordId===coId).reverse();
+  if(!items.length){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--gray2);font-size:13px">لا توجد تعديلات مسجلة بعد</div>';return}
+  el.innerHTML=items.map(h=>`
+  <div style="padding:12px 20px;border-bottom:1px solid var(--gray3)">
+    <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+      <span style="font-size:13px;font-weight:600">${esc(h.action)}</span>
+      <span style="font-size:11px;color:var(--gray2)">${fmtDt(h.at)} — ${esc(h.userName||'—')}</span>
     </div>
-    <button class="btn btn-xs btn-outline" onclick="viewDoc('${d.id}')">عرض</button>
-    <button class="btn btn-xs" style="color:var(--red);border-color:var(--red-light)" onclick="deleteDoc('${d.id}','${coId}')">حذف</button>
-  </div>`).join('')}
-  </div>`;
+    ${h.oldData?`<details style="font-size:11px;color:var(--gray)"><summary style="cursor:pointer">عرض التفاصيل</summary><pre style="margin-top:6px;background:var(--gray4);padding:8px;border-radius:6px;overflow-x:auto;font-size:10px">${esc(JSON.stringify(h.oldData,null,2))}</pre></details>`:''}
+  </div>`).join('');
 }
 
-async function uploadDoc(coId, input){
-  const file=input.files[0];
-  if(!file)return;
-  if(file.size>5*1024*1024){toast('حجم الملف أكبر من 5MB','e');return}
-  const name=val('doc-name-input')||file.name;
-  const docType=val('doc-type-input')||'أخرى';
-  toast('جاري المعالجة...');
-  try{
-    let data, type, finalSize;
-    if(file.type.startsWith('image/')){
-      // ضغط الصور
-      const compressed=await compressImage(file,800,0.7);
-      data=compressed.data;type='img';finalSize=compressed.size;
-    } else {
-      // PDF — تخزين مباشر
-      data=await fileToBase64(file);type='pdf';finalSize=file.size;
-    }
-    await putOne('documents',{id:uid(),companyId:coId,name,docType,type,data,size:finalSize,createdAt:now()});
-    input.value='';set('doc-name-input','');
-    toast('تم رفع المستند بنجاح');
-    loadDocs(coId);
-  }catch(e){toast('خطأ في الرفع: '+e.message,'e')}
+// ── PRINT ──
+async function printCompany(){
+  const co=await dbGet('companies',S.companyId);
+  const w=window.open('','_blank');
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8">
+  <title>بيانات ${co.nameAr}</title>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+  <style>body{font-family:'Tajawal',sans-serif;padding:30px;color:#1e293b;font-size:13px}
+  h1{font-size:18px;margin-bottom:4px}p{color:#64748b;margin-bottom:20px}
+  .section{margin-bottom:20px}
+  .section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:6px;margin-bottom:12px}
+  .row{display:flex;padding:7px 0;border-bottom:1px solid #f1f5f9}
+  .lbl{width:200px;font-size:12px;color:#64748b;flex-shrink:0}.val{font-size:13px;font-weight:500}
+  @media print{body{padding:15px}}</style></head><body>
+  <h1>${esc(co.nameAr)}</h1>
+  <p>${co.companyType==='factory'?'مصنع':'شركة Toll'} — ${esc(co.code)} — تاريخ الطباعة: ${new Date().toLocaleDateString('ar-EG')}</p>
+  <div class="section"><div class="section-title">البيانات القانونية</div>
+  ${prow('رقم السجل التجاري',co.comRegNo)}${prow('انتهاء السجل',fmt(co.comRegExp))}${prow('الرقم القومي',co.natNo)}${prow('رأس المال',co.capital?co.capital+' جنيه':'')}${prow('المقر',co.addressAr)}</div>
+  <div class="section"><div class="section-title">بيانات EDA</div>
+  ${prow('رقم القيد / الرخصة',co.tollNo)}${prow('تاريخ الانتهاء',fmt(co.tollExp))}${prow('كود EDA',co.edaCode)}${prow('GMP',co.gmp)}${prow('انتهاء GMP',fmt(co.gmpExp))}</div>
+  <div class="section"><div class="section-title">البيانات الضريبية</div>
+  ${prow('رقم التسجيل الضريبي',co.taxReg)}${prow('رقم البطاقة',co.taxCard)}${prow('انتهاء البطاقة',fmt(co.taxExp))}${prow('المأمورية',co.taxOfc)}</div>
+  <div class="section"><div class="section-title">المسؤولون</div>
+  ${prow('رئيس مجلس الإدارة',co.chairman)}${prow('مدير الشركة',co.mgr)}${prow('مسؤول الجودة',co.qc)}${prow('مسؤول الإنتاج',co.prod)}</div>
+  <script>window.onload=()=>window.print()<\/script></body></html>`);
 }
+const prow=(l,v)=>v?`<div class="row"><span class="lbl">${l}</span><span class="val">${v}</span></div>`:'';
 
-function fileToBase64(file){
-  return new Promise((ok,fail)=>{
-    const r=new FileReader();
-    r.onload=e=>ok(e.target.result);
-    r.onerror=()=>fail(new Error('فشل قراءة الملف'));
-    r.readAsDataURL(file);
-  });
-}
-
-function compressImage(file,maxW,quality){
-  return new Promise((ok,fail)=>{
-    const img=new Image();
-    const url=URL.createObjectURL(file);
-    img.onload=()=>{
-      URL.revokeObjectURL(url);
-      let {width:w,height:h}=img;
-      if(w>maxW){h=Math.round(h*maxW/w);w=maxW}
-      const canvas=document.createElement('canvas');
-      canvas.width=w;canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      const data=canvas.toDataURL('image/jpeg',quality);
-      const size=Math.round(data.length*0.75);
-      ok({data,size});
-    };
-    img.onerror=()=>fail(new Error('فشل قراءة الصورة'));
-    img.src=url;
-  });
-}
-
-async function viewDoc(id){
-  const d=await dbGet('documents',id);
-  if(!d)return;
-  const w=window.open();
-  if(d.type==='pdf'){
-    w.document.write(`<iframe src="${d.data}" style="width:100%;height:100vh;border:none"></iframe>`);
-  } else {
-    w.document.write(`<img src="${d.data}" style="max-width:100%;height:auto">`);
-  }
-}
-
-async function deleteDoc(id,coId){
-  if(!confirm('حذف هذا المستند؟'))return;
-  const d=await dbGet('documents',id);
-  if(!d)return;
-  d.deletedAt=now();
-  await putOne('documents',d);
-  toast('تم حذف المستند');
-  loadDocs(coId);
-}
-
-function fi(label,value){
-  return`<div><div style="font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:2px">${esc(label)}</div><div style="font-size:14px;font-weight:500">${esc(value)||'<span style="color:var(--gray2)">—</span>'}</div></div>`;
-}
-
+// ── EDIT ──
 async function openEditCompany(){
   const co=await dbGet('companies',S.companyId);
   document.getElementById('modal-edit-co').dataset.coId=S.companyId;
-  fillCoForm(co);
-  openModal('modal-edit-co');
+  fillCoForm(co);openModal('modal-edit-co');
 }
-
-async function editCompanyFromList(id){
+async function editCoFromList(id){
   const co=await dbGet('companies',id);if(!co)return;
   document.getElementById('modal-edit-co').dataset.coId=id;
-  fillCoForm(co);
-  openModal('modal-edit-co');
+  fillCoForm(co);openModal('modal-edit-co');
 }
-
 function fillCoForm(co){
-  // القانونية
-  set('ec-nameAr',co.nameAr);set('ec-nameEn',co.nameEn);
-  set('ec-companyType',co.companyType||'toll');
-  set('ec-legalForm',co.legalForm);set('ec-commercialRegNo',co.commercialRegNo);
-  set('ec-commercialRegDate',co.commercialRegDate);set('ec-commercialRegExpiry',co.commercialRegExpiry);
-  set('ec-nationalEntityNo',co.nationalEntityNo);set('ec-capital',co.capital);
-  set('ec-city',co.city);set('ec-country',co.country||'Egypt');
-  // EDA
-  set('ec-tollRegNo',co.tollRegNo);set('ec-tollRegDate',co.tollRegDate);
-  set('ec-tollRegExpiry',co.tollRegExpiry);set('ec-edaCode',co.edaCode);
-  set('ec-factoryLicenseNo',co.factoryLicenseNo);set('ec-factoryLicenseDate',co.factoryLicenseDate);
-  set('ec-gmpCertificate',co.gmpCertificate);set('ec-gmpExpiry',co.gmpExpiry);
-  set('ec-productionLines',co.productionLines);
-  // الضرائب
-  set('ec-taxRegNo',co.taxRegNo);set('ec-taxCardNo',co.taxCardNo);
-  set('ec-taxCardDate',co.taxCardDate);set('ec-taxCardExpiry',co.taxCardExpiry);
-  set('ec-taxOffice',co.taxOffice);set('ec-activityCode',co.activityCode);
-  set('ec-socialInsuranceNo',co.socialInsuranceNo);set('ec-incomeTaxNo',co.incomeTaxNo);
-  // المسؤولون
-  set('ec-chairman',co.chairman);set('ec-licenseHolder',co.licenseHolder);
-  set('ec-companyManager',co.companyManager);set('ec-technicalConsultant',co.technicalConsultant);
-  set('ec-qcManager',co.qcManager);set('ec-productionManager',co.productionManager);
-  set('ec-raManager',co.raManager);
-  // المصانع
-  set('ec-contractedFactories',co.contractedFactories);
-  set('ec-storageLocations',co.storageLocations);
-  set('ec-distributors',co.distributors);
-  // التواصل
-  set('ec-addr',co.addressAr);set('ec-edaAddress',co.edaAddress);
-  set('ec-phone',co.phone);set('ec-fax',co.fax);
+  set('ec-nameAr',co.nameAr);set('ec-nameEn',co.nameEn);set('ec-companyType',co.companyType||'toll');
+  set('ec-legalForm',co.legalForm);set('ec-comRegNo',co.comRegNo);set('ec-comRegExp',co.comRegExp);
+  set('ec-natNo',co.natNo);set('ec-capital',co.capital);set('ec-city',co.city);
+  set('ec-country',co.country||'Egypt');set('ec-addr',co.addressAr);
+  set('ec-tollNo',co.tollNo);set('ec-tollDate',co.tollDate);set('ec-tollExp',co.tollExp);
+  set('ec-edaCode',co.edaCode);set('ec-gmp',co.gmp);set('ec-gmpExp',co.gmpExp);set('ec-lines',co.lines);
+  set('ec-taxReg',co.taxReg);set('ec-taxCard',co.taxCard);set('ec-taxDate',co.taxDate);
+  set('ec-taxExp',co.taxExp);set('ec-taxOfc',co.taxOfc);set('ec-actCode',co.actCode);
+  set('ec-socIns',co.socIns);set('ec-incTax',co.incTax);
+  set('ec-chairman',co.chairman);set('ec-licHolder',co.licHolder);set('ec-mgr',co.mgr);
+  set('ec-tech',co.tech);set('ec-qc',co.qc);set('ec-prod',co.prod);set('ec-ra',co.ra);
+  set('ec-partners',co.partners);set('ec-egyPct',co.egyPct);
+  set('ec-factories',co.factories);set('ec-storage',co.storage);set('ec-dist',co.dist);
+  set('ec-edaAddr',co.edaAddress);set('ec-phone',co.phone);set('ec-fax',co.fax);
   set('ec-email',co.email);set('ec-web',co.website);
 }
-
 async function saveCompany(){
   const nameAr=val('ec-nameAr');
   if(!nameAr){toast('الاسم بالعربي مطلوب','e');return}
   const coId=document.getElementById('modal-edit-co').dataset.coId||S?.companyId;
   if(!coId)return;
-  const co=await dbGet('companies',coId);
-  Object.assign(co,{
-    nameAr, nameEn:val('ec-nameEn'),
-    companyType:val('ec-companyType')||'toll',
-    legalForm:val('ec-legalForm'), commercialRegNo:val('ec-commercialRegNo'),
-    commercialRegDate:val('ec-commercialRegDate'), commercialRegExpiry:val('ec-commercialRegExpiry'),
-    nationalEntityNo:val('ec-nationalEntityNo'), capital:val('ec-capital'),
-    city:val('ec-city'), country:val('ec-country'),
-    tollRegNo:val('ec-tollRegNo'), tollRegDate:val('ec-tollRegDate'),
-    tollRegExpiry:val('ec-tollRegExpiry'), edaCode:val('ec-edaCode'),
-    factoryLicenseNo:val('ec-factoryLicenseNo'), factoryLicenseDate:val('ec-factoryLicenseDate'),
-    gmpCertificate:val('ec-gmpCertificate'), gmpExpiry:val('ec-gmpExpiry'),
-    productionLines:val('ec-productionLines'),
-    taxRegNo:val('ec-taxRegNo'), taxCardNo:val('ec-taxCardNo'),
-    taxCardDate:val('ec-taxCardDate'), taxCardExpiry:val('ec-taxCardExpiry'),
-    taxOffice:val('ec-taxOffice'), activityCode:val('ec-activityCode'),
-    socialInsuranceNo:val('ec-socialInsuranceNo'), incomeTaxNo:val('ec-incomeTaxNo'),
-    chairman:val('ec-chairman'), licenseHolder:val('ec-licenseHolder'),
-    companyManager:val('ec-companyManager'), technicalConsultant:val('ec-technicalConsultant'),
-    qcManager:val('ec-qcManager'), productionManager:val('ec-productionManager'),
-    raManager:val('ec-raManager'),
-    contractedFactories:val('ec-contractedFactories'),
-    storageLocations:val('ec-storageLocations'), distributors:val('ec-distributors'),
-    addressAr:val('ec-addr'), edaAddress:val('ec-edaAddress'),
-    phone:val('ec-phone'), fax:val('ec-fax'),
-    email:val('ec-email'), website:val('ec-web'),
-    updatedAt:now()
-  });
+  const old=await dbGet('companies',coId);
+  const co={...old,
+    nameAr,nameEn:val('ec-nameEn'),companyType:val('ec-companyType'),
+    legalForm:val('ec-legalForm'),comRegNo:val('ec-comRegNo'),comRegExp:val('ec-comRegExp'),
+    natNo:val('ec-natNo'),capital:val('ec-capital'),city:val('ec-city'),country:val('ec-country'),addressAr:val('ec-addr'),
+    tollNo:val('ec-tollNo'),tollDate:val('ec-tollDate'),tollExp:val('ec-tollExp'),
+    edaCode:val('ec-edaCode'),gmp:val('ec-gmp'),gmpExp:val('ec-gmpExp'),lines:val('ec-lines'),
+    taxReg:val('ec-taxReg'),taxCard:val('ec-taxCard'),taxDate:val('ec-taxDate'),
+    taxExp:val('ec-taxExp'),taxOfc:val('ec-taxOfc'),actCode:val('ec-actCode'),
+    socIns:val('ec-socIns'),incTax:val('ec-incTax'),
+    chairman:val('ec-chairman'),licHolder:val('ec-licHolder'),mgr:val('ec-mgr'),
+    tech:val('ec-tech'),qc:val('ec-qc'),prod:val('ec-prod'),ra:val('ec-ra'),
+    partners:val('ec-partners'),egyPct:val('ec-egyPct'),
+    factories:val('ec-factories'),storage:val('ec-storage'),dist:val('ec-dist'),
+    edaAddress:val('ec-edaAddr'),phone:val('ec-phone'),fax:val('ec-fax'),
+    email:val('ec-email'),website:val('ec-web'),updatedAt:now()
+  };
   await dbPut('companies',co);
+  // حفظ تاريخ التعديل
+  await saveHistory(coId,'تعديل بيانات الشركة',{nameAr:old.nameAr,updatedAt:old.updatedAt},{nameAr:co.nameAr,updatedAt:co.updatedAt});
   if(S&&coId===S.companyId){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr}
   closeModal('modal-edit-co');
   toast('تم حفظ بيانات الشركة بنجاح');
@@ -1308,9 +1046,98 @@ async function saveCompany(){
   else renderCompanies();
 }
 
-// ══════════════════════════════════════
+// ── DOCUMENTS ──
+async function loadDocs(coId){
+  const el=document.getElementById('docs-list-'+coId);if(!el)return;
+  const docs=(await dbGetAll('documents','companyId',coId)).filter(d=>!d.deletedAt);
+  if(!docs.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--gray2);font-size:13px">لا توجد مستندات بعد</div>';return}
+  el.innerHTML=docs.map(d=>`
+  <div class="doc-item">
+    <div class="doc-icon" style="background:${d.type==='pdf'?'var(--red-light)':'var(--blue-light)'};color:${d.type==='pdf'?'var(--red)':'var(--blue)'}">${d.type==='pdf'?'PDF':'IMG'}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div>
+      <div style="font-size:11px;color:var(--gray2)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div>
+    </div>
+    <button class="btn btn-xs btn-outline" onclick="viewDoc('${d.id}')">عرض</button>
+    <button class="btn btn-xs" style="color:var(--red);border-color:var(--red-light);background:#fff" onclick="delDoc('${d.id}','${coId}')">حذف</button>
+  </div>`).join('');
+}
+async function uploadDoc(coId,input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('الملف أكبر من 5MB','e');return}
+  const name=val('doc-name')||file.name,docType=val('doc-type')||'أخرى';
+  toast('جاري المعالجة...');
+  try{
+    let data,type,size;
+    if(file.type.startsWith('image/')){
+      const c=await compressImg(file,900,0.72);data=c.data;type='img';size=c.size;
+    } else {
+      data=await toB64(file);type='pdf';size=file.size;
+    }
+    await dbPut('documents',{id:uid(),companyId:coId,name,docType,type,data,size,createdAt:now()});
+    input.value='';set('doc-name','');
+    toast('تم رفع المستند بنجاح');loadDocs(coId);
+  }catch(e){toast('خطأ: '+e.message,'e')}
+}
+const toB64=f=>new Promise((ok,fail)=>{const r=new FileReader();r.onload=e=>ok(e.target.result);r.onerror=()=>fail(new Error('فشل'));r.readAsDataURL(f)});
+const compressImg=(f,maxW,q)=>new Promise((ok,fail)=>{
+  const img=new Image(),url=URL.createObjectURL(f);
+  img.onload=()=>{
+    URL.revokeObjectURL(url);
+    let{width:w,height:h}=img;
+    if(w>maxW){h=Math.round(h*maxW/w);w=maxW}
+    const cv=document.createElement('canvas');cv.width=w;cv.height=h;
+    cv.getContext('2d').drawImage(img,0,0,w,h);
+    const data=cv.toDataURL('image/jpeg',q);
+    ok({data,size:Math.round(data.length*.75)});
+  };img.onerror=()=>fail(new Error('فشل'));img.src=url;
+});
+async function viewDoc(id){
+  const d=await dbGet('documents',id);if(!d)return;
+  const w=window.open();
+  w.document.write(d.type==='pdf'?`<iframe src="${d.data}" style="width:100%;height:100vh;border:none"></iframe>`:`<img src="${d.data}" style="max-width:100%;height:auto">`);
+}
+async function delDoc(id,coId){
+  if(!confirm('حذف هذا المستند؟'))return;
+  const d=await dbGet('documents',id);if(!d)return;
+  d.deletedAt=now();await dbPut('documents',d);
+  toast('تم الحذف');loadDocs(coId);
+}
+
+// ══════════════════════════════
+// BACKUP / RESTORE
+// ══════════════════════════════
+async function exportBackup(){
+  const [companies,users,documents,comments]=await Promise.all([
+    dbGetAll('companies'),dbGetAll('users'),dbGetAll('documents'),dbGetAll('comments')
+  ]);
+  const data=JSON.stringify({v:1,exportedAt:now(),companies,users,documents,comments},null,2);
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(data);
+  a.download=`quadra-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  toast('تم تنزيل النسخة الاحتياطية');
+}
+async function importBackup(input){
+  const file=input.files[0];if(!file)return;
+  if(!confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟'))return;
+  try{
+    const text=await file.text();
+    const data=JSON.parse(text);
+    if(!data.companies)throw new Error('ملف غير صالح');
+    for(const c of data.companies||[])await dbPut('companies',c);
+    for(const u of data.users||[])await dbPut('users',u);
+    for(const d of data.documents||[])await dbPut('documents',d);
+    for(const c of data.comments||[])await dbPut('comments',c);
+    closeModal('modal-backup');
+    toast('تم الاستيراد بنجاح — أعد تسجيل الدخول');
+    renderCompanies();
+  }catch(e){toast('خطأ في الاستيراد: '+e.message,'e')}
+}
+
+// ══════════════════════════════
 // USERS
-// ══════════════════════════════════════
+// ══════════════════════════════
 let usrQ='';
 async function renderUsers(c){
   const all=await dbGetAll('users','companyId',S.companyId);
@@ -1322,13 +1149,13 @@ async function renderUsers(c){
       <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
       <input class="search-inp" placeholder="بحث..." value="${esc(usrQ)}" oninput="usrQ=this.value;renderUsers(document.getElementById('page-content'))">
     </div>
-    <button class="btn btn-primary" onclick="openAddUser()"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>إضافة</button>
+    <button class="btn btn-primary btn-sm" onclick="openAddUser()"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>إضافة</button>
   </div></div>
   <div class="card"><div class="table-wrap"><table>
-    <thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+    <thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th></th></tr></thead>
     <tbody>${users.length?users.map(u=>`<tr>
       <td><div style="display:flex;align-items:center;gap:9px">
-        <div style="width:32px;height:32px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0" class="${u.role==='admin'?'c0':'c7'}">${u.nameAr.charAt(0)}</div>
+        <div style="width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0" class="${u.role==='admin'?'c0':'c7'}">${u.nameAr.charAt(0)}</div>
         <div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--gray)">${esc(u.nameEn||'')}</div></div>
       </div></td>
       <td><code style="font-size:11px;background:var(--gray4);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
@@ -1341,19 +1168,15 @@ async function renderUsers(c){
         ${u.id!==S.userId?`<button class="btn btn-xs ${u.isActive?'btn-outline':'btn-primary'}" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}
       </div></td>
     </tr>`).join(''):`<tr><td colspan="7"><div class="empty"><h3>لا يوجد مستخدمون</h3></div></td></tr>`}
-    </tbody>
-  </table></div></div>`;
+    </tbody></table></div></div>`;
 }
-
 function openAddUser(){
   document.getElementById('mu-title').textContent='إضافة مستخدم جديد';
   document.getElementById('u-ph').style.display='none';
   document.getElementById('u-pl').innerHTML='كلمة المرور <span class="req">*</span>';
-  ['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title','u-emp','u-phone','u-email'].forEach(id=>set(id,''));
-  set('u-role','user');
-  openModal('modal-user');
+  ['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title','u-phone','u-email'].forEach(id=>set(id,''));
+  set('u-role','user');openModal('modal-user');
 }
-
 async function openEditUser(id){
   const u=await dbGet('users',id);if(!u)return;
   document.getElementById('mu-title').textContent='تعديل مستخدم';
@@ -1362,10 +1185,9 @@ async function openEditUser(id){
   set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');
   set('u-user',u.username);set('u-pass','');set('u-role',u.role);
   set('u-dept',u.department||'');set('u-title',u.jobTitle||'');
-  set('u-emp',u.employeeCode||'');set('u-phone',u.phone||'');set('u-email',u.email||'');
+  set('u-phone',u.phone||'');set('u-email',u.email||'');
   openModal('modal-user');
 }
-
 async function saveUser(){
   const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
   if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','e');return}
@@ -1375,22 +1197,19 @@ async function saveUser(){
     if(id){
       const u=await dbGet('users',id);
       if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','e');return}u.passwordHash=await hashPw(pw)}
-      Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title'),employeeCode:val('u-emp'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});
-      await dbPut('users',u);
-      toast('تم تحديث المستخدم');
+      Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});
+      await dbPut('users',u);toast('تم تحديث المستخدم');
     }else{
       if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف على الأقل','e');return}
       const all=await dbGetAll('users','companyId',S.companyId);
       if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','e');return}
-      await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title'),employeeCode:val('u-emp'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});
+      await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});
       toast('تم إضافة المستخدم');
     }
-    closeModal('modal-user');
-    renderUsers(document.getElementById('page-content'));
+    closeModal('modal-user');renderUsers(document.getElementById('page-content'));
   }catch(e){toast('خطأ: '+e.message,'e')}
   btn.innerHTML='حفظ';btn.disabled=false;
 }
-
 async function toggleUser(id){
   const u=await dbGet('users',id);if(!u)return;
   u.isActive=!u.isActive;u.updatedAt=now();
@@ -1399,295 +1218,100 @@ async function toggleUser(id){
   renderUsers(document.getElementById('page-content'));
 }
 
-// ══════════════════════════════════════
+// ══════════════════════════════
 // SETTINGS
-// ══════════════════════════════════════
-const SETTINGS_KEY='pharma_settings';
-function loadSettings(){
-  try{return JSON.parse(localStorage.getItem(SETTINGS_KEY+'_'+S.companyId)||'{}')}catch{return{}}
-}
-function saveSettings(data){
-  localStorage.setItem(SETTINGS_KEY+'_'+S.companyId,JSON.stringify(data));
-}
-
+// ══════════════════════════════
+const SK='pharma_cfg';
+function loadCfg(){try{return JSON.parse(localStorage.getItem(SK+'_'+S.companyId)||'{}')}catch{return{}}}
+function saveCfg(d){localStorage.setItem(SK+'_'+S.companyId,JSON.stringify(d))}
 function renderSettings(c){
-  const cfg=loadSettings();
+  const cfg=loadCfg();
   c.innerHTML=`
-  <div class="ph"><div class="ph-left"><h2>إعدادات النظام</h2><p>تخصيص طريقة عمل النظام لهذه الشركة</p></div></div>
-
+  <div class="ph"><div class="ph-left"><h2>إعدادات النظام</h2><p>تخصيص طريقة عمل النظام</p></div></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
-
-    <!-- اللغة والعرض -->
-    <div class="card">
-      <div class="card-header"><span class="card-title">اللغة والعرض</span></div>
-      <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
-        <div class="fg">
-          <label class="fl">لغة النظام</label>
-          <select class="fc" id="s-lang">
-            <option value="ar" ${(cfg.lang||'ar')==='ar'?'selected':''}>العربية</option>
-            <option value="en" ${cfg.lang==='en'?'selected':''}>English</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label class="fl">حجم الخط</label>
-          <select class="fc" id="s-fontsize">
-            <option value="13" ${(cfg.fontSize||'14')==='13'?'selected':''}>صغير</option>
-            <option value="14" ${(cfg.fontSize||'14')==='14'?'selected':''}>متوسط (افتراضي)</option>
-            <option value="15" ${cfg.fontSize==='15'?'selected':''}>كبير</option>
-            <option value="16" ${cfg.fontSize==='16'?'selected':''}>كبير جداً</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label class="fl">لون النظام</label>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            ${[['#2563eb','أزرق'],['#059669','أخضر'],['#7c3aed','بنفسجي'],['#dc2626','أحمر'],['#d97706','ذهبي'],['#0891b2','سماوي']].map(([color,name])=>`
-            <div onclick="selectColor('${color}')" title="${name}" style="width:30px;height:30px;border-radius:7px;background:${color};cursor:pointer;border:2px solid ${(cfg.accentColor||'#2563eb')===color?'#fff':'transparent'};outline:2px solid ${(cfg.accentColor||'#2563eb')===color?color:'transparent'};transition:.15s" id="clr-${color.replace('#','')}"></div>`).join('')}
-          </div>
-        </div>
+    <div class="card"><div class="card-header"><span class="card-title">اللغة والعرض</span></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="fg"><label class="fl">حجم الخط</label>
+        <select class="fc" id="s-fs"><option value="13" ${(cfg.fs||'14')==='13'?'selected':''}>صغير</option><option value="14" ${(cfg.fs||'14')==='14'?'selected':''}>متوسط</option><option value="15" ${cfg.fs==='15'?'selected':''}>كبير</option></select>
       </div>
-    </div>
-
-    <!-- إعدادات الطباعة -->
-    <div class="card">
-      <div class="card-header"><span class="card-title">إعدادات الطباعة</span></div>
-      <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
-        <div class="fg">
-          <label class="fl">حجم الورق</label>
-          <select class="fc" id="s-paper">
-            <option value="A4" ${(cfg.paperSize||'A4')==='A4'?'selected':''}>A4</option>
-            <option value="A5" ${cfg.paperSize==='A5'?'selected':''}>A5</option>
-            <option value="thermal80" ${cfg.paperSize==='thermal80'?'selected':''}>حراري 80mm</option>
-            <option value="thermal58" ${cfg.paperSize==='thermal58'?'selected':''}>حراري 58mm</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label class="fl">اتجاه الطباعة</label>
-          <select class="fc" id="s-orientation">
-            <option value="portrait" ${(cfg.orientation||'portrait')==='portrait'?'selected':''}>عمودي (Portrait)</option>
-            <option value="landscape" ${cfg.orientation==='landscape'?'selected':''}>أفقي (Landscape)</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label class="fl">رأس الصفحة (Header)</label>
-          <input class="fc" id="s-header" value="${esc(cfg.printHeader||'')}" placeholder="مثال: سري — للاستخدام الداخلي">
-        </div>
-        <div class="fg">
-          <label class="fl">تذييل الصفحة (Footer)</label>
-          <input class="fc" id="s-footer" value="${esc(cfg.printFooter||'')}" placeholder="مثال: توقيع المدير المسؤول">
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <input type="checkbox" id="s-logo" ${cfg.printLogo!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
-          <label for="s-logo" style="font-size:13px;cursor:pointer">طباعة شعار الشركة</label>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <input type="checkbox" id="s-date" ${cfg.printDate!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
-          <label for="s-date" style="font-size:13px;cursor:pointer">طباعة التاريخ والوقت تلقائياً</label>
-        </div>
+    </div></div>
+    <div class="card"><div class="card-header"><span class="card-title">إعدادات الطباعة</span></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="fg"><label class="fl">حجم الورق</label>
+        <select class="fc" id="s-paper"><option value="A4" ${(cfg.paper||'A4')==='A4'?'selected':''}>A4</option><option value="A5" ${cfg.paper==='A5'?'selected':''}>A5</option><option value="thermal80" ${cfg.paper==='thermal80'?'selected':''}>حراري 80mm</option></select>
       </div>
-    </div>
-
-    <!-- إعدادات التصدير -->
-    <div class="card">
-      <div class="card-header"><span class="card-title">إعدادات التصدير</span></div>
-      <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
-        <div class="fg">
-          <label class="fl">صيغة التاريخ</label>
-          <select class="fc" id="s-datefmt">
-            <option value="ar-EG" ${(cfg.dateFormat||'ar-EG')==='ar-EG'?'selected':''}>عربي — ١ يناير ٢٠٢٥</option>
-            <option value="dd/mm/yyyy" ${cfg.dateFormat==='dd/mm/yyyy'?'selected':''}>DD/MM/YYYY</option>
-            <option value="mm/dd/yyyy" ${cfg.dateFormat==='mm/dd/yyyy'?'selected':''}>MM/DD/YYYY</option>
-            <option value="yyyy-mm-dd" ${cfg.dateFormat==='yyyy-mm-dd'?'selected':''}>YYYY-MM-DD</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label class="fl">العملة</label>
-          <select class="fc" id="s-currency">
-            <option value="EGP" ${(cfg.currency||'EGP')==='EGP'?'selected':''}>جنيه مصري (EGP)</option>
-            <option value="USD" ${cfg.currency==='USD'?'selected':''}>دولار أمريكي (USD)</option>
-            <option value="EUR" ${cfg.currency==='EUR'?'selected':''}>يورو (EUR)</option>
-            <option value="SAR" ${cfg.currency==='SAR'?'selected':''}>ريال سعودي (SAR)</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label class="fl">فاصل الأرقام</label>
-          <select class="fc" id="s-numsep">
-            <option value="ar" ${(cfg.numFormat||'ar')==='ar'?'selected':''}>١٬٢٣٤٫٥٦ (عربي)</option>
-            <option value="en" ${cfg.numFormat==='en'?'selected':''}>1,234.56 (إنجليزي)</option>
-          </select>
-        </div>
-        <div class="fg">
-          <label class="fl">صيغة تصدير Excel</label>
-          <select class="fc" id="s-excelenc">
-            <option value="utf8" ${(cfg.excelEncoding||'utf8')==='utf8'?'selected':''}>UTF-8 (موصى به)</option>
-            <option value="windows1256" ${cfg.excelEncoding==='windows1256'?'selected':''}>Windows-1256 (للعربية القديمة)</option>
-          </select>
-        </div>
+      <div class="fg"><label class="fl">هيدر الطباعة</label><input class="fc" id="s-header" value="${esc(cfg.header||'')}"></div>
+      <div style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="s-logo" ${cfg.logo!==false?'checked':''} style="width:15px;height:15px;accent-color:var(--blue)"><label for="s-logo" style="font-size:13px;cursor:pointer">طباعة شعار الشركة</label></div>
+    </div></div>
+    <div class="card"><div class="card-header"><span class="card-title">التصدير</span></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+      <div class="fg"><label class="fl">العملة</label>
+        <select class="fc" id="s-cur"><option value="EGP" ${(cfg.cur||'EGP')==='EGP'?'selected':''}>جنيه مصري EGP</option><option value="USD" ${cfg.cur==='USD'?'selected':''}>دولار USD</option><option value="EUR" ${cfg.cur==='EUR'?'selected':''}>يورو EUR</option></select>
       </div>
-    </div>
-
-    <!-- إعدادات الإشعارات -->
-    <div class="card">
-      <div class="card-header"><span class="card-title">إعدادات متنوعة</span></div>
-      <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
-        <div style="display:flex;align-items:center;gap:10px">
-          <input type="checkbox" id="s-confirm" ${cfg.confirmDelete!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
-          <label for="s-confirm" style="font-size:13px;cursor:pointer">تأكيد قبل الحذف دائماً</label>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <input type="checkbox" id="s-auditlog" ${cfg.auditLog!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
-          <label for="s-auditlog" style="font-size:13px;cursor:pointer">تسجيل سجل النشاط</label>
-        </div>
-        <div style="display:flex;align-items:center;gap:10px">
-          <input type="checkbox" id="s-autosave" ${cfg.autoSave!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
-          <label for="s-autosave" style="font-size:13px;cursor:pointer">حفظ تلقائي كل 5 دقائق</label>
-        </div>
-        <div class="fg" style="margin-top:4px">
-          <label class="fl">ترقيم المستندات (بادئة)</label>
-          <input class="fc" id="s-docprefix" value="${esc(cfg.docPrefix||'')}" placeholder="مثال: QP-2025-">
-          <div class="fh">سيظهر قبل رقم كل مستند</div>
-        </div>
-        <div class="fg">
-          <label class="fl">عدد الصفوف في الجداول</label>
-          <select class="fc" id="s-pagesize">
-            <option value="10" ${(cfg.pageSize||'20')==='10'?'selected':''}>10 صفوف</option>
-            <option value="20" ${(cfg.pageSize||'20')==='20'?'selected':''}>20 صفاً (افتراضي)</option>
-            <option value="50" ${cfg.pageSize==='50'?'selected':''}>50 صفاً</option>
-            <option value="100" ${cfg.pageSize==='100'?'selected':''}>100 صف</option>
-          </select>
-        </div>
+      <div class="fg"><label class="fl">بادئة ترقيم المستندات</label><input class="fc" id="s-pfx" value="${esc(cfg.pfx||'')}" placeholder="مثال: QP-2025-" dir="ltr"></div>
+    </div></div>
+    <div class="card"><div class="card-header"><span class="card-title">متنوعة</span></div>
+    <div class="card-body" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:10px;align-items:center"><input type="checkbox" id="s-confirm" ${cfg.confirm!==false?'checked':''} style="width:15px;height:15px;accent-color:var(--blue)"><label for="s-confirm" style="font-size:13px;cursor:pointer">تأكيد قبل الحذف دائماً</label></div>
+      <div class="fg" style="margin-top:6px"><label class="fl">عدد صفوف الجداول</label>
+        <select class="fc" id="s-rows"><option value="20" ${(cfg.rows||'20')==='20'?'selected':''}>20 صفاً</option><option value="50" ${cfg.rows==='50'?'selected':''}>50 صفاً</option><option value="100" ${cfg.rows==='100'?'selected':''}>100 صف</option></select>
       </div>
-    </div>
-
+    </div></div>
   </div>
-
-  <!-- Save Button -->
-  <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px">
-    <button class="btn btn-outline" onclick="resetSettings()">استعادة الافتراضي</button>
-    <button class="btn btn-primary" onclick="doSaveSettings()" style="min-width:140px">
-      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+  <div style="margin-top:16px;display:flex;justify-content:flex-end;gap:10px">
+    <button class="btn btn-outline" onclick="saveCfg({});document.body.style.fontSize='';go('settings');toast('تم الاستعادة')">استعادة الافتراضي</button>
+    <button class="btn btn-primary" onclick="doSaveCfg()">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/></svg>
       حفظ الإعدادات
     </button>
   </div>`;
 }
-
-let selectedColor=null;
-function selectColor(hex){
-  selectedColor=hex;
-  document.querySelectorAll('[id^="clr-"]').forEach(el=>{
-    const elHex='#'+el.id.replace('clr-','');
-    el.style.border=elHex===hex?'2px solid #fff':'2px solid transparent';
-    el.style.outline=elHex===hex?`2px solid ${hex}`:'2px solid transparent';
-  });
+function doSaveCfg(){
+  const cfg={fs:val('s-fs'),paper:val('s-paper'),header:val('s-header'),logo:document.getElementById('s-logo').checked,cur:val('s-cur'),pfx:val('s-pfx'),confirm:document.getElementById('s-confirm').checked,rows:val('s-rows')};
+  saveCfg(cfg);document.body.style.fontSize=cfg.fs+'px';
+  toast('تم حفظ الإعدادات');
 }
 
-function doSaveSettings(){
-  const cfg={
-    lang:document.getElementById('s-lang').value,
-    fontSize:document.getElementById('s-fontsize').value,
-    accentColor:selectedColor||loadSettings().accentColor||'#2563eb',
-    paperSize:document.getElementById('s-paper').value,
-    orientation:document.getElementById('s-orientation').value,
-    printHeader:document.getElementById('s-header').value.trim(),
-    printFooter:document.getElementById('s-footer').value.trim(),
-    printLogo:document.getElementById('s-logo').checked,
-    printDate:document.getElementById('s-date').checked,
-    dateFormat:document.getElementById('s-datefmt').value,
-    currency:document.getElementById('s-currency').value,
-    numFormat:document.getElementById('s-numsep').value,
-    excelEncoding:document.getElementById('s-excelenc').value,
-    confirmDelete:document.getElementById('s-confirm').checked,
-    auditLog:document.getElementById('s-auditlog').checked,
-    autoSave:document.getElementById('s-autosave').checked,
-    docPrefix:document.getElementById('s-docprefix').value.trim(),
-    pageSize:document.getElementById('s-pagesize').value,
-  };
-  saveSettings(cfg);
-  // Apply font size immediately
-  document.body.style.fontSize=cfg.fontSize+'px';
-  toast('تم حفظ الإعدادات بنجاح');
-}
-
-function resetSettings(){
-  if(!confirm('سيتم إعادة جميع الإعدادات للافتراضي. هل أنت متأكد؟'))return;
-  localStorage.removeItem(SETTINGS_KEY+'_'+S.companyId);
-  document.body.style.fontSize='';
-  go('settings');
-  toast('تم استعادة الإعدادات الافتراضية');
-}
-
-// Apply saved settings on login
-function applySettings(){
-  const cfg=loadSettings();
-  if(cfg.fontSize)document.body.style.fontSize=cfg.fontSize+'px';
-}
-
-// ══════════════════════════════════════
+// ══════════════════════════════
 // COMMENTS
-// ══════════════════════════════════════
+// ══════════════════════════════
 async function renderComments(){
   const all=await dbGetAll('comments');
+  const cnt=document.getElementById('comment-count');
+  cnt.textContent=all.length;
   const list=document.getElementById('cp-list');
-  const count=document.getElementById('comment-count');
-  count.textContent=all.length;
-  if(!all.length){list.innerHTML='<div class="cp-empty">لا توجد تعليقات بعد</div>';return}
+  if(!all.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--gray2);font-size:13px">لا توجد تعليقات بعد</div>';return}
   list.innerHTML=all.reverse().map(c=>`
-    <div class="cp-item" id="comment-${c.id}">
-      <div class="cp-item-meta">
-        <span class="cp-item-page">${esc(c.page||'عام')}</span>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span>${fmt(c.at)}</span>
-          <button class="cp-item-del" onclick="delComment(${c.id})">حذف</button>
-        </div>
-      </div>
-      <div class="cp-item-text">${esc(c.text)}</div>
-    </div>`).join('');
+  <div class="cp-item">
+    <div class="cp-item-meta"><span class="cp-item-page">${esc(c.page||'عام')}</span><button style="background:none;border:none;cursor:pointer;color:var(--gray2);font-size:11px" onclick="delComment(${c.id})">حذف</button></div>
+    <div class="cp-item-text">${esc(c.text)}</div>
+  </div>`).join('');
 }
-
 async function addComment(){
   const text=document.getElementById('cp-text').value.trim();
-  if(!text){toast('اكتب تعليقاً أولاً','e');return}
+  if(!text){toast('اكتب تعليقاً','e');return}
   const page=document.getElementById('page-title').textContent;
   await dbPut('comments',{text,page,at:now()});
   document.getElementById('cp-text').value='';
-  toast('تم إضافة التعليق');
-  renderComments();
+  toast('تم إضافة التعليق');renderComments();
 }
-
 async function delComment(id){
-  await dbDel('comments',id);
-  renderComments();
+  await dbDel('comments',id);renderComments();
 }
+function toggleComments(){document.getElementById('comment-panel').classList.toggle('open')}
 
-function toggleComments(){
-  document.getElementById('comment-panel').classList.toggle('open');
-}
-
-// ══════════════════════════════════════
+// ══════════════════════════════
 // UI HELPERS
-// ══════════════════════════════════════
-function showScreen(name){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById('screen-'+name).classList.add('active');
-}
-
+// ══════════════════════════════
+function showScreen(name){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+name).classList.add('active')}
 function openModal(id){document.getElementById(id).classList.add('show')}
 function closeModal(id){document.getElementById(id).classList.remove('show')}
-
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show'));
-  if(e.key==='Enter'){
-    if(document.getElementById('screen-login').classList.contains('active'))doLogin();
-  }
-});
-
 function stab(btn,id){
   const mb=btn.closest('.mb');
   mb.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
   mb.querySelectorAll('.tp').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');document.getElementById(id).classList.add('active');
 }
-
 let toastT;
 function toast(msg,type){
   const t=document.getElementById('toast');
@@ -1695,13 +1319,16 @@ function toast(msg,type){
   t.classList.add('show');clearTimeout(toastT);
   toastT=setTimeout(()=>t.classList.remove('show'),3000);
 }
-
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay-bg').classList.add('show')}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show'));
+  if(e.key==='Enter'&&document.getElementById('screen-login').classList.contains('active'))doLogin();
+});
 
-// ══════════════════════════════════════
+// ══════════════════════════════
 // INIT
-// ══════════════════════════════════════
+// ══════════════════════════════
 (async()=>{
   await openDB();
   const saved=sessionStorage.getItem('S');
@@ -1713,8 +1340,7 @@ function closeSidebar(){document.getElementById('sidebar').classList.remove('ope
     }catch{}
     sessionStorage.removeItem('S');
   }
-  showScreen('companies');
-  renderCompanies();
+  showScreen('companies');renderCompanies();
 })();
 </script>
 </body>
