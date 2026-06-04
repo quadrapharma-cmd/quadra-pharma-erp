@@ -3,838 +3,1179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pharma ERP — المرحلة 1</title>
+<title>Quadra Pharma ERP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 <style>
-/* ===== RESET & BASE ===== */
 *{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f8f9fa;--surface:#fff;--border:#e2e8f0;--border2:#cbd5e1;
-  --primary:#2563eb;--primary-dark:#1d4ed8;--primary-light:#eff6ff;
-  --success:#16a34a;--success-light:#f0fdf4;
-  --danger:#dc2626;--danger-light:#fef2f2;
-  --warning:#d97706;--warning-light:#fffbeb;
-  --text:#1e293b;--text2:#64748b;--text3:#94a3b8;
-  --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
-  --shadow2:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
-  --radius:8px;--radius2:12px;
+  --navy:#0f1f3d;--navy2:#162847;--navy3:#1e3a5f;
+  --blue:#2563eb;--blue2:#1d4ed8;--blue-light:#dbeafe;
+  --gold:#f59e0b;--gold2:#d97706;
+  --green:#059669;--green-light:#d1fae5;
+  --red:#dc2626;--red-light:#fee2e2;
+  --gray:#64748b;--gray2:#94a3b8;--gray3:#e2e8f0;--gray4:#f8fafc;
+  --white:#ffffff;--text:#1e293b;
+  --sidebar-w:260px;
+  --font:'Tajawal',sans-serif;
 }
-body{font-family:'Segoe UI',Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.6}
-/* ===== LAYOUT ===== */
-#app{display:flex;min-height:100vh}
-#sidebar{width:240px;background:#1e293b;color:#cbd5e1;display:flex;flex-direction:column;flex-shrink:0;transition:width .3s}
-#sidebar.collapsed{width:60px}
-#main{flex:1;display:flex;flex-direction:column;overflow:hidden}
-#topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-#content{flex:1;overflow-y:auto;padding:24px}
-/* ===== SIDEBAR ===== */
-.sb-logo{padding:16px;border-bottom:1px solid #334155;display:flex;align-items:center;gap:10px}
-.sb-logo-icon{width:36px;height:36px;background:var(--primary);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;font-size:16px;flex-shrink:0}
-.sb-logo-text{font-weight:600;color:#f1f5f9;font-size:15px;white-space:nowrap;overflow:hidden}
-.sb-company{padding:12px 16px;border-bottom:1px solid #334155;font-size:12px;color:#94a3b8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.sb-nav{flex:1;overflow-y:auto;padding:8px 0}
-.sb-item{display:flex;align-items:center;gap:10px;padding:10px 16px;cursor:pointer;transition:.15s;border-radius:0;color:#94a3b8;text-decoration:none;white-space:nowrap}
-.sb-item:hover{background:#334155;color:#f1f5f9}
-.sb-item.active{background:#2563eb;color:#fff}
-.sb-item svg{flex-shrink:0;width:18px;height:18px}
-.sb-item span{overflow:hidden;text-overflow:ellipsis}
-.sb-section{padding:4px 16px 2px;font-size:11px;color:#475569;text-transform:uppercase;letter-spacing:.05em;margin-top:8px}
-/* ===== TOPBAR ===== */
-.topbar-title{font-weight:600;font-size:16px}
-.topbar-left{display:flex;align-items:center;gap:12px}
-.topbar-right{display:flex;align-items:center;gap:8px}
-.user-badge{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg);border-radius:20px;cursor:pointer;font-size:13px}
-.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600}
-/* ===== BUTTONS ===== */
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:var(--radius);border:1px solid transparent;cursor:pointer;font-size:13px;font-weight:500;transition:.15s;white-space:nowrap;text-decoration:none}
+body{font-family:var(--font);background:#f1f5f9;color:var(--text);font-size:14px;line-height:1.6;overflow-x:hidden}
+
+/* ── SCREEN MANAGER ── */
+.screen{display:none}
+.screen.active{display:flex}
+
+/* ════════════════════════════════
+   LOGIN
+════════════════════════════════ */
+#screen-login{
+  min-height:100vh;align-items:center;justify-content:center;
+  background:var(--navy);position:relative;overflow:hidden;
+}
+#screen-login::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 80% 60% at 50% 0%,#1e3a5f 0%,transparent 70%);
+}
+#screen-login::after{
+  content:'';position:absolute;top:-200px;left:-200px;
+  width:600px;height:600px;border-radius:50%;
+  background:radial-gradient(circle,rgba(37,99,235,.12) 0%,transparent 70%);
+}
+.login-card{
+  position:relative;z-index:1;
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.1);
+  border-radius:20px;padding:48px 40px;width:420px;max-width:calc(100vw - 32px);
+  backdrop-filter:blur(20px);
+}
+.login-brand{text-align:center;margin-bottom:36px}
+.login-brand-icon{
+  width:64px;height:64px;background:var(--blue);border-radius:16px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:28px;font-weight:800;color:#fff;margin-bottom:16px;
+  box-shadow:0 8px 32px rgba(37,99,235,.4);
+}
+.login-brand h1{font-size:22px;font-weight:800;color:#fff;letter-spacing:-.3px}
+.login-brand p{font-size:13px;color:rgba(255,255,255,.5);margin-top:4px}
+.login-field{margin-bottom:16px}
+.login-field label{display:block;font-size:12px;font-weight:500;color:rgba(255,255,255,.6);margin-bottom:8px;letter-spacing:.3px}
+.login-field input{
+  width:100%;padding:12px 16px;
+  background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:10px;color:#fff;font-family:var(--font);font-size:14px;
+  transition:.2s;outline:none;
+}
+.login-field input::placeholder{color:rgba(255,255,255,.25)}
+.login-field input:focus{border-color:var(--blue);background:rgba(37,99,235,.1);box-shadow:0 0 0 3px rgba(37,99,235,.2)}
+.login-field input[dir="ltr"]{direction:ltr;text-align:right}
+.btn-login{
+  width:100%;padding:13px;background:var(--blue);color:#fff;
+  border:none;border-radius:10px;font-family:var(--font);
+  font-size:15px;font-weight:700;cursor:pointer;
+  transition:.2s;margin-top:8px;letter-spacing:.2px;
+}
+.btn-login:hover{background:var(--blue2);transform:translateY(-1px);box-shadow:0 8px 24px rgba(37,99,235,.4)}
+.btn-login:active{transform:none}
+.login-divider{text-align:center;color:rgba(255,255,255,.2);font-size:12px;margin:20px 0;position:relative}
+.login-divider::before,.login-divider::after{content:'';position:absolute;top:50%;width:42%;height:1px;background:rgba(255,255,255,.1)}
+.login-divider::before{right:0}.login-divider::after{left:0}
+.btn-register{
+  width:100%;padding:11px;background:transparent;color:rgba(255,255,255,.6);
+  border:1px solid rgba(255,255,255,.12);border-radius:10px;
+  font-family:var(--font);font-size:13px;cursor:pointer;transition:.2s;
+}
+.btn-register:hover{border-color:rgba(255,255,255,.3);color:#fff}
+.login-error{
+  background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);
+  color:#fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;
+  margin-bottom:16px;display:none;
+}
+.login-error.show{display:block}
+
+/* ════════════════════════════════
+   APP LAYOUT
+════════════════════════════════ */
+#screen-app{min-height:100vh;flex-direction:row}
+
+/* SIDEBAR */
+.sidebar{
+  width:var(--sidebar-w);background:var(--navy);
+  display:flex;flex-direction:column;flex-shrink:0;
+  height:100vh;position:sticky;top:0;overflow-y:auto;
+  transition:.3s;z-index:100;
+}
+.sb-brand{
+  padding:20px 20px 16px;border-bottom:1px solid rgba(255,255,255,.07);
+  display:flex;align-items:center;gap:12px;
+}
+.sb-brand-icon{
+  width:38px;height:38px;background:var(--blue);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;font-weight:800;color:#fff;flex-shrink:0;
+}
+.sb-brand-text{overflow:hidden}
+.sb-brand-name{font-size:14px;font-weight:800;color:#fff;white-space:nowrap}
+.sb-brand-sub{font-size:11px;color:rgba(255,255,255,.35);margin-top:1px}
+.sb-company{
+  padding:12px 20px;background:rgba(255,255,255,.04);
+  border-bottom:1px solid rgba(255,255,255,.07);
+}
+.sb-company-label{font-size:10px;color:rgba(255,255,255,.3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px}
+.sb-company-name{font-size:13px;font-weight:600;color:rgba(255,255,255,.85);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-nav{flex:1;padding:12px 0}
+.sb-section{
+  padding:8px 20px 4px;font-size:10px;font-weight:700;
+  color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:.6px;margin-top:4px;
+}
+.sb-item{
+  display:flex;align-items:center;gap:10px;padding:10px 20px;
+  cursor:pointer;color:rgba(255,255,255,.5);transition:.15s;
+  border-right:3px solid transparent;font-size:13px;font-weight:500;
+}
+.sb-item:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.05)}
+.sb-item.active{color:#fff;background:rgba(37,99,235,.2);border-right-color:var(--blue)}
+.sb-item svg{width:16px;height:16px;flex-shrink:0;opacity:.8}
+.sb-item.active svg{opacity:1}
+.sb-item.disabled{opacity:.3;pointer-events:none}
+.sb-badge{
+  margin-right:auto;font-size:10px;padding:2px 7px;
+  background:rgba(245,158,11,.15);color:var(--gold);border-radius:20px;font-weight:600;
+}
+.sb-footer{
+  padding:16px 20px;border-top:1px solid rgba(255,255,255,.07);
+}
+.sb-user{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.sb-user-avatar{
+  width:32px;height:32px;border-radius:8px;background:var(--blue);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:700;color:#fff;flex-shrink:0;
+}
+.sb-user-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.8)}
+.sb-user-role{font-size:10px;color:rgba(255,255,255,.3)}
+.btn-logout{
+  width:100%;padding:8px;background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.08);
+  border-radius:8px;font-family:var(--font);font-size:12px;cursor:pointer;transition:.15s;
+}
+.btn-logout:hover{background:rgba(220,38,38,.15);color:#fca5a5;border-color:rgba(220,38,38,.2)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
+.topbar{
+  background:#fff;border-bottom:1px solid var(--gray3);
+  padding:0 24px;height:60px;display:flex;align-items:center;
+  justify-content:space-between;gap:16px;position:sticky;top:0;z-index:50;
+}
+.topbar-title{font-size:17px;font-weight:700;color:var(--text)}
+.topbar-actions{display:flex;align-items:center;gap:8px}
+#page-content{flex:1;padding:24px;overflow-y:auto}
+
+/* ════════════════════════════════
+   COMPONENTS
+════════════════════════════════ */
+/* Buttons */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:9px 18px;border-radius:8px;border:1px solid transparent;
+  cursor:pointer;font-family:var(--font);font-size:13px;font-weight:600;
+  transition:.15s;white-space:nowrap;text-decoration:none;
+}
 .btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-primary{background:var(--primary);color:#fff;border-color:var(--primary)}
-.btn-primary:hover:not(:disabled){background:var(--primary-dark)}
-.btn-outline{background:#fff;color:var(--text);border-color:var(--border2)}
-.btn-outline:hover{background:var(--bg)}
-.btn-danger{background:var(--danger);color:#fff;border-color:var(--danger)}
+.btn-primary{background:var(--blue);color:#fff}
+.btn-primary:hover:not(:disabled){background:var(--blue2);box-shadow:0 4px 12px rgba(37,99,235,.3)}
+.btn-outline{background:#fff;color:var(--text);border-color:var(--gray3)}
+.btn-outline:hover:not(:disabled){background:var(--gray4);border-color:var(--gray2)}
+.btn-ghost{background:transparent;color:var(--gray);border-color:transparent}
+.btn-ghost:hover{background:var(--gray4)}
+.btn-danger{background:var(--red);color:#fff}
 .btn-danger:hover{background:#b91c1c}
-.btn-sm{padding:5px 10px;font-size:12px}
-.btn-icon{padding:7px;border-radius:var(--radius)}
-/* ===== CARDS ===== */
-.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);box-shadow:var(--shadow)}
-.card-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.card-title{font-weight:600;font-size:15px}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-xs{padding:4px 10px;font-size:11px;border-radius:6px}
+.btn-icon{padding:8px;border-radius:8px}
+
+/* Cards */
+.card{background:#fff;border:1px solid var(--gray3);border-radius:12px;overflow:hidden}
+.card-header{
+  padding:16px 20px;border-bottom:1px solid var(--gray3);
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.card-title{font-size:14px;font-weight:700;color:var(--text)}
 .card-body{padding:20px}
-/* ===== FORMS ===== */
-.form-group{margin-bottom:16px}
-.form-label{display:block;font-size:13px;font-weight:500;margin-bottom:6px;color:var(--text)}
-.form-label .req{color:var(--danger)}
-.form-control{width:100%;padding:9px 12px;border:1px solid var(--border2);border-radius:var(--radius);font-size:13px;font-family:inherit;background:#fff;color:var(--text);transition:.15s;direction:inherit}
-.form-control:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
-.form-control.error{border-color:var(--danger)}
-.form-hint{font-size:11px;color:var(--text3);margin-top:4px}
-.form-error{font-size:11px;color:var(--danger);margin-top:4px}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
-/* ===== TABLE ===== */
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat{
+  background:#fff;border:1px solid var(--gray3);border-radius:12px;
+  padding:20px;position:relative;overflow:hidden;
+}
+.stat::before{
+  content:'';position:absolute;top:0;right:0;
+  width:4px;height:100%;background:var(--stat-color,var(--blue));
+}
+.stat-label{font-size:12px;color:var(--gray);font-weight:500;margin-bottom:8px}
+.stat-value{font-size:32px;font-weight:800;color:var(--text);line-height:1}
+.stat-sub{font-size:11px;color:var(--gray2);margin-top:6px}
+
+/* Table */
 .table-wrap{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th{text-align:right;padding:10px 14px;font-size:12px;font-weight:600;color:var(--text2);border-bottom:2px solid var(--border);background:var(--bg);white-space:nowrap}
-td{padding:11px 14px;border-bottom:1px solid var(--border);vertical-align:middle}
-tr:last-child td{border-bottom:none}
-tr:hover td{background:#f8fafc}
-/* ===== BADGES ===== */
-.badge{display:inline-flex;align-items:center;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:500}
-.badge-green{background:var(--success-light);color:var(--success)}
-.badge-red{background:var(--danger-light);color:var(--danger)}
-.badge-blue{background:var(--primary-light);color:var(--primary)}
-.badge-gray{background:#f1f5f9;color:var(--text2)}
-/* ===== ALERTS ===== */
-.alert{padding:12px 16px;border-radius:var(--radius);font-size:13px;margin-bottom:16px;display:flex;align-items:flex-start;gap:8px}
-.alert-success{background:var(--success-light);color:#15803d;border:1px solid #bbf7d0}
-.alert-danger{background:var(--danger-light);color:#b91c1c;border:1px solid #fecaca}
-.alert-info{background:var(--primary-light);color:#1d4ed8;border:1px solid #bfdbfe}
-/* ===== MODAL ===== */
-.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px}
-.modal{background:#fff;border-radius:var(--radius2);width:100%;max-width:600px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.modal-header{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
-.modal-title{font-weight:600;font-size:15px}
-.modal-body{padding:20px;overflow-y:auto;flex:1}
-.modal-footer{padding:14px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:8px}
-/* ===== STATS ===== */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius2);padding:16px 20px}
-.stat-label{font-size:12px;color:var(--text2);margin-bottom:6px}
-.stat-value{font-size:28px;font-weight:700;color:var(--text);line-height:1}
-.stat-sub{font-size:11px;color:var(--text3);margin-top:4px}
-/* ===== LOGIN ===== */
-#login-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e293b 0%,#1e40af 100%)}
-.login-box{background:#fff;border-radius:16px;padding:40px;width:100%;max-width:400px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.login-logo{text-align:center;margin-bottom:32px}
-.login-logo-icon{width:56px;height:56px;background:var(--primary);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;margin-bottom:12px}
-.login-logo h1{font-size:20px;font-weight:700;color:var(--text)}
-.login-logo p{font-size:13px;color:var(--text2);margin-top:4px}
-/* ===== SEARCH BAR ===== */
-.search-bar{position:relative;flex:1;max-width:320px}
-.search-bar input{padding:8px 12px 8px 36px;border:1px solid var(--border2);border-radius:20px;font-size:13px;width:100%;background:#f8f9fa;direction:rtl}
-.search-bar input:focus{outline:none;border-color:var(--primary);background:#fff}
-.search-bar svg{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--text3)}
-/* ===== TABS ===== */
-.tabs{display:flex;gap:2px;border-bottom:2px solid var(--border);margin-bottom:20px}
-.tab-btn{padding:10px 16px;cursor:pointer;font-size:13px;font-weight:500;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s}
-.tab-btn.active{color:var(--primary);border-bottom-color:var(--primary)}
-/* ===== FILE UPLOAD ===== */
-.file-drop{border:2px dashed var(--border2);border-radius:var(--radius);padding:24px;text-align:center;cursor:pointer;transition:.15s;color:var(--text2)}
-.file-drop:hover{border-color:var(--primary);color:var(--primary);background:var(--primary-light)}
-.file-list{margin-top:12px;display:flex;flex-direction:column;gap:6px}
-.file-item{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--bg);border-radius:var(--radius);font-size:12px}
-/* ===== RESPONSIVE ===== */
-@media(max-width:768px){
-  #sidebar{position:fixed;z-index:200;height:100vh;transform:translateX(100%);transition:.3s}
-  #sidebar.open{transform:translateX(0)}
-  .form-row,.form-row-3{grid-template-columns:1fr}
+thead th{
+  padding:11px 16px;text-align:right;font-size:11px;font-weight:700;
+  color:var(--gray);text-transform:uppercase;letter-spacing:.4px;
+  background:var(--gray4);border-bottom:1px solid var(--gray3);white-space:nowrap;
+}
+tbody td{padding:13px 16px;border-bottom:1px solid var(--gray3);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover td{background:#f8fafc}
+
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.badge-green{background:var(--green-light);color:var(--green)}
+.badge-red{background:var(--red-light);color:var(--red)}
+.badge-blue{background:var(--blue-light);color:var(--blue)}
+.badge-gray{background:var(--gray3);color:var(--gray)}
+.badge-gold{background:#fef3c7;color:var(--gold2)}
+
+/* Forms */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 20px}
+.form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 20px}
+.form-full{grid-column:1/-1}
+.form-group{margin-bottom:18px}
+.form-label{
+  display:block;font-size:12px;font-weight:600;
+  color:var(--text);margin-bottom:7px;
+}
+.form-label .req{color:var(--red)}
+.form-control{
+  width:100%;padding:10px 14px;
+  border:1px solid var(--gray3);border-radius:8px;
+  font-family:var(--font);font-size:13px;color:var(--text);
+  background:#fff;transition:.15s;outline:none;
+}
+.form-control:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.form-control.err{border-color:var(--red)}
+.form-hint{font-size:11px;color:var(--gray2);margin-top:5px}
+.form-err{font-size:11px;color:var(--red);margin-top:5px}
+textarea.form-control{resize:vertical;min-height:80px}
+select.form-control{cursor:pointer}
+
+/* Tabs */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--gray3);margin-bottom:20px}
+.tab{
+  padding:10px 18px;font-size:13px;font-weight:600;color:var(--gray);
+  cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:.15s;
+}
+.tab.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-panel{display:none}.tab-panel.active{display:block}
+
+/* Modal */
+.overlay{
+  position:fixed;inset:0;background:rgba(15,31,61,.7);
+  z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;
+  backdrop-filter:blur(4px);
+}
+.overlay.show{display:flex}
+.modal{
+  background:#fff;border-radius:16px;width:100%;max-width:640px;
+  max-height:90vh;display:flex;flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,.3);animation:slideUp .25s ease;
+}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{
+  padding:18px 22px;border-bottom:1px solid var(--gray3);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.modal-title{font-size:15px;font-weight:700}
+.modal-close{
+  width:32px;height:32px;display:flex;align-items:center;justify-content:center;
+  border-radius:8px;cursor:pointer;color:var(--gray);transition:.15s;border:none;background:transparent;
+}
+.modal-close:hover{background:var(--gray4);color:var(--text)}
+.modal-body{padding:22px;overflow-y:auto;flex:1}
+.modal-footer{
+  padding:14px 22px;border-top:1px solid var(--gray3);
+  display:flex;justify-content:flex-end;gap:8px;
+}
+
+/* Alert */
+.alert{
+  padding:12px 16px;border-radius:8px;font-size:13px;
+  display:flex;align-items:flex-start;gap:8px;margin-bottom:16px;
+}
+.alert-info{background:var(--blue-light);color:var(--blue);border:1px solid #bfdbfe}
+.alert-success{background:var(--green-light);color:var(--green);border:1px solid #6ee7b7}
+.alert-danger{background:var(--red-light);color:var(--red);border:1px solid #fca5a5}
+
+/* Search */
+.search-wrap{position:relative}
+.search-wrap svg{position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gray2);pointer-events:none}
+.search-input{
+  padding:9px 38px 9px 14px;border:1px solid var(--gray3);
+  border-radius:8px;font-family:var(--font);font-size:13px;
+  width:260px;outline:none;transition:.15s;background:var(--gray4);
+}
+.search-input:focus{border-color:var(--blue);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+
+/* Page header */
+.page-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.page-hd-left h2{font-size:20px;font-weight:800;margin-bottom:2px}
+.page-hd-left p{font-size:13px;color:var(--gray)}
+
+/* Empty state */
+.empty{padding:48px 20px;text-align:center;color:var(--gray)}
+.empty-icon{font-size:40px;margin-bottom:12px;opacity:.4}
+.empty h3{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px}
+.empty p{font-size:13px}
+
+/* Spinner */
+.spin{width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .6s linear infinite;display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+
+/* Toast */
+#toast{
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);
+  background:var(--navy);color:#fff;padding:12px 22px;border-radius:10px;
+  font-size:13px;font-weight:500;z-index:9999;
+  box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;
+  transition:opacity .25s;pointer-events:none;max-width:340px;text-align:center;
+}
+#toast.show{opacity:1}
+
+/* Menu toggle (mobile) */
+.menu-toggle{display:none;padding:8px;cursor:pointer;background:transparent;border:none;color:var(--text)}
+.overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+
+/* Responsive */
+@media(max-width:900px){
+  .sidebar{position:fixed;height:100vh;transform:translateX(100%)}
+  .sidebar.open{transform:translateX(0)}
+  .menu-toggle{display:flex}
+  .overlay-bg.show{display:block}
+  .form-grid,.form-grid-3{grid-template-columns:1fr}
+  #page-content{padding:16px}
   .stats-grid{grid-template-columns:1fr 1fr}
-  #content{padding:16px}
 }
 @media(max-width:480px){
   .stats-grid{grid-template-columns:1fr}
-  .modal{margin:0;border-radius:16px 16px 0 0;max-height:95vh}
-  .modal-overlay{align-items:flex-end;padding:0}
+  .search-input{width:100%}
+  .modal{border-radius:16px 16px 0 0;max-height:95vh}
+  .overlay{align-items:flex-end;padding:0}
 }
-/* ===== MISC ===== */
-.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
-.page-title{font-size:20px;font-weight:700}
-.page-sub{font-size:13px;color:var(--text2)}
-.divider{height:1px;background:var(--border);margin:20px 0}
-.text-center{text-align:center}
-.text-muted{color:var(--text2)}
-.text-sm{font-size:12px}
-.mt-1{margin-top:6px}.mt-2{margin-top:12px}.mt-3{margin-top:20px}
-.gap-2{gap:8px}
-.hidden{display:none!important}
-.flex{display:flex}.items-center{align-items:center}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .6s linear infinite}
-@keyframes spin{to{transform:rotate(360deg)}}
-.empty-state{text-align:center;padding:48px 20px;color:var(--text2)}
-.empty-state svg{margin:0 auto 12px;opacity:.4}
-.empty-state h3{font-size:15px;font-weight:600;margin-bottom:6px;color:var(--text)}
-.empty-state p{font-size:13px}
+
+/* Field display */
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+.field-item label{font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:4px}
+.field-item span{font-size:14px;font-weight:500;color:var(--text)}
 </style>
 </head>
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo">
-      <div class="login-logo-icon">P</div>
-      <h1>Pharma ERP</h1>
-      <p>نظام إدارة المصنع الدوائي</p>
+<!-- ══════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════ -->
+<div id="screen-login" class="screen active">
+  <div class="login-card">
+    <div class="login-brand">
+      <div class="login-logo-wrap" style="display:flex;align-items:center;justify-content:center;gap:14px;flex-direction:column">
+        <div class="login-brand-icon">Q</div>
+        <div>
+          <div style="font-size:24px;font-weight:800;color:#fff;letter-spacing:-.5px">Quadra Pharma</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.4);text-align:center;margin-top:3px">نظام إدارة المصنع الدوائي</div>
+        </div>
+      </div>
     </div>
-    <div id="login-alert"></div>
-    <div class="form-group">
-      <label class="form-label">كود الشركة <span class="req">*</span></label>
-      <input class="form-control" id="inp-code" placeholder="مثال: QUAD" style="text-transform:uppercase">
+    <div id="login-err" class="login-error"></div>
+    <div class="login-field">
+      <label>كود الشركة</label>
+      <input id="f-code" placeholder="مثال: QUAD" style="text-transform:uppercase" autocomplete="organization">
     </div>
-    <div class="form-group">
-      <label class="form-label">اسم المستخدم <span class="req">*</span></label>
-      <input class="form-control" id="inp-user" placeholder="username">
+    <div class="login-field">
+      <label>اسم المستخدم</label>
+      <input id="f-user" placeholder="username" dir="ltr" autocomplete="username">
     </div>
-    <div class="form-group">
-      <label class="form-label">كلمة المرور <span class="req">*</span></label>
-      <input class="form-control" type="password" id="inp-pass" placeholder="••••••••">
+    <div class="login-field">
+      <label>كلمة المرور</label>
+      <input id="f-pass" type="password" placeholder="••••••••" dir="ltr" autocomplete="current-password">
     </div>
-    <button class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px" onclick="doLogin()">
-      <span id="login-btn-text">دخول</span>
-    </button>
-    <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center">
-      <p class="text-sm text-muted">أول مرة؟</p>
-      <button class="btn btn-outline btn-sm" style="margin-top:6px;width:100%;justify-content:center" onclick="showRegisterModal()">إنشاء شركة جديدة</button>
-    </div>
+    <button class="btn-login" id="btn-login" onclick="doLogin()">دخول</button>
+    <div class="login-divider">أو</div>
+    <button class="btn-register" onclick="openModal('modal-reg')">إنشاء شركة جديدة</button>
   </div>
 </div>
 
-<!-- MAIN APP -->
-<div id="app" style="display:none">
+<!-- ══════════════════════════════
+     APP SCREEN
+══════════════════════════════ -->
+<div id="screen-app" class="screen">
+  <div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
+
   <!-- Sidebar -->
-  <nav id="sidebar">
-    <div class="sb-logo">
-      <div class="sb-logo-icon">P</div>
-      <div class="sb-logo-text">Pharma ERP</div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sb-brand">
+      <div class="sb-brand-icon">Q</div>
+      <div class="sb-brand-text">
+        <div class="sb-brand-name">Quadra Pharma</div>
+        <div class="sb-brand-sub">ERP System</div>
+      </div>
     </div>
-    <div class="sb-company" id="sb-company-name">—</div>
+    <div class="sb-company">
+      <div class="sb-company-label">الشركة الحالية</div>
+      <div class="sb-company-name" id="sb-co-name">—</div>
+    </div>
     <div class="sb-nav">
       <div class="sb-section">الرئيسية</div>
-      <a class="sb-item active" onclick="navigate('dashboard')">
+      <div class="sb-item active" id="nav-dashboard" onclick="go('dashboard')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        <span>لوحة التحكم</span>
-      </a>
+        لوحة التحكم
+      </div>
+
       <div class="sb-section">الإعدادات</div>
-      <a class="sb-item" onclick="navigate('company')">
+      <div class="sb-item" id="nav-company" onclick="go('company')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-        <span>بيانات الشركة</span>
-      </a>
-      <a class="sb-item" onclick="navigate('users')">
+        بيانات الشركة
+      </div>
+      <div class="sb-item" id="nav-users" onclick="go('users')">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-        <span>المستخدمون</span>
-      </a>
-      <div class="sb-section">المواد — قريباً</div>
-      <a class="sb-item" style="opacity:.4;pointer-events:none">
+        المستخدمون
+      </div>
+
+      <div class="sb-section">الإنتاج</div>
+      <div class="sb-item disabled">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
-        <span>المواد الخام</span>
-      </a>
-      <a class="sb-item" style="opacity:.4;pointer-events:none">
+        المواد الخام
+        <span class="sb-badge">قريباً</span>
+      </div>
+      <div class="sb-item disabled">
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>
-        <span>المنتجات</span>
-      </a>
+        المنتجات
+        <span class="sb-badge">قريباً</span>
+      </div>
+      <div class="sb-item disabled">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+        سجلات الإنتاج
+        <span class="sb-badge">قريباً</span>
+      </div>
     </div>
-    <div style="padding:12px 16px;border-top:1px solid #334155">
-      <button class="btn btn-sm" style="width:100%;justify-content:center;background:#334155;color:#94a3b8;border:none" onclick="doLogout()">تسجيل الخروج</button>
+    <div class="sb-footer">
+      <div class="sb-user">
+        <div class="sb-user-avatar" id="sb-avatar">؟</div>
+        <div>
+          <div class="sb-user-name" id="sb-uname">—</div>
+          <div class="sb-user-role" id="sb-urole">—</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">تسجيل الخروج</button>
     </div>
   </nav>
 
   <!-- Main -->
-  <div id="main">
-    <div id="topbar">
-      <div class="topbar-left">
-        <button class="btn btn-icon btn-outline" onclick="toggleSidebar()" style="display:none" id="menu-btn">
-          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  <div class="main">
+    <header class="topbar">
+      <div style="display:flex;align-items:center;gap:12px">
+        <button class="menu-toggle" onclick="openSidebar()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
         </button>
-        <span class="topbar-title" id="topbar-title">لوحة التحكم</span>
+        <span class="topbar-title" id="page-title">لوحة التحكم</span>
       </div>
-      <div class="topbar-right">
-        <div class="user-badge">
-          <div class="user-avatar" id="topbar-avatar">؟</div>
-          <span id="topbar-username" style="font-size:13px"></span>
-        </div>
-      </div>
-    </div>
-    <div id="content"></div>
+    </header>
+    <div id="page-content"></div>
   </div>
 </div>
 
-<!-- MODALS -->
-<div id="modal-container"></div>
+<!-- ══════════════════════════════
+     MODALS
+══════════════════════════════ -->
+
+<!-- Register Company -->
+<div class="overlay" id="modal-reg">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">إنشاء شركة جديدة</span>
+      <button class="modal-close" onclick="closeModal('modal-reg')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="alert alert-info">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        سيتم إنشاء حساب المدير تلقائياً مع الشركة
+      </div>
+      <p style="font-size:13px;font-weight:700;margin-bottom:14px;color:var(--gray)">بيانات الشركة</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">كود الشركة <span class="req">*</span></label>
+          <input class="form-control" id="r-code" placeholder="QUAD" maxlength="20" style="text-transform:uppercase;direction:ltr">
+          <div class="form-hint">حروف وأرقام فقط، بدون مسافات</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">اسم الشركة بالعربي <span class="req">*</span></label>
+          <input class="form-control" id="r-name" placeholder="شركة كوادرا فارما">
+        </div>
+        <div class="form-group">
+          <label class="form-label">رقم الترخيص</label>
+          <input class="form-control" id="r-license" placeholder="رقم الترخيص الصناعي">
+        </div>
+        <div class="form-group">
+          <label class="form-label">المدينة</label>
+          <input class="form-control" id="r-city" value="Cairo">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الهاتف</label>
+          <input class="form-control" id="r-phone" placeholder="0223456789" dir="ltr">
+        </div>
+        <div class="form-group">
+          <label class="form-label">البريد الإلكتروني</label>
+          <input class="form-control" id="r-email" type="email" placeholder="info@company.com" dir="ltr">
+        </div>
+      </div>
+      <div style="height:1px;background:var(--gray3);margin:4px 0 18px"></div>
+      <p style="font-size:13px;font-weight:700;margin-bottom:14px;color:var(--gray)">بيانات المدير</p>
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">الاسم <span class="req">*</span></label>
+          <input class="form-control" id="r-aname" placeholder="مدير النظام">
+        </div>
+        <div class="form-group">
+          <label class="form-label">اسم المستخدم <span class="req">*</span></label>
+          <input class="form-control" id="r-auser" placeholder="admin" dir="ltr">
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">كلمة المرور <span class="req">*</span></label>
+          <input class="form-control" id="r-apass" type="password" placeholder="8 أحرف على الأقل" dir="ltr">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-reg')">إلغاء</button>
+      <button class="btn btn-primary" id="btn-reg" onclick="doRegister()">إنشاء الشركة</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add/Edit User -->
+<div class="overlay" id="modal-user">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modal-user-title">إضافة مستخدم</span>
+      <button class="modal-close" onclick="closeModal('modal-user')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="u-id">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">الاسم بالعربي <span class="req">*</span></label>
+          <input class="form-control" id="u-name" placeholder="محمد أحمد">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الاسم بالإنجليزي</label>
+          <input class="form-control" id="u-name-en" placeholder="Mohamed Ahmed" dir="ltr">
+        </div>
+        <div class="form-group">
+          <label class="form-label">اسم المستخدم <span class="req">*</span></label>
+          <input class="form-control" id="u-user" placeholder="m.ahmed" dir="ltr">
+        </div>
+        <div class="form-group">
+          <label class="form-label" id="u-pass-label">كلمة المرور <span class="req">*</span></label>
+          <input class="form-control" id="u-pass" type="password" placeholder="8 أحرف على الأقل" dir="ltr">
+          <div class="form-hint" id="u-pass-hint" style="display:none">اتركها فارغة للإبقاء على الحالية</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">الدور</label>
+          <select class="form-control" id="u-role">
+            <option value="user">مستخدم</option>
+            <option value="admin">مدير النظام</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">القسم</label>
+          <input class="form-control" id="u-dept" placeholder="مثال: الجودة، الإنتاج">
+        </div>
+        <div class="form-group">
+          <label class="form-label">المسمى الوظيفي</label>
+          <input class="form-control" id="u-title" placeholder="مدير الجودة">
+        </div>
+        <div class="form-group">
+          <label class="form-label">رقم الموظف</label>
+          <input class="form-control" id="u-empcode" placeholder="EMP-001" dir="ltr">
+        </div>
+        <div class="form-group">
+          <label class="form-label">الهاتف</label>
+          <input class="form-control" id="u-phone" dir="ltr">
+        </div>
+        <div class="form-group">
+          <label class="form-label">البريد الإلكتروني</label>
+          <input class="form-control" id="u-email" type="email" dir="ltr">
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-user')">إلغاء</button>
+      <button class="btn btn-primary" id="btn-save-user" onclick="saveUser()">حفظ</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Company -->
+<div class="overlay" id="modal-co">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">تعديل بيانات الشركة</span>
+      <button class="modal-close" onclick="closeModal('modal-co')">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="tabs">
+        <div class="tab active" onclick="switchTab(this,'co-basic')">الأساسية</div>
+        <div class="tab" onclick="switchTab(this,'co-reg')">التنظيمية</div>
+        <div class="tab" onclick="switchTab(this,'co-contact')">التواصل</div>
+      </div>
+      <div id="co-basic" class="tab-panel active">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">الاسم بالعربي <span class="req">*</span></label>
+            <input class="form-control" id="co-nameAr">
+          </div>
+          <div class="form-group">
+            <label class="form-label">الاسم بالإنجليزي</label>
+            <input class="form-control" id="co-nameEn" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label class="form-label">المدينة</label>
+            <input class="form-control" id="co-city">
+          </div>
+          <div class="form-group">
+            <label class="form-label">الدولة</label>
+            <input class="form-control" id="co-country">
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">العنوان</label>
+            <textarea class="form-control" id="co-addr" rows="2"></textarea>
+          </div>
+        </div>
+      </div>
+      <div id="co-reg" class="tab-panel">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">رقم الترخيص</label>
+            <input class="form-control" id="co-lic" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label class="form-label">تاريخ انتهاء الترخيص</label>
+            <input class="form-control" id="co-lic-exp" type="date">
+          </div>
+          <div class="form-group">
+            <label class="form-label">الرقم الضريبي</label>
+            <input class="form-control" id="co-tax" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label class="form-label">كود هيئة الدواء EDA</label>
+            <input class="form-control" id="co-eda" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label class="form-label">شهادة GMP</label>
+            <input class="form-control" id="co-gmp" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label class="form-label">انتهاء GMP</label>
+            <input class="form-control" id="co-gmp-exp" type="date">
+          </div>
+        </div>
+      </div>
+      <div id="co-contact" class="tab-panel">
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">الهاتف</label>
+            <input class="form-control" id="co-phone" dir="ltr">
+          </div>
+          <div class="form-group">
+            <label class="form-label">البريد الإلكتروني</label>
+            <input class="form-control" id="co-email" type="email" dir="ltr">
+          </div>
+          <div class="form-group form-full">
+            <label class="form-label">الموقع الإلكتروني</label>
+            <input class="form-control" id="co-web" dir="ltr" placeholder="https://...">
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-co')">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveCompany()">حفظ التعديلات</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
 
 <script>
-// ============================================================
-// DATABASE — IndexedDB (غير محدودة الحجم)
-// ============================================================
-const DB_NAME = 'pharma_erp';
-const DB_VER  = 1;
-let db;
-
-function openDB() {
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(DB_NAME, DB_VER);
-    req.onupgradeneeded = e => {
-      const d = e.target.result;
-      // companies
-      if (!d.objectStoreNames.contains('companies')) {
-        const cs = d.createObjectStore('companies', { keyPath: 'id' });
-        cs.createIndex('code', 'code', { unique: true });
+// ════════════════════════════════════════
+// DATABASE — IndexedDB
+// ════════════════════════════════════════
+let DB;
+function openDB(){
+  return new Promise((ok,fail)=>{
+    const r=indexedDB.open('pharma_erp',1);
+    r.onupgradeneeded=e=>{
+      const d=e.target.result;
+      if(!d.objectStoreNames.contains('companies')){
+        const s=d.createObjectStore('companies',{keyPath:'id'});
+        s.createIndex('code','code',{unique:true});
       }
-      // users
-      if (!d.objectStoreNames.contains('users')) {
-        const us = d.createObjectStore('users', { keyPath: 'id' });
-        us.createIndex('company_username', ['companyId','username'], { unique: true });
-        us.createIndex('companyId', 'companyId');
+      if(!d.objectStoreNames.contains('users')){
+        const s=d.createObjectStore('users',{keyPath:'id'});
+        s.createIndex('co_user',['companyId','username'],{unique:true});
+        s.createIndex('companyId','companyId');
       }
-      // sessions
-      if (!d.objectStoreNames.contains('sessions')) {
-        const ss = d.createObjectStore('sessions', { keyPath: 'id' });
-      }
-      // audit_log
-      if (!d.objectStoreNames.contains('audit_log')) {
-        const al = d.createObjectStore('audit_log', { keyPath: 'id', autoIncrement: true });
-        al.createIndex('companyId', 'companyId');
+      if(!d.objectStoreNames.contains('audit')){
+        const s=d.createObjectStore('audit',{keyPath:'id',autoIncrement:true});
+        s.createIndex('companyId','companyId');
       }
     };
-    req.onsuccess = e => { db = e.target.result; res(db); };
-    req.onerror   = e => rej(e.target.error);
+    r.onsuccess=e=>{DB=e.target.result;ok()};
+    r.onerror=e=>fail(e.target.error);
   });
 }
+const p=r=>new Promise((ok,fail)=>{r.onsuccess=e=>ok(e.target.result);r.onerror=e=>fail(e.target.error)});
+const dbGet=(st,k)=>p(DB.transaction(st).objectStore(st).get(k));
+const dbGetAll=(st,idx,k)=>{const s=DB.transaction(st).objectStore(st);return p(idx?s.index(idx).getAll(k):s.getAll())};
+const dbPut=(st,o)=>p(DB.transaction(st,'readwrite').objectStore(st).put(o));
+const uid=()=>crypto.randomUUID();
+const now=()=>new Date().toISOString();
+const fmt=d=>d?new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'long',day:'numeric'}):'—';
+const fmtDt=d=>d?new Date(d).toLocaleString('ar-EG',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const val=id=>(document.getElementById(id)?.value??'').trim();
+const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};
 
-function txn(stores, mode='readonly') {
-  return db.transaction(stores, mode);
-}
-function store(name, mode='readonly') {
-  return txn(name, mode).objectStore(name);
-}
-function idbReq(req) {
-  return new Promise((res, rej) => { req.onsuccess=e=>res(e.target.result); req.onerror=e=>rej(e.target.error); });
-}
-function getAll(storeName, indexName, key) {
-  const s = store(storeName);
-  const src = indexName ? s.index(indexName) : s;
-  return idbReq(key !== undefined ? src.getAll(key) : src.getAll());
-}
-function getOne(storeName, key) { return idbReq(store(storeName).get(key)); }
-function putOne(storeName, obj) { return idbReq(store(storeName,'readwrite').put(obj)); }
-function deleteOne(storeName, key) { return idbReq(store(storeName,'readwrite').delete(key)); }
-
-// ============================================================
-// UTILS
-// ============================================================
-const uid  = () => crypto.randomUUID();
-const now  = () => new Date().toISOString();
-const hashPw = async pw => {
-  const enc = new TextEncoder().encode(pw + 'pharma_salt_2024');
-  const buf = await crypto.subtle.digest('SHA-256', enc);
+async function hashPw(pw){
+  const enc=new TextEncoder().encode(pw+'qp_salt_2025');
+  const buf=await crypto.subtle.digest('SHA-256',enc);
   return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
-};
-const verifyPw = async (pw, hash) => (await hashPw(pw)) === hash;
-const fmt = d => d ? new Date(d).toLocaleDateString('ar-EG') : '—';
-const fmtDt = d => d ? new Date(d).toLocaleString('ar-EG') : '—';
-const esc = s => String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+const chkPw=async(pw,h)=>(await hashPw(pw))===h;
 
-let SESSION = null; // { companyId, userId, nameAr, companyNameAr, role }
-
-async function auditLog(action, module, recordId, data) {
-  if (!SESSION) return;
-  await putOne('audit_log', { companyId: SESSION.companyId, userId: SESSION.userId, action, module, recordId: recordId||null, data: data||null, createdAt: now() });
+async function audit(action,module,recordId){
+  if(!S)return;
+  await dbPut('audit',{companyId:S.companyId,userId:S.userId,nameAr:S.nameAr,action,module,recordId:recordId??null,at:now()});
 }
 
-// ============================================================
+// ════════════════════════════════════════
+// SESSION
+// ════════════════════════════════════════
+let S=null;
+
+// ════════════════════════════════════════
 // AUTH
-// ============================================================
-async function doLogin() {
-  const code = document.getElementById('inp-code').value.trim().toUpperCase();
-  const username = document.getElementById('inp-user').value.trim();
-  const password = document.getElementById('inp-pass').value;
-  const alertEl = document.getElementById('login-alert');
-  const btn = document.getElementById('login-btn-text');
-  alertEl.innerHTML = '';
-  if (!code || !username || !password) { showAlert(alertEl, 'danger', 'جميع الحقول مطلوبة'); return; }
-  btn.innerHTML = '<span class="spinner"></span>';
-  try {
-    // find company
-    const companies = await getAll('companies');
-    const company = companies.find(c => c.code === code && !c.deletedAt);
-    if (!company) { showAlert(alertEl,'danger','كود الشركة غير صحيح'); btn.textContent='دخول'; return; }
-    if (!company.isActive) { showAlert(alertEl,'danger','هذه الشركة موقوفة'); btn.textContent='دخول'; return; }
-    // find user
-    const users = await getAll('users','companyId', company.id);
-    const user = users.find(u => u.username === username && !u.deletedAt);
-    if (!user) { showAlert(alertEl,'danger','اسم المستخدم أو كلمة المرور غير صحيحة'); btn.textContent='دخول'; return; }
-    if (!user.isActive) { showAlert(alertEl,'danger','هذا الحساب موقوف'); btn.textContent='دخول'; return; }
-    // check locked
-    if (user.lockedUntil && new Date(user.lockedUntil) > new Date()) {
-      showAlert(alertEl,'danger','الحساب مقفل مؤقتاً، حاول بعد 30 دقيقة'); btn.textContent='دخول'; return;
+// ════════════════════════════════════════
+async function doLogin(){
+  const code=val('f-code').toUpperCase(),user=val('f-user'),pass=val('f-pass');
+  const err=document.getElementById('login-err');
+  err.classList.remove('show');
+  if(!code||!user||!pass){showErr(err,'يرجى ملء جميع الحقول');return}
+  const btn=document.getElementById('btn-login');
+  btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    const cos=await dbGetAll('companies');
+    const co=cos.find(c=>c.code===code&&!c.deletedAt);
+    if(!co){showErr(err,'كود الشركة غير صحيح');return}
+    if(!co.isActive){showErr(err,'هذه الشركة موقوفة');return}
+    const users=await dbGetAll('users','companyId',co.id);
+    const u=users.find(u=>u.username===user&&!u.deletedAt);
+    if(!u){showErr(err,'اسم المستخدم أو كلمة المرور غير صحيحة');return}
+    if(!u.isActive){showErr(err,'هذا الحساب موقوف، تواصل مع المدير');return}
+    if(u.lockedUntil&&new Date(u.lockedUntil)>new Date()){showErr(err,'الحساب مقفل مؤقتاً لمدة 30 دقيقة');return}
+    const ok=await chkPw(pass,u.passwordHash);
+    if(!ok){
+      u.failedAttempts=(u.failedAttempts||0)+1;
+      if(u.failedAttempts>=5)u.lockedUntil=new Date(Date.now()+30*60000).toISOString();
+      await dbPut('users',u);
+      const left=5-u.failedAttempts;
+      showErr(err,'كلمة المرور غير صحيحة'+(left>0?` — ${left} محاولات متبقية`:''));
+      return;
     }
-    // verify password
-    const ok = await verifyPw(password, user.passwordHash);
-    if (!ok) {
-      const failed = (user.failedAttempts||0) + 1;
-      user.failedAttempts = failed;
-      if (failed >= 5) user.lockedUntil = new Date(Date.now() + 30*60*1000).toISOString();
-      await putOne('users', user);
-      showAlert(alertEl,'danger','كلمة المرور غير صحيحة' + (failed>=3 ? ` (${5-failed} محاولات متبقية)` : '')); btn.textContent='دخول'; return;
-    }
-    // reset failed + update last login
-    user.failedAttempts = 0; user.lockedUntil = null; user.lastLogin = now();
-    await putOne('users', user);
-    // create session
-    SESSION = { companyId: company.id, userId: user.id, nameAr: user.nameAr, companyNameAr: company.nameAr, role: user.role };
-    sessionStorage.setItem('pharma_session', JSON.stringify(SESSION));
-    await auditLog('LOGIN','auth', user.id);
+    u.failedAttempts=0;u.lockedUntil=null;u.lastLogin=now();
+    await dbPut('users',u);
+    S={companyId:co.id,userId:u.id,nameAr:u.nameAr,companyNameAr:co.nameAr,role:u.role};
+    sessionStorage.setItem('S',JSON.stringify(S));
+    await audit('LOGIN','auth',u.id);
     startApp();
-  } catch(e) {
-    console.error(e); showAlert(alertEl,'danger','خطأ غير متوقع: '+e.message);
-  }
-  btn.textContent = 'دخول';
+  }catch(e){showErr(err,'خطأ: '+e.message)}
+  btn.innerHTML='دخول';btn.disabled=false;
 }
 
-async function doLogout() {
-  await auditLog('LOGOUT','auth', SESSION?.userId);
-  SESSION = null;
-  sessionStorage.removeItem('pharma_session');
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('inp-pass').value = '';
+function showErr(el,msg){el.textContent=msg;el.classList.add('show')}
+
+async function doLogout(){
+  await audit('LOGOUT','auth',S?.userId);
+  S=null;sessionStorage.removeItem('S');
+  document.getElementById('screen-app').classList.remove('active');
+  document.getElementById('screen-login').classList.add('active');
+  document.getElementById('f-pass').value='';
+  document.getElementById('login-err').classList.remove('show');
 }
 
-function startApp() {
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  document.getElementById('sb-company-name').textContent = SESSION.companyNameAr;
-  const av = SESSION.nameAr.charAt(0);
-  document.getElementById('topbar-avatar').textContent = av;
-  document.getElementById('topbar-username').textContent = SESSION.nameAr;
-  navigate('dashboard');
+async function doRegister(){
+  const code=val('r-code').toUpperCase(),name=val('r-name');
+  const aname=val('r-aname'),auser=val('r-auser'),apass=val('r-apass');
+  if(!code||!name||!aname||!auser||!apass){toast('يرجى ملء جميع الحقول المطلوبة','err');return}
+  if(!/^[A-Z0-9]+$/.test(code)){toast('كود الشركة: حروف إنجليزية وأرقام فقط','err');return}
+  if(apass.length<8){toast('كلمة المرور يجب أن تكون 8 أحرف على الأقل','err');return}
+  const cos=await dbGetAll('companies');
+  if(cos.find(c=>c.code===code)){toast('كود الشركة موجود بالفعل','err');return}
+  const btn=document.getElementById('btn-reg');
+  btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    const coId=uid(),uId=uid();
+    await dbPut('companies',{id:coId,code,nameAr:name,nameEn:'',licenseNumber:val('r-license'),city:val('r-city'),country:'Egypt',phone:val('r-phone'),email:val('r-email'),isActive:true,createdAt:now(),updatedAt:now()});
+    await dbPut('users',{id:uId,companyId:coId,nameAr:aname,nameEn:'',username:auser,passwordHash:await hashPw(apass),role:'admin',isActive:true,failedAttempts:0,createdAt:now(),updatedAt:now()});
+    closeModal('modal-reg');
+    toast('تم إنشاء الشركة بنجاح — يمكنك تسجيل الدخول الآن');
+    set('f-code',code);set('f-user',auser);
+    ['r-code','r-name','r-license','r-city','r-phone','r-email','r-aname','r-auser','r-apass'].forEach(id=>set(id,''));
+    set('r-city','Cairo');
+  }catch(e){toast('خطأ: '+e.message,'err')}
+  btn.innerHTML='إنشاء الشركة';btn.disabled=false;
 }
 
-// ============================================================
-// NAVIGATION
-// ============================================================
-const PAGE_TITLES = { dashboard:'لوحة التحكم', company:'بيانات الشركة', users:'المستخدمون' };
-let currentPage = '';
-
-function navigate(page) {
-  currentPage = page;
-  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.sb-item').forEach(el => { if(el.getAttribute('onclick')?.includes(`'${page}'`)) el.classList.add('active'); });
-  document.getElementById('topbar-title').textContent = PAGE_TITLES[page] || page;
-  const c = document.getElementById('content');
-  if (page==='dashboard') renderDashboard(c);
-  else if (page==='company') renderCompany(c);
-  else if (page==='users') renderUsers(c);
-  // mobile: close sidebar
-  document.getElementById('sidebar').classList.remove('open');
+// ════════════════════════════════════════
+// APP
+// ════════════════════════════════════════
+function startApp(){
+  document.getElementById('screen-login').classList.remove('active');
+  document.getElementById('screen-app').classList.add('active');
+  document.getElementById('sb-co-name').textContent=S.companyNameAr;
+  document.getElementById('sb-uname').textContent=S.nameAr;
+  document.getElementById('sb-urole').textContent=S.role==='admin'?'مدير النظام':'مستخدم';
+  document.getElementById('sb-avatar').textContent=S.nameAr.charAt(0);
+  go('dashboard');
 }
 
-// ============================================================
-// PAGE: DASHBOARD
-// ============================================================
-async function renderDashboard(c) {
-  const users = await getAll('users','companyId', SESSION.companyId);
-  const activeUsers = users.filter(u=>u.isActive && !u.deletedAt).length;
-  const company = await getOne('companies', SESSION.companyId);
-  const logs = await getAll('audit_log','companyId', SESSION.companyId);
-  const recentLogs = logs.slice(-5).reverse();
+const TITLES={dashboard:'لوحة التحكم',company:'بيانات الشركة',users:'المستخدمون'};
+function go(page){
+  document.querySelectorAll('.sb-item').forEach(el=>el.classList.remove('active'));
+  const nav=document.getElementById('nav-'+page);
+  if(nav)nav.classList.add('active');
+  document.getElementById('page-title').textContent=TITLES[page]||page;
+  const c=document.getElementById('page-content');
+  if(page==='dashboard')renderDashboard(c);
+  else if(page==='company')renderCompany(c);
+  else if(page==='users')renderUsers(c);
+  closeSidebar();
+}
 
-  c.innerHTML = `
-  <div class="page-header">
-    <div><div class="page-title">مرحباً، ${esc(SESSION.nameAr)}</div>
-    <div class="page-sub">${company ? esc(company.nameAr) : ''}</div></div>
-  </div>
-  <div class="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">المستخدمون النشطون</div>
-      <div class="stat-value">${activeUsers}</div>
-      <div class="stat-sub">من إجمالي ${users.filter(u=>!u.deletedAt).length}</div>
+// ════════════════════════════════════════
+// DASHBOARD
+// ════════════════════════════════════════
+async function renderDashboard(c){
+  const users=await dbGetAll('users','companyId',S.companyId);
+  const active=users.filter(u=>u.isActive&&!u.deletedAt);
+  const co=await dbGet('companies',S.companyId);
+  const logs=await dbGetAll('audit','companyId',S.companyId);
+  const recent=logs.slice(-6).reverse();
+  c.innerHTML=`
+  <div style="padding-bottom:4px">
+    <div class="page-hd">
+      <div class="page-hd-left">
+        <h2>مرحباً، ${esc(S.nameAr)}</h2>
+        <p>${esc(S.companyNameAr)}</p>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">المواد الخام</div>
-      <div class="stat-value" style="color:var(--text3)">—</div>
-      <div class="stat-sub">قريباً — المرحلة 2</div>
+    <div class="stats-grid">
+      <div class="stat" style="--stat-color:var(--blue)">
+        <div class="stat-label">المستخدمون النشطون</div>
+        <div class="stat-value">${active.length}</div>
+        <div class="stat-sub">من إجمالي ${users.filter(u=>!u.deletedAt).length} مستخدم</div>
+      </div>
+      <div class="stat" style="--stat-color:var(--gold)">
+        <div class="stat-label">المواد الخام</div>
+        <div class="stat-value" style="font-size:20px;color:var(--gray2);padding-top:6px">قريباً</div>
+        <div class="stat-sub">المرحلة الثانية</div>
+      </div>
+      <div class="stat" style="--stat-color:var(--green)">
+        <div class="stat-label">أوامر الإنتاج</div>
+        <div class="stat-value" style="font-size:20px;color:var(--gray2);padding-top:6px">قريباً</div>
+        <div class="stat-sub">المرحلة الرابعة</div>
+      </div>
+      <div class="stat" style="--stat-color:var(--navy3)">
+        <div class="stat-label">سجلات النشاط</div>
+        <div class="stat-value">${logs.length}</div>
+        <div class="stat-sub">إجمالي العمليات</div>
+      </div>
     </div>
-    <div class="stat-card">
-      <div class="stat-label">أوامر الإنتاج</div>
-      <div class="stat-value" style="color:var(--text3)">—</div>
-      <div class="stat-sub">قريباً — المرحلة 4</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">سجلات النشاط</div>
-      <div class="stat-value">${logs.length}</div>
-      <div class="stat-sub">إجمالي العمليات</div>
-    </div>
-  </div>
-  <div class="card">
-    <div class="card-header"><span class="card-title">آخر الأنشطة</span></div>
-    <div class="card-body">
-      ${recentLogs.length ? `<table><thead><tr><th>العملية</th><th>الوحدة</th><th>التاريخ</th></tr></thead><tbody>
-      ${recentLogs.map(l=>`<tr><td><span class="badge badge-blue">${esc(l.action)}</span></td><td>${esc(l.module)}</td><td class="text-sm text-muted">${fmtDt(l.createdAt)}</td></tr>`).join('')}
-      </tbody></table>` : '<div class="empty-state"><p>لا توجد سجلات بعد</p></div>'}
+    <div class="card">
+      <div class="card-header">
+        <span class="card-title">آخر الأنشطة</span>
+      </div>
+      ${recent.length?`<div class="table-wrap"><table>
+        <thead><tr><th>المستخدم</th><th>العملية</th><th>الوحدة</th><th>التاريخ والوقت</th></tr></thead>
+        <tbody>
+          ${recent.map(l=>`<tr>
+            <td style="font-weight:500">${esc(l.nameAr||'—')}</td>
+            <td><span class="badge badge-blue">${esc(l.action)}</span></td>
+            <td><span style="font-size:12px;color:var(--gray)">${esc(l.module)}</span></td>
+            <td style="font-size:12px;color:var(--gray)">${fmtDt(l.at)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>`:
+      `<div class="empty"><div class="empty-icon">📋</div><h3>لا توجد أنشطة بعد</h3><p>ستظهر هنا سجلات جميع العمليات</p></div>`}
     </div>
   </div>`;
 }
 
-// ============================================================
-// PAGE: COMPANY
-// ============================================================
-async function renderCompany(c) {
-  const company = await getOne('companies', SESSION.companyId);
-  c.innerHTML = `
-  <div class="page-header">
-    <div class="page-title">بيانات الشركة</div>
-    <button class="btn btn-primary" onclick="editCompany()">تعديل البيانات</button>
-  </div>
-  <div class="card">
-    <div class="card-header">
-      <span class="card-title">المعلومات الأساسية</span>
-      <span class="badge ${company.isActive?'badge-green':'badge-red'}">${company.isActive?'نشطة':'موقوفة'}</span>
+// ════════════════════════════════════════
+// COMPANY
+// ════════════════════════════════════════
+async function renderCompany(c){
+  const co=await dbGet('companies',S.companyId);
+  c.innerHTML=`
+  <div class="page-hd">
+    <div class="page-hd-left">
+      <h2>بيانات الشركة</h2>
+      <p>المعلومات الأساسية والتنظيمية</p>
     </div>
-    <div class="card-body">
-      <div class="form-row">
-        ${field('كود الشركة', company.code)}
-        ${field('الاسم بالعربي', company.nameAr)}
-        ${field('الاسم بالإنجليزي', company.nameEn)}
-        ${field('رقم الترخيص', company.licenseNumber)}
-        ${field('تاريخ انتهاء الترخيص', fmt(company.licenseExpiry))}
-        ${field('الرقم الضريبي', company.taxNumber)}
-        ${field('رقم EDA', company.edaCode)}
-        ${field('شهادة GMP', company.gmpCertificate)}
-        ${field('انتهاء GMP', fmt(company.gmpExpiry))}
-        ${field('الدولة', company.country)}
-        ${field('المدينة', company.city)}
-        ${field('الهاتف', company.phone)}
-        ${field('البريد الإلكتروني', company.email)}
-        ${field('الموقع الإلكتروني', company.website)}
+    <button class="btn btn-primary" onclick="editCompany()">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+      تعديل
+    </button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+    <div class="card">
+      <div class="card-header"><span class="card-title">المعلومات الأساسية</span><span class="badge ${co.isActive?'badge-green':'badge-red'}">${co.isActive?'نشطة':'موقوفة'}</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+        ${fi('الكود',co.code)}${fi('الاسم بالعربي',co.nameAr)}${fi('الاسم بالإنجليزي',co.nameEn)}
+        ${fi('المدينة',co.city)}${fi('الدولة',co.country)}${fi('العنوان',co.addressAr)}
       </div>
-      <div class="divider"></div>
-      <div class="form-row">
-        ${field('العنوان بالعربي', company.addressAr, true)}
-        ${field('العنوان بالإنجليزي', company.addressEn, true)}
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">البيانات التنظيمية</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+        ${fi('رقم الترخيص',co.licenseNumber)}${fi('انتهاء الترخيص',fmt(co.licenseExpiry))}
+        ${fi('الرقم الضريبي',co.taxNumber)}${fi('كود هيئة الدواء',co.edaCode)}
+        ${fi('شهادة GMP',co.gmpCertificate)}${fi('انتهاء GMP',fmt(co.gmpExpiry))}
       </div>
-      <p class="text-sm text-muted mt-2">تاريخ الإنشاء: ${fmtDt(company.createdAt)}</p>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">بيانات التواصل</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+        ${fi('الهاتف',co.phone)}${fi('البريد الإلكتروني',co.email)}${fi('الموقع الإلكتروني',co.website)}
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-header"><span class="card-title">معلومات النظام</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+        ${fi('تاريخ الإنشاء',fmtDt(co.createdAt))}${fi('آخر تحديث',fmtDt(co.updatedAt))}
+      </div>
     </div>
   </div>`;
 }
 
-function field(label, value, full) {
-  return `<div${full?' style="grid-column:1/-1"':''}><div class="text-sm text-muted">${esc(label)}</div><div style="font-weight:500;margin-top:2px">${esc(value)||'—'}</div></div>`;
+function fi(label,value){
+  return `<div><div style="font-size:11px;color:var(--gray);font-weight:600;text-transform:uppercase;letter-spacing:.3px;margin-bottom:3px">${esc(label)}</div><div style="font-size:14px;font-weight:500">${esc(value)||'<span style="color:var(--gray2)">—</span>'}</div></div>`;
 }
 
-async function editCompany() {
-  const company = await getOne('companies', SESSION.companyId);
-  showModal('تعديل بيانات الشركة', `
-    <div class="tabs"><div class="tab-btn active" onclick="switchTab(this,'tab-basic')">الأساسية</div><div class="tab-btn" onclick="switchTab(this,'tab-regulatory')">التنظيمية</div><div class="tab-btn" onclick="switchTab(this,'tab-contact')">التواصل</div></div>
-    <div id="tab-basic">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">الاسم بالعربي <span class="req">*</span></label><input class="form-control" id="ec-nameAr" value="${esc(company.nameAr||'')}"></div>
-        <div class="form-group"><label class="form-label">الاسم بالإنجليزي</label><input class="form-control" id="ec-nameEn" value="${esc(company.nameEn||'')}"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">المدينة</label><input class="form-control" id="ec-city" value="${esc(company.city||'')}"></div>
-        <div class="form-group"><label class="form-label">الدولة</label><input class="form-control" id="ec-country" value="${esc(company.country||'Egypt')}"></div>
-      </div>
-      <div class="form-group"><label class="form-label">العنوان بالعربي</label><textarea class="form-control" id="ec-addressAr" rows="2">${esc(company.addressAr||'')}</textarea></div>
-    </div>
-    <div id="tab-regulatory" class="hidden">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">رقم الترخيص</label><input class="form-control" id="ec-licenseNumber" value="${esc(company.licenseNumber||'')}"></div>
-        <div class="form-group"><label class="form-label">تاريخ انتهاء الترخيص</label><input class="form-control" type="date" id="ec-licenseExpiry" value="${company.licenseExpiry||''}"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">الرقم الضريبي</label><input class="form-control" id="ec-taxNumber" value="${esc(company.taxNumber||'')}"></div>
-        <div class="form-group"><label class="form-label">كود EDA</label><input class="form-control" id="ec-edaCode" value="${esc(company.edaCode||'')}"></div>
-      </div>
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">شهادة GMP</label><input class="form-control" id="ec-gmpCertificate" value="${esc(company.gmpCertificate||'')}"></div>
-        <div class="form-group"><label class="form-label">انتهاء GMP</label><input class="form-control" type="date" id="ec-gmpExpiry" value="${company.gmpExpiry||''}"></div>
-      </div>
-    </div>
-    <div id="tab-contact" class="hidden">
-      <div class="form-row">
-        <div class="form-group"><label class="form-label">الهاتف</label><input class="form-control" id="ec-phone" value="${esc(company.phone||'')}"></div>
-        <div class="form-group"><label class="form-label">البريد الإلكتروني</label><input class="form-control" type="email" id="ec-email" value="${esc(company.email||'')}"></div>
-      </div>
-      <div class="form-group"><label class="form-label">الموقع الإلكتروني</label><input class="form-control" id="ec-website" value="${esc(company.website||'')}"></div>
-    </div>
-  `, async () => {
-    const nameAr = document.getElementById('ec-nameAr').value.trim();
-    if (!nameAr) { alert('الاسم بالعربي مطلوب'); return false; }
-    Object.assign(company, {
-      nameAr, nameEn: v('ec-nameEn'), city: v('ec-city'), country: v('ec-country'),
-      addressAr: v('ec-addressAr'), licenseNumber: v('ec-licenseNumber'),
-      licenseExpiry: v('ec-licenseExpiry'), taxNumber: v('ec-taxNumber'),
-      edaCode: v('ec-edaCode'), gmpCertificate: v('ec-gmpCertificate'),
-      gmpExpiry: v('ec-gmpExpiry'), phone: v('ec-phone'),
-      email: v('ec-email'), website: v('ec-website'), updatedAt: now()
-    });
-    await putOne('companies', company);
-    await auditLog('UPDATE','companies', company.id, {nameAr});
-    toast('تم تحديث بيانات الشركة بنجاح');
-    renderCompany(document.getElementById('content'));
+async function editCompany(){
+  const co=await dbGet('companies',S.companyId);
+  set('co-nameAr',co.nameAr);set('co-nameEn',co.nameEn);set('co-city',co.city);
+  set('co-country',co.country||'Egypt');set('co-addr',co.addressAr);
+  set('co-lic',co.licenseNumber);set('co-lic-exp',co.licenseExpiry);
+  set('co-tax',co.taxNumber);set('co-eda',co.edaCode);
+  set('co-gmp',co.gmpCertificate);set('co-gmp-exp',co.gmpExpiry);
+  set('co-phone',co.phone);set('co-email',co.email);set('co-web',co.website);
+  openModal('modal-co');
+}
+
+async function saveCompany(){
+  const nameAr=val('co-nameAr');
+  if(!nameAr){toast('الاسم بالعربي مطلوب','err');return}
+  const co=await dbGet('companies',S.companyId);
+  Object.assign(co,{
+    nameAr,nameEn:val('co-nameEn'),city:val('co-city'),country:val('co-country'),addressAr:val('co-addr'),
+    licenseNumber:val('co-lic'),licenseExpiry:val('co-lic-exp'),taxNumber:val('co-tax'),
+    edaCode:val('co-eda'),gmpCertificate:val('co-gmp'),gmpExpiry:val('co-gmp-exp'),
+    phone:val('co-phone'),email:val('co-email'),website:val('co-web'),updatedAt:now()
   });
+  await dbPut('companies',co);
+  await audit('UPDATE','companies',co.id);
+  S.companyNameAr=co.nameAr;
+  document.getElementById('sb-co-name').textContent=co.nameAr;
+  closeModal('modal-co');
+  toast('تم تحديث بيانات الشركة بنجاح');
+  renderCompany(document.getElementById('page-content'));
 }
 
-// ============================================================
-// PAGE: USERS
-// ============================================================
-let usersSearch = '';
-async function renderUsers(c) {
-  const users = await getAll('users','companyId', SESSION.companyId);
-  const filtered = users.filter(u => !u.deletedAt && (!usersSearch || u.nameAr.includes(usersSearch) || u.username.includes(usersSearch)));
-  c.innerHTML = `
-  <div class="page-header">
-    <div class="page-title">المستخدمون</div>
+// ════════════════════════════════════════
+// USERS
+// ════════════════════════════════════════
+let usrQ='';
+async function renderUsers(c){
+  const all=await dbGetAll('users','companyId',S.companyId);
+  const users=all.filter(u=>!u.deletedAt&&(!usrQ||u.nameAr.includes(usrQ)||u.username.includes(usrQ)||u.department?.includes(usrQ)));
+  c.innerHTML=`
+  <div class="page-hd">
+    <div class="page-hd-left">
+      <h2>المستخدمون</h2>
+      <p>${all.filter(u=>!u.deletedAt).length} مستخدم مسجل</p>
+    </div>
     <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-      <div class="search-bar">
+      <div class="search-wrap">
         <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input placeholder="بحث..." value="${esc(usersSearch)}" oninput="usersSearch=this.value;renderUsers(document.getElementById('content'))">
+        <input class="search-input" placeholder="بحث بالاسم أو القسم..." value="${esc(usrQ)}" oninput="usrQ=this.value;renderUsers(document.getElementById('page-content'))">
       </div>
-      <button class="btn btn-primary" onclick="addUser()">+ إضافة مستخدم</button>
+      <button class="btn btn-primary" onclick="openAddUser()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        إضافة مستخدم
+      </button>
     </div>
   </div>
   <div class="card">
     <div class="table-wrap">
       <table>
-        <thead><tr><th>الاسم</th><th>اسم المستخدم</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراءات</th></tr></thead>
+        <thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراءات</th></tr></thead>
         <tbody>
-          ${filtered.length ? filtered.map(u=>`
-          <tr>
-            <td><div style="font-weight:500">${esc(u.nameAr)}</div><div class="text-sm text-muted">${esc(u.nameEn||'')}</div></td>
-            <td><code style="font-size:12px;background:var(--bg);padding:2px 6px;border-radius:4px">${esc(u.username)}</code></td>
-            <td><span class="badge ${u.role==='admin'?'badge-blue':'badge-gray'}">${u.role==='admin'?'مدير':'مستخدم'}</span></td>
-            <td class="text-muted">${esc(u.department||'—')}</td>
-            <td class="text-sm text-muted">${fmtDt(u.lastLogin)}</td>
+          ${users.length?users.map(u=>`<tr>
+            <td>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:34px;height:34px;border-radius:8px;background:${u.role==='admin'?'var(--blue)':'var(--gray3)'};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:${u.role==='admin'?'#fff':'var(--gray)'};flex-shrink:0">${u.nameAr.charAt(0)}</div>
+                <div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--gray)">${esc(u.nameEn||'')}</div></div>
+              </div>
+            </td>
+            <td><code style="font-size:12px;background:var(--gray4);padding:3px 8px;border-radius:5px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
+            <td><span class="badge ${u.role==='admin'?'badge-blue':'badge-gray'}">${u.role==='admin'?'مدير النظام':'مستخدم'}</span></td>
+            <td style="color:var(--gray)">${esc(u.department||'—')}</td>
+            <td style="font-size:12px;color:var(--gray)">${fmtDt(u.lastLogin)}</td>
             <td><span class="badge ${u.isActive?'badge-green':'badge-red'}">${u.isActive?'نشط':'موقوف'}</span></td>
             <td>
               <div style="display:flex;gap:4px">
-                <button class="btn btn-sm btn-outline" onclick="editUser('${u.id}')">تعديل</button>
-                ${u.id!==SESSION.userId?`<button class="btn btn-sm btn-outline" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}
+                <button class="btn btn-xs btn-outline" onclick="openEditUser('${u.id}')">تعديل</button>
+                ${u.id!==S.userId?`<button class="btn btn-xs ${u.isActive?'btn-outline':'btn-primary'}" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}
               </div>
             </td>
-          </tr>`).join('') : `<tr><td colspan="7"><div class="empty-state"><p>لا يوجد مستخدمون</p></div></td></tr>`}
+          </tr>`).join(''):
+          `<tr><td colspan="7"><div class="empty"><div class="empty-icon">👥</div><h3>لا يوجد مستخدمون</h3><p>اضغط "إضافة مستخدم" للبدء</p></div></td></tr>`}
         </tbody>
       </table>
     </div>
-  </div>
-  <p class="text-sm text-muted mt-2">إجمالي: ${filtered.length} مستخدم</p>`;
-}
-
-async function addUser() {
-  showModal('إضافة مستخدم جديد', `
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">الاسم بالعربي <span class="req">*</span></label><input class="form-control" id="au-nameAr" placeholder="محمد أحمد"></div>
-      <div class="form-group"><label class="form-label">الاسم بالإنجليزي</label><input class="form-control" id="au-nameEn"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">اسم المستخدم <span class="req">*</span></label><input class="form-control" id="au-username" placeholder="m.ahmed" style="direction:ltr"></div>
-      <div class="form-group"><label class="form-label">كلمة المرور <span class="req">*</span></label><input class="form-control" type="password" id="au-password" placeholder="8 أحرف على الأقل"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">الدور</label>
-        <select class="form-control" id="au-role"><option value="user">مستخدم</option><option value="admin">مدير</option></select></div>
-      <div class="form-group"><label class="form-label">القسم</label><input class="form-control" id="au-department" placeholder="الجودة، الإنتاج..."></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">المسمى الوظيفي</label><input class="form-control" id="au-jobTitle"></div>
-      <div class="form-group"><label class="form-label">البريد الإلكتروني</label><input class="form-control" type="email" id="au-email"></div>
-    </div>
-    <div class="form-group"><label class="form-label">الهاتف</label><input class="form-control" id="au-phone"></div>
-  `, async () => {
-    const nameAr = v('au-nameAr'), username = v('au-username'), password = v('au-password');
-    if (!nameAr||!username||!password) { alert('الاسم واسم المستخدم وكلمة المرور مطلوبة'); return false; }
-    if (password.length < 8) { alert('كلمة المرور يجب أن تكون 8 أحرف على الأقل'); return false; }
-    // check unique
-    const existing = await getAll('users','companyId', SESSION.companyId);
-    if (existing.find(u=>u.username===username && !u.deletedAt)) { alert('اسم المستخدم موجود بالفعل'); return false; }
-    const id = uid();
-    const passwordHash = await hashPw(password);
-    await putOne('users', { id, companyId: SESSION.companyId, nameAr, nameEn: v('au-nameEn'), username, passwordHash, role: v('au-role')||'user', department: v('au-department'), jobTitle: v('au-jobTitle'), email: v('au-email'), phone: v('au-phone'), isActive: true, failedAttempts: 0, createdBy: SESSION.userId, createdAt: now(), updatedAt: now() });
-    await auditLog('CREATE','users', id, {nameAr, username});
-    toast('تم إضافة المستخدم بنجاح');
-    renderUsers(document.getElementById('content'));
-  });
-}
-
-async function editUser(id) {
-  const u = await getOne('users', id);
-  if (!u) return;
-  showModal('تعديل مستخدم', `
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">الاسم بالعربي <span class="req">*</span></label><input class="form-control" id="eu-nameAr" value="${esc(u.nameAr||'')}"></div>
-      <div class="form-group"><label class="form-label">الاسم بالإنجليزي</label><input class="form-control" id="eu-nameEn" value="${esc(u.nameEn||'')}"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">الدور</label>
-        <select class="form-control" id="eu-role"><option value="user" ${u.role==='user'?'selected':''}>مستخدم</option><option value="admin" ${u.role==='admin'?'selected':''}>مدير</option></select></div>
-      <div class="form-group"><label class="form-label">القسم</label><input class="form-control" id="eu-department" value="${esc(u.department||'')}"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">المسمى الوظيفي</label><input class="form-control" id="eu-jobTitle" value="${esc(u.jobTitle||'')}"></div>
-      <div class="form-group"><label class="form-label">البريد الإلكتروني</label><input class="form-control" type="email" id="eu-email" value="${esc(u.email||'')}"></div>
-    </div>
-    <div class="form-group"><label class="form-label">كلمة مرور جديدة (اتركها فارغة إذا لم تريد التغيير)</label><input class="form-control" type="password" id="eu-password" placeholder="اتركها فارغة للإبقاء على الحالية"></div>
-  `, async () => {
-    const nameAr = v('eu-nameAr');
-    if (!nameAr) { alert('الاسم مطلوب'); return false; }
-    u.nameAr = nameAr; u.nameEn = v('eu-nameEn'); u.role = v('eu-role');
-    u.department = v('eu-department'); u.jobTitle = v('eu-jobTitle'); u.email = v('eu-email');
-    const pw = v('eu-password');
-    if (pw) { if (pw.length<8) { alert('كلمة المرور 8 أحرف على الأقل'); return false; } u.passwordHash = await hashPw(pw); }
-    u.updatedAt = now();
-    await putOne('users', u);
-    await auditLog('UPDATE','users', u.id, {nameAr});
-    toast('تم تحديث بيانات المستخدم');
-    renderUsers(document.getElementById('content'));
-  });
-}
-
-async function toggleUser(id) {
-  const u = await getOne('users', id);
-  if (!u) return;
-  u.isActive = !u.isActive; u.updatedAt = now();
-  await putOne('users', u);
-  await auditLog(u.isActive?'ACTIVATE':'DEACTIVATE','users', id);
-  toast(u.isActive ? 'تم تفعيل المستخدم' : 'تم إيقاف المستخدم');
-  renderUsers(document.getElementById('content'));
-}
-
-// ============================================================
-// REGISTER NEW COMPANY
-// ============================================================
-function showRegisterModal() {
-  showModal('إنشاء شركة جديدة', `
-    <div class="alert alert-info">سيتم إنشاء حساب مدير تلقائياً مع الشركة</div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">كود الشركة <span class="req">*</span></label><input class="form-control" id="rc-code" placeholder="QUAD" style="text-transform:uppercase;direction:ltr" maxlength="20"></div>
-      <div class="form-group"><label class="form-label">اسم الشركة بالعربي <span class="req">*</span></label><input class="form-control" id="rc-nameAr" placeholder="شركة كوادرا فارما"></div>
-    </div>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">رقم الترخيص</label><input class="form-control" id="rc-license"></div>
-      <div class="form-group"><label class="form-label">المدينة</label><input class="form-control" id="rc-city" value="Cairo"></div>
-    </div>
-    <div class="form-group"><label class="form-label">الهاتف</label><input class="form-control" id="rc-phone"></div>
-    <div class="divider"></div>
-    <p style="font-weight:600;margin-bottom:12px">بيانات المدير</p>
-    <div class="form-row">
-      <div class="form-group"><label class="form-label">الاسم <span class="req">*</span></label><input class="form-control" id="rc-adminName" placeholder="مدير النظام"></div>
-      <div class="form-group"><label class="form-label">اسم المستخدم <span class="req">*</span></label><input class="form-control" id="rc-adminUser" placeholder="admin" style="direction:ltr"></div>
-    </div>
-    <div class="form-group"><label class="form-label">كلمة المرور <span class="req">*</span></label><input class="form-control" type="password" id="rc-adminPw" placeholder="8 أحرف على الأقل"></div>
-  `, async () => {
-    const code = v('rc-code').toUpperCase(), nameAr = v('rc-nameAr'), adminName = v('rc-adminName'), adminUser = v('rc-adminUser'), adminPw = v('rc-adminPw');
-    if (!code||!nameAr||!adminName||!adminUser||!adminPw) { alert('جميع الحقول المطلوبة يجب ملؤها'); return false; }
-    if (adminPw.length<8) { alert('كلمة المرور 8 أحرف على الأقل'); return false; }
-    // check unique code
-    const all = await getAll('companies');
-    if (all.find(c=>c.code===code)) { alert('كود الشركة موجود بالفعل'); return false; }
-    const companyId = uid(), adminId = uid();
-    await putOne('companies', { id: companyId, code, nameAr, nameEn:'', licenseNumber: v('rc-license'), city: v('rc-city'), country:'Egypt', phone: v('rc-phone'), isActive:true, createdAt:now(), updatedAt:now() });
-    const ph = await hashPw(adminPw);
-    await putOne('users', { id: adminId, companyId, nameAr: adminName, username: adminUser, passwordHash: ph, role:'admin', isActive:true, failedAttempts:0, createdAt:now(), updatedAt:now() });
-    toast('تم إنشاء الشركة بنجاح — يمكنك تسجيل الدخول الآن');
-    document.getElementById('inp-code').value = code;
-    document.getElementById('inp-user').value = adminUser;
-  });
-}
-
-// ============================================================
-// UI HELPERS
-// ============================================================
-function v(id) { const el = document.getElementById(id); return el ? (el.value||'').trim() : ''; }
-
-function switchTab(btn, tabId) {
-  const modal = btn.closest('.modal-body') || btn.closest('#modal-container');
-  modal.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  ['tab-basic','tab-regulatory','tab-contact'].forEach(id=>{
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('hidden', id!==tabId);
-  });
-}
-
-function showModal(title, body, onSave) {
-  const mc = document.getElementById('modal-container');
-  mc.innerHTML = `
-  <div class="modal-overlay" onclick="if(event.target===this)closeModal()">
-    <div class="modal">
-      <div class="modal-header">
-        <span class="modal-title">${esc(title)}</span>
-        <button class="btn btn-icon btn-outline" onclick="closeModal()">
-          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-        </button>
-      </div>
-      <div class="modal-body">${body}</div>
-      <div class="modal-footer">
-        <button class="btn btn-outline" onclick="closeModal()">إلغاء</button>
-        <button class="btn btn-primary" id="modal-save-btn" onclick="handleSave()">حفظ</button>
-      </div>
-    </div>
   </div>`;
-  mc._onSave = onSave;
 }
 
-async function handleSave() {
-  const btn = document.getElementById('modal-save-btn');
-  const mc  = document.getElementById('modal-container');
-  if (!mc._onSave) return;
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> جاري الحفظ...';
-  try {
-    const result = await mc._onSave();
-    if (result !== false) closeModal();
-  } catch(e) {
-    alert('خطأ: ' + e.message);
-  }
-  btn.disabled = false;
-  btn.textContent = 'حفظ';
+function openAddUser(){
+  document.getElementById('modal-user-title').textContent='إضافة مستخدم جديد';
+  document.getElementById('u-pass-hint').style.display='none';
+  document.getElementById('u-pass-label').innerHTML='كلمة المرور <span class="req">*</span>';
+  ['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title','u-empcode','u-phone','u-email'].forEach(id=>set(id,''));
+  set('u-role','user');
+  openModal('modal-user');
 }
 
-function closeModal() {
-  document.getElementById('modal-container').innerHTML = '';
+async function openEditUser(id){
+  const u=await dbGet('users',id);if(!u)return;
+  document.getElementById('modal-user-title').textContent='تعديل مستخدم';
+  document.getElementById('u-pass-hint').style.display='block';
+  document.getElementById('u-pass-label').innerHTML='كلمة المرور الجديدة';
+  set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn);
+  set('u-user',u.username);set('u-pass','');set('u-role',u.role);
+  set('u-dept',u.department);set('u-title',u.jobTitle);
+  set('u-empcode',u.employeeCode);set('u-phone',u.phone);set('u-email',u.email);
+  openModal('modal-user');
+}
+
+async function saveUser(){
+  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
+  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','err');return}
+  const btn=document.getElementById('btn-save-user');
+  btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    if(id){
+      // edit
+      const u=await dbGet('users',id);
+      if(!u){toast('لم يتم العثور على المستخدم','err');return}
+      if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف على الأقل','err');return}u.passwordHash=await hashPw(pw)}
+      Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title'),employeeCode:val('u-empcode'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});
+      await dbPut('users',u);
+      await audit('UPDATE','users',u.id);
+      toast('تم تحديث بيانات المستخدم');
+    } else {
+      // add
+      if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف على الأقل مطلوبة','err');return}
+      const all=await dbGetAll('users','companyId',S.companyId);
+      if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود بالفعل','err');return}
+      const newId=uid();
+      await dbPut('users',{id:newId,companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title'),employeeCode:val('u-empcode'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});
+      await audit('CREATE','users',newId);
+      toast('تم إضافة المستخدم بنجاح');
+    }
+    closeModal('modal-user');
+    renderUsers(document.getElementById('page-content'));
+  }catch(e){toast('خطأ: '+e.message,'err')}
+  btn.innerHTML='حفظ';btn.disabled=false;
+}
+
+async function toggleUser(id){
+  const u=await dbGet('users',id);if(!u)return;
+  u.isActive=!u.isActive;u.updatedAt=now();
+  await dbPut('users',u);
+  await audit(u.isActive?'ACTIVATE':'DEACTIVATE','users',id);
+  toast(u.isActive?'تم تفعيل الحساب':'تم إيقاف الحساب');
+  renderUsers(document.getElementById('page-content'));
+}
+
+// ════════════════════════════════════════
+// UI HELPERS
+// ════════════════════════════════════════
+function openModal(id){document.getElementById(id).classList.add('show')}
+function closeModal(id){document.getElementById(id).classList.remove('show')}
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show'));
+  if(e.key==='Enter'&&document.getElementById('screen-login').classList.contains('active'))doLogin();
+});
+
+function switchTab(btn,panelId){
+  const modal=btn.closest('.modal-body');
+  modal.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  modal.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(panelId).classList.add('active');
 }
 
 let toastTimer;
-function toast(msg, type='success') {
-  let t = document.getElementById('toast');
-  if (!t) { t = document.createElement('div'); t.id='toast'; t.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#fff;padding:12px 20px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.3);transition:opacity .3s;max-width:320px;text-align:center'; document.body.appendChild(t); }
-  if (type==='error') t.style.background='var(--danger)';
-  else t.style.background='#1e293b';
-  t.textContent = msg; t.style.opacity='1';
+function toast(msg,type){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.style.background=type==='err'?'var(--red)':'var(--navy)';
+  t.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(()=>{ t.style.opacity='0'; }, 3000);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-function showAlert(el, type, msg) {
-  el.innerHTML = `<div class="alert alert-${type==='danger'?'danger':'success'}">${esc(msg)}</div>`;
+function openSidebar(){
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('overlay-bg').classList.add('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay-bg').classList.remove('show');
 }
 
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-}
-
-// ============================================================
-// RESPONSIVE
-// ============================================================
-function handleResize() {
-  const mobile = window.innerWidth < 768;
-  document.getElementById('menu-btn').style.display = mobile ? 'flex' : 'none';
-}
-window.addEventListener('resize', handleResize);
-handleResize();
-
-// ============================================================
+// ════════════════════════════════════════
 // INIT
-// ============================================================
-document.addEventListener('keydown', e => {
-  if (e.key==='Enter' && document.getElementById('login-screen').style.display!=='none') doLogin();
-  if (e.key==='Escape') closeModal();
-});
-
-(async () => {
+// ════════════════════════════════════════
+(async()=>{
   await openDB();
-  // restore session
-  const saved = sessionStorage.getItem('pharma_session');
-  if (saved) {
-    try {
-      SESSION = JSON.parse(saved);
-      // verify company still exists
-      const c = await getOne('companies', SESSION.companyId);
-      if (c) { startApp(); return; }
-    } catch {}
-    sessionStorage.removeItem('pharma_session');
+  const saved=sessionStorage.getItem('S');
+  if(saved){
+    try{
+      S=JSON.parse(saved);
+      const co=await dbGet('companies',S.companyId);
+      if(co){startApp();return}
+    }catch{}
+    sessionStorage.removeItem('S');
   }
-  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('screen-login').classList.add('active');
 })();
 </script>
 </body>
