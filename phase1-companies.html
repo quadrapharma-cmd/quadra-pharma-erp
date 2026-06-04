@@ -1020,6 +1020,13 @@ async function renderCompanyPage(c){
   previewPartners();
 }
 
+function switchCoTab(btn,id){
+  document.querySelectorAll('.cp-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.cpt').forEach(p=>p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
 function saveBtn(tab){
   return`<div style="display:flex;justify-content:flex-end;margin-top:20px;padding-top:16px;border-top:1px solid var(--gray3)">
     <button class="btn btn-primary" onclick="saveTab('${tab}')">
