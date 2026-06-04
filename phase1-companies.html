@@ -523,6 +523,7 @@ textarea.fc{resize:vertical;min-height:70px}
 </div>
 
 <div id="toast"></div>
+<div id="modal-container"></div>
 
 <script>
 // ══════════════════════════════
@@ -940,42 +941,68 @@ async function renderCompanyPage(c){
 
     <!-- ── الشركاء ── -->
     <div id="cpt-partners" class="cpt">
-      <div class="tab-form" style="padding:20px">
-        <div class="alert alert-info" style="margin-bottom:16px">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex-shrink:0"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-          كل شريك في سطر بالصيغة: الاسم | النسبة% | الجنسية
+      <div style="padding:16px 20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:14px;font-weight:700">الشركاء وتوزيع الحصص</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px">إجمالي النسب يجب أن يساوي 100%</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openPartnerModal()">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة شريك
+          </button>
         </div>
-        <div class="fg">
-          <label class="fl">الشركاء وتوزيع الحصص</label>
-          <textarea class="fc" id="cf-partners" rows="7" dir="ltr" style="font-family:'Tajawal',sans-serif" placeholder="فايزة أحمد زاهر الحلو | 45% | مصري&#10;محمود محمد أحمد خروبة | 45.5% | مصري&#10;هيثم السيد أحمد متولي | 9.5% | مصري">${esc(co.partners||'')}</textarea>
-        </div>
-        <div class="fg">
-          <label class="fl">نسبة المشاركة المصرية الإجمالية</label>
-          <input class="fc" id="cf-egyPct" value="${esc(co.egyPct||'')}" dir="ltr" placeholder="مثال: 100%">
-        </div>
-        <div id="partners-preview" style="margin-top:4px"></div>
-        ${saveBtn('partners')}
+        <div id="partners-list"></div>
+        <div id="partners-total" style="margin-top:12px;padding:10px 14px;background:var(--gray4);border-radius:8px;font-size:13px;font-weight:600;display:none"></div>
       </div>
     </div>
 
     <!-- ── المصانع والموزعون ── -->
     <div id="cpt-factories" class="cpt">
-      <div class="tab-form" style="padding:20px">
-        <div class="fg">
-          <label class="fl">المصانع المتعاقد معها</label>
-          <div class="fh" style="margin-bottom:6px">كل مصنع في سطر — يجب إخطار EDA عند إضافة أو تغيير مصنع</div>
-          <textarea class="fc" id="cf-factories" rows="7" placeholder="ريفا فارما&#10;بدر فارما للصناعات الدوائية&#10;ميديسنيا للصناعات الدوائية&#10;دلتا جراند فارما DGP&#10;ساجا فارماسوتيكالز إيجيبت&#10;نرهادو إنترناشيونال&#10;كريم فارما&#10;فارما باك">${esc(co.factories||co.contractedFactories||'')}</textarea>
+      <div style="padding:16px 20px">
+
+        <!-- المصانع -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div>
+            <div style="font-size:14px;font-weight:700">المصانع المتعاقد معها</div>
+            <div style="font-size:12px;color:var(--amber);margin-top:2px">⚠ يجب إخطار EDA عند أي تغيير</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openFactoryModal('factory')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة مصنع
+          </button>
         </div>
-        <div class="fg">
-          <label class="fl">أماكن التخزين المرخصة</label>
-          <div class="fh" style="margin-bottom:6px">لا تقل مساحة المخزن عن 100م²</div>
-          <textarea class="fc" id="cf-storage" rows="3" placeholder="اسم المخزن + العنوان الكامل">${esc(co.storage||co.storageLocations||'')}</textarea>
+        <div id="factories-list"></div>
+
+        <div style="height:1px;background:var(--gray3);margin:20px 0"></div>
+
+        <!-- التخزين -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div>
+            <div style="font-size:14px;font-weight:700">أماكن التخزين المرخصة</div>
+            <div style="font-size:12px;color:var(--gray);margin-top:2px">لا تقل مساحة المخزن عن 100م²</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openFactoryModal('storage')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة مخزن
+          </button>
         </div>
-        <div class="fg">
-          <label class="fl">الموزعون المعتمدون</label>
-          <textarea class="fc" id="cf-dist" rows="3" placeholder="الشركة المتحدة UCP — مصر القديمة — القاهرة&#10;ابن سينا فارما — المنطقة الصناعية — مدينة العبور">${esc(co.dist||co.distributors||'')}</textarea>
+        <div id="storage-list"></div>
+
+        <div style="height:1px;background:var(--gray3);margin:20px 0"></div>
+
+        <!-- الموزعون -->
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+          <div>
+            <div style="font-size:14px;font-weight:700">الموزعون المعتمدون</div>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="openFactoryModal('dist')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            إضافة موزع
+          </button>
         </div>
-        ${saveBtn('factories')}
+        <div id="dist-list"></div>
+
       </div>
     </div>
 
@@ -1014,10 +1041,8 @@ async function renderCompanyPage(c){
 
   loadDocs(co.id);
   loadHistory(co.id);
-
-  // preview الشركاء عند التغيير
-  document.getElementById('cf-partners')?.addEventListener('input', previewPartners);
-  previewPartners();
+  loadPartners();
+  loadFactoriesAll();
 }
 
 function switchCoTab(btn,id){
@@ -1062,9 +1087,11 @@ async function saveTab(tab){
   } else if(tab==='persons'){
     updates={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web'),edaAddress:val('cf-edaAddr')};
   } else if(tab==='partners'){
-    updates={partners:val('cf-partners'),egyPct:val('cf-egyPct')};
+    // partners handled separately
+    toast('استخدم زرار "إضافة شريك"');return;
   } else if(tab==='factories'){
-    updates={factories:val('cf-factories'),storage:val('cf-storage'),dist:val('cf-dist')};
+    // factories handled separately
+    toast('استخدم أزرار الإضافة');return;
   }
   const co={...old,...updates,updatedAt:now()};
   await dbPut('companies',co);
@@ -1241,8 +1268,207 @@ async function delDoc(id,coId){
 }
 
 // ══════════════════════════════
-// BACKUP / RESTORE
+// PARTNERS
 // ══════════════════════════════
+function getPartners(){
+  try{return JSON.parse(localStorage.getItem('partners_'+S.companyId)||'[]')}catch{return[]}
+}
+function savePartners(arr){localStorage.setItem('partners_'+S.companyId,JSON.stringify(arr))}
+
+function loadPartners(){
+  const el=document.getElementById('partners-list');
+  const tot=document.getElementById('partners-total');
+  if(!el)return;
+  const arr=getPartners();
+  if(!arr.length){
+    el.innerHTML=`<div style="text-align:center;padding:24px;color:var(--gray2);font-size:13px">لا يوجد شركاء مسجلون — اضغط "إضافة شريك"</div>`;
+    tot.style.display='none';return;
+  }
+  el.innerHTML=arr.map((p,i)=>`
+  <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:var(--gray4);border-radius:8px;border:1px solid var(--gray3);margin-bottom:6px">
+    <div style="width:42px;height:42px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;color:#fff;flex-shrink:0">${esc(p.name.charAt(0))}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:14px;font-weight:700">${esc(p.name)}</div>
+      <div style="font-size:12px;color:var(--gray);margin-top:2px">${esc(p.nationality||'—')} · ${esc(p.natId||'')}</div>
+    </div>
+    <div style="text-align:center;min-width:60px">
+      <div style="font-size:22px;font-weight:800;color:var(--blue)">${esc(p.share)}%</div>
+      <div style="font-size:10px;color:var(--gray2)">الحصة</div>
+    </div>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-xs btn-outline" onclick="editPartner(${i})">تعديل</button>
+      <button class="btn btn-xs" style="color:var(--red);border:1px solid var(--red-light);background:#fff" onclick="deletePartner(${i})">حذف</button>
+    </div>
+  </div>`).join('');
+  const total=arr.reduce((s,p)=>s+parseFloat(p.share||0),0);
+  tot.style.display='block';
+  tot.style.background=Math.abs(total-100)<0.01?'var(--green-light)':'var(--amber-light)';
+  tot.style.color=Math.abs(total-100)<0.01?'var(--green)':'var(--amber)';
+  tot.textContent=`إجمالي الحصص: ${total.toFixed(1)}% ${Math.abs(total-100)<0.01?'✓ مكتمل 100%':'⚠ يجب أن يساوي 100%'}`;
+}
+
+function openPartnerModal(editIdx){
+  const arr=getPartners();
+  const p=editIdx!==undefined?arr[editIdx]:{};
+  const isEdit=editIdx!==undefined;
+  const html=`
+  <div class="overlay show" id="modal-partner" onclick="if(event.target===this)closeModal('modal-partner')">
+    <div class="modal" style="max-width:440px">
+      <div class="mh"><span class="mt">${isEdit?'تعديل شريك':'إضافة شريك جديد'}</span>
+        <button class="mc" onclick="closeModal('modal-partner')"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="mb">
+        <div class="fg"><label class="fl">الاسم الكامل <span class="req">*</span></label><input class="fc" id="p-name" value="${esc(p.name||'')}"></div>
+        <div class="form-grid">
+          <div class="fg"><label class="fl">نسبة الحصة % <span class="req">*</span></label><input class="fc" id="p-share" type="number" min="0" max="100" step="0.5" value="${p.share||''}" dir="ltr" placeholder="مثال: 45.5"></div>
+          <div class="fg"><label class="fl">الجنسية</label>
+            <select class="fc" id="p-nat">
+              <option value="مصري" ${(p.nationality||'مصري')==='مصري'?'selected':''}>مصري</option>
+              <option value="سعودي" ${p.nationality==='سعودي'?'selected':''}>سعودي</option>
+              <option value="إماراتي" ${p.nationality==='إماراتي'?'selected':''}>إماراتي</option>
+              <option value="أجنبي" ${p.nationality==='أجنبي'?'selected':''}>أجنبي</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="fg"><label class="fl">الرقم القومي</label><input class="fc" id="p-natid" value="${esc(p.natId||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">عملة الوفاء</label>
+            <select class="fc" id="p-cur">
+              <option value="جنيه مصري" ${(p.currency||'جنيه مصري')==='جنيه مصري'?'selected':''}>جنيه مصري</option>
+              <option value="دولار أمريكي" ${p.currency==='دولار أمريكي'?'selected':''}>دولار أمريكي</option>
+              <option value="يورو" ${p.currency==='يورو'?'selected':''}>يورو</option>
+            </select>
+          </div>
+        </div>
+        <div class="fg"><label class="fl">ملاحظات</label><input class="fc" id="p-note" value="${esc(p.note||'')}" placeholder="اختياري"></div>
+      </div>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeModal('modal-partner')">إلغاء</button>
+        <button class="btn btn-primary" onclick="savePartner(${isEdit?editIdx:'undefined'})">حفظ</button>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('modal-container').innerHTML=html;
+}
+
+function savePartner(editIdx){
+  const name=val('p-name'),share=val('p-share');
+  if(!name||!share){toast('الاسم والحصة مطلوبان','e');return}
+  const arr=getPartners();
+  const obj={name,share:parseFloat(share),nationality:val('p-nat'),natId:val('p-natid'),currency:val('p-cur'),note:val('p-note')};
+  if(editIdx!==undefined&&editIdx!=='undefined')arr[editIdx]=obj;
+  else arr.push(obj);
+  savePartners(arr);
+  closeModal('modal-partner');document.getElementById('modal-container').innerHTML='';
+  toast(editIdx!==undefined&&editIdx!=='undefined'?'تم تحديث بيانات الشريك':'تم إضافة الشريك بنجاح');
+  loadPartners();
+}
+
+function editPartner(i){openPartnerModal(i)}
+function deletePartner(i){
+  if(!confirm('حذف هذا الشريك؟'))return;
+  const arr=getPartners();arr.splice(i,1);savePartners(arr);
+  toast('تم الحذف');loadPartners();
+}
+
+// ══════════════════════════════
+// FACTORIES / STORAGE / DISTRIBUTORS
+// ══════════════════════════════
+const FL_KEYS={factory:'factories_',storage:'storage_',dist:'dist_'};
+const FL_LABELS={factory:'مصنع',storage:'مخزن',dist:'موزع'};
+
+function getList(type){try{return JSON.parse(localStorage.getItem(FL_KEYS[type]+S.companyId)||'[]')}catch{return[]}}
+function saveList(type,arr){localStorage.setItem(FL_KEYS[type]+S.companyId,JSON.stringify(arr))}
+
+function loadFactoriesAll(){
+  renderList('factory','factories-list');
+  renderList('storage','storage-list');
+  renderList('dist','dist-list');
+}
+
+function renderList(type,elId){
+  const el=document.getElementById(elId);if(!el)return;
+  const arr=getList(type);
+  const empty={factory:'لا توجد مصانع — اضغط "إضافة مصنع"',storage:'لا توجد أماكن تخزين',dist:'لا يوجد موزعون'};
+  if(!arr.length){el.innerHTML=`<div style="text-align:center;padding:16px;color:var(--gray2);font-size:13px">${empty[type]}</div>`;return}
+  const colors={factory:'var(--blue)',storage:'var(--green)',dist:'var(--amber)'};
+  el.innerHTML=arr.map((item,i)=>`
+  <div style="display:flex;align-items:center;gap:12px;padding:11px 14px;background:var(--gray4);border-radius:8px;border:1px solid var(--gray3);margin-bottom:6px">
+    <div style="width:8px;height:8px;border-radius:50%;background:${colors[type]};flex-shrink:0"></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:600">${esc(item.name)}</div>
+      ${item.address?`<div style="font-size:11px;color:var(--gray);margin-top:2px">${esc(item.address)}</div>`:''}
+      ${item.note?`<div style="font-size:11px;color:var(--gray2)">${esc(item.note)}</div>`:''}
+    </div>
+    <div style="display:flex;gap:4px">
+      <button class="btn btn-xs btn-outline" onclick="openFactoryModal('${type}',${i})">تعديل</button>
+      <button class="btn btn-xs" style="color:var(--red);border:1px solid var(--red-light);background:#fff" onclick="deleteListItem('${type}',${i})">حذف</button>
+    </div>
+  </div>`).join('');
+}
+
+function openFactoryModal(type,editIdx){
+  const arr=getList(type);
+  const item=editIdx!==undefined?arr[editIdx]:{};
+  const isEdit=editIdx!==undefined;
+  const titles={factory:'مصنع',storage:'مخزن تخزين',dist:'موزع معتمد'};
+  const placeholders={
+    factory:{name:'مثال: نرهادو إنترناشيونال للأدوية',address:'مثال: قطع 23-24-25 المنطقة الصناعية السادسة'},
+    storage:{name:'مثال: مخزن الشركة الرئيسي',address:'العنوان الكامل للمخزن (لا تقل مساحته عن 100م²)'},
+    dist:{name:'مثال: الشركة المتحدة UCP',address:'مثال: 4 ش اثر النبي — مصر القديمة — القاهرة'},
+  };
+  const html=`
+  <div class="overlay show" id="modal-factory" onclick="if(event.target===this){closeModal('modal-factory');document.getElementById('modal-container').innerHTML=''}">
+    <div class="modal" style="max-width:480px">
+      <div class="mh"><span class="mt">${isEdit?'تعديل':'إضافة'} ${titles[type]}</span>
+        <button class="mc" onclick="closeModal('modal-factory');document.getElementById('modal-container').innerHTML=''"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="mb">
+        <div class="fg"><label class="fl">الاسم <span class="req">*</span></label><input class="fc" id="fl-name" value="${esc(item.name||'')}" placeholder="${placeholders[type].name}"></div>
+        <div class="fg"><label class="fl">العنوان</label><textarea class="fc" id="fl-addr" rows="2" placeholder="${placeholders[type].address}">${esc(item.address||'')}</textarea></div>
+        ${type==='factory'?`
+        <div class="form-grid">
+          <div class="fg"><label class="fl">رقم ترخيص المصنع</label><input class="fc" id="fl-lic" value="${esc(item.license||'')}" dir="ltr"></div>
+          <div class="fg"><label class="fl">تاريخ انتهاء الترخيص</label><input class="fc" id="fl-licexp" type="date" value="${item.licenseExp||''}"></div>
+        </div>`:''}
+        ${type==='dist'?`
+        <div class="form-grid">
+          <div class="fg"><label class="fl">المنتجات الموزَّعة</label><input class="fc" id="fl-prods" value="${esc(item.products||'')}" placeholder="Dramrin, Wouncure, ..."></div>
+          <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="fl-phone" value="${esc(item.phone||'')}" dir="ltr"></div>
+        </div>`:''}
+        <div class="fg"><label class="fl">ملاحظات</label><input class="fc" id="fl-note" value="${esc(item.note||'')}" placeholder="اختياري"></div>
+      </div>
+      <div class="mf">
+        <button class="btn btn-outline" onclick="closeModal('modal-factory');document.getElementById('modal-container').innerHTML=''">إلغاء</button>
+        <button class="btn btn-primary" onclick="saveListItem('${type}',${isEdit?editIdx:'undefined'})">حفظ</button>
+      </div>
+    </div>
+  </div>`;
+  document.getElementById('modal-container').innerHTML=html;
+}
+
+function saveListItem(type,editIdx){
+  const name=val('fl-name');
+  if(!name){toast('الاسم مطلوب','e');return}
+  const arr=getList(type);
+  const obj={name,address:val('fl-addr'),note:val('fl-note')};
+  if(type==='factory'){obj.license=val('fl-lic');obj.licenseExp=val('fl-licexp')}
+  if(type==='dist'){obj.products=val('fl-prods');obj.phone=val('fl-phone')}
+  if(editIdx!==undefined&&editIdx!=='undefined')arr[editIdx]=obj;
+  else arr.push(obj);
+  saveList(type,arr);
+  closeModal('modal-factory');document.getElementById('modal-container').innerHTML='';
+  toast('تم الحفظ بنجاح');
+  renderList(type,{factory:'factories-list',storage:'storage-list',dist:'dist-list'}[type]);
+}
+
+function deleteListItem(type,i){
+  if(!confirm('حذف هذا العنصر؟'))return;
+  const arr=getList(type);arr.splice(i,1);saveList(type,arr);
+  toast('تم الحذف');
+  renderList(type,{factory:'factories-list',storage:'storage-list',dist:'dist-list'}[type]);
+}
+
 async function exportBackup(){
   const [companies,users,documents,comments]=await Promise.all([
     dbGetAll('companies'),dbGetAll('users'),dbGetAll('documents'),dbGetAll('comments')
