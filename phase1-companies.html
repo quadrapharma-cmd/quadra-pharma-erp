@@ -4,352 +4,416 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quadra Pharma ERP</title>
-<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--navy:#0f1f3d;--blue:#2563eb;--blue2:#1d4ed8;--blue-light:#dbeafe;--green:#059669;--green-light:#d1fae5;--red:#dc2626;--red-light:#fee2e2;--amber:#d97706;--amber-light:#fef3c7;--gray:#64748b;--gray2:#94a3b8;--gray3:#e2e8f0;--gray4:#f8fafc;--text:#1e293b}
-body{font-family:'Tajawal',sans-serif;background:#f1f5f9;color:var(--text);font-size:14px;line-height:1.6}
-.screen{display:none}.screen.active{display:flex}
-#screen-companies{min-height:100vh;flex-direction:column;background:var(--navy)}
-.co-top{padding:28px 36px 20px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
-.co-brand{display:flex;align-items:center;gap:14px}
-.co-brand-icon{width:44px;height:44px;background:var(--blue);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:800;color:#fff}
-.co-brand h1{font-size:18px;font-weight:800;color:#fff}.co-brand p{font-size:12px;color:rgba(255,255,255,.4)}
-.co-body{flex:1;padding:28px 36px;max-width:1000px;width:100%;margin:0 auto}
-.co-section-title{font-size:11px;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px}
-.co-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px;margin-bottom:12px}
-.co-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:18px;cursor:pointer;transition:.2s;position:relative}
-.co-card:hover{background:rgba(255,255,255,.09);border-color:rgba(255,255,255,.15);transform:translateY(-2px)}
-.co-card-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px}
-.co-card-icon{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;color:#fff;flex-shrink:0}
-.co-card-menu{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:rgba(255,255,255,.3);cursor:pointer;transition:.15s;background:transparent;border:none;font-size:18px;position:relative}
-.co-card-menu:hover{background:rgba(255,255,255,.1);color:#fff}
-.co-card-name{font-size:14px;font-weight:700;color:#fff;margin-bottom:3px}
-.co-card-code{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.5);display:inline-block;direction:ltr;margin-bottom:8px}
-.co-card-meta{font-size:12px;color:rgba(255,255,255,.35);display:flex;gap:10px;flex-wrap:wrap}
-.co-dot{position:absolute;top:14px;left:14px;width:7px;height:7px;border-radius:50%}
-.dot-on{background:#10b981}.dot-off{background:#6b7280}
-.dd{position:absolute;left:8px;top:40px;background:#1e293b;border:1px solid rgba(255,255,255,.1);border-radius:8px;padding:4px;z-index:100;min-width:130px;box-shadow:0 8px 24px rgba(0,0,0,.4);display:none}
+:root{
+  --bg:#0d1117;--sb:#161b22;--card:#1c2128;--card2:#21262d;
+  --border:#30363d;--green:#2ea043;--gl:#3fb950;--gbg:#0d2818;
+  --text:#e6edf3;--muted:#8b949e;--hover:#21262d;
+  --blue:#388bfd;--red:#f85149;--amber:#e3b341;--purple:#bc8cff;
+  --r:10px;--rl:14px;--sw:258px;--th:58px;
+  --font:'Cairo',sans-serif;--mono:'JetBrains Mono',monospace;
+}
+body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:100vh}
+.screen{display:none;width:100%;min-height:100vh}
+.screen.active{display:flex}
+
+/* ══ COMPANIES SCREEN ══ */
+#sc-co{flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 30% 40%,#0d2818,var(--bg) 60%);gap:28px;padding:24px}
+.logo-pill{display:inline-flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:10px 24px}
+.logo-ic{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff}
+.logo-tx{font-size:20px;font-weight:800}
+.logo-sub{color:var(--muted);font-size:13px;text-align:center}
+.co-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;max-width:860px;width:100%}
+.co-card{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:22px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative}
+.co-card:hover{border-color:var(--green);transform:translateY(-2px);box-shadow:0 8px 30px rgba(46,160,67,.18)}
+.co-card-ci{font-size:28px;margin-bottom:10px}
+.co-card-cn{font-size:16px;font-weight:700}
+.co-card-cm{font-size:12px;color:var(--muted);margin-top:3px}
+.co-dot{position:absolute;top:14px;left:14px;width:8px;height:8px;border-radius:50%}
+.dot-on{background:var(--gl)}.dot-off{background:var(--muted)}
+.cbg{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;margin-top:9px}
+.cbg-toll{background:var(--gbg);color:var(--gl);border:1px solid var(--green)}
+.cbg-factory{background:#0a1628;color:var(--blue);border:1px solid var(--blue)}
+.dd{position:absolute;left:8px;top:44px;background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:4px;z-index:100;min-width:130px;box-shadow:0 8px 24px rgba(0,0,0,.6);display:none}
 .dd.show{display:block}
-.dd-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;color:rgba(255,255,255,.7);transition:.15s;border:none;background:transparent;font-family:'Tajawal',sans-serif;width:100%;text-align:right}
-.dd-item:hover{background:rgba(255,255,255,.08);color:#fff}.dd-item.red{color:#fca5a5}.dd-item.red:hover{background:rgba(220,38,38,.15)}
-.dd-div{height:1px;background:rgba(255,255,255,.07);margin:3px 4px}
-#screen-login{min-height:100vh;align-items:center;justify-content:center;background:var(--navy);position:relative;overflow:hidden}
-#screen-login::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,#1e3a5f 0%,transparent 70%)}
-.lcard{position:relative;z-index:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:36px;width:390px;max-width:calc(100vw - 32px)}
-.lback{display:flex;align-items:center;gap:8px;color:rgba(255,255,255,.4);font-size:13px;cursor:pointer;margin-bottom:22px;background:none;border:none;font-family:'Tajawal',sans-serif;padding:0}
-.lco-badge{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.06);border-radius:10px;padding:11px 15px;margin-bottom:24px}
-.lco-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;color:#fff;flex-shrink:0}
-.lco-name{font-size:14px;font-weight:700;color:#fff}.lco-code{font-size:11px;color:rgba(255,255,255,.35);direction:ltr}
-.lfield{margin-bottom:14px}.llabel{display:block;font-size:12px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:6px}
-.linput{width:100%;padding:11px 14px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:9px;color:#fff;font-family:'Tajawal',sans-serif;font-size:14px;transition:.2s;outline:none}
-.linput:focus{border-color:var(--blue);background:rgba(37,99,235,.1)}.linput::placeholder{color:rgba(255,255,255,.2)}
-.btn-login{width:100%;padding:12px;background:var(--blue);color:#fff;border:none;border-radius:9px;font-family:'Tajawal',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px}
-.btn-login:hover{background:var(--blue2)}
-.lerr{background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);color:#fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none}
+.dd-item{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:7px;cursor:pointer;font-size:13px;color:var(--muted);transition:.15s;border:none;background:transparent;font-family:var(--font);width:100%;text-align:right}
+.dd-item:hover{background:var(--hover);color:var(--text)}
+.dd-item.red{color:var(--red)}.dd-item.red:hover{background:rgba(248,81,73,.1)}
+.dd-div{height:1px;background:var(--border);margin:3px 4px}
+.co-card-menu{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--muted);cursor:pointer;background:transparent;border:none;font-size:18px;transition:.15s}
+.co-card-menu:hover{background:var(--hover);color:var(--text)}
+.btn-add-co{display:flex;align-items:center;justify-content:center;gap:10px;background:transparent;border:1.5px dashed rgba(46,160,67,.35);border-radius:var(--rl);padding:18px;cursor:pointer;color:var(--muted);font-family:var(--font);font-size:14px;font-weight:600;transition:.2s;width:100%}
+.btn-add-co:hover{background:var(--gbg);border-color:var(--green);color:var(--text)}
+
+/* ══ LOGIN ══ */
+#sc-login{flex-direction:column;align-items:center;justify-content:center;background:radial-gradient(ellipse at 70% 30%,#0d2818,var(--bg) 55%);padding:20px}
+.lbox{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:32px;width:100%;max-width:420px}
+.lhdr{text-align:center;margin-bottom:22px}
+.co-badge{display:inline-flex;align-items:center;gap:8px;background:var(--gbg);border:1px solid var(--green);border-radius:20px;padding:5px 15px;font-size:12px;color:var(--gl);margin-bottom:14px;cursor:pointer}
+.co-badge:hover{opacity:.8}
+.ltitle{font-size:22px;font-weight:800}
+.lsub{color:var(--muted);font-size:13px;margin-top:4px}
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--muted)}
+.fl .req{color:var(--red)}
+.fi{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--blue)}
+.fi::placeholder{color:var(--muted)}
+select.fi{cursor:pointer}
+textarea.fi{resize:vertical;min-height:75px}
+.lerr{color:var(--red);font-size:13px;text-align:center;margin:8px 0;display:none}
 .lerr.show{display:block}
-#screen-app{min-height:100vh;flex-direction:row}
-.sidebar{width:240px;background:var(--navy);flex-shrink:0;display:flex;flex-direction:column;height:100vh;position:sticky;top:0;overflow-y:auto}
-.sb-brand{padding:16px 18px 12px;border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:10px}
-.sb-brand-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;color:#fff;flex-shrink:0}
-.sb-brand-name{font-size:13px;font-weight:800;color:#fff}.sb-brand-sub{font-size:10px;color:rgba(255,255,255,.3)}
-.sb-co{padding:10px 18px;background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.07);display:flex;align-items:center;gap:8px;cursor:pointer}
-.sb-co:hover{background:rgba(255,255,255,.08)}
-.sb-co-name{font-size:12px;font-weight:600;color:rgba(255,255,255,.7);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sb-nav{flex:1;padding:8px 0}
-.sb-sec{padding:8px 18px 3px;font-size:10px;font-weight:700;color:rgba(255,255,255,.2);text-transform:uppercase;letter-spacing:.6px;margin-top:4px}
-.sb-item{display:flex;align-items:center;gap:9px;padding:9px 18px;cursor:pointer;color:rgba(255,255,255,.45);transition:.15s;border-right:3px solid transparent;font-size:13px;font-weight:500}
-.sb-item:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
-.sb-item.active{color:#fff;background:rgba(37,99,235,.2);border-right-color:var(--blue)}
-.sb-item svg{width:15px;height:15px;flex-shrink:0}.sb-item.dim{opacity:.3;pointer-events:none}
-.sb-soon{margin-right:auto;font-size:10px;padding:1px 6px;background:rgba(245,158,11,.15);color:#fbbf24;border-radius:20px;font-weight:600}
-.sb-footer{padding:12px 18px;border-top:1px solid rgba(255,255,255,.07)}
-.sb-user{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.sb-avatar{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0}
-.sb-uname{font-size:12px;font-weight:600;color:rgba(255,255,255,.75)}.sb-urole{font-size:10px;color:rgba(255,255,255,.3)}
-.btn-logout{width:100%;padding:7px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.4);border:1px solid rgba(255,255,255,.07);border-radius:7px;font-family:'Tajawal',sans-serif;font-size:12px;cursor:pointer}
-.btn-logout:hover{background:rgba(220,38,38,.12);color:#fca5a5}
-.main{flex:1;display:flex;flex-direction:column;min-height:100vh;overflow:hidden}
-.topbar{background:#fff;border-bottom:1px solid var(--gray3);padding:0 22px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-.topbar-title{font-size:16px;font-weight:700}
-.menu-btn{display:none;padding:7px;background:none;border:none;cursor:pointer;color:var(--text)}
-#page-content{flex:1;padding:22px;overflow-y:auto}
-.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;border:1px solid transparent;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:600;transition:.15s;white-space:nowrap}
-.btn:disabled{opacity:.5;cursor:not-allowed}
-.btn-primary{background:var(--blue);color:#fff}.btn-primary:hover:not(:disabled){background:var(--blue2)}
-.btn-outline{background:#fff;color:var(--text);border-color:var(--gray3)}.btn-outline:hover{background:var(--gray4)}
-.btn-red{background:var(--red);color:#fff}.btn-sm{padding:6px 12px;font-size:12px}.btn-xs{padding:4px 9px;font-size:11px;border-radius:6px}
-.card{background:#fff;border:1px solid var(--gray3);border-radius:12px;overflow:hidden}
-.card-header{padding:14px 18px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between;gap:12px}
-.card-title{font-size:14px;font-weight:700}.card-body{padding:18px}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:14px;margin-bottom:20px}
-.stat{background:#fff;border:1px solid var(--gray3);border-radius:12px;padding:18px;position:relative;overflow:hidden}
-.stat::before{content:'';position:absolute;top:0;right:0;width:4px;height:100%;background:var(--sc,var(--blue))}
-.stat-label{font-size:12px;color:var(--gray);font-weight:500;margin-bottom:6px}
-.stat-value{font-size:28px;font-weight:800;line-height:1}.stat-sub{font-size:11px;color:var(--gray2);margin-top:4px}
-table{width:100%;border-collapse:collapse}.table-wrap{overflow-x:auto}
-thead th{padding:10px 14px;text-align:right;font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.4px;background:var(--gray4);border-bottom:1px solid var(--gray3);white-space:nowrap}
-tbody td{padding:11px 14px;border-bottom:1px solid var(--gray3);vertical-align:middle;font-size:13px}
-tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:#f8fafc}
-.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600}
-.bg{background:var(--green-light);color:var(--green)}.br{background:var(--red-light);color:var(--red)}
-.bb{background:var(--blue-light);color:var(--blue)}.bgr{background:var(--gray3);color:var(--gray)}.ba{background:var(--amber-light);color:var(--amber)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 18px}.full{grid-column:1/-1}
-.fg{margin-bottom:16px}.fl{display:block;font-size:12px;font-weight:600;color:var(--text);margin-bottom:6px}.fl .req{color:var(--red)}
-.fc{width:100%;padding:9px 12px;border:1px solid var(--gray3);border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;color:var(--text);background:#fff;transition:.15s;outline:none}
-.fc:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.1)}.fh{font-size:11px;color:var(--gray2);margin-top:4px}
-textarea.fc{resize:vertical;min-height:70px}
-.overlay{position:fixed;inset:0;background:rgba(15,31,61,.65);z-index:1000;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
-.overlay.show{display:flex}
-.modal{background:#fff;border-radius:14px;width:100%;max-width:560px;max-height:90vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.25);animation:su .2s ease}
-@keyframes su{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
-.mh{padding:15px 20px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between}
-.mt{font-size:15px;font-weight:700}
-.mc{width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:7px;cursor:pointer;color:var(--gray);border:none;background:transparent}
-.mc:hover{background:var(--gray4)}.mb{padding:20px;overflow-y:auto;flex:1}
-.mf{padding:13px 20px;border-top:1px solid var(--gray3);display:flex;justify-content:flex-end;gap:8px}
-.alert{padding:11px 14px;border-radius:7px;font-size:13px;display:flex;align-items:flex-start;gap:8px;margin-bottom:14px}
-.alert-info{background:var(--blue-light);color:var(--blue);border:1px solid #bfdbfe}
-.alert-warn{background:var(--amber-light);color:var(--amber);border:1px solid #fde68a}
-.search-wrap{position:relative}
-.search-wrap svg{position:absolute;right:11px;top:50%;transform:translateY(-50%);color:var(--gray2);pointer-events:none}
-.search-inp{padding:8px 36px 8px 12px;border:1px solid var(--gray3);border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;width:240px;outline:none;transition:.15s;background:var(--gray4)}
-.search-inp:focus{border-color:var(--blue);background:#fff}
-.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;gap:12px;flex-wrap:wrap}
-.ph-left h2{font-size:19px;font-weight:800;margin-bottom:2px}.ph-left p{font-size:13px;color:var(--gray)}
-.empty{padding:36px 20px;text-align:center;color:var(--gray)}
-.empty h3{font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px}
-.cp-tabs{display:flex;overflow-x:auto;border-bottom:2px solid var(--gray3);scrollbar-width:none;background:#fff}
+.btnp{width:100%;background:var(--green);color:#fff;border:none;border-radius:var(--r);padding:12px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:background .15s}
+.btnp:hover{background:var(--gl)}
+
+/* ══ APP ══ */
+#sc-app{flex-direction:row;min-height:100vh}
+.sidebar{width:var(--sw);background:var(--sb);border-left:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;right:0;top:0;z-index:100;overflow:hidden}
+.sb-top{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800}
+.sb-logo-ic{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--green),var(--blue));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.sb-co{padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);flex-shrink:0;cursor:pointer;transition:background .15s}
+.sb-co:hover{background:var(--hover)}
+.sb-co strong{display:block;color:var(--text);font-size:13px;margin-bottom:1px}
+.sb-nav{flex:1;overflow-y:auto;padding:6px 0}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.nsec{padding:8px 16px 3px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.nitem{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;position:relative;user-select:none}
+.nitem:hover{background:var(--hover);color:var(--text)}
+.nitem.act{background:var(--gbg);color:var(--gl)}
+.nitem.act::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:var(--green);border-radius:3px 0 0 3px}
+.nitem.dim{opacity:.3;pointer-events:none}
+.nic{width:18px;text-align:center;font-size:14px}
+.sb-soon{margin-right:auto;font-size:10px;padding:1px 6px;background:#1c1500;color:var(--amber);border:1px solid var(--amber);border-radius:20px}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px;cursor:pointer;flex-shrink:0;transition:background .15s}
+.sb-foot:hover{background:var(--hover)}
+.uav{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--blue),var(--purple));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.ui{flex:1;min-width:0}
+.un{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ur{font-size:11px;color:var(--muted)}
+.topbar{position:fixed;top:0;right:var(--sw);left:0;height:var(--th);background:var(--sb);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 18px;gap:10px;z-index:50}
+.tb-menu{display:none;background:none;border:none;color:var(--text);cursor:pointer;font-size:20px;padding:4px}
+.tb-bc{flex:1;font-size:14px;font-weight:600;min-width:0}
+.main{margin-right:var(--sw);margin-top:var(--th);padding:22px;min-height:calc(100vh - var(--th))}
+
+/* ══ COMPONENTS ══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-ok{background:var(--green);color:#fff;border-color:var(--green)}.btn-ok:hover:not(:disabled){background:var(--gl)}
+.btn-o{background:transparent;color:var(--muted);border-color:var(--border)}.btn-o:hover{border-color:var(--text);color:var(--text)}
+.btn-bl{background:var(--blue);color:#fff;border-color:var(--blue)}.btn-bl:hover{opacity:.85}
+.btn-x{background:transparent;color:var(--red);border-color:var(--red)}.btn-x:hover{background:rgba(248,81,73,.1)}
+.btn-sm{padding:4px 9px;font-size:12px}
+.btn-xs{padding:3px 7px;font-size:11px;border-radius:7px}
+.pcard{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:18px;overflow:hidden}
+.ph{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ptitle{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px}
+.pacts{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);padding:18px;position:relative;overflow:hidden}
+.sc::after{content:'';position:absolute;bottom:0;right:0;width:55px;height:55px;border-radius:50%;opacity:.07}
+.sc.gr::after{background:var(--green)}.sc.bl::after{background:var(--blue)}.sc.am::after{background:var(--amber)}.sc.re::after{background:var(--red)}
+.slbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.4px;margin-bottom:4px}
+.sval{font-size:30px;font-weight:800;line-height:1;margin-bottom:4px}
+.sval.gr{color:var(--gl)}.sval.bl{color:var(--blue)}.sval.am{color:var(--amber)}.sval.re{color:var(--red)}
+.sinfo{font-size:12px;color:var(--muted)}.sic{position:absolute;top:14px;left:14px;font-size:20px;opacity:.4}
+table{width:100%;border-collapse:collapse}.tw{overflow-x:auto}
+thead th{padding:9px 14px;font-size:11px;font-weight:700;color:var(--muted);text-align:right;background:var(--card2);border-bottom:1px solid var(--border);white-space:nowrap}
+tbody td{padding:11px 14px;font-size:13px;border-bottom:1px solid var(--border);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:var(--hover)}
+.bdg{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px}
+.bdg-g{background:var(--gbg);color:var(--gl);border:1px solid var(--green)}
+.bdg-b{background:#0a1628;color:var(--blue);border:1px solid var(--blue)}
+.bdg-a{background:#1c1500;color:var(--amber);border:1px solid var(--amber)}
+.bdg-r{background:#1c0a09;color:var(--red);border:1px solid var(--red)}
+.bdg-p{background:#1c1a28;color:var(--purple);border:1px solid var(--purple)}
+.bdg-m{background:var(--card2);color:var(--muted);border:1px solid var(--border)}
+.page-title{font-size:21px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:9px}
+
+/* CP TABS */
+.cp-tabs{display:flex;overflow-x:auto;gap:2px;background:var(--bg);border-radius:var(--r);padding:4px;margin-bottom:18px;flex-wrap:wrap;scrollbar-width:none}
 .cp-tabs::-webkit-scrollbar{display:none}
-.cp-tab{padding:13px 18px;font-size:13px;font-weight:600;color:var(--gray);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;font-family:'Tajawal',sans-serif;transition:.15s}
-.cp-tab:hover{color:var(--text)}.cp-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
-.cpt{display:none}.cpt.active{display:block}.tab-body{padding:22px}
-.save-bar{display:flex;justify-content:flex-end;padding-top:16px;margin-top:8px;border-top:1px solid var(--gray3)}
-.exp-panel{background:#fff;border:1px solid var(--gray3);border-radius:12px;margin-bottom:20px;overflow:hidden}
-.exp-header{padding:11px 18px;background:var(--amber-light);border-bottom:1px solid #fde68a;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--amber)}
-.exp-item{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--gray3);font-size:13px;gap:12px}
-.exp-item:last-child{border-bottom:none}
-.doc-drop{border:2px dashed var(--gray3);border-radius:8px;padding:22px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:12px}
-.doc-drop:hover{border-color:var(--blue);background:var(--blue-light)}
-.doc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--gray4);border-radius:8px;border:1px solid var(--gray3);margin-bottom:6px}
-.doc-icon{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
-.backup-card{background:#fff;border:1px solid var(--gray3);border-radius:12px;padding:18px;margin-bottom:14px}
-.comment-toggle{position:fixed;left:20px;bottom:20px;z-index:200;background:var(--amber);color:#fff;border:none;border-radius:50px;padding:10px 16px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(217,119,6,.4);display:flex;align-items:center;gap:7px}
-.comment-panel{position:fixed;left:0;bottom:0;top:0;width:300px;z-index:300;background:#fff;border-right:1px solid var(--gray3);display:flex;flex-direction:column;box-shadow:4px 0 24px rgba(0,0,0,.12);transform:translateX(-100%);transition:.3s}
-.comment-panel.open{transform:translateX(0)}
-.cp-hdr{padding:14px 16px;border-bottom:1px solid var(--gray3);display:flex;align-items:center;justify-content:space-between}
-.cp-list{flex:1;overflow-y:auto;padding:12px}
-.cp-item{margin-bottom:10px;padding:10px 12px;background:var(--gray4);border-radius:8px;border-right:3px solid var(--amber)}
-.cp-item-meta{font-size:11px;color:var(--gray2);margin-bottom:4px;display:flex;justify-content:space-between}
-.cp-form{padding:12px;border-top:1px solid var(--gray3)}
-.cp-form textarea{width:100%;padding:8px;border:1px solid var(--gray3);border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;resize:none;outline:none;margin-bottom:8px}
-.cp-form button{width:100%;padding:8px;background:var(--amber);color:#fff;border:none;border-radius:7px;font-family:'Tajawal',sans-serif;font-size:13px;font-weight:700;cursor:pointer}
-.overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:99}
-#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;font-weight:500;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3);opacity:0;transition:opacity .25s;pointer-events:none;max-width:320px;text-align:center}
-#toast.show{opacity:1}
-.spin{width:15px;height:15px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:rot .6s linear infinite;display:inline-block}
-@keyframes rot{to{transform:rotate(360deg)}}
-.c0{background:#2563eb}.c1{background:#059669}.c2{background:#7c3aed}.c3{background:#dc2626}.c4{background:#d97706}.c5{background:#0891b2}.c6{background:#be185d}.c7{background:#374151}
+.cp-tab{background:none;border:none;padding:7px 14px;border-radius:7px;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:500;color:var(--muted);transition:all .15s;white-space:nowrap}
+.cp-tab:hover{color:var(--text)}
+.cp-tab.act{background:var(--card);color:var(--text);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.4)}
+.cpt{display:none}.cpt.act{display:block}
+.tab-body{padding:18px}
+.save-bar{display:flex;justify-content:flex-end;padding-top:16px;margin-top:8px;border-top:1px solid var(--border)}
+
+/* FORM */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fw{grid-column:1/-1}
+.fsect{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:14px 0 7px;border-bottom:1px solid var(--border);margin-bottom:14px}
+
+/* TABLE ACTION */
 .tbl-action{display:flex;gap:4px}
-.btn-edit{padding:4px 9px;font-size:11px;border-radius:6px;border:1px solid var(--gray3);background:#fff;cursor:pointer;font-family:'Tajawal',sans-serif;font-weight:600;color:var(--text)}
-.btn-edit:hover{background:var(--gray4)}
-.btn-del{padding:4px 9px;font-size:11px;border-radius:6px;border:1px solid var(--red-light);background:#fff;cursor:pointer;font-family:'Tajawal',sans-serif;font-weight:600;color:var(--red)}
-.btn-del:hover{background:var(--red-light)}
-.empty-table{padding:16px;background:var(--gray4);border-radius:8px;font-size:13px;color:var(--gray);text-align:center}
-@media(max-width:860px){.sidebar{position:fixed;height:100vh;transform:translateX(100%);transition:.3s;z-index:100}.sidebar.open{transform:translateX(0)}.menu-btn{display:flex}.overlay-bg.show{display:block}.form-grid{grid-template-columns:1fr}#page-content{padding:16px}}
-@media(max-width:480px){.stats-grid{grid-template-columns:1fr 1fr}.comment-panel{width:100%}}
+
+/* MODAL */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:center;justify-content:center;padding:18px}
+.moverlay.on{display:flex}
+.modal{background:var(--card);border:1px solid var(--border);border-radius:var(--rl);width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;animation:min .2s ease}
+@keyframes min{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.mhdr{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.mtitle{font-size:15px;font-weight:700}
+.mclose{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:6px}
+.mclose:hover{background:var(--hover);color:var(--text)}
+.mbody{padding:20px;overflow-y:auto;flex:1}
+.mftr{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px}
+
+/* EXPIRY */
+.exp-panel{background:var(--card);border:1px solid var(--amber);border-radius:var(--rl);margin-bottom:18px;overflow:hidden}
+.exp-header{padding:11px 18px;background:#1c1500;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--amber)}
+.exp-item{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);font-size:13px;gap:12px;color:var(--text)}
+.exp-item:last-child{border-bottom:none}
+
+/* DOCS */
+.doc-drop{border:2px dashed var(--border);border-radius:var(--r);padding:22px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:12px}
+.doc-drop:hover{border-color:var(--blue);background:rgba(56,139,253,.05)}
+.doc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r);border:1px solid var(--border);margin-bottom:6px}
+.doc-icon{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+
+/* BACKUP */
+.backup-card{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+
+/* EMPTY STATE */
+.es{text-align:center;padding:40px 18px;color:var(--muted)}
+.es .ei{font-size:40px;margin-bottom:10px;opacity:.5}
+.es h3{font-size:15px;margin-bottom:5px;color:var(--text)}
+
+/* SEARCH */
+.sbar{display:flex;align-items:center;gap:7px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:7px 11px}
+.sbar input{background:none;border:none;outline:none;color:var(--text);font-family:var(--font);font-size:13px;width:160px}
+.sbar input::placeholder{color:var(--muted)}
+
+/* COMMENTS */
+.comment-toggle{position:fixed;left:18px;bottom:18px;z-index:150;background:var(--amber);color:#000;border:none;border-radius:50px;padding:9px 16px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.comment-panel{position:fixed;left:0;bottom:0;top:0;width:300px;z-index:300;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-100%);transition:.3s;box-shadow:4px 0 24px rgba(0,0,0,.4)}
+.comment-panel.open{transform:translateX(0)}
+.cp-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cp-list{flex:1;overflow-y:auto;padding:12px}
+.cp-item{margin-bottom:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r);border-right:3px solid var(--amber)}
+.cp-form{padding:12px;border-top:1px solid var(--border)}
+.cp-form textarea{width:100%;padding:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);color:var(--text);font-family:var(--font);font-size:13px;resize:none;outline:none;margin-bottom:8px}
+.cp-form button{width:100%;padding:8px;background:var(--amber);color:#000;border:none;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer}
+
+/* TOAST */
+.tc{position:fixed;bottom:24px;left:18px;z-index:400;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:var(--card2);border:1px solid var(--border);border-radius:var(--r);padding:11px 16px;font-size:13px;display:flex;align-items:center;gap:9px;min-width:220px;max-width:340px;animation:tin .2s ease;pointer-events:auto}
+.toast.ok{border-color:var(--green)}.toast.er{border-color:var(--red)}.toast.info{border-color:var(--blue)}
+@keyframes tin{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* MISC */
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:var(--text);border-radius:50%;animation:rot .6s linear infinite;display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+.overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+
+@media(max-width:860px){
+  .sidebar{transform:translateX(100%);transition:.3s}
+  .sidebar.open{transform:translateX(0)}
+  .tb-menu{display:flex!important}
+  .overlay-bg.show{display:block}
+  .topbar{right:0}
+  .main{margin-right:0}
+  .fgrid{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 <!-- COMPANIES SCREEN -->
-<div id="screen-companies" class="screen active">
-  <div class="co-top">
-    <div class="co-brand"><div class="co-brand-icon">Q</div><div><h1>Quadra Pharma ERP</h1><p>اختر شركة لتسجيل الدخول</p></div></div>
-    <div style="display:flex;gap:8px">
-      <button class="btn btn-sm" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.7);border:none" onclick="openModal('modal-backup')">نسخ احتياطي</button>
-      <button class="btn btn-primary btn-sm" onclick="openModal('modal-add-co')">+ إنشاء شركة</button>
-    </div>
+<div id="sc-co" class="screen active">
+  <div class="logo-pill">
+    <div class="logo-ic">Q</div>
+    <div><div class="logo-tx">Quadra Pharma ERP</div><div style="font-size:11px;color:var(--muted);margin-top:1px">نظام الإدارة الصيدلاني المصري</div></div>
   </div>
-  <div class="co-body"><div class="co-section-title">الشركات المسجلة</div><div class="co-grid" id="co-grid"></div></div>
+  <div class="logo-sub">اختر شركة لتسجيل الدخول أو أنشئ شركة جديدة</div>
+  <div class="co-grid" id="co-grid"></div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+    <button class="btn btn-o btn-sm" onclick="openModal('modal-backup')">💾 نسخ احتياطي</button>
+    <button class="btn btn-ok" onclick="openModal('modal-add-co')">✚ إنشاء شركة جديدة</button>
+  </div>
 </div>
 
 <!-- LOGIN SCREEN -->
-<div id="screen-login" class="screen">
-  <div class="lcard">
-    <button class="lback" onclick="showScreen('companies')">← العودة للشركات</button>
-    <div class="lco-badge" id="lco-badge"></div>
+<div id="sc-login" class="screen">
+  <div class="lbox">
+    <div class="lhdr">
+      <div id="lco-badge" class="co-badge" onclick="showScreen('co')">← تغيير الشركة</div>
+      <div class="ltitle">تسجيل الدخول</div>
+      <div class="lsub">أدخل بيانات حسابك للمتابعة</div>
+    </div>
     <div id="lerr" class="lerr"></div>
-    <div class="lfield"><label class="llabel">اسم المستخدم</label><input class="linput" id="f-user" dir="ltr"></div>
-    <div class="lfield"><label class="llabel">كلمة المرور</label><input class="linput" id="f-pass" type="password" dir="ltr"></div>
-    <button class="btn-login" id="btn-login" onclick="doLogin()">دخول</button>
+    <div class="fg"><label class="fl">اسم المستخدم</label><input class="fi" id="f-user" dir="ltr" placeholder="username" autocomplete="username"></div>
+    <div class="fg"><label class="fl">كلمة المرور</label><input class="fi" id="f-pass" type="password" dir="ltr" placeholder="••••••••"></div>
+    <button class="btnp" id="btn-login" onclick="doLogin()">دخول</button>
   </div>
 </div>
 
 <!-- APP SCREEN -->
-<div id="screen-app" class="screen">
+<div id="sc-app" class="screen">
   <div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
   <nav class="sidebar" id="sidebar">
-    <div class="sb-brand"><div class="sb-brand-icon c0" id="sb-icon">Q</div><div><div class="sb-brand-name" id="sb-coname">—</div><div class="sb-brand-sub">Pharma ERP</div></div></div>
-    <div class="sb-co" onclick="doLogout()"><svg width="12" height="12" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg><span class="sb-co-name" style="font-size:11px;color:rgba(255,255,255,.35)">تغيير الشركة</span></div>
-    <div class="sb-nav">
-      <div class="sb-sec">الرئيسية</div>
-      <div class="sb-item active" id="nav-dashboard" onclick="go('dashboard')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>لوحة التحكم</div>
-      <div class="sb-sec">الإعدادات</div>
-      <div class="sb-item" id="nav-company" onclick="go('company')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>بيانات الشركة</div>
-      <div class="sb-item" id="nav-users" onclick="go('users')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>المستخدمون</div>
-      <div class="sb-item" id="nav-settings" onclick="go('settings')"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>إعدادات النظام</div>
-      <div class="sb-sec">الإنتاج</div>
-      <div class="sb-item dim"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>المواد الخام<span class="sb-soon">قريباً</span></div>
-      <div class="sb-item dim"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/></svg>المنتجات<span class="sb-soon">قريباً</span></div>
+    <div class="sb-top">
+      <div class="sb-logo">
+        <div class="sb-logo-ic">Q</div>
+        <span id="sb-coname" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">—</span>
+      </div>
     </div>
-    <div class="sb-footer">
-      <div class="sb-user"><div class="sb-avatar c0" id="sb-av">؟</div><div><div class="sb-uname" id="sb-un">—</div><div class="sb-urole" id="sb-ur">—</div></div></div>
-      <button class="btn-logout" onclick="doLogout()">تسجيل الخروج</button>
+    <div class="sb-co" onclick="doLogout()">
+      <strong id="sb-coname2">—</strong>
+      <span style="font-size:11px">تغيير الشركة ←</span>
+    </div>
+    <div class="sb-nav" id="sb-nav"></div>
+    <div class="sb-foot" onclick="doLogout()">
+      <div class="uav" id="sb-av">؟</div>
+      <div class="ui"><div class="un" id="sb-un">—</div><div class="ur" id="sb-ur">—</div></div>
+      <span style="color:var(--muted);font-size:12px">خروج</span>
     </div>
   </nav>
-  <div class="main">
+  <div style="flex:1;display:flex;flex-direction:column;min-height:100vh">
     <header class="topbar">
-      <div style="display:flex;align-items:center;gap:10px">
-        <button class="menu-btn" onclick="openSidebar()"><svg width="19" height="19" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg></button>
-        <span class="topbar-title" id="page-title">لوحة التحكم</span>
-      </div>
+      <button class="tb-menu" onclick="openSidebar()">☰</button>
+      <div class="tb-bc" id="page-title">لوحة التحكم</div>
     </header>
-    <div id="page-content"></div>
+    <div class="main" id="main-content"></div>
   </div>
 </div>
 
-<!-- تعليقات -->
-<button class="comment-toggle" id="comment-toggle" onclick="toggleComments()" style="display:none">💬 تعليقاتي <span id="comment-count" style="background:rgba(255,255,255,.25);border-radius:20px;padding:1px 7px;font-size:11px">0</span></button>
+<!-- تعليقات المراجعة -->
+<button class="comment-toggle" id="comment-toggle" onclick="toggleComments()" style="display:none">
+  💬 تعليقاتي <span id="comment-count" style="background:rgba(0,0,0,.25);border-radius:20px;padding:1px 7px;font-size:11px">0</span>
+</button>
 <div class="comment-panel" id="comment-panel">
-  <div class="cp-hdr"><span style="font-size:14px;font-weight:700">تعليقات المراجعة</span><button class="mc" onclick="toggleComments()">✕</button></div>
+  <div class="cp-hdr"><span style="font-size:14px;font-weight:700">تعليقات المراجعة</span><button onclick="toggleComments()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px">✕</button></div>
   <div class="cp-list" id="cp-list"></div>
-  <div class="cp-form"><textarea id="cp-text" rows="3" placeholder="تعليقك..."></textarea><button onclick="addComment()">إضافة تعليق</button></div>
+  <div class="cp-form"><textarea id="cp-text" rows="3" placeholder="تعليقك على هذه الصفحة..."></textarea><button onclick="addComment()">إضافة تعليق</button></div>
 </div>
-<div id="toast"></div>
+<div class="tc" id="tc"></div>
 
-<!-- MODALS -->
+<!-- ══ MODALS ══ -->
 <!-- إنشاء شركة -->
-<div class="overlay" id="modal-add-co"><div class="modal">
-  <div class="mh"><span class="mt">إنشاء شركة جديدة</span><button class="mc" onclick="closeModal('modal-add-co')">✕</button></div>
-  <div class="mb">
-    <div class="alert alert-info">ℹ️ سيتم إنشاء حساب مدير تلقائياً</div>
-    <div class="form-grid">
-      <div class="fg"><label class="fl">كود الشركة <span class="req">*</span></label><input class="fc" id="nc-code" placeholder="QUAD" maxlength="20" style="text-transform:uppercase;direction:ltr"><div class="fh">حروف وأرقام إنجليزية فقط</div></div>
-      <div class="fg"><label class="fl">نوع الكيان <span class="req">*</span></label><select class="fc" id="nc-type"><option value="toll">شركة Toll</option><option value="factory">مصنع</option></select></div>
-      <div class="fg full"><label class="fl">اسم الشركة بالعربي <span class="req">*</span></label><input class="fc" id="nc-name"></div>
-      <div class="fg"><label class="fl">المدينة</label><input class="fc" id="nc-city" value="Cairo"></div>
-      <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="nc-phone" dir="ltr"></div>
+<div class="moverlay" id="modal-add-co"><div class="modal">
+  <div class="mhdr"><span class="mtitle">إنشاء شركة جديدة</span><button class="mclose" onclick="closeModal('modal-add-co')">✕</button></div>
+  <div class="mbody">
+    <div style="background:var(--gbg);border:1px solid var(--green);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--gl);margin-bottom:16px">ℹ️ سيتم إنشاء حساب مدير تلقائياً مع الشركة</div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">كود الشركة <span class="req">*</span></label><input class="fi" id="nc-code" placeholder="QUAD" maxlength="20" style="text-transform:uppercase;direction:ltr"><div style="font-size:11px;color:var(--muted);margin-top:4px">حروف وأرقام إنجليزية فقط</div></div>
+      <div class="fg"><label class="fl">نوع الكيان <span class="req">*</span></label><select class="fi" id="nc-type"><option value="toll">شركة Toll</option><option value="factory">مصنع</option></select></div>
+      <div class="fg fw"><label class="fl">اسم الشركة بالعربي <span class="req">*</span></label><input class="fi" id="nc-name"></div>
+      <div class="fg"><label class="fl">المدينة</label><input class="fi" id="nc-city" value="Cairo"></div>
+      <div class="fg"><label class="fl">الهاتف</label><input class="fi" id="nc-phone" dir="ltr"></div>
     </div>
-    <div style="height:1px;background:var(--gray3);margin:4px 0 16px"></div>
-    <p style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:12px">بيانات المدير الأول</p>
-    <div class="form-grid">
-      <div class="fg"><label class="fl">الاسم <span class="req">*</span></label><input class="fc" id="nc-aname"></div>
-      <div class="fg"><label class="fl">اسم المستخدم <span class="req">*</span></label><input class="fc" id="nc-auser" dir="ltr"></div>
-      <div class="fg full"><label class="fl">كلمة المرور <span class="req">*</span></label><input class="fc" id="nc-apass" type="password" dir="ltr"><div class="fh">8 أحرف على الأقل</div></div>
+    <div style="height:1px;background:var(--border);margin:8px 0 16px"></div>
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">بيانات المدير الأول</div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">الاسم <span class="req">*</span></label><input class="fi" id="nc-aname"></div>
+      <div class="fg"><label class="fl">اسم المستخدم <span class="req">*</span></label><input class="fi" id="nc-auser" dir="ltr"></div>
+      <div class="fg fw"><label class="fl">كلمة المرور <span class="req">*</span></label><input class="fi" id="nc-apass" type="password" dir="ltr"><div style="font-size:11px;color:var(--muted);margin-top:4px">8 أحرف على الأقل</div></div>
     </div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-add-co')">إلغاء</button><button class="btn btn-primary" id="btn-add-co" onclick="doAddCompany()">إنشاء الشركة</button></div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-add-co')">إلغاء</button><button class="btn btn-ok" id="btn-add-co" onclick="doAddCompany()">إنشاء الشركة</button></div>
 </div></div>
 
 <!-- حذف شركة -->
-<div class="overlay" id="modal-del-co"><div class="modal" style="max-width:380px">
-  <div class="mh"><span class="mt">حذف الشركة</span><button class="mc" onclick="closeModal('modal-del-co')">✕</button></div>
-  <div class="mb">
-    <div class="alert alert-warn">⚠️ سيتم حذف جميع البيانات نهائياً</div>
-    <p style="font-size:13px;margin-bottom:12px">هل أنت متأكد من حذف: <strong id="del-co-name"></strong>؟</p>
-    <div class="fg"><label class="fl">اكتب كود الشركة للتأكيد: <strong id="del-co-hint"></strong></label><input class="fc" id="del-co-inp" dir="ltr" style="text-transform:uppercase"></div>
+<div class="moverlay" id="modal-del-co"><div class="modal" style="max-width:380px">
+  <div class="mhdr"><span class="mtitle">حذف الشركة</span><button class="mclose" onclick="closeModal('modal-del-co')">✕</button></div>
+  <div class="mbody">
+    <div style="background:#1c0a09;border:1px solid var(--red);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:14px">⚠️ سيتم حذف جميع البيانات نهائياً</div>
+    <div class="fg"><label class="fl">اكتب كود الشركة للتأكيد: <strong id="del-co-hint"></strong></label><input class="fi" id="del-co-inp" dir="ltr" style="text-transform:uppercase"></div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-del-co')">إلغاء</button><button class="btn btn-red" onclick="doDeleteCompany()">حذف نهائي</button></div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-del-co')">إلغاء</button><button class="btn btn-x" onclick="doDeleteCompany()">حذف نهائي</button></div>
 </div></div>
 
 <!-- مستخدم -->
-<div class="overlay" id="modal-user"><div class="modal">
-  <div class="mh"><span class="mt" id="mu-title">إضافة مستخدم</span><button class="mc" onclick="closeModal('modal-user')">✕</button></div>
-  <div class="mb"><input type="hidden" id="u-id">
-    <div class="form-grid">
-      <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fc" id="u-name"></div>
-      <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fc" id="u-name-en" dir="ltr"></div>
-      <div class="fg"><label class="fl">اسم المستخدم <span class="req">*</span></label><input class="fc" id="u-user" dir="ltr"></div>
-      <div class="fg"><label class="fl" id="u-pl">كلمة المرور <span class="req">*</span></label><input class="fc" id="u-pass" type="password" dir="ltr"><div class="fh" id="u-ph" style="display:none">اتركها فارغة للإبقاء</div></div>
-      <div class="fg"><label class="fl">الدور</label><select class="fc" id="u-role"><option value="user">مستخدم</option><option value="admin">مدير النظام</option></select></div>
-      <div class="fg"><label class="fl">القسم</label><input class="fc" id="u-dept"></div>
-      <div class="fg"><label class="fl">المسمى الوظيفي</label><input class="fc" id="u-title"></div>
-      <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="u-phone" dir="ltr"></div>
-      <div class="fg full"><label class="fl">البريد الإلكتروني</label><input class="fc" id="u-email" type="email" dir="ltr"></div>
+<div class="moverlay" id="modal-user"><div class="modal">
+  <div class="mhdr"><span class="mtitle" id="mu-title">إضافة مستخدم</span><button class="mclose" onclick="closeModal('modal-user')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="u-id">
+    <div class="fgrid">
+      <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fi" id="u-name"></div>
+      <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fi" id="u-name-en" dir="ltr"></div>
+      <div class="fg"><label class="fl">اسم المستخدم <span class="req">*</span></label><input class="fi" id="u-user" dir="ltr"></div>
+      <div class="fg"><label class="fl" id="u-pl">كلمة المرور <span class="req">*</span></label><input class="fi" id="u-pass" type="password" dir="ltr"><div id="u-ph" style="font-size:11px;color:var(--muted);margin-top:4px;display:none">اتركها فارغة للإبقاء</div></div>
+      <div class="fg"><label class="fl">الدور</label><select class="fi" id="u-role"><option value="user">مستخدم</option><option value="admin">مدير النظام</option></select></div>
+      <div class="fg"><label class="fl">القسم</label><input class="fi" id="u-dept"></div>
+      <div class="fg"><label class="fl">المسمى الوظيفي</label><input class="fi" id="u-title-inp"></div>
+      <div class="fg"><label class="fl">الهاتف</label><input class="fi" id="u-phone" dir="ltr"></div>
+      <div class="fg fw"><label class="fl">البريد الإلكتروني</label><input class="fi" id="u-email" type="email" dir="ltr"></div>
     </div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-user')">إلغاء</button><button class="btn btn-primary" id="btn-su" onclick="saveUser()">حفظ</button></div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-user')">إلغاء</button><button class="btn btn-ok" id="btn-su" onclick="saveUser()">حفظ</button></div>
 </div></div>
 
 <!-- شريك -->
-<div class="overlay" id="modal-partner"><div class="modal" style="max-width:420px">
-  <div class="mh"><span class="mt" id="mp-title">إضافة شريك</span><button class="mc" onclick="closeModal('modal-partner')">✕</button></div>
-  <div class="mb"><input type="hidden" id="mp-id">
-    <div class="fg"><label class="fl">اسم الشريك <span class="req">*</span></label><input class="fc" id="mp-name" placeholder="الاسم الكامل"></div>
-    <div class="form-grid">
-      <div class="fg"><label class="fl">نسبة الملكية % <span class="req">*</span></label><input class="fc" id="mp-pct" type="number" min="0" max="100" step="0.01" dir="ltr" placeholder="45.5"></div>
-      <div class="fg"><label class="fl">الجنسية</label><input class="fc" id="mp-nat" placeholder="مصري"></div>
-      <div class="fg"><label class="fl">عدد الحصص</label><input class="fc" id="mp-shares" type="number" dir="ltr"></div>
-      <div class="fg"><label class="fl">قيمة الحصة (جنيه)</label><input class="fc" id="mp-val" type="number" dir="ltr"></div>
+<div class="moverlay" id="modal-partner"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="mp-title">إضافة شريك</span><button class="mclose" onclick="closeModal('modal-partner')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="mp-id">
+    <div class="fg"><label class="fl">اسم الشريك <span class="req">*</span></label><input class="fi" id="mp-name" placeholder="الاسم الرباعي الكامل"></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">نسبة الملكية % <span class="req">*</span></label><input class="fi" id="mp-pct" type="number" min="0" max="100" step="0.01" dir="ltr" placeholder="45.5"></div>
+      <div class="fg"><label class="fl">الجنسية</label><input class="fi" id="mp-nat" placeholder="مصري"></div>
+      <div class="fg"><label class="fl">عدد الحصص</label><input class="fi" id="mp-shares" type="number" dir="ltr"></div>
+      <div class="fg"><label class="fl">قيمة الحصة (جنيه)</label><input class="fi" id="mp-val" type="number" dir="ltr"></div>
     </div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-partner')">إلغاء</button><button class="btn btn-primary" onclick="savePartner()">حفظ</button></div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-partner')">إلغاء</button><button class="btn btn-ok" onclick="savePartner()">حفظ</button></div>
 </div></div>
 
 <!-- مصنع -->
-<div class="overlay" id="modal-factory"><div class="modal" style="max-width:480px">
-  <div class="mh"><span class="mt" id="mf-title">إضافة مصنع متعاقد</span><button class="mc" onclick="closeModal('modal-factory')">✕</button></div>
-  <div class="mb"><input type="hidden" id="mf-id">
-    <div class="fg"><label class="fl">اسم المصنع <span class="req">*</span></label><input class="fc" id="mf-name" placeholder="مثال: نرهادو إنترناشيونال"></div>
-    <div class="fg"><label class="fl">العنوان</label><input class="fc" id="mf-addr" placeholder="المنطقة الصناعية..."></div>
-    <div class="fg"><label class="fl">المنتجات المصنّعة</label><textarea class="fc" id="mf-prods" rows="2" placeholder="Dramrin, Purified Water..."></textarea></div>
-    <div class="form-grid">
-      <div class="fg"><label class="fl">رقم ترخيص المصنع</label><input class="fc" id="mf-lic" dir="ltr"></div>
-      <div class="fg"><label class="fl">خطوط الإنتاج</label><input class="fc" id="mf-lines" placeholder="صلبة، سائل..."></div>
+<div class="moverlay" id="modal-factory"><div class="modal" style="max-width:480px">
+  <div class="mhdr"><span class="mtitle" id="mf-title">إضافة مصنع</span><button class="mclose" onclick="closeModal('modal-factory')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="mf-id">
+    <div class="fg"><label class="fl">اسم المصنع <span class="req">*</span></label><input class="fi" id="mf-name" placeholder="مثال: نرهادو إنترناشيونال"></div>
+    <div class="fg"><label class="fl">العنوان</label><input class="fi" id="mf-addr"></div>
+    <div class="fg"><label class="fl">المنتجات المصنّعة</label><textarea class="fi" id="mf-prods" rows="2" placeholder="Dramrin, Purified Water..."></textarea></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">رقم ترخيص المصنع</label><input class="fi" id="mf-lic" dir="ltr"></div>
+      <div class="fg"><label class="fl">خطوط الإنتاج</label><input class="fi" id="mf-lines" placeholder="صلبة، سائل..."></div>
     </div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-factory')">إلغاء</button><button class="btn btn-primary" onclick="saveFactory()">حفظ</button></div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-factory')">إلغاء</button><button class="btn btn-ok" onclick="saveFactory()">حفظ</button></div>
 </div></div>
 
 <!-- موزع -->
-<div class="overlay" id="modal-dist"><div class="modal" style="max-width:420px">
-  <div class="mh"><span class="mt" id="md-title">إضافة موزع</span><button class="mc" onclick="closeModal('modal-dist')">✕</button></div>
-  <div class="mb"><input type="hidden" id="md-id">
-    <div class="fg"><label class="fl">اسم الموزع <span class="req">*</span></label><input class="fc" id="md-name"></div>
-    <div class="fg"><label class="fl">العنوان</label><input class="fc" id="md-addr"></div>
-    <div class="fg"><label class="fl">المنتجات الموزَّعة</label><textarea class="fc" id="md-prods" rows="2"></textarea></div>
+<div class="moverlay" id="modal-dist"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="md-title">إضافة موزع</span><button class="mclose" onclick="closeModal('modal-dist')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="md-id">
+    <div class="fg"><label class="fl">اسم الموزع <span class="req">*</span></label><input class="fi" id="md-name"></div>
+    <div class="fg"><label class="fl">العنوان</label><input class="fi" id="md-addr"></div>
+    <div class="fg"><label class="fl">المنتجات الموزَّعة</label><textarea class="fi" id="md-prods" rows="2"></textarea></div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-dist')">إلغاء</button><button class="btn btn-primary" onclick="saveDist()">حفظ</button></div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-dist')">إلغاء</button><button class="btn btn-ok" onclick="saveDist()">حفظ</button></div>
 </div></div>
 
 <!-- مخزن -->
-<div class="overlay" id="modal-storage"><div class="modal" style="max-width:420px">
-  <div class="mh"><span class="mt" id="ms-title">إضافة مكان تخزين</span><button class="mc" onclick="closeModal('modal-storage')">✕</button></div>
-  <div class="mb"><input type="hidden" id="ms-id">
-    <div class="fg"><label class="fl">اسم المخزن <span class="req">*</span></label><input class="fc" id="ms-name"></div>
-    <div class="fg"><label class="fl">العنوان الكامل</label><textarea class="fc" id="ms-addr" rows="2"></textarea></div>
-    <div class="form-grid">
-      <div class="fg"><label class="fl">المساحة (م²)</label><input class="fc" id="ms-area" type="number" dir="ltr" placeholder="100"></div>
-      <div class="fg"><label class="fl">نوع التخزين</label><select class="fc" id="ms-type"><option>مخزن عادي</option><option>مخزن مبرد</option><option>مخزن خاص</option></select></div>
+<div class="moverlay" id="modal-storage"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="ms-title">إضافة مكان تخزين</span><button class="mclose" onclick="closeModal('modal-storage')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="ms-id">
+    <div class="fg"><label class="fl">اسم المخزن <span class="req">*</span></label><input class="fi" id="ms-name"></div>
+    <div class="fg"><label class="fl">العنوان الكامل</label><textarea class="fi" id="ms-addr" rows="2"></textarea></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">المساحة (م²)</label><input class="fi" id="ms-area" type="number" dir="ltr" placeholder="100"></div>
+      <div class="fg"><label class="fl">نوع التخزين</label><select class="fi" id="ms-type"><option>مخزن عادي</option><option>مخزن مبرد</option><option>مخزن خاص</option></select></div>
     </div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-storage')">إلغاء</button><button class="btn btn-primary" onclick="saveStorage()">حفظ</button></div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-storage')">إلغاء</button><button class="btn btn-ok" onclick="saveStorage()">حفظ</button></div>
 </div></div>
 
 <!-- نسخ احتياطي -->
-<div class="overlay" id="modal-backup"><div class="modal" style="max-width:420px">
-  <div class="mh"><span class="mt">النسخ الاحتياطي</span><button class="mc" onclick="closeModal('modal-backup')">✕</button></div>
-  <div class="mb">
-    <div class="backup-card"><div style="font-size:14px;font-weight:700;margin-bottom:6px">تصدير نسخة احتياطية</div><div style="font-size:12px;color:var(--gray);margin-bottom:12px">تصدير جميع البيانات في ملف JSON</div><button class="btn btn-primary btn-sm" onclick="exportBackup()">⬇ تنزيل النسخة الاحتياطية</button></div>
-    <div class="backup-card" style="margin-bottom:0"><div style="font-size:14px;font-weight:700;margin-bottom:6px">استيراد نسخة احتياطية</div><div class="alert alert-warn">⚠️ سيتم استبدال البيانات الحالية</div><input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)"><button class="btn btn-outline btn-sm" onclick="document.getElementById('import-file').click()">اختيار ملف JSON</button></div>
+<div class="moverlay" id="modal-backup"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle">النسخ الاحتياطي</span><button class="mclose" onclick="closeModal('modal-backup')">✕</button></div>
+  <div class="mbody">
+    <div class="backup-card"><div style="font-size:14px;font-weight:700;margin-bottom:6px">⬇ تصدير نسخة احتياطية</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px">تصدير جميع البيانات في ملف JSON</div><button class="btn btn-ok btn-sm" onclick="exportBackup()">تنزيل النسخة الاحتياطية</button></div>
+    <div class="backup-card" style="margin-bottom:0"><div style="font-size:14px;font-weight:700;margin-bottom:6px">⬆ استيراد نسخة احتياطية</div><div style="background:#1c1500;border:1px solid var(--amber);border-radius:7px;padding:9px 12px;font-size:12px;color:var(--amber);margin-bottom:12px">⚠️ سيتم استبدال البيانات الحالية</div><input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)"><button class="btn btn-o btn-sm" onclick="document.getElementById('import-file').click()">اختيار ملف JSON</button></div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-backup')">إغلاق</button></div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-backup')">إغلاق</button></div>
 </div></div>
 <script>
 // ══ DB ══
 let DB;
 const openDB=()=>new Promise((ok,fail)=>{
-  const r=indexedDB.open('pharma_erp',4);
+  const r=indexedDB.open('pharma_erp',6);
   r.onupgradeneeded=e=>{
     const d=e.target.result;
     const stores=[
@@ -363,6 +427,7 @@ const openDB=()=>new Promise((ok,fail)=>{
       ['factories',[{n:'companyId',k:'companyId'}]],
       ['distributors',[{n:'companyId',k:'companyId'}]],
       ['storages',[{n:'companyId',k:'companyId'}]],
+      ['drugs',[{n:'companyId',k:'companyId'}]],
     ];
     for(const[name,idxs,auto]of stores){
       if(!d.objectStoreNames.contains(name)){
@@ -385,32 +450,65 @@ const fmtDt=d=>d?new Date(d).toLocaleString('ar-EG',{year:'numeric',month:'short
 const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
 const val=id=>(document.getElementById(id)?.value??'').trim();
 const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};
-const COLORS=['c0','c1','c2','c3','c4','c5','c6','c7'];
+const COLORS=['#2ea043','#388bfd','#7c3aed','#f85149','#e3b341','#0891b2','#be185d','#374151'];
 const coColor=c=>COLORS[c.charCodeAt(0)%COLORS.length];
 const hashPw=async pw=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw+'qp25'));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')};
 const chkPw=async(pw,h)=>(await hashPw(pw))===h;
-const expBadge=d=>{if(!d)return'';const diff=Math.ceil((new Date(d)-new Date())/864e5);if(diff<0)return' <span class="badge br">منتهي</span>';if(diff<90)return` <span class="badge ba">${diff} يوم</span>`;return' <span class="badge bg">ساري</span>'};
+const expBadge=d=>{if(!d)return'';const diff=Math.ceil((new Date(d)-new Date())/864e5);if(diff<0)return' <span class="bdg bdg-r">منتهي</span>';if(diff<90)return` <span class="bdg bdg-a">${diff} يوم</span>`;return' <span class="bdg bdg-g">ساري</span>'};
 const saveHist=async(recordId,action,note)=>await dbPut('history',{recordId,action,note:note||'',at:now(),userId:S?.userId,userName:S?.nameAr});
 let S=null,delCoId=null;
 
-// ══ COMPANIES LIST ══
+function toast(msg,type='info'){
+  const t=document.createElement('div');
+  t.className='toast '+(type==='ok'?'ok':type==='er'?'er':'info');
+  t.textContent=(type==='ok'?'✅ ':type==='er'?'❌ ':'ℹ️ ')+msg;
+  document.getElementById('tc').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320)},3000);
+}
+
+// ══ COMPANIES ══
 async function renderCompanies(){
   const cos=(await dbGetAll('companies')).filter(c=>!c.deletedAt);
   const g=document.getElementById('co-grid');
-  if(!cos.length){g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:48px;color:rgba(255,255,255,.3)"><div style="font-size:40px;margin-bottom:12px;opacity:.3">🏭</div><div style="font-size:15px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:6px">لا توجد شركات بعد</div><div style="font-size:13px">اضغط إنشاء شركة للبدء</div></div>';return}
-  g.innerHTML=cos.map(co=>{const cc=coColor(co.code);return`<div class="co-card"><div class="co-dot ${co.isActive?'dot-on':'dot-off'}"></div><div class="co-card-top"><div class="co-card-icon ${cc}">${co.nameAr.charAt(0)}</div><div style="position:relative"><button class="co-card-menu" onclick="event.stopPropagation();toggleDD('dd-${co.id}')">⋮</button><div class="dd" id="dd-${co.id}"><button class="dd-item" onclick="event.stopPropagation();closeAllDD();loginCo('${co.id}')">🔑 دخول</button><div class="dd-div"></div><button class="dd-item red" onclick="event.stopPropagation();closeAllDD();confirmDelCo('${co.id}')">🗑 حذف</button></div></div></div><div class="co-card-name" onclick="loginCo('${co.id}')">${esc(co.nameAr)}</div><span class="co-card-code">${esc(co.code)}</span><div class="co-card-meta"><span style="color:${co.companyType==='factory'?'#60a5fa':'#fbbf24'};font-weight:600">${co.companyType==='factory'?'مصنع':'Toll'}</span><span>${esc(co.city||'—')}</span></div></div>`;}).join('');
+  if(!cos.length){
+    g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><div style="font-size:44px;margin-bottom:12px;opacity:.4">🏭</div><div style="font-size:15px;color:var(--text);margin-bottom:6px">لا توجد شركات بعد</div><div style="font-size:13px">اضغط "إنشاء شركة جديدة" للبدء</div></div>';
+    return;
+  }
+  g.innerHTML=cos.map(co=>{
+    const cc=coColor(co.code);
+    const typeC=co.companyType==='factory'?'cbg-factory':'cbg-toll';
+    const typeLbl=co.companyType==='factory'?'مصنع':'شركة Toll';
+    return`<div class="co-card">
+      <div class="co-dot ${co.isActive?'dot-on':'dot-off'}"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:10px">
+        <div style="width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;background:${cc};flex-shrink:0">${co.nameAr.charAt(0)}</div>
+        <div style="position:relative">
+          <button class="co-card-menu" onclick="event.stopPropagation();toggleDD('dd-${co.id}')">⋮</button>
+          <div class="dd" id="dd-${co.id}">
+            <button class="dd-item" onclick="event.stopPropagation();closeAllDD();loginCo('${co.id}')">🔑 دخول</button>
+            <div class="dd-div"></div>
+            <button class="dd-item red" onclick="event.stopPropagation();closeAllDD();confirmDelCo('${co.id}')">🗑 حذف</button>
+          </div>
+        </div>
+      </div>
+      <div class="co-card-cn" onclick="loginCo('${co.id}')">${esc(co.nameAr)}</div>
+      <div class="co-card-cm">${esc(co.city||'—')}</div>
+      <span class="cbg ${typeC}">${typeLbl}</span>
+    </div>`;
+  }).join('');
 }
+
 function toggleDD(id){closeAllDD();document.getElementById(id)?.classList.add('show')}
 function closeAllDD(){document.querySelectorAll('.dd.show').forEach(d=>d.classList.remove('show'))}
 document.addEventListener('click',closeAllDD);
 
 async function doAddCompany(){
   const code=val('nc-code').toUpperCase(),name=val('nc-name'),aname=val('nc-aname'),auser=val('nc-auser'),apass=val('nc-apass');
-  if(!code||!name||!aname||!auser||!apass){toast('يرجى ملء الحقول المطلوبة','e');return}
-  if(!/^[A-Z0-9]+$/.test(code)){toast('الكود: حروف وأرقام إنجليزية فقط','e');return}
-  if(apass.length<8){toast('كلمة المرور 8 أحرف على الأقل','e');return}
+  if(!code||!name||!aname||!auser||!apass){toast('يرجى ملء الحقول المطلوبة','er');return}
+  if(!/^[A-Z0-9]+$/.test(code)){toast('الكود: حروف وأرقام إنجليزية فقط','er');return}
+  if(apass.length<8){toast('كلمة المرور 8 أحرف على الأقل','er');return}
   const all=await dbGetAll('companies');
-  if(all.find(c=>c.code===code&&!c.deletedAt)){toast('كود الشركة موجود بالفعل','e');return}
+  if(all.find(c=>c.code===code&&!c.deletedAt)){toast('كود الشركة موجود بالفعل','er');return}
   const btn=document.getElementById('btn-add-co');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
   try{
     const coId=uid();
@@ -418,14 +516,22 @@ async function doAddCompany(){
     await dbPut('users',{id:uid(),companyId:coId,nameAr:aname,username:auser,passwordHash:await hashPw(apass),role:'admin',isActive:true,failedAttempts:0,createdAt:now(),updatedAt:now()});
     closeModal('modal-add-co');
     ['nc-code','nc-name','nc-phone','nc-aname','nc-auser','nc-apass'].forEach(id=>set(id,''));set('nc-city','Cairo');
-    toast('✅ تم إنشاء الشركة بنجاح');renderCompanies();
-  }catch(e){toast('خطأ: '+e.message,'e')}
+    toast('تم إنشاء الشركة بنجاح','ok');renderCompanies();
+  }catch(e){toast('خطأ: '+e.message,'er')}
   btn.innerHTML='إنشاء الشركة';btn.disabled=false;
 }
-function confirmDelCo(id){delCoId=id;dbGet('companies',id).then(co=>{if(!co)return;document.getElementById('del-co-name').textContent=co.nameAr;document.getElementById('del-co-hint').textContent=co.code;set('del-co-inp','');openModal('modal-del-co')});}
+
+function confirmDelCo(id){
+  delCoId=id;
+  dbGet('companies',id).then(co=>{
+    if(!co)return;
+    document.getElementById('del-co-hint').textContent=co.code;
+    set('del-co-inp','');openModal('modal-del-co');
+  });
+}
 async function doDeleteCompany(){
   if(!delCoId)return;const co=await dbGet('companies',delCoId);if(!co)return;
-  if(val('del-co-inp').toUpperCase()!==co.code){toast('كود الشركة غير صحيح','e');return}
+  if(val('del-co-inp').toUpperCase()!==co.code){toast('كود الشركة غير صحيح','er');return}
   co.deletedAt=now();co.isActive=false;await dbPut('companies',co);
   const users=await dbGetAll('users','companyId',delCoId);
   for(const u of users){u.deletedAt=now();await dbPut('users',u)}
@@ -434,7 +540,16 @@ async function doDeleteCompany(){
 
 // ══ LOGIN ══
 let loginCoId=null;
-function loginCo(id){loginCoId=id;dbGet('companies',id).then(co=>{if(!co)return;const cc=coColor(co.code);document.getElementById('lco-badge').innerHTML=`<div class="lco-icon ${cc}">${co.nameAr.charAt(0)}</div><div><div class="lco-name">${esc(co.nameAr)}</div><div class="lco-code">${esc(co.code)}</div></div>`;set('f-user','');set('f-pass','');document.getElementById('lerr').classList.remove('show');showScreen('login');});}
+function loginCo(id){
+  loginCoId=id;
+  dbGet('companies',id).then(co=>{
+    if(!co)return;
+    document.getElementById('lco-badge').textContent='← '+co.nameAr;
+    set('f-user','');set('f-pass','');
+    document.getElementById('lerr').classList.remove('show');
+    showScreen('login');
+  });
+}
 async function doLogin(){
   const username=val('f-user'),password=val('f-pass');
   const err=document.getElementById('lerr');err.classList.remove('show');
@@ -445,35 +560,69 @@ async function doLogin(){
     if(!co||co.deletedAt){err.textContent='الشركة غير موجودة';err.classList.add('show');return}
     const users=await dbGetAll('users','companyId',co.id);
     const u=users.find(x=>x.username===username&&!x.deletedAt);
-    if(!u){err.textContent='اسم المستخدم أو كلمة المرور غير صحيحة';err.classList.add('show');return}
-    if(!u.isActive){err.textContent='هذا الحساب موقوف';err.classList.add('show');return}
+    if(!u||!u.isActive){err.textContent='بيانات الدخول غير صحيحة';err.classList.add('show');return}
     if(u.lockedUntil&&new Date(u.lockedUntil)>new Date()){err.textContent='الحساب مقفل 30 دقيقة';err.classList.add('show');return}
-    if(!(await chkPw(password,u.passwordHash))){u.failedAttempts=(u.failedAttempts||0)+1;if(u.failedAttempts>=5)u.lockedUntil=new Date(Date.now()+30*60000).toISOString();await dbPut('users',u);err.textContent='كلمة المرور غير صحيحة'+(u.failedAttempts>=3?` (${5-u.failedAttempts} محاولات)`:'');err.classList.add('show');return}
+    if(!(await chkPw(password,u.passwordHash))){
+      u.failedAttempts=(u.failedAttempts||0)+1;
+      if(u.failedAttempts>=5)u.lockedUntil=new Date(Date.now()+30*60000).toISOString();
+      await dbPut('users',u);
+      err.textContent='كلمة المرور غير صحيحة'+(u.failedAttempts>=3?` (${5-u.failedAttempts} محاولات متبقية)`:'');
+      err.classList.add('show');return;
+    }
     u.failedAttempts=0;u.lockedUntil=null;u.lastLogin=now();await dbPut('users',u);
     S={companyId:co.id,userId:u.id,nameAr:u.nameAr,companyNameAr:co.nameAr,coCode:co.code,role:u.role};
     sessionStorage.setItem('S',JSON.stringify(S));startApp();
   }catch(e){err.textContent='خطأ: '+e.message;err.classList.add('show')}
   btn.innerHTML='دخول';btn.disabled=false;
 }
-function doLogout(){S=null;sessionStorage.removeItem('S');loginCoId=null;showScreen('companies');renderCompanies();document.getElementById('comment-toggle').style.display='none';document.getElementById('comment-panel').classList.remove('open');}
+function doLogout(){S=null;sessionStorage.removeItem('S');loginCoId=null;showScreen('co');renderCompanies();document.getElementById('comment-toggle').style.display='none';document.getElementById('comment-panel').classList.remove('open');}
 
 // ══ APP ══
+const NAV=[
+  {sec:'الرئيسية'},
+  {id:'dashboard',lbl:'لوحة التحكم',ic:'📊'},
+  {sec:'الشركة'},
+  {id:'company',lbl:'بيانات الشركة',ic:'🏢'},
+  {id:'drug-reg',lbl:'EDA — أدوية بشرية',ic:'💊'},
+  {sec:'الإعدادات'},
+  {id:'users',lbl:'المستخدمون',ic:'👥'},
+  {id:'settings',lbl:'إعدادات النظام',ic:'⚙️'},
+  {sec:'الإنتاج'},
+  {id:'materials',lbl:'المواد الخام',ic:'🧪',soon:true},
+  {id:'products',lbl:'المنتجات',ic:'💊',soon:true},
+  {id:'production',lbl:'الإنتاج',ic:'🏭',soon:true},
+];
+
+function buildNav(){
+  const nav=document.getElementById('sb-nav');
+  nav.innerHTML=NAV.map(n=>{
+    if(n.sec)return`<div class="nsec">${n.sec}</div>`;
+    return`<div class="nitem ${n.soon?'dim':''}" id="nav-${n.id}" onclick="${n.soon?'':"`go('${n.id}')`"}">
+      <span class="nic">${n.ic}</span><span>${n.lbl}</span>
+      ${n.soon?'<span class="sb-soon">قريباً</span>':''}
+    </div>`;
+  }).join('');
+}
+
 function startApp(){
   const cc=coColor(S.coCode);
-  document.getElementById('sb-icon').className='sb-brand-icon '+cc;document.getElementById('sb-icon').textContent=S.companyNameAr.charAt(0);
-  document.getElementById('sb-coname').textContent=S.companyNameAr;document.getElementById('sb-av').className='sb-avatar '+cc;
-  document.getElementById('sb-av').textContent=S.nameAr.charAt(0);document.getElementById('sb-un').textContent=S.nameAr;
+  document.getElementById('sb-coname').textContent=S.companyNameAr;
+  document.getElementById('sb-coname2').textContent=S.companyNameAr;
+  document.getElementById('sb-av').textContent=S.nameAr.charAt(0);
+  document.getElementById('sb-av').style.background=`linear-gradient(135deg,${cc},var(--purple))`;
+  document.getElementById('sb-un').textContent=S.nameAr;
   document.getElementById('sb-ur').textContent=S.role==='admin'?'مدير النظام':'مستخدم';
   document.getElementById('comment-toggle').style.display='flex';
-  showScreen('app');go('dashboard');renderComments();
+  buildNav();showScreen('app');go('dashboard');renderComments();
 }
-const TITLES={dashboard:'لوحة التحكم',company:'بيانات الشركة',users:'المستخدمون',settings:'إعدادات النظام'};
+
 function go(page){
-  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
-  document.getElementById('nav-'+page)?.classList.add('active');
-  document.getElementById('page-title').textContent=TITLES[page]||page;
-  const c=document.getElementById('page-content');
-  ({dashboard:renderDashboard,company:renderCompanyPage,users:renderUsers,settings:renderSettings}[page]||renderDashboard)(c);
+  document.querySelectorAll('.nitem').forEach(e=>e.classList.remove('act'));
+  document.getElementById('nav-'+page)?.classList.add('act');
+  const titles={dashboard:'📊 لوحة التحكم',company:'🏢 بيانات الشركة','drug-reg':'💊 EDA — أدوية بشرية',users:'👥 المستخدمون',settings:'⚙️ إعدادات النظام'};
+  document.getElementById('page-title').textContent=titles[page]||page;
+  const m=document.getElementById('main-content');
+  ({dashboard:renderDashboard,company:renderCompanyPage,'drug-reg':renderDrugReg,users:renderUsers,settings:renderSettings}[page]||renderDashboard)(m);
   closeSidebar();
 }
 
@@ -483,338 +632,313 @@ async function renderDashboard(c){
   const au=users.filter(u=>u.isActive&&!u.deletedAt).length;
   const logs=await dbGetAll('audit','companyId',S.companyId);
   const co=await dbGet('companies',S.companyId);
-  const recent=logs.slice(-6).reverse();
+  const recent=logs.slice(-5).reverse();
   const checks=[{k:'comRegExp',l:'السجل التجاري'},{k:'tollExp',l:'Toll / رخصة المصنع'},{k:'gmpExp',l:'شهادة GMP'},{k:'taxExp',l:'البطاقة الضريبية'}];
   const warns=checks.filter(x=>co[x.k]).map(x=>{const diff=Math.ceil((new Date(co[x.k])-new Date())/864e5);return{label:x.l,date:fmt(co[x.k]),diff,exp:diff<0}}).filter(x=>x.diff<90);
-  const expPanel=warns.length?`<div class="exp-panel"><div class="exp-header">⚠️ ${warns.filter(w=>w.exp).length} منتهية — ${warns.filter(w=>!w.exp).length} تنتهي قريباً</div>${warns.map(w=>`<div class="exp-item"><span style="font-weight:600">${esc(w.label)}</span><span style="font-size:12px;color:var(--gray)">${esc(w.date)}</span><span class="badge ${w.exp?'br':'ba'}">${w.exp?'منتهي':w.diff+' يوم'}</span><button class="btn btn-xs btn-outline" onclick="go('company')">عرض</button></div>`).join('')}</div>`:'';
-  c.innerHTML=`<div class="ph"><div class="ph-left"><h2>مرحباً، ${esc(S.nameAr)}</h2><p>${esc(S.companyNameAr)}</p></div></div>${expPanel}<div class="stats-grid"><div class="stat" style="--sc:var(--blue)"><div class="stat-label">المستخدمون النشطون</div><div class="stat-value">${au}</div><div class="stat-sub">من ${users.filter(u=>!u.deletedAt).length} إجمالي</div></div><div class="stat" style="--sc:var(--amber)"><div class="stat-label">المواد الخام</div><div class="stat-value" style="font-size:18px;color:var(--gray2);padding-top:4px">قريباً</div><div class="stat-sub">المرحلة 2</div></div><div class="stat" style="--sc:var(--green)"><div class="stat-label">أوامر الإنتاج</div><div class="stat-value" style="font-size:18px;color:var(--gray2);padding-top:4px">قريباً</div><div class="stat-sub">المرحلة 4</div></div><div class="stat" style="--sc:#7c3aed"><div class="stat-label">سجلات النشاط</div><div class="stat-value">${logs.length}</div></div></div><div class="card"><div class="card-header"><span class="card-title">آخر الأنشطة</span></div>${recent.length?`<div class="table-wrap"><table><thead><tr><th>المستخدم</th><th>العملية</th><th>الوقت</th></tr></thead><tbody>${recent.map(l=>`<tr><td style="font-weight:500">${esc(l.nameAr||'—')}</td><td><span class="badge bb">${esc(l.action)}</span></td><td style="color:var(--gray);font-size:12px">${fmtDt(l.at)}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty"><h3>لا توجد أنشطة بعد</h3></div>'}</div>`;
+
+  let html='';
+  if(warns.length){
+    html+=`<div class="exp-panel"><div class="exp-header">⚠️ ${warns.filter(w=>w.exp).length} وثيقة منتهية — ${warns.filter(w=>!w.exp).length} تنتهي قريباً</div>
+    ${warns.map(w=>`<div class="exp-item"><span style="font-weight:600">${esc(w.label)}</span><span style="font-size:12px;color:var(--muted)">${esc(w.date)}</span><span class="bdg ${w.exp?'bdg-r':'bdg-a'}">${w.exp?'منتهي':w.diff+' يوم'}</span><button class="btn btn-o btn-xs" onclick="go('company')">عرض</button></div>`).join('')}
+    </div>`;
+  }
+
+  html+=`<div class="stats">
+    <div class="sc gr"><div class="sic">👥</div><div class="slbl">المستخدمون النشطون</div><div class="sval gr">${au}</div><div class="sinfo">من ${users.filter(u=>!u.deletedAt).length} إجمالي</div></div>
+    <div class="sc am"><div class="sic">⏳</div><div class="slbl">المواد الخام</div><div class="sval am" style="font-size:18px;padding-top:6px">قريباً</div><div class="sinfo">المرحلة 2</div></div>
+    <div class="sc bl"><div class="sic">💊</div><div class="slbl">المنتجات</div><div class="sval bl" style="font-size:18px;padding-top:6px">قريباً</div><div class="sinfo">المرحلة 3</div></div>
+    <div class="sc re"><div class="sic">📋</div><div class="slbl">سجلات النشاط</div><div class="sval re">${logs.length}</div><div class="sinfo">إجمالي العمليات</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="pcard"><div class="ph"><div class="ptitle">⚡ إجراءات سريعة</div></div>
+    <div style="padding:14px;display:flex;flex-wrap:wrap;gap:10px">
+      <button class="btn btn-ok" onclick="go('company')">🏢 تحديث بيانات الشركة</button>
+      <button class="btn btn-bl" onclick="go('users')">👤 إضافة مستخدم</button>
+      <button class="btn btn-o" onclick="openModal('modal-backup')">💾 نسخ احتياطي</button>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">🏢 الشركة النشطة</div></div>
+    <div style="padding:14px">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-size:13px">الاسم</span><span style="font-size:13px;font-weight:600">${esc(co.nameAr)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-size:13px">النوع</span><span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:var(--muted);font-size:13px">الكود</span><span style="font-family:var(--mono);font-size:12px;color:var(--blue)">${esc(co.code)}</span></div>
+    </div></div>
+  </div>
+  <div class="pcard"><div class="ph"><div class="ptitle">📋 آخر الأنشطة</div></div>
+  ${recent.length?`<div class="tw"><table><thead><tr><th>المستخدم</th><th>العملية</th><th>الوقت</th></tr></thead><tbody>
+  ${recent.map(l=>`<tr><td style="font-weight:600">${esc(l.userName||'—')}</td><td><span class="bdg bdg-b">${esc(l.action)}</span></td><td style="font-size:12px;color:var(--muted)">${fmtDt(l.at)}</td></tr>`).join('')}
+  </tbody></table></div>`:'<div class="es" style="padding:28px"><div class="ei">📋</div><p>لا توجد أنشطة بعد</p></div>'}
+  </div>`;
+  c.innerHTML=html;
 }
 
 // ══ COMPANY PAGE ══
 async function renderCompanyPage(c){
   const co=await dbGet('companies',S.companyId);
   c.innerHTML=`
-  <div class="ph">
-    <div class="ph-left"><h2>بيانات الشركة</h2>
-      <p><span class="badge ${co.companyType==='factory'?'bb':'ba'}">${co.companyType==='factory'?'مصنع':'شركة Toll'}</span>&nbsp;<span class="badge ${co.isActive?'bg':'br'}">${co.isActive?'نشطة':'موقوفة'}</span></p>
-    </div>
-    <button class="btn btn-outline btn-sm" onclick="printCompany()">🖨 طباعة</button>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div class="page-title" style="margin-bottom:0">🏢 بيانات الشركة <span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+    <button class="btn btn-o btn-sm" onclick="printCompany()">🖨 طباعة</button>
   </div>
-  <div class="card">
-    <div class="cp-tabs">
-      <button class="cp-tab active" onclick="switchCoTab(this,'cpt-legal')">القانونية</button>
-      <button class="cp-tab" onclick="switchCoTab(this,'cpt-eda')">EDA والترخيص</button>
-      <button class="cp-tab" onclick="switchCoTab(this,'cpt-tax')">الضرائب</button>
-      <button class="cp-tab" onclick="switchCoTab(this,'cpt-persons')">المسؤولون</button>
-      <button class="cp-tab" onclick="switchCoTab(this,'cpt-partners')">الشركاء</button>
-      <button class="cp-tab" onclick="switchCoTab(this,'cpt-factories')">المصانع والموزعون</button>
-      <button class="cp-tab" onclick="switchCoTab(this,'cpt-docs')">المستندات</button>
-      <button class="cp-tab" onclick="switchCoTab(this,'cpt-history')">سجل التعديلات</button>
-    </div>
+  <div class="cp-tabs" id="co-tabs">
+    <button class="cp-tab act" data-cpt="cpt-legal">القانونية</button>
+    <button class="cp-tab" data-cpt="cpt-eda">EDA والترخيص</button>
+    <button class="cp-tab" data-cpt="cpt-tax">الضرائب</button>
+    <button class="cp-tab" data-cpt="cpt-persons">المسؤولون</button>
+    <button class="cp-tab" data-cpt="cpt-partners">الشركاء</button>
+    <button class="cp-tab" data-cpt="cpt-factories">المصانع والموزعون</button>
+    <button class="cp-tab" data-cpt="cpt-docs">المستندات</button>
+    <button class="cp-tab" data-cpt="cpt-history">سجل التعديلات</button>
+  </div>
 
-    <div id="cpt-legal" class="cpt active"><div class="tab-body">
-      <div class="form-grid">
-        <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fc" id="cf-nameAr" value="${esc(co.nameAr||'')}"></div>
-        <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fc" id="cf-nameEn" value="${esc(co.nameEn||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">نوع الكيان</label><select class="fc" id="cf-companyType"><option value="toll" ${(co.companyType||'toll')==='toll'?'selected':''}>شركة Toll</option><option value="factory" ${co.companyType==='factory'?'selected':''}>مصنع</option></select></div>
-        <div class="fg"><label class="fl">الشكل القانوني</label><select class="fc" id="cf-legalForm"><option value="">اختر...</option>${['شركة ذات مسؤولية محدودة (ش.ذ.م.م)','شركة توصية بسيطة','شركة مساهمة','شركة شخص واحد'].map(v=>`<option ${co.legalForm===v?'selected':''}>${v}</option>`).join('')}</select></div>
-        <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fc" id="cf-comRegNo" value="${esc(co.comRegNo||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">انتهاء السجل${expBadge(co.comRegExp)}</label><input class="fc" id="cf-comRegExp" type="date" value="${co.comRegExp||''}"></div>
-        <div class="fg"><label class="fl">الرقم القومي للمنشأة</label><input class="fc" id="cf-natNo" value="${esc(co.natNo||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">رأس المال (جنيه)</label><input class="fc" id="cf-capital" type="number" value="${co.capital||''}" dir="ltr"></div>
-        <div class="fg"><label class="fl">المدينة</label><input class="fc" id="cf-city" value="${esc(co.city||'')}"></div>
-        <div class="fg"><label class="fl">الدولة</label><input class="fc" id="cf-country" value="${esc(co.country||'Egypt')}"></div>
-        <div class="fg full"><label class="fl">المقر الرئيسي</label><textarea class="fc" id="cf-addr" rows="2">${esc(co.addressAr||'')}</textarea></div>
+  <div id="cpt-legal" class="cpt act">
+    <div class="pcard"><div class="ph"><div class="ptitle">📋 البيانات القانونية</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fi" id="cf-nameAr" value="${esc(co.nameAr||'')}"></div>
+        <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fi" id="cf-nameEn" value="${esc(co.nameEn||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">نوع الكيان</label><select class="fi" id="cf-companyType"><option value="toll" ${(co.companyType||'toll')==='toll'?'selected':''}>شركة Toll</option><option value="factory" ${co.companyType==='factory'?'selected':''}>مصنع</option></select></div>
+        <div class="fg"><label class="fl">الشكل القانوني</label><select class="fi" id="cf-legalForm"><option value="">اختر...</option>${['شركة ذات مسؤولية محدودة (ش.ذ.م.م)','شركة توصية بسيطة','شركة مساهمة','شركة شخص واحد'].map(v=>`<option ${co.legalForm===v?'selected':''}>${v}</option>`).join('')}</select></div>
+        <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fi" id="cf-comRegNo" value="${esc(co.comRegNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">انتهاء السجل${expBadge(co.comRegExp)}</label><input class="fi" id="cf-comRegExp" type="date" value="${co.comRegExp||''}"></div>
+        <div class="fg"><label class="fl">الرقم القومي للمنشأة</label><input class="fi" id="cf-natNo" value="${esc(co.natNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">رأس المال (جنيه)</label><input class="fi" id="cf-capital" type="number" value="${co.capital||''}" dir="ltr"></div>
+        <div class="fg"><label class="fl">المدينة</label><input class="fi" id="cf-city" value="${esc(co.city||'')}"></div>
+        <div class="fg"><label class="fl">الدولة</label><input class="fi" id="cf-country" value="${esc(co.country||'Egypt')}"></div>
+        <div class="fg fw"><label class="fl">المقر الرئيسي</label><textarea class="fi" id="cf-addr" rows="2">${esc(co.addressAr||'')}</textarea></div>
       </div>
-      <div class="save-bar"><button class="btn btn-primary" onclick="saveTab('legal')">💾 حفظ البيانات القانونية</button></div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('legal')">💾 حفظ البيانات القانونية</button></div>
     </div></div>
+  </div>
 
-    <div id="cpt-eda" class="cpt"><div class="tab-body">
-      <div style="margin-bottom:14px;padding:10px 14px;background:var(--blue-light);border-radius:8px;font-size:12px;font-weight:700;color:var(--blue)">${co.companyType==='factory'?'📋 رخصة مصنع — FM-LPM-02':'📋 قيد Toll لدى الغير — FM-LAD-15'}</div>
-      <div class="form-grid">
-        <div class="fg"><label class="fl">${co.companyType==='factory'?'رقم رخصة المصنع':'رقم قيد Toll'}</label><input class="fc" id="cf-tollNo" value="${esc(co.tollNo||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">تاريخ الإصدار</label><input class="fc" id="cf-tollDate" type="date" value="${co.tollDate||''}"></div>
-        <div class="fg"><label class="fl">تاريخ الانتهاء${expBadge(co.tollExp)}</label><input class="fc" id="cf-tollExp" type="date" value="${co.tollExp||''}"></div>
-        <div class="fg"><label class="fl">كود EDA</label><input class="fc" id="cf-edaCode" value="${esc(co.edaCode||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">شهادة GMP</label><input class="fc" id="cf-gmp" value="${esc(co.gmp||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">انتهاء GMP${expBadge(co.gmpExp)}</label><input class="fc" id="cf-gmpExp" type="date" value="${co.gmpExp||''}"></div>
-        <div class="fg full"><label class="fl">خطوط الإنتاج</label><input class="fc" id="cf-lines" value="${esc(co.lines||co.productionLines||'')}" placeholder="صلبة، كبسولات، سائل..."></div>
-        <div class="fg full"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fc" id="cf-edaAddr" rows="2">${esc(co.edaAddress||co.edaAddr||'')}</textarea></div>
+  <div id="cpt-eda" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">${co.companyType==='factory'?'📋 رخصة مصنع — FM-LPM-02':'📋 قيد Toll لدى الغير — FM-LAD-15'}</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">${co.companyType==='factory'?'رقم رخصة المصنع':'رقم قيد Toll'}</label><input class="fi" id="cf-tollNo" value="${esc(co.tollNo||'')}" dir="ltr" placeholder="${co.companyType==='factory'?'00003/2017':'Toll/57'}"></div>
+        <div class="fg"><label class="fl">تاريخ الإصدار</label><input class="fi" id="cf-tollDate" type="date" value="${co.tollDate||''}"></div>
+        <div class="fg"><label class="fl">تاريخ الانتهاء${expBadge(co.tollExp)}</label><input class="fi" id="cf-tollExp" type="date" value="${co.tollExp||''}"></div>
+        <div class="fg"><label class="fl">كود EDA</label><input class="fi" id="cf-edaCode" value="${esc(co.edaCode||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">شهادة GMP</label><input class="fi" id="cf-gmp" value="${esc(co.gmp||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">انتهاء GMP${expBadge(co.gmpExp)}</label><input class="fi" id="cf-gmpExp" type="date" value="${co.gmpExp||''}"></div>
+        <div class="fg fw"><label class="fl">خطوط الإنتاج</label><input class="fi" id="cf-lines" value="${esc(co.lines||co.productionLines||'')}" placeholder="صلبة، كبسولات، سائل..."></div>
+        <div class="fg fw"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fi" id="cf-edaAddr" rows="2">${esc(co.edaAddress||co.edaAddr||'')}</textarea></div>
       </div>
-      <div class="save-bar"><button class="btn btn-primary" onclick="saveTab('eda')">💾 حفظ بيانات EDA</button></div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('eda')">💾 حفظ بيانات EDA</button></div>
     </div></div>
+  </div>
 
-    <div id="cpt-tax" class="cpt"><div class="tab-body">
-      <div class="form-grid">
-        <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fc" id="cf-taxReg" value="${esc(co.taxReg||co.taxRegNo||'')}" dir="ltr" placeholder="204-999-359"></div>
-        <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fc" id="cf-taxCard" value="${esc(co.taxCard||co.taxCardNo||'')}" dir="ltr" placeholder="509-999-204"></div>
-        <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fc" id="cf-taxDate" type="date" value="${co.taxDate||co.taxCardDate||''}"></div>
-        <div class="fg"><label class="fl">انتهاء البطاقة${expBadge(co.taxExp||co.taxCardExpiry)}</label><input class="fc" id="cf-taxExp" type="date" value="${co.taxExp||co.taxCardExpiry||''}"></div>
-        <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fc" id="cf-taxOfc" value="${esc(co.taxOfc||co.taxOffice||'')}" placeholder="الاستثمار"></div>
-        <div class="fg"><label class="fl">كود النشاط</label><input class="fc" id="cf-actCode" value="${esc(co.actCode||co.activityCode||'')}" dir="ltr" placeholder="4772"></div>
-        <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fc" id="cf-socIns" value="${esc(co.socIns||co.socialInsuranceNo||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">ملف ضريبة الدخل</label><input class="fc" id="cf-incTax" value="${esc(co.incTax||co.incomeTaxNo||'')}" dir="ltr"></div>
+  <div id="cpt-tax" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">💰 البيانات الضريبية والمالية</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fi" id="cf-taxReg" value="${esc(co.taxReg||co.taxRegNo||'')}" dir="ltr" placeholder="204-999-359"></div>
+        <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fi" id="cf-taxCard" value="${esc(co.taxCard||co.taxCardNo||'')}" dir="ltr" placeholder="509-999-204"></div>
+        <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fi" id="cf-taxDate" type="date" value="${co.taxDate||co.taxCardDate||''}"></div>
+        <div class="fg"><label class="fl">انتهاء البطاقة${expBadge(co.taxExp||co.taxCardExpiry)}</label><input class="fi" id="cf-taxExp" type="date" value="${co.taxExp||co.taxCardExpiry||''}"></div>
+        <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fi" id="cf-taxOfc" value="${esc(co.taxOfc||co.taxOffice||'')}" placeholder="الاستثمار"></div>
+        <div class="fg"><label class="fl">كود النشاط ISIC</label><input class="fi" id="cf-actCode" value="${esc(co.actCode||co.activityCode||'')}" dir="ltr" placeholder="4772"></div>
+        <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fi" id="cf-socIns" value="${esc(co.socIns||co.socialInsuranceNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">ملف ضريبة الدخل</label><input class="fi" id="cf-incTax" value="${esc(co.incTax||co.incomeTaxNo||'')}" dir="ltr"></div>
       </div>
-      <div class="save-bar"><button class="btn btn-primary" onclick="saveTab('tax')">💾 حفظ البيانات الضريبية</button></div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('tax')">💾 حفظ البيانات الضريبية</button></div>
     </div></div>
+  </div>
 
-    <div id="cpt-persons" class="cpt"><div class="tab-body">
-      <div class="form-grid">
-        <div class="fg"><label class="fl">رئيس مجلس الإدارة / المدير</label><input class="fc" id="cf-chairman" value="${esc(co.chairman||'')}"></div>
-        <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fc" id="cf-licHolder" value="${esc(co.licHolder||co.licenseHolder||'')}"></div>
-        <div class="fg"><label class="fl">مدير الشركة</label><input class="fc" id="cf-mgr" value="${esc(co.mgr||co.companyManager||'')}"></div>
-        <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fc" id="cf-tech" value="${esc(co.tech||co.technicalConsultant||'')}"></div>
-        <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fc" id="cf-qc" value="${esc(co.qc||co.qcManager||'')}" placeholder="د. الاسم — رقم نقابة الصيادلة"></div>
-        <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fc" id="cf-prod" value="${esc(co.prod||co.productionManager||'')}" placeholder="د. الاسم — رقم نقابة الصيادلة"></div>
-        <div class="fg"><label class="fl">مسؤول الشؤون التنظيمية RA</label><input class="fc" id="cf-ra" value="${esc(co.ra||co.raManager||'')}"></div>
-        <div class="fg"><label class="fl">الهاتف</label><input class="fc" id="cf-phone" value="${esc(co.phone||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">فاكس</label><input class="fc" id="cf-fax" value="${esc(co.fax||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fc" id="cf-email" value="${esc(co.email||'')}" type="email" dir="ltr"></div>
-        <div class="fg"><label class="fl">الموقع الإلكتروني</label><input class="fc" id="cf-web" value="${esc(co.website||co.web||'')}" dir="ltr"></div>
+  <div id="cpt-persons" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">👤 المسؤولون وجهات الاتصال</div></div><div class="tab-body">
+      <div class="fsect">المسؤولون الرسميون</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رئيس مجلس الإدارة / المدير</label><input class="fi" id="cf-chairman" value="${esc(co.chairman||'')}"></div>
+        <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fi" id="cf-licHolder" value="${esc(co.licHolder||co.licenseHolder||'')}"></div>
+        <div class="fg"><label class="fl">مدير الشركة</label><input class="fi" id="cf-mgr" value="${esc(co.mgr||co.companyManager||'')}"></div>
+        <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fi" id="cf-tech" value="${esc(co.tech||co.technicalConsultant||'')}"></div>
+        <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fi" id="cf-qc" value="${esc(co.qc||co.qcManager||'')}" placeholder="د. الاسم — رقم النقابة"></div>
+        <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fi" id="cf-prod" value="${esc(co.prod||co.productionManager||'')}" placeholder="د. الاسم — رقم النقابة"></div>
+        <div class="fg fw"><label class="fl">مسؤول الشؤون التنظيمية RA</label><input class="fi" id="cf-ra" value="${esc(co.ra||co.raManager||'')}"></div>
       </div>
-      <div class="save-bar"><button class="btn btn-primary" onclick="saveTab('persons')">💾 حفظ بيانات المسؤولين</button></div>
+      <div class="fsect">جهات الاتصال</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">الهاتف الرئيسي</label><input class="fi" id="cf-phone" value="${esc(co.phone||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">الفاكس</label><input class="fi" id="cf-fax" value="${esc(co.fax||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" id="cf-email" value="${esc(co.email||'')}" type="email" dir="ltr"></div>
+        <div class="fg"><label class="fl">الموقع الإلكتروني</label><input class="fi" id="cf-web" value="${esc(co.website||co.web||'')}" dir="ltr"></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('persons')">💾 حفظ بيانات المسؤولين</button></div>
     </div></div>
+  </div>
 
-    <div id="cpt-partners" class="cpt"><div class="tab-body">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-        <div><div style="font-size:13px;font-weight:700">الشركاء وتوزيع الحصص</div><div style="font-size:12px;color:var(--gray);margin-top:2px">مجموع النسب يجب أن يساوي 100%</div></div>
-        <button class="btn btn-primary btn-sm" onclick="openAddPartner()">+ إضافة شريك</button>
-      </div>
-      <div id="partners-table"></div>
-      <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--gray3)">
-        <div class="fg"><label class="fl">نسبة المشاركة المصرية الإجمالية</label><input class="fc" id="cf-egyPct" value="${esc(co.egyPct||'')}" dir="ltr" placeholder="مثال: 100%" style="max-width:200px"></div>
-        <div class="save-bar"><button class="btn btn-outline btn-sm" onclick="saveEgyPct()">💾 حفظ نسبة المشاركة المصرية</button></div>
-      </div>
+  <div id="cpt-partners" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">🤝 الشركاء وتوزيع الحصص</div><div class="pacts"><button class="btn btn-ok btn-sm" onclick="openAddPartner()">+ إضافة شريك</button></div></div>
+    <div id="partners-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">نسبة المشاركة المصرية</div></div>
+    <div class="tab-body">
+      <div class="fg"><label class="fl">نسبة المشاركة المصرية الإجمالية</label><input class="fi" id="cf-egyPct" value="${esc(co.egyPct||'')}" dir="ltr" placeholder="100%" style="max-width:200px"><div style="font-size:11px;color:var(--muted);margin-top:4px">يُطلب من هيئة الدواء والجهات الحكومية</div></div>
+      <div class="save-bar"><button class="btn btn-o btn-sm" onclick="saveEgyPct()">💾 حفظ</button></div>
     </div></div>
+  </div>
 
-    <div id="cpt-factories" class="cpt"><div class="tab-body">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="font-size:13px;font-weight:700">المصانع المتعاقد معها</div>
-        <button class="btn btn-primary btn-sm" onclick="openAddFactory()">+ إضافة مصنع</button>
-      </div>
-      <div id="factories-table" style="margin-bottom:22px"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="font-size:13px;font-weight:700">أماكن التخزين المرخصة</div>
-        <button class="btn btn-primary btn-sm" onclick="openAddStorage()">+ إضافة مخزن</button>
-      </div>
-      <div id="storages-table" style="margin-bottom:22px"></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
-        <div style="font-size:13px;font-weight:700">الموزعون المعتمدون</div>
-        <button class="btn btn-primary btn-sm" onclick="openAddDist()">+ إضافة موزع</button>
-      </div>
-      <div id="dists-table"></div>
-    </div></div>
+  <div id="cpt-factories" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">🏭 المصانع المتعاقد معها</div><button class="btn btn-ok btn-sm" onclick="openAddFactory()">+ إضافة مصنع</button></div><div id="factories-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🏪 أماكن التخزين المرخصة</div><button class="btn btn-ok btn-sm" onclick="openAddStorage()">+ إضافة مخزن</button></div><div id="storages-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🚚 الموزعون المعتمدون</div><button class="btn btn-ok btn-sm" onclick="openAddDist()">+ إضافة موزع</button></div><div id="dists-table"></div></div>
+  </div>
 
-    <div id="cpt-docs" class="cpt"><div class="tab-body">
+  <div id="cpt-docs" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📁 المستندات الرسمية</div></div>
+    <div style="padding:16px">
       <div id="docs-list-co"></div>
-      <div style="margin-top:16px">
-        <div class="doc-drop" onclick="document.getElementById('doc-inp').click()">
-          <div style="font-size:24px;margin-bottom:8px">📎</div>
-          <div style="font-size:13px;color:var(--gray)">اضغط لرفع PDF أو صورة</div>
-          <div style="font-size:11px;color:var(--gray2);margin-top:3px">الصور تُضغط تلقائياً — الحد 5MB</div>
-        </div>
-        <input type="file" id="doc-inp" accept=".pdf,image/*" style="display:none" onchange="uploadDoc(this)">
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <input class="fc" id="doc-name" placeholder="اسم المستند..." style="flex:1">
-          <select class="fc" id="doc-type" style="width:170px">
-            <option>سجل تجاري</option><option>بطاقة ضريبية</option><option>ترخيص EDA</option>
-            <option>شهادة GMP</option><option>عقد تأسيس</option><option>صحيفة استثمار</option>
-            <option>عقد تصنيع</option><option>تأمينات اجتماعية</option><option>أخرى</option>
-          </select>
-        </div>
+      <div class="doc-drop" onclick="document.getElementById('doc-inp').click()" style="margin-top:14px">
+        <div style="font-size:24px;margin-bottom:8px">📎</div>
+        <div style="font-size:13px;color:var(--muted)">اضغط لرفع PDF أو صورة</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;opacity:.7">الصور تُضغط تلقائياً — الحد 5MB</div>
+      </div>
+      <input type="file" id="doc-inp" accept=".pdf,image/*" style="display:none" onchange="uploadDoc(this)">
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input class="fi" id="doc-name" placeholder="اسم المستند..." style="flex:1">
+        <select class="fi" id="doc-type" style="width:170px">
+          <option>سجل تجاري</option><option>بطاقة ضريبية</option><option>ترخيص EDA</option>
+          <option>شهادة GMP</option><option>عقد تأسيس</option><option>صحيفة استثمار</option>
+          <option>عقد تصنيع</option><option>تأمينات اجتماعية</option><option>أخرى</option>
+        </select>
       </div>
     </div></div>
-
-    <div id="cpt-history" class="cpt"><div id="co-history-list" style="padding:4px 0"></div></div>
   </div>
-  <div style="margin-top:10px;font-size:11px;color:var(--gray2)">إنشاء: ${fmtDt(co.createdAt)} | آخر تحديث: ${fmtDt(co.updatedAt)}</div>`;
+
+  <div id="cpt-history" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📜 سجل التعديلات</div></div>
+    <div id="co-history-list"></div></div>
+  </div>
+
+  <div style="margin-top:12px;font-size:11px;color:var(--muted)">إنشاء: ${fmtDt(co.createdAt)} | آخر تحديث: ${fmtDt(co.updatedAt)}</div>`;
+
+  // Tab switching
+  document.querySelectorAll('[data-cpt]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.cp-tab').forEach(b=>b.classList.remove('act'));
+      document.querySelectorAll('.cpt').forEach(p=>p.classList.remove('act'));
+      btn.classList.add('act');
+      document.getElementById(btn.dataset.cpt)?.classList.add('act');
+    });
+  });
 
   loadDocs();loadHistory();loadPartnersTable();loadFactoriesTable();loadStoragesTable();loadDistsTable();
-}
-
-function switchCoTab(btn,id){
-  document.querySelectorAll('.cp-tab').forEach(b=>b.classList.remove('active'));
-  document.querySelectorAll('.cpt').forEach(p=>p.classList.remove('active'));
-  btn.classList.add('active');document.getElementById(id)?.classList.add('active');
 }
 
 async function saveTab(tab){
   const co=await dbGet('companies',S.companyId);
   let u={};
-  if(tab==='legal'){
-    const nameAr=val('cf-nameAr');if(!nameAr){toast('الاسم مطلوب','e');return}
-    u={nameAr,nameEn:val('cf-nameEn'),companyType:val('cf-companyType'),legalForm:val('cf-legalForm'),comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),natNo:val('cf-natNo'),capital:val('cf-capital'),city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')};
-  }else if(tab==='eda'){
-    u={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines'),edaAddress:val('cf-edaAddr')};
-  }else if(tab==='tax'){
-    u={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};
-  }else if(tab==='persons'){
-    u={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web')};
-  }
-  const labels={legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'};
+  if(tab==='legal'){const nameAr=val('cf-nameAr');if(!nameAr){toast('الاسم مطلوب','er');return}u={nameAr,nameEn:val('cf-nameEn'),companyType:val('cf-companyType'),legalForm:val('cf-legalForm'),comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),natNo:val('cf-natNo'),capital:val('cf-capital'),city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')};}
+  else if(tab==='eda'){u={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines'),edaAddress:val('cf-edaAddr')};}
+  else if(tab==='tax'){u={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};}
+  else if(tab==='persons'){u={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web')};}
   Object.assign(co,u,{updatedAt:now()});
   await dbPut('companies',co);
-  await saveHist(co.id,'تعديل '+labels[tab]);
-  if(tab==='legal'){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr}
-  toast('✅ تم الحفظ بنجاح');
+  await saveHist(co.id,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'}[tab]);
+  if(tab==='legal'){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr;document.getElementById('sb-coname2').textContent=co.nameAr;}
+  toast('تم الحفظ بنجاح','ok');
 }
+async function saveEgyPct(){const co=await dbGet('companies',S.companyId);co.egyPct=val('cf-egyPct');co.updatedAt=now();await dbPut('companies',co);toast('تم الحفظ','ok');}
 
-async function saveEgyPct(){
-  const co=await dbGet('companies',S.companyId);
-  co.egyPct=val('cf-egyPct');co.updatedAt=now();
-  await dbPut('companies',co);toast('✅ تم الحفظ');
-}
-
-// ══ PARTNERS TABLE ══
+// ══ PARTNERS ══
 async function loadPartnersTable(){
   const el=document.getElementById('partners-table');if(!el)return;
   const rows=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  if(!rows.length){el.innerHTML='<div class="empty-table">لا يوجد شركاء مسجلون — اضغط "+ إضافة شريك" للبدء</div>';return}
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">🤝</div><p>لا يوجد شركاء — اضغط "+ إضافة شريك"</p></div>';return}
   const total=rows.reduce((s,r)=>s+parseFloat(r.pct||0),0);
   const ok=Math.abs(total-100)<0.01;
-  el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>اسم الشريك</th><th>النسبة %</th><th>عدد الحصص</th><th>قيمة الحصة</th><th>الجنسية</th><th></th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td><span class="badge bb">${esc(r.pct)}%</span></td><td>${esc(r.shares||'—')}</td><td>${r.val?esc(r.val)+' ج':'—'}</td><td>${esc(r.nat||'—')}</td><td><div class="tbl-action"><button class="btn-edit" onclick="openEditPartner('${r.id}')">تعديل</button><button class="btn-del" onclick="delPartner('${r.id}')">حذف</button></div></td></tr>`).join('')}
-  <tr style="background:var(--gray4)"><td colspan="2" style="font-weight:700">الإجمالي: <span class="badge ${ok?'bg':'br'}">${total.toFixed(2)}%</span></td><td colspan="4" style="font-size:12px;color:var(--gray)">${ok?'✅ مجموع الحصص صحيح':'⚠️ يجب أن يساوي 100%'}</td></tr>
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الشريك</th><th>النسبة %</th><th>عدد الحصص</th><th>قيمة الحصة</th><th>الجنسية</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td><span class="bdg bdg-g">${esc(r.pct)}%</span></td><td>${esc(r.shares||'—')}</td><td>${r.val?esc(r.val)+' ج':'—'}</td><td>${esc(r.nat||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditPartner('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delPartner('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  <tr style="background:var(--card2)"><td colspan="2" style="font-weight:700">الإجمالي: <span class="bdg ${ok?'bdg-g':'bdg-r'}">${total.toFixed(2)}%</span></td><td colspan="4" style="font-size:12px;color:var(--muted)">${ok?'✅ صحيح':'⚠️ يجب أن يساوي 100%'}</td></tr>
   </tbody></table></div>`;
 }
 function openAddPartner(){document.getElementById('mp-title').textContent='إضافة شريك جديد';['mp-id','mp-name','mp-pct','mp-nat','mp-shares','mp-val'].forEach(id=>set(id,''));openModal('modal-partner');}
-async function openEditPartner(id){
-  const r=await dbGet('partners',id);if(!r)return;
-  document.getElementById('mp-title').textContent='تعديل بيانات الشريك';
-  set('mp-id',r.id);set('mp-name',r.name);set('mp-pct',r.pct);set('mp-nat',r.nat);set('mp-shares',r.shares);set('mp-val',r.val);
-  openModal('modal-partner');
-}
+async function openEditPartner(id){const r=await dbGet('partners',id);if(!r)return;document.getElementById('mp-title').textContent='تعديل بيانات الشريك';set('mp-id',r.id);set('mp-name',r.name);set('mp-pct',r.pct);set('mp-nat',r.nat);set('mp-shares',r.shares);set('mp-val',r.val);openModal('modal-partner');}
 async function savePartner(){
-  const name=val('mp-name'),pct=val('mp-pct');
-  if(!name||!pct){toast('الاسم والنسبة مطلوبان','e');return}
-  const eid=val('mp-id'),id=eid||uid();
-  const existing=eid?await dbGet('partners',id):null;
+  const name=val('mp-name'),pct=val('mp-pct');if(!name||!pct){toast('الاسم والنسبة مطلوبان','er');return}
+  const eid=val('mp-id'),id=eid||uid();const existing=eid?await dbGet('partners',id):null;
   await dbPut('partners',{...existing,id,companyId:S.companyId,name,pct,nat:val('mp-nat'),shares:val('mp-shares'),val:val('mp-val'),createdAt:existing?.createdAt||now(),updatedAt:now()});
   await saveHist(S.companyId,eid?'تعديل شريك':'إضافة شريك',name);
-  closeModal('modal-partner');toast('✅ تم الحفظ');loadPartnersTable();
+  closeModal('modal-partner');toast('تم الحفظ','ok');loadPartnersTable();
 }
-async function delPartner(id){
-  if(!confirm('حذف هذا الشريك؟'))return;
-  const r=await dbGet('partners',id);if(!r)return;
-  r.deletedAt=now();await dbPut('partners',r);
-  await saveHist(S.companyId,'حذف شريك',r.name);
-  toast('تم الحذف');loadPartnersTable();
-}
+async function delPartner(id){if(!confirm('حذف هذا الشريك؟'))return;const r=await dbGet('partners',id);if(!r)return;r.deletedAt=now();await dbPut('partners',r);await saveHist(S.companyId,'حذف شريك',r.name);toast('تم الحذف');loadPartnersTable();}
 
-// ══ FACTORIES TABLE ══
+// ══ FACTORIES ══
 async function loadFactoriesTable(){
   const el=document.getElementById('factories-table');if(!el)return;
   const rows=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  if(!rows.length){el.innerHTML='<div class="empty-table">لا توجد مصانع متعاقد معها — اضغط "+ إضافة مصنع"</div>';return}
-  el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>اسم المصنع</th><th>العنوان</th><th>خطوط الإنتاج</th><th>المنتجات</th><th></th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--gray)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.lines||'—')}</td><td style="font-size:11px;color:var(--gray)">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn-edit" onclick="openEditFactory('${r.id}')">تعديل</button><button class="btn-del" onclick="delFactory('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏭</div><p>لا توجد مصانع متعاقد معها</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المصنع</th><th>العنوان</th><th>خطوط الإنتاج</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.lines||'—')}</td><td style="font-size:11px;color:var(--muted)">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditFactory('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delFactory('${r.id}')">حذف</button></div></td></tr>`).join('')}
   </tbody></table></div>`;
 }
 function openAddFactory(){document.getElementById('mf-title').textContent='إضافة مصنع متعاقد';['mf-id','mf-name','mf-addr','mf-prods','mf-lic','mf-lines'].forEach(id=>set(id,''));openModal('modal-factory');}
-async function openEditFactory(id){
-  const r=await dbGet('factories',id);if(!r)return;
-  document.getElementById('mf-title').textContent='تعديل بيانات المصنع';
-  set('mf-id',r.id);set('mf-name',r.name);set('mf-addr',r.addr);set('mf-prods',r.prods);set('mf-lic',r.lic);set('mf-lines',r.lines);
-  openModal('modal-factory');
-}
+async function openEditFactory(id){const r=await dbGet('factories',id);if(!r)return;document.getElementById('mf-title').textContent='تعديل بيانات المصنع';set('mf-id',r.id);set('mf-name',r.name);set('mf-addr',r.addr);set('mf-prods',r.prods);set('mf-lic',r.lic);set('mf-lines',r.lines);openModal('modal-factory');}
 async function saveFactory(){
-  const name=val('mf-name');if(!name){toast('اسم المصنع مطلوب','e');return}
-  const eid=val('mf-id'),id=eid||uid();
-  const existing=eid?await dbGet('factories',id):null;
+  const name=val('mf-name');if(!name){toast('اسم المصنع مطلوب','er');return}
+  const eid=val('mf-id'),id=eid||uid();const existing=eid?await dbGet('factories',id):null;
   await dbPut('factories',{...existing,id,companyId:S.companyId,name,addr:val('mf-addr'),prods:val('mf-prods'),lic:val('mf-lic'),lines:val('mf-lines'),createdAt:existing?.createdAt||now(),updatedAt:now()});
   await saveHist(S.companyId,eid?'تعديل مصنع':'إضافة مصنع',name);
-  closeModal('modal-factory');toast('✅ تم الحفظ');loadFactoriesTable();
+  closeModal('modal-factory');toast('تم الحفظ','ok');loadFactoriesTable();
 }
-async function delFactory(id){
-  if(!confirm('حذف هذا المصنع؟'))return;
-  const r=await dbGet('factories',id);if(!r)return;
-  r.deletedAt=now();await dbPut('factories',r);
-  toast('تم الحذف');loadFactoriesTable();
-}
+async function delFactory(id){if(!confirm('حذف؟'))return;const r=await dbGet('factories',id);if(!r)return;r.deletedAt=now();await dbPut('factories',r);toast('تم الحذف');loadFactoriesTable();}
 
-// ══ STORAGES TABLE ══
+// ══ STORAGES ══
 async function loadStoragesTable(){
   const el=document.getElementById('storages-table');if(!el)return;
   const rows=(await dbGetAll('storages','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  if(!rows.length){el.innerHTML='<div class="empty-table">لا توجد أماكن تخزين — اضغط "+ إضافة مخزن"</div>';return}
-  el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>اسم المخزن</th><th>العنوان</th><th>المساحة</th><th>النوع</th><th></th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--gray)">${esc(r.addr||'—')}</td><td>${r.area?esc(r.area)+' م²':'—'}</td><td><span class="badge bgr">${esc(r.type||'—')}</span></td><td><div class="tbl-action"><button class="btn-edit" onclick="openEditStorage('${r.id}')">تعديل</button><button class="btn-del" onclick="delStorage('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏪</div><p>لا توجد أماكن تخزين</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المخزن</th><th>العنوان</th><th>المساحة</th><th>النوع</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td>${r.area?esc(r.area)+' م²':'—'}</td><td><span class="bdg bdg-m">${esc(r.type||'—')}</span></td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditStorage('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delStorage('${r.id}')">حذف</button></div></td></tr>`).join('')}
   </tbody></table></div>`;
 }
 function openAddStorage(){document.getElementById('ms-title').textContent='إضافة مكان تخزين';['ms-id','ms-name','ms-addr','ms-area'].forEach(id=>set(id,''));set('ms-type','مخزن عادي');openModal('modal-storage');}
-async function openEditStorage(id){
-  const r=await dbGet('storages',id);if(!r)return;
-  document.getElementById('ms-title').textContent='تعديل مكان التخزين';
-  set('ms-id',r.id);set('ms-name',r.name);set('ms-addr',r.addr);set('ms-area',r.area);set('ms-type',r.type);
-  openModal('modal-storage');
-}
+async function openEditStorage(id){const r=await dbGet('storages',id);if(!r)return;document.getElementById('ms-title').textContent='تعديل';set('ms-id',r.id);set('ms-name',r.name);set('ms-addr',r.addr);set('ms-area',r.area);set('ms-type',r.type);openModal('modal-storage');}
 async function saveStorage(){
-  const name=val('ms-name');if(!name){toast('الاسم مطلوب','e');return}
-  const eid=val('ms-id'),id=eid||uid();
-  const existing=eid?await dbGet('storages',id):null;
+  const name=val('ms-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('ms-id'),id=eid||uid();const existing=eid?await dbGet('storages',id):null;
   await dbPut('storages',{...existing,id,companyId:S.companyId,name,addr:val('ms-addr'),area:val('ms-area'),type:val('ms-type'),createdAt:existing?.createdAt||now(),updatedAt:now()});
-  closeModal('modal-storage');toast('✅ تم الحفظ');loadStoragesTable();
+  closeModal('modal-storage');toast('تم الحفظ','ok');loadStoragesTable();
 }
-async function delStorage(id){
-  if(!confirm('حذف هذا المخزن؟'))return;
-  const r=await dbGet('storages',id);if(!r)return;
-  r.deletedAt=now();await dbPut('storages',r);
-  toast('تم الحذف');loadStoragesTable();
-}
+async function delStorage(id){if(!confirm('حذف؟'))return;const r=await dbGet('storages',id);if(!r)return;r.deletedAt=now();await dbPut('storages',r);toast('تم الحذف');loadStoragesTable();}
 
-// ══ DISTRIBUTORS TABLE ══
+// ══ DISTRIBUTORS ══
 async function loadDistsTable(){
   const el=document.getElementById('dists-table');if(!el)return;
   const rows=(await dbGetAll('distributors','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  if(!rows.length){el.innerHTML='<div class="empty-table">لا يوجد موزعون — اضغط "+ إضافة موزع"</div>';return}
-  el.innerHTML=`<div class="table-wrap"><table><thead><tr><th>اسم الموزع</th><th>العنوان</th><th>المنتجات</th><th></th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--gray)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn-edit" onclick="openEditDist('${r.id}')">تعديل</button><button class="btn-del" onclick="delDist('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🚚</div><p>لا يوجد موزعون</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الموزع</th><th>العنوان</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditDist('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delDist('${r.id}')">حذف</button></div></td></tr>`).join('')}
   </tbody></table></div>`;
 }
 function openAddDist(){document.getElementById('md-title').textContent='إضافة موزع معتمد';['md-id','md-name','md-addr','md-prods'].forEach(id=>set(id,''));openModal('modal-dist');}
-async function openEditDist(id){
-  const r=await dbGet('distributors',id);if(!r)return;
-  document.getElementById('md-title').textContent='تعديل بيانات الموزع';
-  set('md-id',r.id);set('md-name',r.name);set('md-addr',r.addr);set('md-prods',r.prods);
-  openModal('modal-dist');
-}
+async function openEditDist(id){const r=await dbGet('distributors',id);if(!r)return;document.getElementById('md-title').textContent='تعديل الموزع';set('md-id',r.id);set('md-name',r.name);set('md-addr',r.addr);set('md-prods',r.prods);openModal('modal-dist');}
 async function saveDist(){
-  const name=val('md-name');if(!name){toast('اسم الموزع مطلوب','e');return}
-  const eid=val('md-id'),id=eid||uid();
-  const existing=eid?await dbGet('distributors',id):null;
+  const name=val('md-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('md-id'),id=eid||uid();const existing=eid?await dbGet('distributors',id):null;
   await dbPut('distributors',{...existing,id,companyId:S.companyId,name,addr:val('md-addr'),prods:val('md-prods'),createdAt:existing?.createdAt||now(),updatedAt:now()});
-  closeModal('modal-dist');toast('✅ تم الحفظ');loadDistsTable();
+  closeModal('modal-dist');toast('تم الحفظ','ok');loadDistsTable();
 }
-async function delDist(id){
-  if(!confirm('حذف هذا الموزع؟'))return;
-  const r=await dbGet('distributors',id);if(!r)return;
-  r.deletedAt=now();await dbPut('distributors',r);
-  toast('تم الحذف');loadDistsTable();
-}
+async function delDist(id){if(!confirm('حذف؟'))return;const r=await dbGet('distributors',id);if(!r)return;r.deletedAt=now();await dbPut('distributors',r);toast('تم الحذف');loadDistsTable();}
 
 // ══ DOCUMENTS ══
 async function loadDocs(){
   const el=document.getElementById('docs-list-co');if(!el)return;
-  const coId=S.companyId;
-  const docs=(await dbGetAll('documents','companyId',coId)).filter(d=>!d.deletedAt);
-  if(!docs.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--gray2);font-size:13px">لا توجد مستندات بعد</div>';return}
-  el.innerHTML=docs.map(d=>`<div class="doc-item"><div class="doc-icon" style="background:${d.type==='pdf'?'var(--red-light)':'var(--blue-light)'};color:${d.type==='pdf'?'var(--red)':'var(--blue)'}">${d.type==='pdf'?'PDF':'IMG'}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div><div style="font-size:11px;color:var(--gray2)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div></div><button class="btn-edit" onclick="viewDoc('${d.id}')">عرض</button><button class="btn-del" onclick="delDoc('${d.id}')">حذف</button></div>`).join('');
+  const docs=(await dbGetAll('documents','companyId',S.companyId)).filter(d=>!d.deletedAt);
+  if(!docs.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">لا توجد مستندات بعد</div>';return}
+  el.innerHTML=docs.map(d=>`<div class="doc-item"><div class="doc-icon" style="background:${d.type==='pdf'?'rgba(248,81,73,.15)':'rgba(56,139,253,.15)'};color:${d.type==='pdf'?'var(--red)':'var(--blue)'}">${d.type==='pdf'?'PDF':'IMG'}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div></div><button class="btn btn-o btn-sm" onclick="viewDoc('${d.id}')">عرض</button><button class="btn btn-x btn-sm" onclick="delDoc('${d.id}')">حذف</button></div>`).join('');
 }
 async function uploadDoc(input){
   const file=input.files[0];if(!file)return;
-  if(file.size>5*1024*1024){toast('الملف أكبر من 5MB','e');return}
+  if(file.size>5*1024*1024){toast('الملف أكبر من 5MB','er');return}
   const name=val('doc-name')||file.name,docType=val('doc-type')||'أخرى';
-  toast('جاري المعالجة...');
+  toast('جاري المعالجة...','info');
   try{
     let data,type,size;
-    if(file.type.startsWith('image/')){const c=await compressImg(file,900,.72);data=c.data;type='img';size=c.size}
-    else{data=await toB64(file);type='pdf';size=file.size}
+    if(file.type.startsWith('image/')){const c=await compressImg(file,900,.72);data=c.data;type='img';size=c.size;}
+    else{data=await toB64(file);type='pdf';size=file.size;}
     await dbPut('documents',{id:uid(),companyId:S.companyId,name,docType,type,data,size,createdAt:now()});
-    input.value='';set('doc-name','');toast('✅ تم رفع المستند');loadDocs();
-  }catch(e){toast('خطأ: '+e.message,'e')}
+    input.value='';set('doc-name','');toast('تم رفع المستند','ok');loadDocs();
+  }catch(e){toast('خطأ: '+e.message,'er')}
 }
 const toB64=f=>new Promise((ok,fail)=>{const r=new FileReader();r.onload=e=>ok(e.target.result);r.onerror=()=>fail(new Error('فشل'));r.readAsDataURL(f)});
-const compressImg=(f,maxW,q)=>new Promise((ok,fail)=>{const img=new Image(),url=URL.createObjectURL(f);img.onload=()=>{URL.revokeObjectURL(url);let{width:w,height:h}=img;if(w>maxW){h=Math.round(h*maxW/w);w=maxW}const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);ok({data:cv.toDataURL('image/jpeg',q),size:Math.round(cv.toDataURL('image/jpeg',q).length*.75)})};img.onerror=()=>fail(new Error('فشل'));img.src=url;});
+const compressImg=(f,maxW,q)=>new Promise((ok,fail)=>{const img=new Image(),url=URL.createObjectURL(f);img.onload=()=>{URL.revokeObjectURL(url);let{width:w,height:h}=img;if(w>maxW){h=Math.round(h*maxW/w);w=maxW}const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);const data=cv.toDataURL('image/jpeg',q);ok({data,size:Math.round(data.length*.75)})};img.onerror=()=>fail(new Error('فشل'));img.src=url;});
 async function viewDoc(id){const d=await dbGet('documents',id);if(!d)return;const w=window.open();w.document.write(d.type==='pdf'?`<iframe src="${d.data}" style="width:100%;height:100vh;border:none"></iframe>`:`<img src="${d.data}" style="max-width:100%">`);}
 async function delDoc(id){if(!confirm('حذف؟'))return;const d=await dbGet('documents',id);if(!d)return;d.deletedAt=now();await dbPut('documents',d);toast('تم الحذف');loadDocs();}
 
@@ -822,8 +946,8 @@ async function delDoc(id){if(!confirm('حذف؟'))return;const d=await dbGet('do
 async function loadHistory(){
   const el=document.getElementById('co-history-list');if(!el)return;
   const all=(await dbGetAll('history')).filter(h=>h.recordId===S.companyId).reverse();
-  if(!all.length){el.innerHTML='<div style="padding:20px;text-align:center;color:var(--gray2);font-size:13px">لا توجد تعديلات مسجلة بعد</div>';return}
-  el.innerHTML=all.map(h=>`<div style="padding:12px 20px;border-bottom:1px solid var(--gray3);display:flex;justify-content:space-between;align-items:center;gap:12px"><div><span class="badge bb" style="margin-left:8px">${esc(h.action)}</span>${h.note?`<span style="font-size:12px;color:var(--gray)">${esc(h.note)}</span>`:''}</div><div style="font-size:11px;color:var(--gray2);white-space:nowrap">${esc(h.userName||'—')} · ${fmtDt(h.at)}</div></div>`).join('');
+  if(!all.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">📜</div><p>لا توجد تعديلات مسجلة بعد</p></div>';return}
+  el.innerHTML=all.map(h=>`<div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px"><div><span class="bdg bdg-b" style="margin-left:8px">${esc(h.action)}</span>${h.note?`<span style="font-size:12px;color:var(--muted)">${esc(h.note)}</span>`:''}</div><div style="font-size:11px;color:var(--muted);white-space:nowrap">${esc(h.userName||'—')} · ${fmtDt(h.at)}</div></div>`).join('');
 }
 
 // ══ PRINT ══
@@ -831,9 +955,68 @@ async function printCompany(){
   const co=await dbGet('companies',S.companyId);
   const partners=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
   const factories=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  const pr=(l,v)=>v?`<div class="row"><span class="lbl">${l}</span><span>${v}</span></div>`:'';
+  const pr=(l,v)=>v?`<tr><td style="color:#666;font-size:12px;width:200px;padding:6px 0">${l}</td><td style="font-size:13px;font-weight:500;padding:6px 0">${v}</td></tr>`:'';
   const w=window.open();
-  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Tajawal',sans-serif;padding:28px;color:#1e293b;font-size:13px}h1{font-size:18px;margin-bottom:4px}p{color:#64748b;margin-bottom:16px}.sec{margin-bottom:18px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}.row{display:flex;padding:6px 0;border-bottom:1px solid #f1f5f9}.lbl{width:200px;color:#64748b;font-size:12px;flex-shrink:0}table{width:100%;border-collapse:collapse;margin-top:6px}th,td{padding:7px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:12px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p>${co.companyType==='factory'?'مصنع':'شركة Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div>${pr('السجل التجاري',co.comRegNo)}${pr('انتهاء السجل',fmt(co.comRegExp))}${pr('الرقم القومي',co.natNo)}${pr('رأس المال',co.capital?co.capital+' جنيه':'')}${pr('المقر',co.addressAr)}</div><div class="sec"><div class="sec-title">بيانات EDA</div>${pr('رقم القيد/الرخصة',co.tollNo)}${pr('انتهاء القيد',fmt(co.tollExp))}${pr('كود EDA',co.edaCode)}${pr('GMP',co.gmp)}${pr('انتهاء GMP',fmt(co.gmpExp))}</div><div class="sec"><div class="sec-title">البيانات الضريبية</div>${pr('التسجيل الضريبي',co.taxReg)}${pr('البطاقة الضريبية',co.taxCard)}${pr('انتهاء البطاقة',fmt(co.taxExp))}</div><div class="sec"><div class="sec-title">المسؤولون</div>${pr('رئيس الإدارة',co.chairman)}${pr('مدير الشركة',co.mgr)}${pr('مسؤول الجودة',co.qc)}${pr('مسؤول الإنتاج',co.prod)}</div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة%</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''} ${factories.length?`<div class="sec"><div class="sec-title">المصانع المتعاقد معها</div><table><thead><tr><th>المصنع</th><th>العنوان</th></tr></thead><tbody>${factories.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.addr||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script></body></html>`);
+}
+
+// ══ USERS ══
+let usrQ='';
+async function renderUsers(c){
+  const all=await dbGetAll('users','companyId',S.companyId);
+  const users=all.filter(u=>!u.deletedAt&&(!usrQ||u.nameAr.includes(usrQ)||u.username.includes(usrQ)));
+  c.innerHTML=`<div class="page-title">👥 المستخدمون</div>
+  <div class="pcard"><div class="ph"><div class="ptitle">${all.filter(u=>!u.deletedAt).length} مستخدم</div>
+  <div class="pacts">
+    <div class="sbar"><span style="color:var(--muted)">🔍</span><input placeholder="بحث..." value="${esc(usrQ)}" oninput="usrQ=this.value;renderUsers(document.getElementById('main-content'))"></div>
+    <button class="btn btn-ok btn-sm" onclick="openAddUser()">+ إضافة مستخدم</button>
+  </div></div>
+  <div class="tw"><table><thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>
+  ${users.length?users.map(u=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,var(--blue),var(--purple))">${u.nameAr.charAt(0)}</div><div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--muted)">${esc(u.nameEn||'')}</div></div></div></td>
+    <td><code style="font-size:11px;background:var(--card2);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
+    <td><span class="bdg ${u.role==='admin'?'bdg-b':'bdg-m'}">${u.role==='admin'?'مدير':'مستخدم'}</span></td>
+    <td style="color:var(--muted)">${esc(u.department||'—')}</td>
+    <td style="font-size:11px;color:var(--muted)">${fmtDt(u.lastLogin)}</td>
+    <td><span class="bdg ${u.isActive?'bdg-g':'bdg-r'}">${u.isActive?'نشط':'موقوف'}</span></td>
+    <td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditUser('${u.id}')">تعديل</button>${u.id!==S.userId?`<button class="btn btn-${u.isActive?'o':'ok'} btn-sm" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}</div></td>
+  </tr>`).join(''):'<tr><td colspan="7"><div class="es"><div class="ei">👥</div><p>لا يوجد مستخدمون</p></div></td></tr>'}
+  </tbody></table></div></div>`;
+}
+function openAddUser(){document.getElementById('mu-title').textContent='إضافة مستخدم جديد';document.getElementById('u-ph').style.display='none';document.getElementById('u-pl').innerHTML='كلمة المرور <span class="req">*</span>';['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title-inp','u-phone','u-email'].forEach(id=>set(id,''));set('u-role','user');openModal('modal-user');}
+async function openEditUser(id){const u=await dbGet('users',id);if(!u)return;document.getElementById('mu-title').textContent='تعديل مستخدم';document.getElementById('u-ph').style.display='block';document.getElementById('u-pl').innerHTML='كلمة مرور جديدة';set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');set('u-user',u.username);set('u-pass','');set('u-role',u.role);set('u-dept',u.department||'');set('u-title-inp',u.jobTitle||'');set('u-phone',u.phone||'');set('u-email',u.email||'');openModal('modal-user');}
+async function saveUser(){
+  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
+  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','er');return}
+  const btn=document.getElementById('btn-su');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    if(id){const u=await dbGet('users',id);if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','er');return}u.passwordHash=await hashPw(pw)}Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});await dbPut('users',u);toast('تم التحديث','ok');}
+    else{if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف','er');return}const all=await dbGetAll('users','companyId',S.companyId);if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','er');return}await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});toast('تم الإضافة','ok');}
+    closeModal('modal-user');renderUsers(document.getElementById('main-content'));
+  }catch(e){toast('خطأ: '+e.message,'er')}
+  btn.innerHTML='حفظ';btn.disabled=false;
+}
+async function toggleUser(id){const u=await dbGet('users',id);if(!u)return;u.isActive=!u.isActive;u.updatedAt=now();await dbPut('users',u);toast(u.isActive?'تم التفعيل':'تم الإيقاف','ok');renderUsers(document.getElementById('main-content'));}
+
+// ══ SETTINGS ══
+function renderSettings(c){
+  c.innerHTML=`<div class="page-title">⚙️ إعدادات النظام</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="pcard"><div class="ph"><div class="ptitle">العرض</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الخط</label><select class="fi" id="s-fs"><option value="13">صغير 13px</option><option value="14" selected>متوسط 14px</option><option value="15">كبير 15px</option></select></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">الطباعة</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الورق</label><select class="fi" id="s-paper"><option value="A4" selected>A4</option><option value="A5">A5</option></select></div>
+      <div class="fg"><label class="fl">هيدر الطباعة</label><input class="fi" id="s-header" placeholder="نص يظهر في رأس كل طباعة"></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">💾 النسخ الاحتياطي</div></div><div class="tab-body" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ok" onclick="exportBackup()">⬇ تصدير نسخة احتياطية</button>
+      <button class="btn btn-o" onclick="openModal('modal-backup')">⬆ استيراد نسخة</button>
+    </div></div>
+  </div>
+  <div style="margin-top:16px;display:flex;justify-content:flex-end">
+    <button class="btn btn-ok" onclick="toast('تم حفظ الإعدادات','ok');document.body.style.fontSize=val('s-fs')+'px'">💾 حفظ الإعدادات</button>
+  </div>`;
 }
 
 // ══ BACKUP ══
@@ -844,7 +1027,7 @@ async function exportBackup(){
   const a=document.createElement('a');
   a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
   a.download=`quadra-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();toast('✅ تم تنزيل النسخة الاحتياطية');
+  a.click();toast('تم تنزيل النسخة الاحتياطية','ok');
 }
 async function importBackup(input){
   const file=input.files[0];if(!file)return;
@@ -854,73 +1037,205 @@ async function importBackup(input){
     if(!data.companies)throw new Error('ملف غير صالح');
     const stores=['companies','users','documents','partners','factories','distributors','storages'];
     for(const st of stores)for(const o of data[st]||[])await dbPut(st,o);
-    closeModal('modal-backup');toast('✅ تم الاستيراد بنجاح');renderCompanies();
-  }catch(e){toast('خطأ: '+e.message,'e')}
+    closeModal('modal-backup');toast('تم الاستيراد بنجاح','ok');renderCompanies();
+  }catch(e){toast('خطأ: '+e.message,'er')}
 }
-
-// ══ USERS ══
-let usrQ='';
-async function renderUsers(c){
-  const all=await dbGetAll('users','companyId',S.companyId);
-  const users=all.filter(u=>!u.deletedAt&&(!usrQ||u.nameAr.includes(usrQ)||u.username.includes(usrQ)));
-  c.innerHTML=`<div class="ph"><div class="ph-left"><h2>المستخدمون</h2><p>${all.filter(u=>!u.deletedAt).length} مستخدم</p></div><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><div class="search-wrap"><svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="search-inp" placeholder="بحث..." value="${esc(usrQ)}" oninput="usrQ=this.value;renderUsers(document.getElementById('page-content'))"></div><button class="btn btn-primary btn-sm" onclick="openAddUser()">+ إضافة</button></div></div>
-  <div class="card"><div class="table-wrap"><table><thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th></th></tr></thead><tbody>
-  ${users.length?users.map(u=>`<tr><td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0" class="${u.role==='admin'?'c0':'c7'}">${u.nameAr.charAt(0)}</div><div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--gray)">${esc(u.nameEn||'')}</div></div></div></td><td><code style="font-size:11px;background:var(--gray4);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td><td><span class="badge ${u.role==='admin'?'bb':'bgr'}">${u.role==='admin'?'مدير':'مستخدم'}</span></td><td style="color:var(--gray)">${esc(u.department||'—')}</td><td style="font-size:11px;color:var(--gray)">${fmtDt(u.lastLogin)}</td><td><span class="badge ${u.isActive?'bg':'br'}">${u.isActive?'نشط':'موقوف'}</span></td><td><div style="display:flex;gap:4px"><button class="btn-edit" onclick="openEditUser('${u.id}')">تعديل</button>${u.id!==S.userId?`<button class="btn-edit" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}</div></td></tr>`).join(''):'<tr><td colspan="7"><div class="empty"><h3>لا يوجد مستخدمون</h3></div></td></tr>'}
-  </tbody></table></div></div>`;
-}
-function openAddUser(){document.getElementById('mu-title').textContent='إضافة مستخدم جديد';document.getElementById('u-ph').style.display='none';document.getElementById('u-pl').innerHTML='كلمة المرور <span class="req">*</span>';['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title','u-phone','u-email'].forEach(id=>set(id,''));set('u-role','user');openModal('modal-user');}
-async function openEditUser(id){const u=await dbGet('users',id);if(!u)return;document.getElementById('mu-title').textContent='تعديل مستخدم';document.getElementById('u-ph').style.display='block';document.getElementById('u-pl').innerHTML='كلمة مرور جديدة';set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');set('u-user',u.username);set('u-pass','');set('u-role',u.role);set('u-dept',u.department||'');set('u-title',u.jobTitle||'');set('u-phone',u.phone||'');set('u-email',u.email||'');openModal('modal-user');}
-async function saveUser(){
-  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
-  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','e');return}
-  const btn=document.getElementById('btn-su');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
-  try{
-    if(id){const u=await dbGet('users',id);if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','e');return}u.passwordHash=await hashPw(pw)}Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});await dbPut('users',u);toast('✅ تم التحديث');}
-    else{if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف على الأقل','e');return}const all=await dbGetAll('users','companyId',S.companyId);if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','e');return}await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});toast('✅ تم الإضافة');}
-    closeModal('modal-user');renderUsers(document.getElementById('page-content'));
-  }catch(e){toast('خطأ: '+e.message,'e')}
-  btn.innerHTML='حفظ';btn.disabled=false;
-}
-async function toggleUser(id){const u=await dbGet('users',id);if(!u)return;u.isActive=!u.isActive;u.updatedAt=now();await dbPut('users',u);toast(u.isActive?'✅ تم التفعيل':'تم الإيقاف');renderUsers(document.getElementById('page-content'));}
-
-// ══ SETTINGS ══
-const SK='pharma_cfg';
-const loadCfg=()=>{try{return JSON.parse(localStorage.getItem(SK+'_'+S?.companyId)||'{}')}catch{return{}}};
-function renderSettings(c){
-  const cfg=loadCfg();
-  c.innerHTML=`<div class="ph"><div class="ph-left"><h2>إعدادات النظام</h2></div></div><div style="display:grid;grid-template-columns:1fr 1fr;gap:16px"><div class="card"><div class="card-header"><span class="card-title">العرض</span></div><div class="card-body"><div class="fg"><label class="fl">حجم الخط</label><select class="fc" id="s-fs"><option value="13" ${(cfg.fs||'14')==='13'?'selected':''}>صغير</option><option value="14" ${(cfg.fs||'14')==='14'?'selected':''}>متوسط</option><option value="15" ${cfg.fs==='15'?'selected':''}>كبير</option></select></div></div></div><div class="card"><div class="card-header"><span class="card-title">الطباعة</span></div><div class="card-body" style="display:flex;flex-direction:column;gap:12px"><div class="fg"><label class="fl">حجم الورق</label><select class="fc" id="s-paper"><option value="A4" ${(cfg.paper||'A4')==='A4'?'selected':''}>A4</option><option value="A5" ${cfg.paper==='A5'?'selected':''}>A5</option></select></div><div class="fg"><label class="fl">هيدر الطباعة</label><input class="fc" id="s-header" value="${esc(cfg.header||'')}"></div></div></div></div><div style="margin-top:16px;display:flex;justify-content:flex-end"><button class="btn btn-primary" onclick="doSaveCfg()">💾 حفظ الإعدادات</button></div>`;
-}
-function doSaveCfg(){const cfg={fs:val('s-fs'),paper:val('s-paper'),header:val('s-header')};localStorage.setItem(SK+'_'+S?.companyId,JSON.stringify(cfg));document.body.style.fontSize=cfg.fs+'px';toast('✅ تم الحفظ');}
 
 // ══ COMMENTS ══
 async function renderComments(){
   const all=await dbGetAll('comments');
   document.getElementById('comment-count').textContent=all.length;
   const list=document.getElementById('cp-list');
-  if(!all.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--gray2);font-size:13px">لا توجد تعليقات بعد</div>';return}
-  list.innerHTML=all.reverse().map(c=>`<div class="cp-item"><div class="cp-item-meta"><span style="font-weight:600;color:var(--amber)">${esc(c.page||'عام')}</span><button style="background:none;border:none;cursor:pointer;color:var(--gray2);font-size:11px" onclick="delComment(${c.id})">حذف</button></div><div style="font-size:13px">${esc(c.text)}</div></div>`).join('');
+  if(!all.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">لا توجد تعليقات بعد</div>';return}
+  list.innerHTML=all.reverse().map(c=>`<div class="cp-item"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between"><span style="color:var(--amber);font-weight:600">${esc(c.page||'عام')}</span><button style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px" onclick="delComment(${c.id})">حذف</button></div><div style="font-size:13px;color:var(--text)">${esc(c.text)}</div></div>`).join('');
 }
-async function addComment(){const text=document.getElementById('cp-text').value.trim();if(!text){toast('اكتب تعليقاً','e');return}const page=document.getElementById('page-title').textContent;await dbPut('comments',{text,page,at:now()});document.getElementById('cp-text').value='';toast('✅ تم');renderComments();}
+async function addComment(){const text=document.getElementById('cp-text').value.trim();if(!text){toast('اكتب تعليقاً','er');return}const page=document.getElementById('page-title').textContent;await dbPut('comments',{text,page,at:now()});document.getElementById('cp-text').value='';toast('تم إضافة التعليق','ok');renderComments();}
 async function delComment(id){await dbDel('comments',id);renderComments();}
 function toggleComments(){document.getElementById('comment-panel').classList.toggle('open')}
 
 // ══ UI ══
-function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+n).classList.add('active')}
-function openModal(id){document.getElementById(id).classList.add('show')}
-function closeModal(id){document.getElementById(id).classList.remove('show')}
-let toastT;
-function toast(msg,type){const t=document.getElementById('toast');t.textContent=msg;t.style.background=type==='e'?'#dc2626':'#0f1f3d';t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('sc-'+n)?.classList.add('active')}
+function openModal(id){document.getElementById(id).classList.add('on')}
+function closeModal(id){document.getElementById(id).classList.remove('on')}
 function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay-bg').classList.add('show')}
 function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
-document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.overlay.show').forEach(o=>o.classList.remove('show'));if(e.key==='Enter'&&document.getElementById('screen-login').classList.contains('active'))doLogin();});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.moverlay.on').forEach(o=>o.classList.remove('on'));
+  if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('active'))doLogin();
+});
 
 // ══ INIT ══
 (async()=>{
   await openDB();
   const saved=sessionStorage.getItem('S');
-  if(saved){try{S=JSON.parse(saved);const co=await dbGet('companies',S.companyId);if(co&&!co.deletedAt){startApp();return}}catch{}sessionStorage.removeItem('S');}
-  showScreen('companies');renderCompanies();
+  if(saved){
+    try{
+      S=JSON.parse(saved);
+      const co=await dbGet('companies',S.companyId);
+      if(co&&!co.deletedAt){startApp();return}
+    }catch{}
+    sessionStorage.removeItem('S');
+  }
+  showScreen('co');renderCompanies();
 })();
+</script>
+<!-- ══ MODAL: DRUG ══ -->
+<div class="overlay" id="modal-drug"><div class="modal" style="max-width:640px">
+  <div class="mh"><span class="mt" id="md-drug-title">💊 إضافة منتج دوائي</span><button class="mc" onclick="closeModal('modal-drug')">✕</button></div>
+  <div class="mb"><input type="hidden" id="d-id">
+    <div class="form-grid">
+      <div class="fg"><label class="fl">اسم المنتج (عربي) <span class="req">*</span></label><input class="fc" id="d-nar" placeholder="أموكسيسيلين 500 مجم"></div>
+      <div class="fg"><label class="fl">Product Name (English)</label><input class="fc" id="d-nen" placeholder="Amoxicillin 500mg" dir="ltr"></div>
+      <div class="fg"><label class="fl">رقم تسجيل EDA</label><input class="fc" id="d-eda" placeholder="18/01/1234" dir="ltr"></div>
+      <div class="fg"><label class="fl">الشكل الدوائي <span class="req">*</span></label>
+        <select class="fc" id="d-form">
+          <option value="">— اختر —</option>
+          <option value="tablet">أقراص (Tablet)</option><option value="capsule">كبسولات</option>
+          <option value="syrup">شراب</option><option value="suspension">تعليق</option>
+          <option value="injection">حقن</option><option value="cream">كريم</option>
+          <option value="ointment">مرهم</option><option value="powder">مسحوق</option>
+          <option value="sachet">ساشيه</option><option value="drops">قطرات</option>
+          <option value="gel">جل</option><option value="spray">رذاذ</option>
+          <option value="suppository">تحاميل</option><option value="patch">لصقات</option>
+          <option value="other">أخرى</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">التركيز / القوة</label><input class="fc" id="d-str" placeholder="500 mg" dir="ltr"></div>
+      <div class="fg"><label class="fl">حجم التعبئة</label><input class="fc" id="d-pack" placeholder="24 قرص / علبة"></div>
+      <div class="fg"><label class="fl">ظروف التخزين</label>
+        <select class="fc" id="d-stor">
+          <option value="ambient">Ambient — 15-25°C</option>
+          <option value="controlled">Controlled — 20-25°C</option>
+          <option value="cool">Cool — 8-15°C</option>
+          <option value="cold_chain">Cold Chain — 2-8°C</option>
+          <option value="frozen">Frozen — -20°C</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">حالة التسجيل</label>
+        <select class="fc" id="d-stat">
+          <option value="registered">مسجل ✓</option>
+          <option value="pending">قيد التسجيل ⏳</option>
+          <option value="expired">منتهي ✗</option>
+          <option value="suspended">موقوف ⚠</option>
+        </select>
+      </div>
+      <div class="fg"><label class="fl">تاريخ انتهاء التسجيل</label><input class="fc" type="date" id="d-exp"></div>
+      <div class="fg"><label class="fl">INN — المادة الفعالة</label><input class="fc" id="d-inn" placeholder="Amoxicillin" dir="ltr"></div>
+      <div class="fg"><label class="fl">ATC Code</label><input class="fc" id="d-atc" placeholder="J01CA04" dir="ltr"></div>
+      <div class="fg full"><label class="fl">ملاحظات</label><textarea class="fc" id="d-note" rows="2"></textarea></div>
+    </div>
+  </div>
+  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-drug')">إلغاء</button><button class="btn btn-primary" onclick="saveDrug()">💾 حفظ المنتج</button></div>
+</div></div>
+
+<script>
+const FORM_LBL={tablet:'أقراص',capsule:'كبسولات',syrup:'شراب',suspension:'تعليق',injection:'حقن',cream:'كريم',ointment:'مرهم',powder:'مسحوق',sachet:'ساشيه',drops:'قطرات',gel:'جل',spray:'رذاذ',suppository:'تحاميل',patch:'لصقات',other:'أخرى'};
+const STOR_LBL={ambient:'Ambient 15-25°C',controlled:'Controlled 20-25°C',cool:'Cool 8-15°C',cold_chain:'Cold Chain 2-8°C',frozen:'Frozen -20°C'};
+const STAT_LBL={registered:'مسجل',pending:'قيد التسجيل',expired:'منتهي',suspended:'موقوف'};
+const STAT_CLS={registered:'bg',pending:'ba',expired:'br',suspended:'bgr'};
+
+async function renderDrugReg(c){
+  c.innerHTML=`
+  <div class="ph">
+    <div class="ph-left"><h2>💊 EDA — أدوية بشرية</h2><p id="drug-summary">جاري التحميل...</p></div>
+    <button class="btn btn-primary btn-sm" onclick="openDrugModal()">+ إضافة منتج</button>
+  </div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
+    <div class="search-wrap" style="flex:1;min-width:180px">
+      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input class="search-inp" style="width:100%;padding-right:36px" id="drug-srch" placeholder="بحث بالاسم أو رقم EDA أو المادة الفعالة..." oninput="filterDrugs()">
+    </div>
+    <select class="fc" id="drug-flt-stat" style="width:150px" onchange="filterDrugs()">
+      <option value="">كل الحالات</option>
+      <option value="registered">مسجل</option>
+      <option value="pending">قيد التسجيل</option>
+      <option value="expired">منتهي</option>
+      <option value="suspended">موقوف</option>
+    </select>
+    <select class="fc" id="drug-flt-form" style="width:150px" onchange="filterDrugs()">
+      <option value="">كل الأشكال</option>
+      ${Object.entries(FORM_LBL).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}
+    </select>
+  </div>
+  <div class="card">
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>#</th><th>اسم المنتج</th><th>رقم EDA</th><th>الشكل</th><th>التركيز</th><th>التخزين</th><th>الحالة</th><th>الانتهاء</th><th></th></tr></thead>
+        <tbody id="drug-tbl"></tbody>
+      </table>
+    </div>
+  </div>`;
+  filterDrugs();
+}
+
+async function filterDrugs(){
+  const drugs=(await dbGetAll('drugs','companyId',S.companyId)).filter(d=>!d.deletedAt);
+  const q=(document.getElementById('drug-srch')?.value||'').toLowerCase();
+  const fs=document.getElementById('drug-flt-stat')?.value||'';
+  const ff=document.getElementById('drug-flt-form')?.value||'';
+  const res=drugs.filter(d=>{
+    const mq=!q||(d.nameAr||'').includes(q)||(d.nameEn||'').toLowerCase().includes(q)||(d.edaNo||'').includes(q)||(d.inn||'').toLowerCase().includes(q);
+    return mq&&(!fs||d.status===fs)&&(!ff||d.form===ff);
+  });
+  // summary
+  const s=document.getElementById('drug-summary');
+  if(s)s.innerHTML=`إجمالي: <strong>${drugs.length}</strong> | مسجل: <strong style="color:var(--green)">${drugs.filter(d=>d.status==='registered').length}</strong> | قيد التسجيل: <strong style="color:var(--amber)">${drugs.filter(d=>d.status==='pending').length}</strong> | منتهي: <strong style="color:var(--red)">${drugs.filter(d=>d.status==='expired').length}</strong>`;
+  const tb=document.getElementById('drug-tbl');
+  if(!tb)return;
+  if(!res.length){
+    tb.innerHTML=`<tr><td colspan="9"><div class="empty"><div style="font-size:40px;margin-bottom:12px">💊</div><h3>لا توجد منتجات</h3><p>اضغط "+ إضافة منتج" لتسجيل أول منتج دوائي</p></div></td></tr>`;
+    return;
+  }
+  tb.innerHTML=res.map((d,i)=>{
+    const diff=d.expiry?Math.ceil((new Date(d.expiry)-new Date())/864e5):null;
+    const expWarn=diff!==null&&diff<90&&d.status==='registered'?'<span title="ينتهي قريباً" style="color:var(--amber)">⚠ </span>':'';
+    const expCls=diff!==null&&diff<0?'color:var(--red)':diff!==null&&diff<90?'color:var(--amber)':'';
+    return`<tr>
+      <td style="color:var(--gray2);font-size:11px">${String(i+1).padStart(3,'0')}</td>
+      <td><div style="font-weight:600">${esc(d.nameAr||d.nameEn||'—')}</div>${d.nameEn&&d.nameAr?`<div style="font-size:11px;color:var(--gray2)">${esc(d.nameEn)}</div>`:''}</td>
+      <td style="font-size:12px;direction:ltr;font-family:monospace">${esc(d.edaNo||'—')}</td>
+      <td>${esc(FORM_LBL[d.form]||d.form||'—')}</td>
+      <td style="font-size:12px">${esc(d.strength||'—')}</td>
+      <td><span class="badge bgr" style="font-size:10px">${esc(STOR_LBL[d.storage]||d.storage||'—')}</span></td>
+      <td><span class="badge ${STAT_CLS[d.status]||'bgr'}">${STAT_LBL[d.status]||'—'}</span></td>
+      <td style="font-size:12px;${expCls}">${expWarn}${d.expiry?fmt(d.expiry):'—'}</td>
+      <td><div style="display:flex;gap:4px">
+        <button class="btn-edit" onclick="editDrug('${d.id}')">تعديل</button>
+        <button class="btn-del" onclick="delDrug('${d.id}')">حذف</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+function openDrugModal(drug){
+  document.getElementById('md-drug-title').textContent=drug?'✏️ تعديل منتج دوائي':'💊 إضافة منتج دوائي جديد';
+  set('d-id',drug?.id||'');set('d-nar',drug?.nameAr||'');set('d-nen',drug?.nameEn||'');
+  set('d-eda',drug?.edaNo||'');set('d-form',drug?.form||'');
+  set('d-str',drug?.strength||'');set('d-pack',drug?.pack||'');
+  set('d-stor',drug?.storage||'ambient');set('d-stat',drug?.status||'registered');
+  set('d-exp',drug?.expiry||'');set('d-inn',drug?.inn||'');
+  set('d-atc',drug?.atc||'');set('d-note',drug?.notes||'');
+  openModal('modal-drug');
+}
+async function editDrug(id){const d=await dbGet('drugs',id);if(d)openDrugModal(d);}
+async function saveDrug(){
+  const nameAr=val('d-nar'),nameEn=val('d-nen'),form=val('d-form');
+  if(!nameAr&&!nameEn){toast('أدخل اسم المنتج','er');return}
+  if(!form){toast('اختر الشكل الدوائي','er');return}
+  const eid=val('d-id'),id=eid||uid();
+  const existing=eid?await dbGet('drugs',id):null;
+  await dbPut('drugs',{...existing,id,companyId:S.companyId,nameAr,nameEn,edaNo:val('d-eda'),form,strength:val('d-str'),pack:val('d-pack'),storage:val('d-stor'),status:val('d-stat'),expiry:val('d-exp'),inn:val('d-inn'),atc:val('d-atc'),notes:val('d-note'),createdAt:existing?.createdAt||now(),updatedAt:now(),createdBy:S.userId});
+  await saveHist(S.companyId,eid?'تعديل منتج دوائي':'إضافة منتج دوائي',nameAr||nameEn);
+  closeModal('modal-drug');
+  toast(`✅ ${eid?'تم تعديل':'تم إضافة'} ${nameAr||nameEn}`);
+  filterDrugs();
+}
+async function delDrug(id){
+  if(!confirm('حذف هذا المنتج نهائياً؟'))return;
+  const d=await dbGet('drugs',id);if(!d)return;
+  d.deletedAt=now();await dbPut('drugs',d);
+  toast('تم الحذف','ok');filterDrugs();
+}
 </script>
 </body>
 </html>
