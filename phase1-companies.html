@@ -987,14 +987,23 @@ const NAV=[
 ];
 
 function buildNav(){
-  const nav=document.getElementById('sb-nav');
-  nav.innerHTML=NAV.map(n=>{
-    if(n.sec)return`<div class="nsec">${n.sec}</div>`;
-    return`<div class="nitem ${n.soon?'dim':''}" id="nav-${n.id}" onclick="${n.soon?'':"`go('${n.id}')`"}">
-      <span class="nic">${n.ic}</span><span>${n.lbl}</span>
-      ${n.soon?'<span class="sb-soon">قريباً</span>':''}
-    </div>`;
-  }).join('');
+  var nav=document.getElementById('sb-nav');
+  if(!nav)return;
+  var html='';
+  for(var i=0;i<NAV.length;i++){
+    var n=NAV[i];
+    if(n.sec){html+='<div class="nsec">'+n.sec+'</div>';continue;}
+    var dim=n.soon?' dim':'';
+    var soon=n.soon?'<span class="sb-soon">قريباً</span>':'';
+    html+='<div class="nitem'+dim+'" id="nav-'+n.id+'" data-page="'+n.id+'">'
+         +'<span class="nic">'+n.ic+'</span><span>'+n.lbl+'</span>'+soon+'</div>';
+  }
+  nav.innerHTML=html;
+  nav.addEventListener('click',function(e){
+    var item=e.target.closest('[data-page]');
+    if(!item||item.classList.contains('dim'))return;
+    go(item.dataset.page);
+  });
 }
 
 function startApp(){
