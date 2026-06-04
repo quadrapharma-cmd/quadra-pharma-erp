@@ -219,6 +219,84 @@ tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:var(--hov
   .main{margin-right:0}
   .fgrid{grid-template-columns:1fr}
 }
+/* ══ REGISTRATION MODULE ══ */
+.agc-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid var(--gray3);background:#fff;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:600;color:var(--gray);transition:.15s}
+.agc-btn:hover{border-color:var(--blue);color:var(--blue)}
+.agc-btn.act-eda{background:var(--blue-light);border-color:var(--blue);color:var(--blue)}
+.agc-btn.act-nfsa{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.agc-btn.act-cosm{background:#fdf4ff;border-color:#9333ea;color:#9333ea}
+.agc-btn.act-all{background:var(--gray4);border-color:var(--gray2);color:var(--text)}
+.agc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-eda{background:var(--blue)}.dot-nfsa{background:var(--green)}.dot-cosm{background:#9333ea}
+.reg-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.rs{background:#fff;border:1px solid var(--gray3);border-radius:10px;padding:12px;text-align:center;cursor:pointer;transition:.15s}
+.rs:hover{border-color:var(--blue)}.rs-lbl{font-size:11px;color:var(--gray);font-weight:600;margin-bottom:4px}
+.rs-val{font-size:22px;font-weight:800}
+.rs-val.blue{color:var(--blue)}.rs-val.green{color:var(--green)}.rs-val.amber{color:var(--amber)}.rs-val.red{color:var(--red)}.rs-val.purple{color:#9333ea}
+.reg-drawer-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500}
+.reg-drawer-ov.on{display:block}
+.reg-drawer{position:fixed;top:0;right:0;bottom:0;width:740px;max-width:95vw;background:#fff;border-left:1px solid var(--gray3);z-index:501;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.reg-drawer.open{transform:translateX(0)}
+.rdh{padding:16px 20px;border-bottom:1px solid var(--gray3);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.rdh-title{font-size:16px;font-weight:800}.rdh-sub{font-size:12px;color:var(--gray);margin-top:3px}
+.rdh-close{background:none;border:none;color:var(--gray);cursor:pointer;font-size:20px;padding:3px 7px;border-radius:7px}
+.rdh-close:hover{background:var(--gray4)}
+.rd-tabs{display:flex;gap:2px;padding:10px 14px;border-bottom:1px solid var(--gray3);flex-wrap:wrap;flex-shrink:0;background:var(--gray4)}
+.dtab{background:none;border:none;padding:6px 12px;border-radius:7px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:600;color:var(--gray);transition:.15s;white-space:nowrap}
+.dtab:hover{color:var(--text);background:var(--gray3)}.dtab.act{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.rd-status{display:flex;align-items:center;gap:4px;padding:12px 20px;background:var(--gray4);border-bottom:1px solid var(--gray3);overflow-x:auto;flex-shrink:0}
+.status-step{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;position:relative;min-width:55px}
+.status-step::after{content:'';position:absolute;top:14px;right:-50%;width:100%;height:2px;background:var(--gray3);z-index:0}
+.status-step:last-child::after{display:none}
+.step-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#fff;position:relative;z-index:1;transition:.2s}
+.step-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.step-dot.active{background:var(--blue);border-color:var(--blue);color:#fff;box-shadow:0 0 0 4px var(--blue-light)}
+.step-dot.warn{background:var(--amber);border-color:var(--amber);color:#fff}
+.step-dot.err{background:var(--red);border-color:var(--red);color:#fff}
+.step-lbl{font-size:10px;color:var(--gray);text-align:center;font-weight:600;white-space:nowrap}
+.rd-body{flex:1;overflow-y:auto}.rd-body::-webkit-scrollbar{width:4px}.rd-body::-webkit-scrollbar-thumb{background:var(--gray3);border-radius:2px}
+.rd-foot{padding:12px 20px;border-top:1px solid var(--gray3);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+.fsec{padding:16px 20px;border-bottom:1px solid var(--gray3)}
+.fsec-title{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.fsec-title::after{content:'';flex:1;height:1px;background:var(--gray3)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.info-cell{padding:10px 20px;border-bottom:1px solid var(--gray3);border-left:1px solid var(--gray3)}
+.info-cell:nth-child(odd){border-left:none}.info-lbl{font-size:11px;color:var(--gray);font-weight:600;margin-bottom:3px}
+.info-val{font-size:13px;font-weight:600}
+.timeline{padding:16px 20px}
+.tl-item{display:flex;gap:12px;margin-bottom:18px;position:relative}
+.tl-line{position:absolute;right:17px;top:30px;bottom:-18px;width:1px;background:var(--gray3)}
+.tl-item:last-child .tl-line{display:none}
+.tl-dot{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;position:relative;z-index:1}
+.tl-dot.green{background:var(--green-light);border:2px solid var(--green)}.tl-dot.blue{background:var(--blue-light);border:2px solid var(--blue)}
+.tl-dot.amber{background:var(--amber-light);border:2px solid var(--amber)}.tl-dot.red{background:var(--red-light);border:2px solid var(--red)}
+.tl-dot.gray{background:var(--gray4);border:2px solid var(--gray3)}
+.tl-content{flex:1}.tl-title{font-size:13px;font-weight:700;margin-bottom:2px}.tl-meta{font-size:11px;color:var(--gray)}
+.tl-body{font-size:12px;color:var(--gray);margin-top:4px;padding:7px 10px;background:var(--gray4);border-radius:7px;border:1px solid var(--gray3)}
+.var-card{border:1px solid var(--gray3);border-radius:9px;margin:0 20px 10px;overflow:hidden}
+.var-head{padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--gray4)}
+.var-type{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.var-type.N{background:var(--green-light);color:var(--green)}.var-type.A{background:var(--amber-light);color:var(--amber)}
+.var-type.B{background:var(--blue-light);color:var(--blue)}.var-type.C{background:var(--red-light);color:var(--red)}
+.var-title{font-size:13px;font-weight:600;flex:1}
+.var-body{padding:10px 14px;border-top:1px solid var(--gray3);font-size:12px;color:var(--gray)}
+.chk-list{padding:0 20px 16px}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray3)}
+.chk-item:last-child{border-bottom:none}
+.chk-box{width:20px;height:20px;border-radius:4px;border:2px solid var(--gray3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;margin-top:2px;font-size:11px;font-weight:700}
+.chk-box.done{background:var(--green);border-color:var(--green);color:#fff}
+.chk-box.na{background:var(--gray4);border-color:var(--gray2);color:var(--gray)}
+.chk-info{flex:1}.chk-name{font-size:13px;font-weight:600}
+.chk-agency{font-size:10px;padding:1px 6px;border-radius:3px;background:var(--gray4);color:var(--gray)}
+.vtag{font-family:monospace;font-size:11px;color:var(--gray);background:var(--gray4);border:1px solid var(--gray3);padding:2px 7px;border-radius:4px}
+.reg-alert{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:8px;font-size:13px;margin:14px 20px 0}
+.reg-alert.warn{background:var(--amber-light);border:1px solid #fde68a;color:var(--amber)}
+.reg-alert.err{background:var(--red-light);border:1px solid #fecaca;color:var(--red)}
+.reg-alert.info{background:var(--blue-light);border:1px solid #bfdbfe;color:var(--blue)}
+.reg-moverlay{display:none;position:fixed;inset:0;background:rgba(15,31,61,.7);z-index:600;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+.reg-moverlay.on{display:flex}
+.reg-modal{background:#fff;border-radius:14px;width:100%;max-width:600px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:su .2s ease}
+@media(max-width:860px){.reg-stats{grid-template-columns:repeat(3,1fr)}.info-grid{grid-template-columns:1fr}.info-cell{border-left:none}.reg-drawer{width:100%}}
 </style>
 </head>
 <body>
@@ -622,7 +700,7 @@ function go(page){
   const titles={dashboard:'📊 لوحة التحكم',company:'🏢 بيانات الشركة','drug-reg':'💊 EDA — أدوية بشرية',users:'👥 المستخدمون',settings:'⚙️ إعدادات النظام'};
   document.getElementById('page-title').textContent=titles[page]||page;
   const m=document.getElementById('main-content');
-  ({dashboard:renderDashboard,company:renderCompanyPage,'drug-reg':renderDrugReg,users:renderUsers,settings:renderSettings}[page]||renderDashboard)(m);
+  ({dashboard:renderDashboard,company:renderCompanyPage,'drug-reg':function(c){window.renderDrugReg(c);},users:renderUsers,settings:renderSettings}[page]||renderDashboard)(m);
   closeSidebar();
 }
 
@@ -1079,163 +1157,680 @@ document.addEventListener('keydown',e=>{
   showScreen('co');renderCompanies();
 })();
 </script>
-<!-- ══ MODAL: DRUG ══ -->
-<div class="overlay" id="modal-drug"><div class="modal" style="max-width:640px">
-  <div class="mh"><span class="mt" id="md-drug-title">💊 إضافة منتج دوائي</span><button class="mc" onclick="closeModal('modal-drug')">✕</button></div>
-  <div class="mb"><input type="hidden" id="d-id">
-    <div class="form-grid">
-      <div class="fg"><label class="fl">اسم المنتج (عربي) <span class="req">*</span></label><input class="fc" id="d-nar" placeholder="أموكسيسيلين 500 مجم"></div>
-      <div class="fg"><label class="fl">Product Name (English)</label><input class="fc" id="d-nen" placeholder="Amoxicillin 500mg" dir="ltr"></div>
-      <div class="fg"><label class="fl">رقم تسجيل EDA</label><input class="fc" id="d-eda" placeholder="18/01/1234" dir="ltr"></div>
-      <div class="fg"><label class="fl">الشكل الدوائي <span class="req">*</span></label>
-        <select class="fc" id="d-form">
-          <option value="">— اختر —</option>
-          <option value="tablet">أقراص (Tablet)</option><option value="capsule">كبسولات</option>
-          <option value="syrup">شراب</option><option value="suspension">تعليق</option>
-          <option value="injection">حقن</option><option value="cream">كريم</option>
-          <option value="ointment">مرهم</option><option value="powder">مسحوق</option>
-          <option value="sachet">ساشيه</option><option value="drops">قطرات</option>
-          <option value="gel">جل</option><option value="spray">رذاذ</option>
-          <option value="suppository">تحاميل</option><option value="patch">لصقات</option>
-          <option value="other">أخرى</option>
-        </select>
-      </div>
-      <div class="fg"><label class="fl">التركيز / القوة</label><input class="fc" id="d-str" placeholder="500 mg" dir="ltr"></div>
-      <div class="fg"><label class="fl">حجم التعبئة</label><input class="fc" id="d-pack" placeholder="24 قرص / علبة"></div>
-      <div class="fg"><label class="fl">ظروف التخزين</label>
-        <select class="fc" id="d-stor">
-          <option value="ambient">Ambient — 15-25°C</option>
-          <option value="controlled">Controlled — 20-25°C</option>
-          <option value="cool">Cool — 8-15°C</option>
-          <option value="cold_chain">Cold Chain — 2-8°C</option>
-          <option value="frozen">Frozen — -20°C</option>
-        </select>
-      </div>
-      <div class="fg"><label class="fl">حالة التسجيل</label>
-        <select class="fc" id="d-stat">
-          <option value="registered">مسجل ✓</option>
-          <option value="pending">قيد التسجيل ⏳</option>
-          <option value="expired">منتهي ✗</option>
-          <option value="suspended">موقوف ⚠</option>
-        </select>
-      </div>
-      <div class="fg"><label class="fl">تاريخ انتهاء التسجيل</label><input class="fc" type="date" id="d-exp"></div>
-      <div class="fg"><label class="fl">INN — المادة الفعالة</label><input class="fc" id="d-inn" placeholder="Amoxicillin" dir="ltr"></div>
-      <div class="fg"><label class="fl">ATC Code</label><input class="fc" id="d-atc" placeholder="J01CA04" dir="ltr"></div>
-      <div class="fg full"><label class="fl">ملاحظات</label><textarea class="fc" id="d-note" rows="2"></textarea></div>
+<!-- ══ REGISTRATION: DRAWER ══ -->
+<div class="reg-drawer-ov" id="reg-ov" onclick="closeDrawer()"></div>
+<div class="reg-drawer" id="reg-drawer">
+  <div class="rdh">
+    <div>
+      <div class="rdh-title" id="dr-title">—</div>
+      <div class="rdh-sub" id="dr-sub">—</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-outline btn-sm" onclick="editCurrentRecord()">✏️ تعديل</button>
+      <button class="btn btn-outline btn-sm" onclick="exportRecord()">📤</button>
+      <button class="rdh-close" onclick="closeDrawer()">✕</button>
     </div>
   </div>
-  <div class="mf"><button class="btn btn-outline" onclick="closeModal('modal-drug')">إلغاء</button><button class="btn btn-primary" onclick="saveDrug()">💾 حفظ المنتج</button></div>
-</div></div>
+  <div class="rd-status" id="dr-status"></div>
+  <div class="rd-tabs" id="dr-tabs">
+    <button class="dtab act" data-dt="info" onclick="switchDTab(this)">📋 بيانات الإخطار</button>
+    <button class="dtab" data-dt="parties" onclick="switchDTab(this)">🏢 الأطراف</button>
+    <button class="dtab" data-dt="composition" onclick="switchDTab(this)">🧪 التركيب</button>
+    <button class="dtab" data-dt="checklist" onclick="switchDTab(this)">✅ Checklist</button>
+    <button class="dtab" data-dt="variations" onclick="switchDTab(this)">🔄 Variations</button>
+    <button class="dtab" data-dt="timeline" onclick="switchDTab(this)">📅 السجل الزمني</button>
+  </div>
+  <div class="rd-body" id="dr-body"></div>
+  <div class="rd-foot">
+    <button class="btn btn-outline" onclick="closeDrawer()">إغلاق</button>
+    <button class="btn btn-primary btn-sm" onclick="editCurrentRecord()">✏️ تعديل هذا الإخطار</button>
+  </div>
+</div>
+
+<!-- ══ REGISTRATION: MODAL ══ -->
+<div class="reg-moverlay" id="reg-modal">
+  <div class="reg-modal">
+    <div class="mh"><span class="mt" id="reg-modal-title">✚ إخطار جديد</span><button class="mc" onclick="closeRegModal()">✕</button></div>
+    <div class="mb" id="reg-modal-body"></div>
+    <div class="mf">
+      <button class="btn btn-outline" onclick="closeRegModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveRecord()">💾 حفظ الإخطار</button>
+    </div>
+  </div>
+</div>
 
 <script>
-const FORM_LBL={tablet:'أقراص',capsule:'كبسولات',syrup:'شراب',suspension:'تعليق',injection:'حقن',cream:'كريم',ointment:'مرهم',powder:'مسحوق',sachet:'ساشيه',drops:'قطرات',gel:'جل',spray:'رذاذ',suppository:'تحاميل',patch:'لصقات',other:'أخرى'};
-const STOR_LBL={ambient:'Ambient 15-25°C',controlled:'Controlled 20-25°C',cool:'Cool 8-15°C',cold_chain:'Cold Chain 2-8°C',frozen:'Frozen -20°C'};
-const STAT_LBL={registered:'مسجل',pending:'قيد التسجيل',expired:'منتهي',suspended:'موقوف'};
-const STAT_CLS={registered:'bg',pending:'ba',expired:'br',suspended:'bgr'};
+(function(){
+'use strict';
 
-async function renderDrugReg(c){
-  c.innerHTML=`
-  <div class="ph">
-    <div class="ph-left"><h2>💊 EDA — أدوية بشرية</h2><p id="drug-summary">جاري التحميل...</p></div>
-    <button class="btn btn-primary btn-sm" onclick="openDrugModal()">+ إضافة منتج</button>
-  </div>
-  <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;align-items:center">
-    <div class="search-wrap" style="flex:1;min-width:180px">
-      <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-      <input class="search-inp" style="width:100%;padding-right:36px" id="drug-srch" placeholder="بحث بالاسم أو رقم EDA أو المادة الفعالة..." oninput="filterDrugs()">
-    </div>
-    <select class="fc" id="drug-flt-stat" style="width:150px" onchange="filterDrugs()">
-      <option value="">كل الحالات</option>
-      <option value="registered">مسجل</option>
-      <option value="pending">قيد التسجيل</option>
-      <option value="expired">منتهي</option>
-      <option value="suspended">موقوف</option>
-    </select>
-    <select class="fc" id="drug-flt-form" style="width:150px" onchange="filterDrugs()">
-      <option value="">كل الأشكال</option>
-      ${Object.entries(FORM_LBL).map(([k,v])=>`<option value="${k}">${v}</option>`).join('')}
-    </select>
-  </div>
-  <div class="card">
-    <div class="table-wrap">
-      <table>
-        <thead><tr><th>#</th><th>اسم المنتج</th><th>رقم EDA</th><th>الشكل</th><th>التركيز</th><th>التخزين</th><th>الحالة</th><th>الانتهاء</th><th></th></tr></thead>
-        <tbody id="drug-tbl"></tbody>
-      </table>
-    </div>
-  </div>`;
-  filterDrugs();
+// ══ REG DATA ══
+var REG_KEY='qp_reg_v1';
+function getKey(){ return REG_KEY+'_'+(window.S&&window.S.companyId?window.S.companyId:'default'); }
+var records=[], filtered=[], currentRec=null, currentTab='info', editMode=false;
+var currentAgency='all', currentPage=1, perPage=15, sortField='invalidation_date', sortDir=1;
+
+var AGENCY_LBL={
+  eda_drug:{lbl:'EDA — أدوية بشرية', short:'EDA أدوية', cls:'bb'},
+  nfsa:    {lbl:'NFSA — أغذية خاصة', short:'NFSA',      cls:'bg'},
+  cosm:    {lbl:'EDA — تجميل',        short:'تجميل',     cls:'bgr'},
+};
+var LICENSE_LBL={local:'محلي',toll:'Toll',import:'استيراد',export:'تصدير',under_license:'تحت ترخيص','local/toll':'محلي/Toll'};
+var FORM_LBL={tablet:'أقراص',capsule:'كبسولات',syrup:'شراب',suspension:'تعليق',injection:'حقن',cream:'كريم',ointment:'مرهم',powder:'مسحوق',gel:'جل',liquid:'سائل',sachet:'ساشيه',drops:'قطرات',spray:'رذاذ',suppository:'تحاميل',patch:'لصقات',lotion:'لوشن',tube:'أنبوبة',other:'أخرى'};
+var STATUS_CFG={
+  active:   {lbl:'سارية ✓',      cls:'bg'},
+  expiring: {lbl:'تنتهي قريباً', cls:'ba'},
+  expired:  {lbl:'منتهية ✗',     cls:'br'},
+  pending:  {lbl:'قيد التسجيل',  cls:'bb'},
+  suspended:{lbl:'موقوفة ⚠',    cls:'bgr'},
+};
+var REG_STEPS_EDA=[{key:'submitted',lbl:'تقديم الملف'},{key:'nodcar',lbl:'NODCAR'},{key:'inspection',lbl:'زيارة تحليل'},{key:'committee',lbl:'اللجنة الفنية'},{key:'licensed',lbl:'إخطار التسجيل'},{key:'post_market',lbl:'ما بعد التسجيل'}];
+var REG_STEPS_NFSA=[{key:'submitted',lbl:'تقديم الطلب'},{key:'review',lbl:'مراجعة الملف'},{key:'inspection',lbl:'زيارة ميدانية'},{key:'licensed',lbl:'شهادة التسجيل'},{key:'renewal',lbl:'تجديد'}];
+var REG_STEPS_COSM=[{key:'submitted',lbl:'تقديم الطلب'},{key:'review',lbl:'المراجعة'},{key:'licensed',lbl:'إخطار التسجيل'},{key:'renewal',lbl:'تجديد'}];
+var CHECKLIST_EDA=[{id:'cl1',name:'ملف CTD كامل (Module 1-5)',required:true},{id:'cl2',name:'نتيجة NODCAR — أول 3 تشغيلات مطابقة',required:true},{id:'cl3',name:'زيارة تحليل EDA — مكتملة',required:true},{id:'cl4',name:'دراسة الثبات — Accelerated 6 شهور',required:true},{id:'cl5',name:'دراسة الثبات — Long-term جارية',required:true},{id:'cl6',name:'Process Validation — 3 تشغيلات',required:true},{id:'cl7',name:'شهادة GMP للمصنع سارية',required:true},{id:'cl8',name:'رسوم التفتيش الدوري محددة',required:false},{id:'cl9',name:'توقيع قرار اللجنة الفنية',required:false},{id:'cl10',name:'متطلبات اليقظة الصيدلية (Pharmacovigilance)',required:true}];
+var CHECKLIST_NFSA=[{id:'n1',name:'شهادة تحليل (CoA) من معمل معتمد',required:true},{id:'n2',name:'سجل تجاري ساري',required:true},{id:'n3',name:'إعلان المكونات (Declaration of Ingredients)',required:true},{id:'n4',name:'القيمة الغذائية (Nutritional Information)',required:true},{id:'n5',name:'Heavy Metals — رصاص/كادميوم/زرنيخ/زئبق',required:true},{id:'n6',name:'Pesticide Residue',required:true},{id:'n7',name:'بطاقة بيانات المنتج مختومة',required:true},{id:'n8',name:'عقد التصنيع (إن اختلف المصنع)',required:false}];
+var CHECKLIST_COSM=[{id:'c1',name:'بيان تركيب المنتج مختوم',required:true},{id:'c2',name:'Notification Request (F) على المنصة الإلكترونية',required:true},{id:'c3',name:'Artwork — موك أب مكتمل ومعتمد',required:true},{id:'c4',name:'عقد التصنيع Toll Manufacturing',required:false},{id:'c5',name:'شهادة تحليل المنتج النهائي',required:true},{id:'c6',name:'CoA المواد الخام الرئيسية',required:false}];
+
+var SEED=[
+  {id:1,agency:'eda_drug',reg_no:'30108/2019',soft_file:'5927',user_id:'User-35398',name_ar:'ماء نقي دستور الأدوية البريطاني 2019',name_en:'Purified Water BP 2019',form:'sachet',strength:'50ml',physical:'محلول شفاف عديم اللون',shelf_life:36,storage:'لا تتجاوز 30°C',approved_pack:'ساشيه 50مل (طبقتان LDPE+بوليستر)',price:[{size:'50ml ساشيه',price:'2 جنيه'}],license_type:'local',marketing_type:'محلي',reg_date:'2024-08-22',invalidation_date:'2029-02-28',license_holder:'Quadra Pharm — مصر',manufacturer:'Kareem Pharma — مصر',packager:'Kareem Pharma — مصر',storage_site:'Kareem Pharma — مصنع',release_site:'Kareem Pharma — مصنع',api_suppliers:[{material:'Purified Water',supplier:'—',country:'مصر',spec:'BP 2019'}],inactive_ingredients:[],reg_steps:{submitted:'done',nodcar:'done',inspection:'done',committee:'done',licensed:'done',post_market:'active'},checklist:{cl1:'done',cl2:'done',cl3:'done',cl4:'done',cl5:'active',cl6:'done',cl7:'done',cl8:'done',cl9:'done',cl10:'active'},variations:[{id:'v1',date:'2025-03-15',type:'N',category:'إداري',desc:'تغيير مالك الترخيص',status:'approved'},{id:'v2',date:'2025-10-01',type:'B',category:'تصنيع',desc:'نقل مكان التصنيع والتخزين',status:'approved'}],stability:{tracking_id:'26432',type:'Post License Variation',status:'commented',deadline:'2026-08-25',comments:5},timeline:[{date:'2019-03-21',icon:'📋',color:'blue',title:'الإخطار الأصلي — ميديسنيا للصناعات الدوائية',body:'رقم 30108/2019'},{date:'2024-08-22',icon:'🔄',color:'amber',title:'إعادة إصدار الإخطار — نقل ملكية وتغيير مكان التصنيع',body:'من ميديسنيا → كوادرا فارم'},{date:'2026-02-18',icon:'🔬',color:'green',title:'CADC — مطابقة 3 تشغيلات',body:'نتيجة مطابق لكل الدفعات'},{date:'2026-05-25',icon:'⚠️',color:'amber',title:'EDA Stability — Commented Application',body:'5 تعليقات يجب استيفاؤها — Tracking ID: 26432'}],status:'active',qf_code:'CAPP.041.04',committee_decree:'',notes:'أول 3 تشغيلات — تعهد عدم الإفراج حتى صدور المطابقة من CADC'},
+  {id:2,agency:'eda_drug',reg_no:'29925/2022',soft_file:'0',user_id:'User-1037',name_ar:'وونكيور بودرة موضعية',name_en:'Wouncure Topical Powder',form:'powder',strength:'—',physical:'مسحوق أبيض متجانس',shelf_life:36,storage:'لا تتجاوز 30°C في مكان جاف',approved_pack:'زجاجة HDPE بيضاء 10جم أو 20جم',price:[{size:'10 جم',price:'34 جنيه'},{size:'20 جم',price:'60 جنيه'}],license_type:'toll',marketing_type:'محلي',reg_date:'2022-07-26',invalidation_date:'2032-11-10',license_holder:'Quadra Pharm — مصر',manufacturer:'Badr Pharma for Pharmaceutical Industries — مصر',packager:'Badr Pharma for Pharmaceutical Industries — مصر',storage_site:'Badr Pharma — مصنع',release_site:'Badr Pharma — مصنع',api_suppliers:[{material:'Neomycin Sulphate',supplier:'Sichuan Long March',country:'الصين',spec:'BP2018'},{material:'Bacitracin Zinc',supplier:'North China Pharmaceutical',country:'الصين',spec:'BP2018'},{material:'Cysteine',supplier:'Tianjin Tianyao',country:'الصين',spec:'BP2018'},{material:'Maize Starch',supplier:'—',country:'—',spec:'BP2018'}],inactive_ingredients:[{name:'Maize Starch',qty:'977mg/g',spec:'BP2018',role:'حشو'}],reg_steps:{submitted:'done',nodcar:'done',inspection:'done',committee:'done',licensed:'done',post_market:'active'},checklist:{cl1:'done',cl2:'done',cl3:'done',cl4:'done',cl5:'done',cl6:'active',cl7:'done',cl8:'done',cl9:'done',cl10:'active'},variations:[{id:'v3',date:'2026-04-16',type:'B',category:'جودة — طريقة تحليل',desc:'Variation طريقة تحليل Wouncure',status:'under_review'}],stability:null,timeline:[{date:'2022-07-26',icon:'📋',color:'green',title:'إخطار تسجيل نهائي — EDA',body:'رقم 29925/2022 — Toll Manufacturing'},{date:'2026-04-16',icon:'🔄',color:'amber',title:'طلب Variation — استفسار تعديل',body:'hdr.variation@edaegypt.gov.eg — رد باستيفاء'}],status:'active',qf_code:'CAPP.041.04',committee_decree:'370/2006',notes:'شركة باد فارما مصنع Toll'},
+  {id:3,agency:'nfsa',reg_no:'2022/4001',soft_file:'025407',user_id:'—',name_ar:'دكستروسيل 40 جل',name_en:'Dextrosel 40 Gel',form:'gel',strength:'10g دكستروز/أنبوبة 25g',physical:'جل شفاف',shelf_life:24,storage:'لا تتجاوز درجة حرارة الغرفة',approved_pack:'علبة كرتون × 3 أنابيب × 25جم = 75جم',price:[{size:'75 جم (3 أنابيب)',price:'—'}],license_type:'local',marketing_type:'محلي',reg_date:'2022-01-11',invalidation_date:'2027-08-13',license_holder:'Quadra Consumer — مصر',manufacturer:'أورجانيكس للمكملات الغذائية — مصر',packager:'أورجانيكس — مصر',storage_site:'أورجانيكس — مدينة السادات',release_site:'—',api_suppliers:[{material:'Dextrose',supplier:'—',country:'مصر',spec:'USP42'},{material:'Potassium Sorbate E202',supplier:'—',country:'—',spec:'USP42'}],inactive_ingredients:[{name:'Purified Water',qty:'14g/25g',spec:'',role:'سائل'},{name:'Sodium CMC E466',qty:'929mg/25g',spec:'',role:'قوام'},{name:'Citric Acid E330',qty:'20mg/25g',spec:'',role:'منظم pH'},{name:'Vanilla Flavor',qty:'6mg/25g',spec:'',role:'نكهة'}],nutritional:{energy:40,fat:0,carbs:10,sugars:10,protein:0,sodium:0,serving:'25g أنبوبة'},food_category:'أغذية للحالات المرضية',nfsa_decree:'قرار مجلس الإدارة رقم 1 لسنة 2018',nfsa_company_code:'1122',reg_steps:{submitted:'done',review:'done',inspection:'done',licensed:'done',renewal:'active'},checklist:{n1:'done',n2:'done',n3:'done',n4:'done',n5:'done',n6:'done',n7:'done',n8:'na'},variations:[{id:'v4',date:'2025-12-21',type:'N',category:'إداري',desc:'تغيير اسم الشركة من الحلو فارما إلى Quadra Consumer',status:'approved'}],stability:null,timeline:[{date:'2022-01-11',icon:'📋',color:'green',title:'شهادة التسجيل — NFSA',body:'رقم 2022/4001 — أغذية للحالات المرضية — 5 سنوات'},{date:'2025-12-21',icon:'🔄',color:'blue',title:'تغيير اسم الشركة',body:'الحلو فارما → Quadra Consumer'}],status:'active',qf_code:'NFSA-2018/1',committee_decree:'',notes:'Dextrosel لرفع سكر الدم — يستخدم تحت إشراف طبي فقط'},
+  {id:4,agency:'cosm',reg_no:'15742/2010',soft_file:'11/2011',user_id:'—',name_ar:'سميلي فريش غسول للفم',name_en:'Smilly Fresh Mouth Wash',form:'liquid',strength:'60/100/120ml',physical:'سائل',shelf_life:36,storage:'—',approved_pack:'زجاجة بلاستيك 60/100/120ml في كرتون',price:[{size:'60ml',price:'—'},{size:'100ml',price:'—'},{size:'120ml',price:'—'}],license_type:'local/toll',marketing_type:'محلي',reg_date:'2010-10-05',invalidation_date:'2020-10-04',license_holder:'Quadra Pharm — Egypt',manufacturer:'Hi Care Pharmaceuticals And Cosmetics — مصر',packager:'Hi Care — مصر',storage_site:'Hi Care — مصنع',release_site:'—',api_suppliers:[{material:'Thymol',supplier:'—',country:'—',spec:'0.05%',role:'مطهر'},{material:'Chlorhexidine',supplier:'—',country:'—',spec:'0.3%',role:'مطهر'}],inactive_ingredients:[{name:'Menthol',qty:'0.2%',spec:'',role:'منعش'},{name:'Glycerin',qty:'5%',spec:'',role:'مرطب'},{name:'Ethanol 95%',qty:'2%',spec:'',role:'مذيب'},{name:'Water',qty:'to 100%',spec:'',role:'وسيط'}],cosmetic_category:'غسول الفم',reg_steps:{submitted:'done',review:'done',licensed:'done',renewal:'expired'},checklist:{c1:'done',c2:'done',c3:'done',c4:'done',c5:'done',c6:'done'},variations:[{id:'v5',date:'2011-05-12',type:'N',category:'إضافة عبوة',desc:'إضافة عبوة Plastic Bottle 60ml with Atomizer',status:'approved'},{id:'v6',date:'2011-01-01',type:'N',category:'نقل ملكية',desc:'نقل ملكية من سبوة فارم إلى كوادرا فارم',status:'approved'}],stability:null,timeline:[{date:'2010-10-05',icon:'📋',color:'blue',title:'إخطار تسجيل — وزارة الصحة',body:'رقم 15742/2010 — Cosmetics Dept'},{date:'2011-01-01',icon:'🔄',color:'amber',title:'نقل ملكية',body:'من سبوة فارم → كوادرا فارم'},{date:'2020-10-04',icon:'❌',color:'red',title:'انتهاء التسجيل',body:'الإخطار منتهي — يحتاج تجديد'}],status:'expired',qf_code:'FM-RCP-27',committee_decree:'',notes:'الإخطار منتهي منذ 2020 — يحتاج إعادة تسجيل'},
+];
+
+function loadData(){
+  try{var s=localStorage.getItem(getKey());records=s?JSON.parse(s):JSON.parse(JSON.stringify(SEED));}
+  catch(e){records=JSON.parse(JSON.stringify(SEED));}
+  if(!records.length) records=JSON.parse(JSON.stringify(SEED));
+}
+function saveData(){localStorage.setItem(getKey(),JSON.stringify(records));}
+
+function daysLeft(d){if(!d)return null;return Math.floor((new Date(d)-Date.now())/864e5);}
+function computeStatus(r){
+  if(r.status==='pending'||r.status==='suspended') return r.status;
+  var d=daysLeft(r.invalidation_date);
+  if(d===null) return 'pending';
+  if(d<0) return 'expired';
+  if(d<=365) return 'expiring';
+  return 'active';
+}
+function fmtReg(s){if(!s)return'—';return new Date(s).toLocaleDateString('ar-EG',{year:'numeric',month:'short',day:'numeric'});}
+function ic(label,value){return '<div class="info-cell"><div class="info-lbl">'+label+'</div><div class="info-val">'+value+'</div></div>';}
+function statusBdg(st){var s=STATUS_CFG[st]||{lbl:st,cls:'bgr'};return'<span class="badge '+s.cls+'">'+s.lbl+'</span>';}
+function agencyBdg(ag){var a=AGENCY_LBL[ag]||{lbl:ag,cls:'bgr'};return'<span class="badge '+a.cls+'">'+a.lbl+'</span>';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── RENDER PAGE ──
+window.renderDrugReg=function(c){
+  loadData();
+  c.innerHTML=buildRegPage();
+  applyFilters();
+};
+
+function buildRegPage(){
+  return '<div class="ph">'+
+    '<div class="ph-left"><h2>📋 سجل الإخطارات التنظيمية</h2><p>EDA أدوية · NFSA أغذية · EDA تجميل</p></div>'+
+    '<div style="display:flex;gap:8px">'+
+      '<button class="btn btn-outline btn-sm" onclick="exportAll()">📤 تصدير</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="openNewModal()">+ إخطار جديد</button>'+
+    '</div>'+
+  '</div>'+
+  // Agency filter
+  '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'+
+    '<button class="agc-btn act-all" data-ag="all" onclick="filterAgency(\'all\',this)">🏛️ الكل <span id="cnt-all">0</span></button>'+
+    '<button class="agc-btn" data-ag="eda_drug" onclick="filterAgency(\'eda_drug\',this)"><span class="agc-dot dot-eda"></span> EDA أدوية <span id="cnt-eda_drug">0</span></button>'+
+    '<button class="agc-btn" data-ag="nfsa" onclick="filterAgency(\'nfsa\',this)"><span class="agc-dot dot-nfsa"></span> NFSA <span id="cnt-nfsa">0</span></button>'+
+    '<button class="agc-btn" data-ag="cosm" onclick="filterAgency(\'cosm\',this)"><span class="agc-dot dot-cosm"></span> تجميل <span id="cnt-cosm">0</span></button>'+
+  '</div>'+
+  // Stats
+  '<div class="reg-stats">'+
+    '<div class="rs" onclick="filterStatus(\'\')"><div class="rs-lbl">الكل</div><div class="rs-val blue" id="st-total">0</div></div>'+
+    '<div class="rs"><div class="rs-lbl">سارية ✓</div><div class="rs-val green" id="st-active">0</div></div>'+
+    '<div class="rs"><div class="rs-lbl">تنتهي قريباً</div><div class="rs-val amber" id="st-expiring">0</div></div>'+
+    '<div class="rs"><div class="rs-lbl">منتهية ✗</div><div class="rs-val red" id="st-expired">0</div></div>'+
+    '<div class="rs"><div class="rs-lbl">قيد التسجيل</div><div class="rs-val purple" id="st-pending">0</div></div>'+
+  '</div>'+
+  // Toolbar
+  '<div class="reg-toolbar">'+
+    '<div class="search-wrap" style="flex:1;min-width:180px">'+
+      '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'+
+      '<input class="search-inp" style="width:100%;padding-right:36px" id="reg-srch" placeholder="بحث بالاسم أو رقم الإخطار أو المادة الفعالة..." oninput="applyFilters()">'+
+    '</div>'+
+    '<select class="fc" id="flt-status" style="width:150px" onchange="applyFilters()">'+
+      '<option value="">كل الحالات</option><option value="active">سارية</option>'+
+      '<option value="expiring">تنتهي قريباً</option><option value="expired">منتهية</option>'+
+      '<option value="pending">قيد التسجيل</option>'+
+    '</select>'+
+    '<select class="fc" id="flt-license" style="width:140px" onchange="applyFilters()">'+
+      '<option value="">كل الترخيص</option><option value="local">محلي</option>'+
+      '<option value="toll">Toll</option><option value="import">استيراد</option>'+
+    '</select>'+
+  '</div>'+
+  // Table
+  '<div class="card">'+
+    '<div class="card-header">'+
+      '<span class="card-title">قائمة الإخطارات <span id="tbl-count" style="font-size:12px;color:var(--gray)"></span></span>'+
+      '<span style="font-size:12px;color:var(--gray2)" id="tbl-info"></span>'+
+    '</div>'+
+    '<div class="table-wrap">'+
+      '<table><thead><tr>'+
+        '<th onclick="sortBy(\'reg_no\')" style="cursor:pointer">رقم الإخطار ↕</th>'+
+        '<th onclick="sortBy(\'name_ar\')" style="cursor:pointer">اسم المنتج ↕</th>'+
+        '<th>الشكل</th><th>الجهة</th><th>نوع الترخيص</th>'+
+        '<th>مالك الترخيص</th><th>المصنع</th>'+
+        '<th onclick="sortBy(\'invalidation_date\')" style="cursor:pointer">انتهاء التسجيل ↕</th>'+
+        '<th>الحالة</th><th></th>'+
+      '</tr></thead>'+
+      '<tbody id="reg-tbl-body"></tbody></table>'+
+    '</div>'+
+    '<div style="padding:12px 18px;border-top:1px solid var(--gray3);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--gray)">'+
+      '<span id="pg-info-reg"></span>'+
+      '<div style="display:flex;gap:6px">'+
+        '<button class="btn btn-outline btn-sm" id="pg-prev-reg" onclick="prevPage()">‹ السابق</button>'+
+        '<button class="btn btn-outline btn-sm" id="pg-next-reg" onclick="nextPage()">التالي ›</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
 }
 
-async function filterDrugs(){
-  const drugs=(await dbGetAll('drugs','companyId',S.companyId)).filter(d=>!d.deletedAt);
-  const q=(document.getElementById('drug-srch')?.value||'').toLowerCase();
-  const fs=document.getElementById('drug-flt-stat')?.value||'';
-  const ff=document.getElementById('drug-flt-form')?.value||'';
-  const res=drugs.filter(d=>{
-    const mq=!q||(d.nameAr||'').includes(q)||(d.nameEn||'').toLowerCase().includes(q)||(d.edaNo||'').includes(q)||(d.inn||'').toLowerCase().includes(q);
-    return mq&&(!fs||d.status===fs)&&(!ff||d.form===ff);
+function applyFilters(){
+  var q=(document.getElementById('reg-srch')||{value:''}).value.toLowerCase();
+  var fs=(document.getElementById('flt-status')||{value:''}).value;
+  var fl=(document.getElementById('flt-license')||{value:''}).value;
+  filtered=records.filter(function(r){
+    var ag=currentAgency==='all'||r.agency===currentAgency;
+    var mq=!q||(r.name_ar||'').includes(q)||(r.name_en||'').toLowerCase().includes(q)||(r.reg_no||'').includes(q);
+    var ms=!fs||computeStatus(r)===fs;
+    var ml=!fl||r.license_type===fl;
+    return ag&&mq&&ms&&ml;
   });
-  // summary
-  const s=document.getElementById('drug-summary');
-  if(s)s.innerHTML=`إجمالي: <strong>${drugs.length}</strong> | مسجل: <strong style="color:var(--green)">${drugs.filter(d=>d.status==='registered').length}</strong> | قيد التسجيل: <strong style="color:var(--amber)">${drugs.filter(d=>d.status==='pending').length}</strong> | منتهي: <strong style="color:var(--red)">${drugs.filter(d=>d.status==='expired').length}</strong>`;
-  const tb=document.getElementById('drug-tbl');
-  if(!tb)return;
-  if(!res.length){
-    tb.innerHTML=`<tr><td colspan="9"><div class="empty"><div style="font-size:40px;margin-bottom:12px">💊</div><h3>لا توجد منتجات</h3><p>اضغط "+ إضافة منتج" لتسجيل أول منتج دوائي</p></div></td></tr>`;
+  if(sortField){
+    filtered.sort(function(a,b){
+      var av=a[sortField]||'',bv=b[sortField]||'';
+      return sortDir*(av<bv?-1:av>bv?1:0);
+    });
+  }
+  updateStats();
+  renderRegTable();
+}
+
+function updateStats(){
+  var all=records;
+  var cnt={all:all.length,eda_drug:0,nfsa:0,cosm:0};
+  var st={total:all.length,active:0,expiring:0,expired:0,pending:0};
+  all.forEach(function(r){
+    if(cnt[r.agency]!==undefined) cnt[r.agency]++;
+    var s=computeStatus(r);
+    if(st[s]!==undefined) st[s]++;
+  });
+  Object.keys(cnt).forEach(function(k){var e=document.getElementById('cnt-'+k);if(e)e.textContent=cnt[k];});
+  Object.keys(st).forEach(function(k){var e=document.getElementById('st-'+k);if(e)e.textContent=st[k];});
+}
+
+function renderRegTable(){
+  var tb=document.getElementById('reg-tbl-body');if(!tb)return;
+  var total=filtered.length;
+  var start=(currentPage-1)*perPage;
+  var page=filtered.slice(start,start+perPage);
+  var totalPg=Math.ceil(total/perPage)||1;
+  var ci=document.getElementById('tbl-count');if(ci)ci.textContent='('+total+')';
+  var ti=document.getElementById('tbl-info');if(ti)ti.textContent='عرض '+(total?start+1:0)+' - '+Math.min(start+perPage,total)+' من '+total;
+  var pi=document.getElementById('pg-info-reg');if(pi)pi.textContent='صفحة '+currentPage+' / '+totalPg;
+  var pp=document.getElementById('pg-prev-reg');if(pp)pp.disabled=currentPage<=1;
+  var pn=document.getElementById('pg-next-reg');if(pn)pn.disabled=currentPage>=totalPg;
+  if(!page.length){
+    tb.innerHTML='<tr><td colspan="10"><div class="empty"><div style="font-size:36px;margin-bottom:12px">📋</div><h3>لا توجد إخطارات</h3><p>اضغط "+ إخطار جديد" لإضافة أول إخطار</p></div></td></tr>';
     return;
   }
-  tb.innerHTML=res.map((d,i)=>{
-    const diff=d.expiry?Math.ceil((new Date(d.expiry)-new Date())/864e5):null;
-    const expWarn=diff!==null&&diff<90&&d.status==='registered'?'<span title="ينتهي قريباً" style="color:var(--amber)">⚠ </span>':'';
-    const expCls=diff!==null&&diff<0?'color:var(--red)':diff!==null&&diff<90?'color:var(--amber)':'';
-    return`<tr>
-      <td style="color:var(--gray2);font-size:11px">${String(i+1).padStart(3,'0')}</td>
-      <td><div style="font-weight:600">${esc(d.nameAr||d.nameEn||'—')}</div>${d.nameEn&&d.nameAr?`<div style="font-size:11px;color:var(--gray2)">${esc(d.nameEn)}</div>`:''}</td>
-      <td style="font-size:12px;direction:ltr;font-family:monospace">${esc(d.edaNo||'—')}</td>
-      <td>${esc(FORM_LBL[d.form]||d.form||'—')}</td>
-      <td style="font-size:12px">${esc(d.strength||'—')}</td>
-      <td><span class="badge bgr" style="font-size:10px">${esc(STOR_LBL[d.storage]||d.storage||'—')}</span></td>
-      <td><span class="badge ${STAT_CLS[d.status]||'bgr'}">${STAT_LBL[d.status]||'—'}</span></td>
-      <td style="font-size:12px;${expCls}">${expWarn}${d.expiry?fmt(d.expiry):'—'}</td>
-      <td><div style="display:flex;gap:4px">
-        <button class="btn-edit" onclick="editDrug('${d.id}')">تعديل</button>
-        <button class="btn-del" onclick="delDrug('${d.id}')">حذف</button>
-      </div></td>
-    </tr>`;
+  tb.innerHTML=page.map(function(r){
+    var st=computeStatus(r);
+    var d=daysLeft(r.invalidation_date);
+    var dStr=d===null?'—':d<0?'منتهي منذ '+Math.abs(d)+' يوم':(d===0?'اليوم ❗':d+' يوم');
+    var dCol=d===null?'':d<0?'color:var(--red)':d<180?'color:var(--amber)':'';
+    var hasStab=r.stability&&r.stability.status==='commented';
+    return '<tr onclick="openDrawer('+r.id+')" style="cursor:pointer">'+
+      '<td><span style="font-family:monospace;font-size:12px">'+esc(r.reg_no)+'</span>'+
+        (hasStab?'<span title="تعليقات ثبات" style="color:var(--amber);margin-right:4px"> ⚠️</span>':'')+'</td>'+
+      '<td><div style="font-weight:600">'+(r.name_ar?esc(r.name_ar):(esc(r.name_en)||'—'))+'</div>'+
+        (r.name_en&&r.name_ar?'<div style="font-size:11px;color:var(--gray2)">'+esc(r.name_en)+'</div>':'')+'</td>'+
+      '<td>'+esc(FORM_LBL[r.form]||r.form||'—')+'</td>'+
+      '<td>'+agencyBdg(r.agency)+'</td>'+
+      '<td><span class="badge bgr" style="font-size:10px">'+esc(LICENSE_LBL[r.license_type]||r.license_type||'—')+'</span></td>'+
+      '<td style="font-size:12px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.license_holder||'—')+'</td>'+
+      '<td style="font-size:12px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.manufacturer||'—')+'</td>'+
+      '<td><div style="font-size:12px;'+dCol+'">'+fmtReg(r.invalidation_date)+'</div>'+
+        '<div style="font-size:11px;'+dCol+'">'+dStr+'</div></td>'+
+      '<td>'+statusBdg(st)+'</td>'+
+      '<td onclick="event.stopPropagation()"><div style="display:flex;gap:4px">'+
+        '<button class="btn-edit" onclick="openDrawer('+r.id+')" title="عرض">👁</button>'+
+        '<button class="btn-edit" onclick="openEditModal('+r.id+')" title="تعديل">✏️</button>'+
+        '<button class="btn-del" onclick="deleteRecord('+r.id+')" title="حذف">🗑</button>'+
+      '</div></td>'+
+    '</tr>';
   }).join('');
 }
 
-function openDrugModal(drug){
-  document.getElementById('md-drug-title').textContent=drug?'✏️ تعديل منتج دوائي':'💊 إضافة منتج دوائي جديد';
-  set('d-id',drug?.id||'');set('d-nar',drug?.nameAr||'');set('d-nen',drug?.nameEn||'');
-  set('d-eda',drug?.edaNo||'');set('d-form',drug?.form||'');
-  set('d-str',drug?.strength||'');set('d-pack',drug?.pack||'');
-  set('d-stor',drug?.storage||'ambient');set('d-stat',drug?.status||'registered');
-  set('d-exp',drug?.expiry||'');set('d-inn',drug?.inn||'');
-  set('d-atc',drug?.atc||'');set('d-note',drug?.notes||'');
-  openModal('modal-drug');
+function filterAgency(ag,btn){
+  currentAgency=ag;currentPage=1;
+  document.querySelectorAll('.agc-btn').forEach(function(b){b.className='agc-btn';});
+  if(btn){
+    var cls=ag==='all'?'act-all':ag==='nfsa'?'act-nfsa':ag==='cosm'?'act-cosm':'act-eda';
+    btn.className='agc-btn '+cls;
+  }
+  applyFilters();
 }
-async function editDrug(id){const d=await dbGet('drugs',id);if(d)openDrugModal(d);}
-async function saveDrug(){
-  const nameAr=val('d-nar'),nameEn=val('d-nen'),form=val('d-form');
-  if(!nameAr&&!nameEn){toast('أدخل اسم المنتج','er');return}
-  if(!form){toast('اختر الشكل الدوائي','er');return}
-  const eid=val('d-id'),id=eid||uid();
-  const existing=eid?await dbGet('drugs',id):null;
-  await dbPut('drugs',{...existing,id,companyId:S.companyId,nameAr,nameEn,edaNo:val('d-eda'),form,strength:val('d-str'),pack:val('d-pack'),storage:val('d-stor'),status:val('d-stat'),expiry:val('d-exp'),inn:val('d-inn'),atc:val('d-atc'),notes:val('d-note'),createdAt:existing?.createdAt||now(),updatedAt:now(),createdBy:S.userId});
-  await saveHist(S.companyId,eid?'تعديل منتج دوائي':'إضافة منتج دوائي',nameAr||nameEn);
-  closeModal('modal-drug');
-  toast(`✅ ${eid?'تم تعديل':'تم إضافة'} ${nameAr||nameEn}`);
-  filterDrugs();
+function filterStatus(s){var e=document.getElementById('flt-status');if(e)e.value=s;applyFilters();}
+function sortBy(f){if(sortField===f)sortDir*=-1;else{sortField=f;sortDir=1;}applyFilters();}
+function prevPage(){if(currentPage>1){currentPage--;renderRegTable();}}
+function nextPage(){var tp=Math.ceil(filtered.length/perPage)||1;if(currentPage<tp){currentPage++;renderRegTable();}}
+
+// ── DRAWER ──
+function openDrawer(id){
+  currentRec=records.find(function(r){return r.id===id;});
+  if(!currentRec)return;
+  document.getElementById('dr-title').textContent=currentRec.name_ar||currentRec.name_en;
+  document.getElementById('dr-sub').textContent=currentRec.reg_no+' · '+(AGENCY_LBL[currentRec.agency]||{lbl:currentRec.agency}).lbl;
+  renderDStatus();
+  // reset tabs
+  document.querySelectorAll('.dtab').forEach(function(b){b.classList.remove('act');});
+  var firstTab=document.querySelector('.dtab[data-dt="info"]');
+  if(firstTab)firstTab.classList.add('act');
+  currentTab='info';
+  renderDBody();
+  document.getElementById('reg-drawer').classList.add('open');
+  document.getElementById('reg-ov').classList.add('on');
 }
-async function delDrug(id){
-  if(!confirm('حذف هذا المنتج نهائياً؟'))return;
-  const d=await dbGet('drugs',id);if(!d)return;
-  d.deletedAt=now();await dbPut('drugs',d);
-  toast('تم الحذف','ok');filterDrugs();
+function closeDrawer(){
+  document.getElementById('reg-drawer').classList.remove('open');
+  document.getElementById('reg-ov').classList.remove('on');
 }
+window.closeDrawer=closeDrawer;
+window.openDrawer=openDrawer;
+
+function renderDStatus(){
+  var r=currentRec;
+  var steps=r.agency==='nfsa'?REG_STEPS_NFSA:r.agency==='cosm'?REG_STEPS_COSM:REG_STEPS_EDA;
+  document.getElementById('dr-status').innerHTML=steps.map(function(s,i){
+    var st=(r.reg_steps&&r.reg_steps[s.key])||'pending';
+    var dotCls=st==='done'?'done':st==='active'?'active':st==='warn'?'warn':st==='expired'?'err':'';
+    var icon=st==='done'?'✓':st==='active'?'●':st==='expired'?'✕':(i+1);
+    return '<div class="status-step"><div class="step-dot '+dotCls+'">'+icon+'</div><div class="step-lbl">'+s.lbl+'</div></div>';
+  }).join('');
+}
+
+function switchDTab(btn){
+  document.querySelectorAll('.dtab').forEach(function(b){b.classList.remove('act');});
+  btn.classList.add('act');
+  currentTab=btn.dataset.dt;
+  renderDBody();
+}
+window.switchDTab=switchDTab;
+
+function renderDBody(){
+  var body=document.getElementById('dr-body');
+  if(!body)return;
+  var r=currentRec;
+  if(currentTab==='info') body.innerHTML=renderTabInfo(r);
+  else if(currentTab==='parties') body.innerHTML=renderTabParties(r);
+  else if(currentTab==='composition') body.innerHTML=renderTabComposition(r);
+  else if(currentTab==='checklist') body.innerHTML=renderTabChecklist(r);
+  else if(currentTab==='variations') body.innerHTML=renderTabVariations(r);
+  else if(currentTab==='timeline') body.innerHTML=renderTabTimeline(r);
+  // bind checklist
+  body.querySelectorAll('.chk-box[data-cid]').forEach(function(el){
+    el.addEventListener('click',function(){toggleCheck(el.dataset.cid);});
+  });
+}
+
+function renderTabInfo(r){
+  var st=computeStatus(r);
+  var d=daysLeft(r.invalidation_date);
+  var html='';
+  if(st==='expired') html+='<div class="reg-alert err">❌ الإخطار منتهٍ منذ '+Math.abs(d)+' يوم — يجب تجديده فوراً</div>';
+  if(st==='expiring'&&d<=180) html+='<div class="reg-alert warn">⚠️ ينتهي الإخطار بعد <strong>'+d+' يوم</strong> — '+fmtReg(r.invalidation_date)+' — ابدأ إجراءات التجديد</div>';
+  if(r.stability&&r.stability.status==='commented') html+='<div class="reg-alert info">📊 دراسة الثبات بها '+r.stability.comments+' تعليقات — Tracking ID: '+r.stability.tracking_id+' — موعد الاستيفاء: '+fmtReg(r.stability.deadline)+'</div>';
+  html+='<div class="fsec"><div class="fsec-title">🪪 بيانات الإخطار الرسمية</div><div class="info-grid">'+
+    ic('رقم الإخطار','<span style="font-family:monospace;color:var(--blue)">'+esc(r.reg_no)+'</span>')+
+    ic('Soft File No.',esc(r.soft_file||'—'))+
+    ic('الجهة التنظيمية',agencyBdg(r.agency))+
+    ic('نوع الترخيص','<span class="badge bgr" style="font-size:10px">'+esc(LICENSE_LBL[r.license_type]||r.license_type)+'</span>')+
+    ic('تاريخ الإصدار',fmtReg(r.reg_date))+
+    ic('تاريخ الإبطال','<strong style="'+(st==='expired'?'color:var(--red)':st==='expiring'?'color:var(--amber)':'')+'" >'+fmtReg(r.invalidation_date)+'</strong>')+
+    ic('أيام متبقية',d===null?'—':d<0?'<span style="color:var(--red)">منتهي منذ '+Math.abs(d)+' يوم</span>':'<span style="'+(d<180?'color:var(--amber)':'color:var(--green)')+'">'+d+' يوم</span>')+
+    ic('حالة الإخطار',statusBdg(st))+
+    (r.qf_code?ic('Code No.',esc(r.qf_code)):'')+
+    (r.committee_decree?ic('القرار الوزاري',esc(r.committee_decree)):'')+
+  '</div></div>';
+  html+='<div class="fsec"><div class="fsec-title">💊 بيانات المستحضر</div><div class="info-grid">'+
+    ic('الاسم التجاري (عربي)',esc(r.name_ar||'—'))+
+    ic('Product Name (EN)',esc(r.name_en||'—'))+
+    ic('الشكل الدوائي',esc(FORM_LBL[r.form]||r.form||'—'))+
+    ic('التركيز / القوة',esc(r.strength||'—'))+
+    ic('الخصائص الفيزيائية',esc(r.physical||'—'))+
+    ic('مدة الصلاحية',r.shelf_life?r.shelf_life+' شهر':'—')+
+    ic('ظروف التخزين',esc(r.storage||'—'))+
+    ic('العبوة المعتمدة',esc(r.approved_pack||'—'))+
+    (r.purpose_of_use?ic('الغرض من الاستخدام',esc(r.purpose_of_use)):'')+
+  '</div></div>';
+  if(r.price&&r.price.length){
+    html+='<div class="fsec"><div class="fsec-title">💰 الأسعار المعتمدة</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>الحجم</th><th>السعر</th></tr></thead><tbody>'+
+      r.price.map(function(p){return'<tr><td>'+esc(p.size)+'</td><td><strong style="color:var(--amber)">'+esc(p.price)+'</strong></td></tr>';}).join('')+
+      '</tbody></table></div></div>';
+  }
+  if(r.agency==='nfsa'&&r.nutritional){
+    var n=r.nutritional;
+    html+='<div class="fsec"><div class="fsec-title">📊 القيمة الغذائية ('+esc(n.serving)+')</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>العنصر</th><th>القيمة</th></tr></thead><tbody>'+
+      '<tr><td>الطاقة</td><td>'+n.energy+' Kcal</td></tr>'+
+      '<tr><td>الكربوهيدرات</td><td>'+n.carbs+' g (منها سكريات: '+n.sugars+' g)</td></tr>'+
+      '<tr><td>البروتين</td><td>'+n.protein+' g</td></tr>'+
+      '<tr><td>الصوديوم</td><td>'+n.sodium+' g</td></tr>'+
+      '</tbody></table></div></div>';
+  }
+  if(r.notes){html+='<div class="fsec"><div class="fsec-title">📝 ملاحظات</div><p style="font-size:13px;color:var(--gray);line-height:1.7">'+esc(r.notes)+'</p></div>';}
+  return html;
+}
+
+function renderTabParties(r){
+  var html='<div class="fsec"><div class="fsec-title">🏢 الأطراف الرئيسية</div><div class="info-grid">'+
+    ic('مالك الترخيص','<strong>'+esc(r.license_holder||'—')+'</strong>')+
+    ic('المصنع (FPP)',esc(r.manufacturer||'—'))+
+    ic('الجهة القائمة بالتعبئة',esc(r.packager||'—'))+
+    ic('موقع التخزين',esc(r.storage_site||'—'))+
+    ic('موقع الإفراج',esc(r.release_site||'—'))+
+  '</div></div>';
+  if(r.api_suppliers&&r.api_suppliers.length){
+    html+='<div class="fsec"><div class="fsec-title">🧬 موردو المواد الفعالة (API Suppliers)</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>المادة الفعالة</th><th>المورد</th><th>البلد</th><th>المواصفة</th>'+(r.agency==='cosm'?'<th>الدور</th>':'')+'</tr></thead><tbody>'+
+      r.api_suppliers.map(function(s){return'<tr><td><strong>'+esc(s.material)+'</strong></td><td>'+esc(s.supplier||'—')+'</td><td>'+esc(s.country||'—')+'</td><td><span class="vtag">'+esc(s.spec||'—')+'</span></td>'+(r.agency==='cosm'?'<td style="font-size:11px;color:var(--gray)">'+esc(s.role||'—')+'</td>':'')+'</tr>';}).join('')+
+      '</tbody></table></div></div>';
+  }
+  return html;
+}
+
+function renderTabComposition(r){
+  var html='<div class="fsec"><div class="fsec-title">🧪 التركيب الكمي والنوعي</div>';
+  if(r.api_suppliers&&r.api_suppliers.length){
+    html+='<div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">المواد الفعالة (Active Ingredients)</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>المادة</th><th>الكمية/التركيز</th><th>المواصفة</th></tr></thead><tbody>'+
+      r.api_suppliers.map(function(s){return'<tr><td><strong>'+esc(s.material)+'</strong></td><td>'+esc(s.strength||s.spec||'—')+'</td><td><span class="vtag">'+esc(s.spec||'—')+'</span></td></tr>';}).join('')+
+      '</tbody></table></div><div style="height:14px"></div>';
+  }
+  if(r.inactive_ingredients&&r.inactive_ingredients.length){
+    html+='<div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:8px">المواد المساعدة (Excipients)</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>المادة</th><th>الكمية</th><th>الدور</th></tr></thead><tbody>'+
+      r.inactive_ingredients.map(function(e){return'<tr><td>'+esc(e.name)+'</td><td>'+esc(e.qty||'—')+'</td><td style="font-size:11px;color:var(--gray)">'+esc(e.role||'—')+'</td></tr>';}).join('')+
+      '</tbody></table></div>';
+  }
+  if(!((r.api_suppliers||[]).length+(r.inactive_ingredients||[]).length)){
+    html+='<div class="empty" style="padding:24px"><h3>لا توجد بيانات تركيب مُدخلة</h3></div>';
+  }
+  html+='</div>';return html;
+}
+
+function renderTabChecklist(r){
+  var list=r.agency==='nfsa'?CHECKLIST_NFSA:r.agency==='cosm'?CHECKLIST_COSM:CHECKLIST_EDA;
+  var chk=r.checklist||{};
+  var done=list.filter(function(c){return chk[c.id]==='done';}).length;
+  var pct=done/list.length*100;
+  var html='<div class="fsec"><div class="fsec-title">متطلبات ما بعد التسجيل — '+done+'/'+list.length+' مكتمل</div>'+
+    '<div style="height:6px;background:var(--gray3);border-radius:3px;margin-bottom:14px;overflow:hidden">'+
+    '<div style="height:100%;width:'+pct+'%;background:var(--green);border-radius:3px;transition:width .5s"></div>'+
+    '</div></div>';
+  html+='<div class="chk-list">';
+  list.forEach(function(c){
+    var st=chk[c.id]||'pending';
+    var boxCls=st==='done'?'done':st==='na'?'na':'';
+    var icon=st==='done'?'✓':st==='na'?'—':'';
+    html+='<div class="chk-item">'+
+      '<div class="chk-box '+boxCls+'" data-cid="'+c.id+'">'+icon+'</div>'+
+      '<div class="chk-info">'+
+        '<div class="chk-name">'+(c.required?'<span style="color:var(--red)">* </span>':'')+esc(c.name)+'</div>'+
+        '<div style="margin-top:3px;display:flex;gap:6px">'+
+          '<span class="chk-agency">'+(r.agency==='nfsa'?'NFSA':r.agency==='cosm'?'تجميل':'EDA أدوية')+'</span>'+
+          '<span style="font-size:10px;color:var(--gray2)">'+(c.required?'إلزامي':'اختياري')+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  });
+  html+='</div>';return html;
+}
+
+function toggleCheck(cid){
+  if(!currentRec)return;
+  if(!currentRec.checklist)currentRec.checklist={};
+  var cur=currentRec.checklist[cid]||'pending';
+  currentRec.checklist[cid]=cur==='pending'?'done':cur==='done'?'na':'pending';
+  var idx=records.findIndex(function(r){return r.id===currentRec.id;});
+  if(idx>=0)records[idx]=currentRec;
+  saveData();renderDBody();
+}
+window.toggleCheck=toggleCheck;
+
+function renderTabVariations(r){
+  var vars=r.variations||[];
+  var html='<div style="padding:16px 20px 10px;display:flex;align-items:center;justify-content:space-between">'+
+    '<div style="font-size:13px;font-weight:700">سجل المتغيرات ('+vars.length+')</div>'+
+    '<button class="btn btn-primary btn-sm" onclick="addVariation()">✚ إضافة Variation</button>'+
+    '</div>';
+  html+='<div style="padding:0 20px 10px;display:flex;gap:8px;flex-wrap:wrap">'+
+    ['N','A','B','C'].map(function(t,i){
+      var descs=['PAC-N: تغيير فوري عند التقديم','PAC-A: تغيير سنوي','PAC-B: يحتاج قبول EDA','PAC-C: تغيير جوهري — موافقة مسبقة'];
+      return'<span><span class="var-type '+t+'">PAC-'+t+'</span> <span style="font-size:11px;color:var(--gray)">'+descs[i].split(':')[1]+'</span></span>';
+    }).join('')+
+  '</div>';
+  if(!vars.length){
+    html+='<div class="empty" style="padding:24px"><h3>لا توجد متغيرات مسجلة</h3></div>';
+    return html;
+  }
+  vars.forEach(function(v){
+    var stCls=v.status==='approved'?'bg':v.status==='under_review'?'ba':v.status==='rejected'?'br':'bgr';
+    var stLbl=v.status==='approved'?'تمت الموافقة':v.status==='under_review'?'قيد المراجعة':v.status==='rejected'?'مرفوض':'—';
+    html+='<div class="var-card">'+
+      '<div class="var-head">'+
+        '<span class="var-type '+v.type+'">PAC-'+v.type+'</span>'+
+        '<span class="var-title">'+esc(v.desc)+'</span>'+
+        '<span class="badge '+stCls+'">'+stLbl+'</span>'+
+      '</div>'+
+      '<div class="var-body"><span class="vtag">'+esc(v.category)+'</span> <span style="color:var(--gray)">'+fmtReg(v.date)+'</span></div>'+
+    '</div>';
+  });
+  return html;
+}
+
+function renderTabTimeline(r){
+  var tl=r.timeline||[];
+  if(!tl.length)return'<div class="empty" style="padding:30px"><h3>لا يوجد سجل زمني</h3></div>';
+  var html='<div class="timeline">';
+  tl.forEach(function(t,i){
+    html+='<div class="tl-item">'+
+      (i<tl.length-1?'<div class="tl-line"></div>':'')+
+      '<div class="tl-dot '+(t.color||'gray')+'">'+t.icon+'</div>'+
+      '<div class="tl-content">'+
+        '<div class="tl-title">'+esc(t.title)+'</div>'+
+        '<div class="tl-meta">'+fmtReg(t.date)+'</div>'+
+        (t.body?'<div class="tl-body">'+esc(t.body)+'</div>':'')+
+      '</div>'+
+    '</div>';
+  });
+  html+='</div>';return html;
+}
+
+// ── MODAL ADD/EDIT ──
+function openNewModal(){
+  editMode=false;currentRec=null;
+  document.getElementById('reg-modal-title').textContent='✚ تسجيل إخطار جديد';
+  document.getElementById('reg-modal-body').innerHTML=buildModalForm(null);
+  document.getElementById('reg-modal').classList.add('on');
+}
+function openEditModal(id){
+  var r=records.find(function(x){return x.id===id;});
+  if(!r)return;
+  editMode=true;currentRec=r;
+  document.getElementById('reg-modal-title').textContent='✏️ تعديل إخطار — '+r.reg_no;
+  document.getElementById('reg-modal-body').innerHTML=buildModalForm(r);
+  document.getElementById('reg-modal').classList.add('on');
+}
+function editCurrentRecord(){if(currentRec)openEditModal(currentRec.id);}
+function closeRegModal(){document.getElementById('reg-modal').classList.remove('on');}
+window.editCurrentRecord=editCurrentRecord;
+window.openNewModal=openNewModal;
+window.openEditModal=openEditModal;
+window.closeRegModal=closeRegModal;
+
+document.addEventListener('click',function(e){
+  var m=document.getElementById('reg-modal');
+  if(m&&e.target===m)closeRegModal();
+});
+
+function buildModalForm(r){
+  var ag=r?r.agency:'eda_drug';
+  var fOpts=Object.keys(FORM_LBL).map(function(k){return'<option value="'+k+'"'+(r&&r.form===k?' selected':'')+'>'+FORM_LBL[k]+'</option>';}).join('');
+  var lOpts=Object.keys(LICENSE_LBL).map(function(k){return'<option value="'+k+'"'+(r&&r.license_type===k?' selected':'')+'>'+LICENSE_LBL[k]+'</option>';}).join('');
+  return '<div>'+
+    '<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:600;margin-bottom:8px">الجهة التنظيمية <span style="color:var(--red)">*</span></div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+      [['eda_drug','💊 EDA — أدوية'],['nfsa','🥗 NFSA — أغذية'],['cosm','💄 EDA — تجميل']].map(function(opt){
+        var cls=opt[0]==='nfsa'?'act-nfsa':opt[0]==='cosm'?'act-cosm':'act-eda';
+        return'<button type="button" class="agc-btn '+(ag===opt[0]?cls:'')+'" data-agency="'+opt[0]+'" onclick="selectRegAgency(this)" style="flex:1;justify-content:center">'+opt[1]+'</button>';
+      }).join('')+
+    '</div><input type="hidden" id="f-agency" value="'+(ag||'eda_drug')+'"></div>'+
+    '<div class="form-grid">'+
+      '<div class="fg"><label class="fl">رقم الإخطار <span class="req">*</span></label><input class="fc" id="f-reg_no" value="'+(r?esc(r.reg_no):'')+'" placeholder="مثال: 29925/2022" dir="ltr"></div>'+
+      '<div class="fg"><label class="fl">Soft File No.</label><input class="fc" id="f-soft_file" value="'+(r?esc(r.soft_file||''):'')+'" dir="ltr"></div>'+
+      '<div class="fg full"><label class="fl">الاسم التجاري (عربي) <span class="req">*</span></label><input class="fc" id="f-name_ar" value="'+(r?esc(r.name_ar||''):'')+'" placeholder="الاسم الكامل بالعربية"></div>'+
+      '<div class="fg full"><label class="fl">Product Name (English)</label><input class="fc" id="f-name_en" value="'+(r?esc(r.name_en||''):'')+'" dir="ltr"></div>'+
+      '<div class="fg"><label class="fl">الشكل الدوائي <span class="req">*</span></label><select class="fc" id="f-form"><option value="">— اختر —</option>'+fOpts+'</select></div>'+
+      '<div class="fg"><label class="fl">نوع الترخيص <span class="req">*</span></label><select class="fc" id="f-license_type">'+lOpts+'</select></div>'+
+      '<div class="fg"><label class="fl">تاريخ إصدار الإخطار <span class="req">*</span></label><input class="fc" type="date" id="f-reg_date" value="'+(r?r.reg_date||'':'')+'" ></div>'+
+      '<div class="fg"><label class="fl">تاريخ الإبطال (انتهاء التسجيل)</label><input class="fc" type="date" id="f-invalidation_date" value="'+(r?r.invalidation_date||'':'')+'" ></div>'+
+      '<div class="fg"><label class="fl">مدة الصلاحية (أشهر)</label><input class="fc" type="number" id="f-shelf_life" value="'+(r?r.shelf_life||36:36)+'" dir="ltr" min="1"></div>'+
+      '<div class="fg"><label class="fl">القرار الوزاري</label><input class="fc" id="f-committee_decree" value="'+(r?esc(r.committee_decree||''):'')+'" placeholder="مثال: 370/2006" dir="ltr"></div>'+
+      '<div class="fg full"><label class="fl">مالك الترخيص <span class="req">*</span></label><input class="fc" id="f-license_holder" value="'+(r?esc(r.license_holder||''):'')+'" placeholder="اسم الشركة والبلد"></div>'+
+      '<div class="fg full"><label class="fl">المصنع <span class="req">*</span></label><input class="fc" id="f-manufacturer" value="'+(r?esc(r.manufacturer||''):'')+'" placeholder="اسم المصنع والبلد"></div>'+
+      '<div class="fg full"><label class="fl">العبوة المعتمدة</label><input class="fc" id="f-approved_pack" value="'+(r?esc(r.approved_pack||''):'')+'" placeholder="نوع العبوة + الأحجام"></div>'+
+      '<div class="fg full"><label class="fl">ظروف التخزين</label><input class="fc" id="f-storage" value="'+(r?esc(r.storage||''):'')+'" placeholder="لا تتجاوز 30°C في مكان جاف"></div>'+
+      '<div class="fg"><label class="fl">الحالة الحالية</label><select class="fc" id="f-status">'+
+        Object.keys(STATUS_CFG).map(function(k){return'<option value="'+k+'"'+(r&&r.status===k?' selected':'')+'>'+STATUS_CFG[k].lbl+'</option>';}).join('')+
+      '</select></div>'+
+      '<div class="fg full"><label class="fl">ملاحظات</label><textarea class="fc" id="f-notes" rows="2">'+(r?esc(r.notes||''):'')+'</textarea></div>'+
+    '</div></div>';
+}
+
+function selectRegAgency(btn){
+  document.querySelectorAll('#reg-modal-body .agc-btn').forEach(function(b){b.className='agc-btn';});
+  var ag=btn.dataset.agency;
+  var cls=ag==='nfsa'?'act-nfsa':ag==='cosm'?'act-cosm':'act-eda';
+  btn.className='agc-btn '+cls;
+  var e=document.getElementById('f-agency');if(e)e.value=ag;
+}
+window.selectRegAgency=selectRegAgency;
+
+function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+
+function saveRecord(){
+  var ag=gv('f-agency')||'eda_drug';
+  var reg_no=gv('f-reg_no'),name_ar=gv('f-name_ar');
+  if(!reg_no){toast('أدخل رقم الإخطار','er');return;}
+  if(!name_ar){toast('أدخل الاسم التجاري','er');return;}
+  var obj={
+    id:editMode&&currentRec?currentRec.id:Date.now(),
+    agency:ag,reg_no:reg_no,soft_file:gv('f-soft_file'),
+    name_ar:name_ar,name_en:gv('f-name_en'),
+    form:gv('f-form'),license_type:gv('f-license_type'),
+    reg_date:gv('f-reg_date'),invalidation_date:gv('f-invalidation_date'),
+    shelf_life:parseInt(gv('f-shelf_life'))||36,
+    committee_decree:gv('f-committee_decree'),
+    license_holder:gv('f-license_holder'),manufacturer:gv('f-manufacturer'),
+    approved_pack:gv('f-approved_pack'),storage:gv('f-storage'),
+    status:gv('f-status'),notes:gv('f-notes'),
+    price:editMode&&currentRec?currentRec.price:[],
+    api_suppliers:editMode&&currentRec?currentRec.api_suppliers:[],
+    inactive_ingredients:editMode&&currentRec?currentRec.inactive_ingredients:[],
+    variations:editMode&&currentRec?currentRec.variations:[],
+    timeline:editMode&&currentRec?currentRec.timeline:[{date:gv('f-reg_date'),icon:'📋',color:'blue',title:'تسجيل الإخطار',body:'رقم '+reg_no}],
+    reg_steps:editMode&&currentRec?currentRec.reg_steps:{},
+    checklist:editMode&&currentRec?currentRec.checklist:{},
+    physical:editMode&&currentRec?currentRec.physical||'':'',
+    strength:editMode&&currentRec?currentRec.strength||'':'',
+    packager:editMode&&currentRec?currentRec.packager||'':'',
+    storage_site:editMode&&currentRec?currentRec.storage_site||'':'',
+    release_site:editMode&&currentRec?currentRec.release_site||'':'',
+    marketing_type:editMode&&currentRec?currentRec.marketing_type||'محلي':'محلي',
+    user_id:editMode&&currentRec?currentRec.user_id||'':'',
+    qf_code:editMode&&currentRec?currentRec.qf_code||'':'',
+    stability:editMode&&currentRec?currentRec.stability:null,
+  };
+  if(editMode){var idx=records.findIndex(function(r){return r.id===obj.id;});if(idx>=0)records[idx]=obj;}
+  else records.unshift(obj);
+  saveData();closeRegModal();applyFilters();
+  toast((editMode?'تم تعديل':'تم إضافة')+' "'+name_ar+'" ✓','ok');
+  if(editMode&&currentRec&&currentRec.id===obj.id){currentRec=obj;renderDStatus();renderDBody();}
+}
+window.saveRecord=saveRecord;
+
+function deleteRecord(id){
+  var r=records.find(function(x){return x.id===id;});if(!r)return;
+  if(!confirm('هل تريد حذف إخطار "'+r.name_ar+'" ('+r.reg_no+') نهائياً؟'))return;
+  records=records.filter(function(x){return x.id!==id;});
+  saveData();if(currentRec&&currentRec.id===id)closeDrawer();
+  applyFilters();toast('تم الحذف','ok');
+}
+window.deleteRecord=deleteRecord;
+
+function addVariation(){
+  var r=currentRec;if(!r)return;
+  var type=prompt('نوع PAC (N/A/B/C):','B');if(!type)return;
+  var cat=prompt('فئة التغيير:','إداري');
+  var desc=prompt('وصف التغيير:','');if(!desc)return;
+  if(!r.variations)r.variations=[];
+  r.variations.unshift({id:'v'+Date.now(),date:new Date().toISOString().slice(0,10),type:type.toUpperCase(),category:cat||'إداري',desc:desc,status:'under_review'});
+  if(!r.timeline)r.timeline=[];
+  r.timeline.unshift({date:new Date().toISOString().slice(0,10),icon:'🔄',color:'amber',title:'Variation جديد — PAC-'+type.toUpperCase(),body:desc});
+  var idx=records.findIndex(function(x){return x.id===r.id;});
+  if(idx>=0)records[idx]=r;
+  saveData();renderDBody();toast('تم إضافة Variation ✓','ok');
+}
+window.addVariation=addVariation;
+
+function exportRecord(){
+  if(!currentRec)return;
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(currentRec,null,2));
+  a.download='reg_'+currentRec.reg_no.replace('/','_')+'.json';
+  a.click();toast('تم التصدير ✓','ok');
+}
+function exportAll(){
+  var data={exported_at:new Date().toISOString(),total:records.length,records:records};
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
+  a.download='quadra_registrations_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();toast('تم تصدير '+records.length+' إخطار ✓','ok');
+}
+window.exportRecord=exportRecord;window.exportAll=exportAll;
+
+function toast(msg,type){
+  var t=document.getElementById('toast-container');
+  if(!t)return;
+  var d=document.createElement('div');
+  var icon=type==='ok'?'✅':type==='er'?'❌':type==='warn'?'⚠️':'ℹ️';
+  d.textContent=icon+' '+msg;
+  d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f1f3d;color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3)';
+  document.body.appendChild(d);
+  setTimeout(function(){d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(function(){d.remove();},320);},2800);
+}
+
+// ── ESC KEY ──
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var rm=document.getElementById('reg-modal');
+    if(rm&&rm.classList.contains('on')){closeRegModal();e.stopImmediatePropagation();return;}
+    var dr=document.getElementById('reg-drawer');
+    if(dr&&dr.classList.contains('open')){closeDrawer();e.stopImmediatePropagation();}
+  }
+});
+
+})(); // end Registration Module IIFE
 </script>
 </body>
 </html>
