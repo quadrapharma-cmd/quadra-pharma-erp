@@ -421,6 +421,10 @@ textarea.fc{resize:vertical;min-height:70px}
         <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
         المستخدمون
       </div>
+      <div class="sb-item" id="nav-settings" onclick="go('settings')">
+        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+        إعدادات النظام
+      </div>
       <div class="sb-section">الإنتاج</div>
       <div class="sb-item dim"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>المواد الخام<span class="sb-soon">قريباً</span></div>
       <div class="sb-item dim"><svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 010 14.14M4.93 4.93a10 10 0 000 14.14"/></svg>المنتجات<span class="sb-soon">قريباً</span></div>
@@ -799,9 +803,10 @@ function startApp(){
   showScreen('app');
   go('dashboard');
   renderComments();
+  applySettings();
 }
 
-const TITLES={dashboard:'لوحة التحكم',company:'بيانات الشركة',users:'المستخدمون'};
+const TITLES={dashboard:'لوحة التحكم',company:'بيانات الشركة',users:'المستخدمون',settings:'إعدادات النظام'};
 function go(page){
   document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
   document.getElementById('nav-'+page)?.classList.add('active');
@@ -810,6 +815,7 @@ function go(page){
   if(page==='dashboard')renderDashboard(c);
   else if(page==='company')renderCompanyPage(c);
   else if(page==='users')renderUsers(c);
+  else if(page==='settings')renderSettings(c);
   closeSidebar();
 }
 
@@ -998,6 +1004,228 @@ async function toggleUser(id){
   await dbPut('users',u);
   toast(u.isActive?'تم تفعيل الحساب':'تم إيقاف الحساب');
   renderUsers(document.getElementById('page-content'));
+}
+
+// ══════════════════════════════════════
+// SETTINGS
+// ══════════════════════════════════════
+const SETTINGS_KEY='pharma_settings';
+function loadSettings(){
+  try{return JSON.parse(localStorage.getItem(SETTINGS_KEY+'_'+S.companyId)||'{}')}catch{return{}}
+}
+function saveSettings(data){
+  localStorage.setItem(SETTINGS_KEY+'_'+S.companyId,JSON.stringify(data));
+}
+
+function renderSettings(c){
+  const cfg=loadSettings();
+  c.innerHTML=`
+  <div class="ph"><div class="ph-left"><h2>إعدادات النظام</h2><p>تخصيص طريقة عمل النظام لهذه الشركة</p></div></div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">
+
+    <!-- اللغة والعرض -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">اللغة والعرض</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+        <div class="fg">
+          <label class="fl">لغة النظام</label>
+          <select class="fc" id="s-lang">
+            <option value="ar" ${(cfg.lang||'ar')==='ar'?'selected':''}>العربية</option>
+            <option value="en" ${cfg.lang==='en'?'selected':''}>English</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">حجم الخط</label>
+          <select class="fc" id="s-fontsize">
+            <option value="13" ${(cfg.fontSize||'14')==='13'?'selected':''}>صغير</option>
+            <option value="14" ${(cfg.fontSize||'14')==='14'?'selected':''}>متوسط (افتراضي)</option>
+            <option value="15" ${cfg.fontSize==='15'?'selected':''}>كبير</option>
+            <option value="16" ${cfg.fontSize==='16'?'selected':''}>كبير جداً</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">لون النظام</label>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${[['#2563eb','أزرق'],['#059669','أخضر'],['#7c3aed','بنفسجي'],['#dc2626','أحمر'],['#d97706','ذهبي'],['#0891b2','سماوي']].map(([color,name])=>`
+            <div onclick="selectColor('${color}')" title="${name}" style="width:30px;height:30px;border-radius:7px;background:${color};cursor:pointer;border:2px solid ${(cfg.accentColor||'#2563eb')===color?'#fff':'transparent'};outline:2px solid ${(cfg.accentColor||'#2563eb')===color?color:'transparent'};transition:.15s" id="clr-${color.replace('#','')}"></div>`).join('')}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- إعدادات الطباعة -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">إعدادات الطباعة</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+        <div class="fg">
+          <label class="fl">حجم الورق</label>
+          <select class="fc" id="s-paper">
+            <option value="A4" ${(cfg.paperSize||'A4')==='A4'?'selected':''}>A4</option>
+            <option value="A5" ${cfg.paperSize==='A5'?'selected':''}>A5</option>
+            <option value="thermal80" ${cfg.paperSize==='thermal80'?'selected':''}>حراري 80mm</option>
+            <option value="thermal58" ${cfg.paperSize==='thermal58'?'selected':''}>حراري 58mm</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">اتجاه الطباعة</label>
+          <select class="fc" id="s-orientation">
+            <option value="portrait" ${(cfg.orientation||'portrait')==='portrait'?'selected':''}>عمودي (Portrait)</option>
+            <option value="landscape" ${cfg.orientation==='landscape'?'selected':''}>أفقي (Landscape)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">رأس الصفحة (Header)</label>
+          <input class="fc" id="s-header" value="${esc(cfg.printHeader||'')}" placeholder="مثال: سري — للاستخدام الداخلي">
+        </div>
+        <div class="fg">
+          <label class="fl">تذييل الصفحة (Footer)</label>
+          <input class="fc" id="s-footer" value="${esc(cfg.printFooter||'')}" placeholder="مثال: توقيع المدير المسؤول">
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="s-logo" ${cfg.printLogo!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
+          <label for="s-logo" style="font-size:13px;cursor:pointer">طباعة شعار الشركة</label>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="s-date" ${cfg.printDate!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
+          <label for="s-date" style="font-size:13px;cursor:pointer">طباعة التاريخ والوقت تلقائياً</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- إعدادات التصدير -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">إعدادات التصدير</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:16px">
+        <div class="fg">
+          <label class="fl">صيغة التاريخ</label>
+          <select class="fc" id="s-datefmt">
+            <option value="ar-EG" ${(cfg.dateFormat||'ar-EG')==='ar-EG'?'selected':''}>عربي — ١ يناير ٢٠٢٥</option>
+            <option value="dd/mm/yyyy" ${cfg.dateFormat==='dd/mm/yyyy'?'selected':''}>DD/MM/YYYY</option>
+            <option value="mm/dd/yyyy" ${cfg.dateFormat==='mm/dd/yyyy'?'selected':''}>MM/DD/YYYY</option>
+            <option value="yyyy-mm-dd" ${cfg.dateFormat==='yyyy-mm-dd'?'selected':''}>YYYY-MM-DD</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">العملة</label>
+          <select class="fc" id="s-currency">
+            <option value="EGP" ${(cfg.currency||'EGP')==='EGP'?'selected':''}>جنيه مصري (EGP)</option>
+            <option value="USD" ${cfg.currency==='USD'?'selected':''}>دولار أمريكي (USD)</option>
+            <option value="EUR" ${cfg.currency==='EUR'?'selected':''}>يورو (EUR)</option>
+            <option value="SAR" ${cfg.currency==='SAR'?'selected':''}>ريال سعودي (SAR)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">فاصل الأرقام</label>
+          <select class="fc" id="s-numsep">
+            <option value="ar" ${(cfg.numFormat||'ar')==='ar'?'selected':''}>١٬٢٣٤٫٥٦ (عربي)</option>
+            <option value="en" ${cfg.numFormat==='en'?'selected':''}>1,234.56 (إنجليزي)</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">صيغة تصدير Excel</label>
+          <select class="fc" id="s-excelenc">
+            <option value="utf8" ${(cfg.excelEncoding||'utf8')==='utf8'?'selected':''}>UTF-8 (موصى به)</option>
+            <option value="windows1256" ${cfg.excelEncoding==='windows1256'?'selected':''}>Windows-1256 (للعربية القديمة)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- إعدادات الإشعارات -->
+    <div class="card">
+      <div class="card-header"><span class="card-title">إعدادات متنوعة</span></div>
+      <div class="card-body" style="display:flex;flex-direction:column;gap:14px">
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="s-confirm" ${cfg.confirmDelete!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
+          <label for="s-confirm" style="font-size:13px;cursor:pointer">تأكيد قبل الحذف دائماً</label>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="s-auditlog" ${cfg.auditLog!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
+          <label for="s-auditlog" style="font-size:13px;cursor:pointer">تسجيل سجل النشاط</label>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <input type="checkbox" id="s-autosave" ${cfg.autoSave!==false?'checked':''} style="width:16px;height:16px;accent-color:var(--blue)">
+          <label for="s-autosave" style="font-size:13px;cursor:pointer">حفظ تلقائي كل 5 دقائق</label>
+        </div>
+        <div class="fg" style="margin-top:4px">
+          <label class="fl">ترقيم المستندات (بادئة)</label>
+          <input class="fc" id="s-docprefix" value="${esc(cfg.docPrefix||'')}" placeholder="مثال: QP-2025-">
+          <div class="fh">سيظهر قبل رقم كل مستند</div>
+        </div>
+        <div class="fg">
+          <label class="fl">عدد الصفوف في الجداول</label>
+          <select class="fc" id="s-pagesize">
+            <option value="10" ${(cfg.pageSize||'20')==='10'?'selected':''}>10 صفوف</option>
+            <option value="20" ${(cfg.pageSize||'20')==='20'?'selected':''}>20 صفاً (افتراضي)</option>
+            <option value="50" ${cfg.pageSize==='50'?'selected':''}>50 صفاً</option>
+            <option value="100" ${cfg.pageSize==='100'?'selected':''}>100 صف</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Save Button -->
+  <div style="margin-top:20px;display:flex;justify-content:flex-end;gap:10px">
+    <button class="btn btn-outline" onclick="resetSettings()">استعادة الافتراضي</button>
+    <button class="btn btn-primary" onclick="doSaveSettings()" style="min-width:140px">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+      حفظ الإعدادات
+    </button>
+  </div>`;
+}
+
+let selectedColor=null;
+function selectColor(hex){
+  selectedColor=hex;
+  document.querySelectorAll('[id^="clr-"]').forEach(el=>{
+    const elHex='#'+el.id.replace('clr-','');
+    el.style.border=elHex===hex?'2px solid #fff':'2px solid transparent';
+    el.style.outline=elHex===hex?`2px solid ${hex}`:'2px solid transparent';
+  });
+}
+
+function doSaveSettings(){
+  const cfg={
+    lang:document.getElementById('s-lang').value,
+    fontSize:document.getElementById('s-fontsize').value,
+    accentColor:selectedColor||loadSettings().accentColor||'#2563eb',
+    paperSize:document.getElementById('s-paper').value,
+    orientation:document.getElementById('s-orientation').value,
+    printHeader:document.getElementById('s-header').value.trim(),
+    printFooter:document.getElementById('s-footer').value.trim(),
+    printLogo:document.getElementById('s-logo').checked,
+    printDate:document.getElementById('s-date').checked,
+    dateFormat:document.getElementById('s-datefmt').value,
+    currency:document.getElementById('s-currency').value,
+    numFormat:document.getElementById('s-numsep').value,
+    excelEncoding:document.getElementById('s-excelenc').value,
+    confirmDelete:document.getElementById('s-confirm').checked,
+    auditLog:document.getElementById('s-auditlog').checked,
+    autoSave:document.getElementById('s-autosave').checked,
+    docPrefix:document.getElementById('s-docprefix').value.trim(),
+    pageSize:document.getElementById('s-pagesize').value,
+  };
+  saveSettings(cfg);
+  // Apply font size immediately
+  document.body.style.fontSize=cfg.fontSize+'px';
+  toast('تم حفظ الإعدادات بنجاح');
+}
+
+function resetSettings(){
+  if(!confirm('سيتم إعادة جميع الإعدادات للافتراضي. هل أنت متأكد؟'))return;
+  localStorage.removeItem(SETTINGS_KEY+'_'+S.companyId);
+  document.body.style.fontSize='';
+  go('settings');
+  toast('تم استعادة الإعدادات الافتراضية');
+}
+
+// Apply saved settings on login
+function applySettings(){
+  const cfg=loadSettings();
+  if(cfg.fontSize)document.body.style.fontSize=cfg.fontSize+'px';
 }
 
 // ══════════════════════════════════════
