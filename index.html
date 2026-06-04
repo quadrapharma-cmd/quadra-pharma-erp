@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quadra Pharma ERP</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Tajawal',sans-serif;background:#0f1f3d;color:#fff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.wrap{width:100%;max-width:600px}
+.brand{text-align:center;margin-bottom:48px}
+.brand-icon{width:72px;height:72px;background:#2563eb;border-radius:18px;display:inline-flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;margin-bottom:16px;box-shadow:0 8px 32px rgba(37,99,235,.4)}
+.brand h1{font-size:28px;font-weight:800;margin-bottom:6px}
+.brand p{color:rgba(255,255,255,.4);font-size:14px}
+.phases{display:flex;flex-direction:column;gap:12px}
+.phase{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:12px;text-decoration:none;transition:.2s;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04)}
+.phase:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);transform:translateX(-3px)}
+.phase.disabled{opacity:.4;pointer-events:none;cursor:default}
+.phase-num{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
+.phase-info{flex:1}
+.phase-title{font-size:15px;font-weight:700;margin-bottom:3px}
+.phase-sub{font-size:12px;color:rgba(255,255,255,.4)}
+.phase-status{font-size:11px;font-weight:600;padding:3px 10px;border-radius:20px}
+.s-done{background:rgba(5,150,105,.2);color:#6ee7b7}
+.s-soon{background:rgba(245,158,11,.1);color:#fbbf24}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">
+    <div class="brand-icon">Q</div>
+    <h1>Quadra Pharma ERP</h1>
+    <p>نظام إدارة المصنع الدوائي — اختر المرحلة للمراجعة</p>
+  </div>
+  <div class="phases">
+    <a href="phase1-companies.html" class="phase">
+      <div class="phase-num" style="background:rgba(37,99,235,.3);color:#93c5fd">1</div>
+      <div class="phase-info">
+        <div class="phase-title">الشركات والمستخدمون</div>
+        <div class="phase-sub">تسجيل دخول، بيانات الشركة، إدارة المستخدمين والصلاحيات</div>
+      </div>
+      <span class="phase-status s-done">✓ مكتملة</span>
+    </a>
+    <div class="phase disabled">
+      <div class="phase-num" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.3)">2</div>
+      <div class="phase-info">
+        <div class="phase-title">المواد الخام</div>
+        <div class="phase-sub">تسجيل المواد، بحث، استيراد Excel، رفع مستندات، طباعة</div>
+      </div>
+      <span class="phase-status s-soon">قريباً</span>
+    </div>
+    <div class="phase disabled">
+      <div class="phase-num" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.3)">3</div>
+      <div class="phase-info">
+        <div class="phase-title">المنتجات والـ BOM</div>
+        <div class="phase-sub">تركيبات المنتجات وربطها بالمواد الخام</div>
+      </div>
+      <span class="phase-status s-soon">قريباً</span>
+    </div>
+    <div class="phase disabled">
+      <div class="phase-num" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.3)">4</div>
+      <div class="phase-info">
+        <div class="phase-title">الإنتاج وسجلات الدفعات</div>
+        <div class="phase-sub">BPR إلكتروني، مراحل التصنيع، توقيع رقمي</div>
+      </div>
+      <span class="phase-status s-soon">قريباً</span>
+    </div>
+    <div class="phase disabled">
+      <div class="phase-num" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.3)">5</div>
+      <div class="phase-info">
+        <div class="phase-title">ضبط الجودة QC</div>
+        <div class="phase-sub">طلبات التحليل، COA، إدارة الانحرافات</div>
+      </div>
+      <span class="phase-status s-soon">قريباً</span>
+    </div>
+    <div class="phase disabled">
+      <div class="phase-num" style="background:rgba(255,255,255,.05);color:rgba(255,255,255,.3)">6</div>
+      <div class="phase-info">
+        <div class="phase-title">المخزون والشراء</div>
+        <div class="phase-sub">استلام مواد، صرف للإنتاج، طلبات الشراء</div>
+      </div>
+      <span class="phase-status s-soon">قريباً</span>
+    </div>
+  </div>
+</div>
+</body>
+</html>
