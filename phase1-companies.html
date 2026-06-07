@@ -874,52 +874,90 @@ select.fi option{background:#fff;color:var(--text)}
 </head>
 <body>
 
-<!-- ══ NEW LOGIN SCREEN ══ -->
-<div id="erp-login-screen">
+<!-- ══ LOGIN v3: user picker ══ -->
+<div id="erp-login-screen" style="display:none">
   <div class="login-orb o1"></div>
   <div class="login-orb o2"></div>
-  <div class="login-box">
-    <div class="login-logo">Q</div>
-    <div class="login-title">Quadra Pharma ERP</div>
-    <div class="login-sub">نظام الإدارة الصيدلاني المصري</div>
-    <div class="login-hint" id="erp-login-hint"></div>
-    <div class="login-err" id="erp-login-err"></div>
-    <div class="login-field">
-      <label class="login-label">اسم المستخدم</label>
-      <div class="login-input-wrap">
-        <span class="login-input-icon">👤</span>
-        <input class="login-inp" id="erp-u" dir="ltr" placeholder="username"
-               autocomplete="username" onkeydown="if(event.key==='Enter')erpDoLogin()">
+  <div class="erp-steps" id="erp-steps">
+    <div class="erp-dot a" id="erp-d0"></div>
+    <div class="erp-dot" id="erp-d1"></div>
+    <div class="erp-dot" id="erp-d2"></div>
+  </div>
+  <!-- VIEW 1: user picker -->
+  <div class="erp-view act" id="erp-v-pick">
+    <div class="login-box" style="max-width:480px">
+      <div class="login-logo">Q</div>
+      <div class="login-title">Quadra Pharma ERP</div>
+      <div class="login-sub" style="margin-bottom:22px">من أنت؟ اختر حسابك</div>
+      <div class="erp-user-grid" id="erp-user-grid"></div>
+      <div style="font-size:12px;color:#9ca3af;text-align:center;margin-top:4px">
+        كلمة المرور مطلوبة في الخطوة التالية
       </div>
     </div>
-    <div class="login-field">
-      <label class="login-label">كلمة المرور</label>
-      <div class="login-input-wrap">
-        <span class="login-input-icon">🔒</span>
-        <input class="login-inp" id="erp-p" type="password" dir="ltr"
-               placeholder="••••••••" autocomplete="current-password"
-               onkeydown="if(event.key==='Enter')erpDoLogin()">
+  </div>
+  <!-- VIEW 2: password -->
+  <div class="erp-view" id="erp-v-pass">
+    <div class="login-box">
+      <button class="erp-back" onclick="erpGoStep(0)">← تغيير المستخدم</button>
+      <div class="erp-sel-user">
+        <div class="erp-sel-av" id="erp-sel-av">A</div>
+        <div>
+          <div id="erp-sel-name" style="font-size:15px;font-weight:700;color:#1c1917"></div>
+          <div id="erp-sel-role" style="font-size:12px;color:#78716c;margin-top:2px"></div>
+        </div>
       </div>
+      <div class="login-err" id="erp-pw-err"></div>
+      <div class="erp-att-bar" id="erp-att-bar"><div class="erp-att-fill" id="erp-att-fill"></div></div>
+      <div class="login-field">
+        <label class="login-label" for="erp-pw">كلمة المرور</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🔒</span>
+          <input class="login-inp" type="password" id="erp-pw" dir="ltr" placeholder="••••••••"
+                 autocomplete="current-password" oninput="erpClearPwErr()"
+                 onkeydown="if(event.key==='Enter')erpDoLogin()"
+                 onkeyup="document.getElementById('erp-caps').style.display=event.getModifierState('CapsLock')?'block':'none'">
+          <span id="erp-eye" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#9ca3af" onclick="erpToggleEye()">👁</span>
+        </div>
+        <div class="erp-caps" id="erp-caps">⚠️ Caps Lock مفعّل</div>
+      </div>
+      <button class="login-btn" id="erp-pw-btn" onclick="erpDoLogin()">دخول ←</button>
+      <button class="erp-forgot-btn" onclick="erpGoStep(2)">نسيت كلمة المرور؟</button>
     </div>
-    <button class="login-btn" id="erp-login-btn" onclick="erpDoLogin()">
-      <span id="erp-btn-txt">دخول ←</span>
-    </button>
+  </div>
+  <!-- VIEW 3: reset via admin -->
+  <div class="erp-view" id="erp-v-forgot">
+    <div class="login-box">
+      <button class="erp-back" onclick="erpGoStep(1)">← رجوع</button>
+      <div class="login-logo" style="background:linear-gradient(135deg,#f59e0b,#d97706);font-size:22px">🔑</div>
+      <div class="login-title">استعادة الوصول</div>
+      <div class="login-sub" style="margin-bottom:20px">يحتاج المدير تأكيد هويته</div>
+      <div class="login-err" id="erp-reset-err"></div>
+      <div class="login-field">
+        <label class="login-label">كلمة مرور المدير</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">👑</span>
+          <input class="login-inp" type="password" id="erp-admin-pw" dir="ltr" placeholder="admin password">
+        </div>
+      </div>
+      <div class="login-field">
+        <label class="login-label">كلمة المرور الجديدة</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🔐</span>
+          <input class="login-inp" type="password" id="erp-new-pw" dir="ltr" placeholder="6 أحرف على الأقل">
+        </div>
+      </div>
+      <button class="login-btn" onclick="erpDoReset()">تعيين كلمة المرور الجديدة</button>
+    </div>
   </div>
 </div>
 
 <!-- ══ CENTRAL DASHBOARD ══ -->
-<div id="central-dashboard">
+<div id="central-dashboard" style="display:none">
   <div class="cd-topbar">
-    <div class="cd-brand">
-      <div class="cd-brand-gem">Q</div>
-      <div class="cd-brand-name">Quadra Pharma ERP</div>
-    </div>
+    <div class="cd-brand"><div class="cd-brand-gem">Q</div><div class="cd-brand-name">Quadra Pharma ERP</div></div>
     <div class="cd-spacer"></div>
     <div class="cd-user">
-      <div>
-        <div class="cd-user-name" id="cd-user-name">—</div>
-        <div class="cd-user-role" id="cd-user-role">—</div>
-      </div>
+      <div><div class="cd-user-name" id="cd-user-name">—</div><div class="cd-user-role" id="cd-user-role">—</div></div>
       <div class="cd-avatar" id="cd-avatar">A</div>
       <button class="cd-logout" onclick="erpLogout()">⏻ خروج</button>
     </div>
@@ -936,16 +974,6 @@ select.fi option{background:#fff;color:var(--text)}
     <div class="cd-section-title">شركاتي</div>
     <div class="cd-companies-grid" id="cd-companies-grid"></div>
   </div>
-</div>
-
-<div class="tc" id="tc"></div>
-<!-- ══ COMPANY SELECTOR SCREEN ══ -->
-<div id="co-screen">
-  <div class="co-hero-icon">ف</div>
-  <div class="co-hero-title">نظام ERP الدوائي</div>
-  <div class="co-hero-sub">اختر شركة أو أضف شركة جديدة — كل شركة بياناتها مستقلة تماماً</div>
-  <div class="co-grid" id="co-grid"></div>
-  <div class="co-footer-note">البيانات محفوظة على هذا المتصفح فقط</div>
 </div>
 
 <!-- ══ NEW COMPANY MODAL ══ -->
