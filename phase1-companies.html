@@ -1071,7 +1071,9 @@ async function renderDashboard(c){
     <div class="pcard"><div class="ph"><div class="ptitle">🏢 الشركة النشطة</div></div>
     <div style="padding:14px">
       <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-size:13px">الاسم</span><span style="font-size:13px;font-weight:600">${esc(co.nameAr)}</span></div>
-      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-size:13px">النوع</span><span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(34,211,238,.1)"><span style="color:var(--muted);font-size:13px">النوع</span><span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+      ${co.legalForm?`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(34,211,238,.1)"><span style="color:var(--muted);font-size:13px">الشكل القانوني</span><span style="font-size:12px;font-weight:600">${co.legalForm.replace('_',' ')}</span></div>`:''}
+      ${co.gafiNo?`<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(34,211,238,.1)"><span style="color:var(--muted);font-size:13px">رقم GAFI</span><span style="font-family:monospace;font-size:12px">${esc(co.gafiNo)}</span></div>`:''}
       <div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:var(--muted);font-size:13px">الكود</span><span style="font-family:var(--mono);font-size:12px;color:var(--blue)">${esc(co.code)}</span></div>
     </div></div>
   </div>
@@ -1088,7 +1090,11 @@ async function renderCompanyPage(c){
   const co=await dbGet('companies',S.companyId);
   c.innerHTML=`
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
-    <div class="page-title" style="margin-bottom:0">🏢 بيانات الشركة <span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+    <div class="page-title" style="margin-bottom:0">🏢 بيانات الشركة
+      <span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span>
+      ${co.legalForm?`<span class="bdg bdg-m" style="font-size:10px">${co.legalForm.replace('_',' ')}</span>`:''}
+      ${co.tradeName?`<span style="font-size:12px;color:var(--muted);font-weight:400">${esc(co.tradeName)}</span>`:''}
+    </div>
     <button class="btn btn-o btn-sm" onclick="printCompany()">🖨 طباعة</button>
   </div>
   <div class="cp-tabs" id="co-tabs">
@@ -1097,22 +1103,73 @@ async function renderCompanyPage(c){
     <button class="cp-tab" data-cpt="cpt-tax">الضرائب</button>
     <button class="cp-tab" data-cpt="cpt-persons">المسؤولون</button>
     <button class="cp-tab" data-cpt="cpt-partners">الشركاء</button>
+    <button class="cp-tab" id="tab-persons-company" data-cpt="cpt-persons-company" style="display:none">شركات الأشخاص</button>
+    <button class="cp-tab" id="tab-shareholding" data-cpt="cpt-shareholding" style="display:none">المساهمة</button>
     <button class="cp-tab" data-cpt="cpt-factories">المصانع والموزعون</button>
     <button class="cp-tab" data-cpt="cpt-docs">المستندات</button>
     <button class="cp-tab" data-cpt="cpt-history">سجل التعديلات</button>
   </div>
 
   <div id="cpt-legal" class="cpt act">
-    <div class="pcard"><div class="ph"><div class="ptitle">📋 البيانات القانونية</div></div><div class="tab-body">
+    <div class="pcard"><div class="ph"><div class="ptitle">📋 البيانات القانونية الأساسية</div></div><div class="tab-body">
+      <div class="fsect">الهوية القانونية</div>
       <div class="fgrid">
         <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fi" id="cf-nameAr" value="${esc(co.nameAr||'')}"></div>
         <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fi" id="cf-nameEn" value="${esc(co.nameEn||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">نوع الكيان</label><select class="fi" id="cf-companyType"><option value="toll" ${(co.companyType||'toll')==='toll'?'selected':''}>شركة Toll</option><option value="factory" ${co.companyType==='factory'?'selected':''}>مصنع</option></select></div>
-        <div class="fg"><label class="fl">الشكل القانوني</label><select class="fi" id="cf-legalForm"><option value="">اختر...</option>${['شركة ذات مسؤولية محدودة (ش.ذ.م.م)','شركة توصية بسيطة','شركة مساهمة','شركة شخص واحد'].map(v=>`<option ${co.legalForm===v?'selected':''}>${v}</option>`).join('')}</select></div>
-        <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fi" id="cf-comRegNo" value="${esc(co.comRegNo||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">انتهاء السجل${expBadge(co.comRegExp)}</label><input class="fi" id="cf-comRegExp" type="date" value="${co.comRegExp||''}"></div>
+        <div class="fg fw"><label class="fl">السُمة التجارية <span style="font-size:10px;color:var(--muted)">(يجب أن يشمل اسم شريك في شركات الأشخاص)</span></label><input class="fi" id="cf-tradeName" value="${esc(co.tradeName||'')}" placeholder="مثال: كوادرا فارم — د. هيثم دويدار وشركاه"></div>
+        <div class="fg"><label class="fl">نوع الكيان (EDA) <span class="req">*</span></label>
+          <select class="fi" id="cf-companyType" onchange="onEntityTypeChange()">
+            <option value="toll" ${(co.companyType||'toll')==='toll'?'selected':''}>شركة Toll</option>
+            <option value="factory" ${co.companyType==='factory'?'selected':''}>مصنع</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">الشكل القانوني <span class="req">*</span></label>
+          <select class="fi" id="cf-legalForm" onchange="onLegalFormChange()">
+            <option value="">اختر الشكل القانوني...</option>
+            <optgroup label="شركات الأشخاص — ق.التجارة 17/1999">
+              <option value="تضامن" ${co.legalForm==='تضامن'?'selected':''}>شركة تضامن</option>
+              <option value="توصية_بسيطة" ${co.legalForm==='توصية_بسيطة'?'selected':''}>شركة توصية بسيطة</option>
+            </optgroup>
+            <optgroup label="شركات الأموال — ق.159/1981">
+              <option value="مساهمة" ${co.legalForm==='مساهمة'?'selected':''}>شركة مساهمة (ش.م.م)</option>
+              <option value="توصية_بالأسهم" ${co.legalForm==='توصية_بالأسهم'?'selected':''}>شركة توصية بالأسهم</option>
+            </optgroup>
+            <optgroup label="أشكال خاصة — ق.159/1981">
+              <option value="ذ.م.م" ${co.legalForm==='ذ.م.م'?'selected':''}>شركة ذات مسؤولية محدودة (ش.ذ.م.م)</option>
+              <option value="شخص_واحد" ${co.legalForm==='شخص_واحد'?'selected':''}>شركة الشخص الواحد</option>
+            </optgroup>
+          </select>
+        </div>
+        <div id="legal-form-notice" style="display:none;grid-column:1/-1"></div>
+      </div>
+      <div class="fsect" style="margin-top:14px">بيانات التأسيس والتسجيل</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رقم السجل التجاري <span class="req">*</span></label><input class="fi" id="cf-comRegNo" value="${esc(co.comRegNo||'')}" dir="ltr" placeholder="12345"></div>
+        <div class="fg"><label class="fl">انتهاء السجل التجاري${expBadge(co.comRegExp)}</label><input class="fi" id="cf-comRegExp" type="date" value="${co.comRegExp||''}"></div>
+        <div class="fg"><label class="fl">تاريخ التأسيس الفعلي</label><input class="fi" id="cf-foundDate" type="date" value="${co.foundDate||''}"></div>
+        <div class="fg"><label class="fl">مدة الشركة</label>
+          <select class="fi" id="cf-duration" onchange="document.getElementById('cf-duration-custom-row').style.display=this.value==='custom'?'block':'none'">
+            <option value="" ${!co.duration?'selected':''}>اختر...</option>
+            <option value="unlimited" ${co.duration==='unlimited'?'selected':''}>غير محددة المدة</option>
+            <option value="10" ${co.duration==='10'?'selected':''}>10 سنوات</option>
+            <option value="20" ${co.duration==='20'?'selected':''}>20 سنة</option>
+            <option value="30" ${co.duration==='30'?'selected':''}>30 سنة (الأكثر شيوعاً)</option>
+            <option value="50" ${co.duration==='50'?'selected':''}>50 سنة</option>
+            <option value="custom" ${co.duration==='custom'?'selected':''}>مدة مخصصة</option>
+          </select>
+        </div>
+        <div class="fg" id="cf-duration-custom-row" style="${co.duration==='custom'?'display:block':'display:none'}"><label class="fl">المدة (سنوات)</label><input class="fi" id="cf-durationYears" type="number" value="${co.durationYears||''}" dir="ltr" placeholder="35"></div>
+        <div class="fg"><label class="fl">رقم قيد GAFI / Invest in Egypt</label><input class="fi" id="cf-gafiNo" value="${esc(co.gafiNo||'')}" dir="ltr" placeholder="123456"></div>
+        <div class="fg"><label class="fl">رقم تسجيل المحكمة الابتدائية</label><input class="fi" id="cf-courtRegNo" value="${esc(co.courtRegNo||'')}" dir="ltr" placeholder="1234/2020 شركات"></div>
+        <div class="fg fw"><label class="fl">غرض الشركة / النشاط الرئيسي <span style="font-size:10px;color:var(--muted)">(كما في عقد التأسيس)</span></label><textarea class="fi" id="cf-purpose" rows="2" placeholder="صناعة وتعبئة الأدوية البشرية والبيطرية...">${esc(co.purpose||'')}</textarea></div>
+      </div>
+      <div class="fsect" style="margin-top:14px">رأس المال والبيانات المالية</div>
+      <div class="fgrid">
         <div class="fg"><label class="fl">الرقم القومي للمنشأة</label><input class="fi" id="cf-natNo" value="${esc(co.natNo||'')}" dir="ltr"></div>
-        <div class="fg"><label class="fl">رأس المال (جنيه)</label><input class="fi" id="cf-capital" type="number" value="${co.capital||''}" dir="ltr"></div>
+        <div class="fg"><label class="fl">رأس المال المُصرَّح (جنيه)</label><input class="fi" id="cf-capital" type="number" value="${co.capital||''}" dir="ltr" placeholder="1000000"></div>
+      </div>
+      <div class="fsect" style="margin-top:14px">العنوان</div>
+      <div class="fgrid">
         <div class="fg"><label class="fl">المدينة</label><input class="fi" id="cf-city" value="${esc(co.city||'')}"></div>
         <div class="fg"><label class="fl">الدولة</label><input class="fi" id="cf-country" value="${esc(co.country||'Egypt')}"></div>
         <div class="fg fw"><label class="fl">المقر الرئيسي</label><textarea class="fi" id="cf-addr" rows="2">${esc(co.addressAr||'')}</textarea></div>
@@ -1186,6 +1243,100 @@ async function renderCompanyPage(c){
     </div></div>
   </div>
 
+  <div id="cpt-persons-company" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">👥 بيانات شركات الأشخاص</div></div><div class="tab-body">
+      <div id="persons-company-notice" style="background:var(--red-light);border:1px solid rgba(220,38,38,.3);border-radius:10px;padding:11px 14px;font-size:12px;color:#991b1b;margin-bottom:16px">
+        ⚠️ <strong>تنبيه قانوني:</strong> في شركات التضامن وشركات التوصية البسيطة، الشريك المتضامن مسؤول مسؤولية شخصية وتضامنية عن كامل ديون الشركة — يمكن الرجوع على أمواله الشخصية. تأكد من توثيق صفة كل شريك بدقة.
+      </div>
+      <div class="fsect">المدير المُفوَّض وصلاحياته</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">اسم المدير المُفوَّض <span class="req">*</span></label><input class="fi" id="cf-delegateMgr" value="${esc(co.delegateMgr||'')}" placeholder="الاسم الرباعي الكامل"></div>
+        <div class="fg"><label class="fl">رقمه القومي</label><input class="fi" id="cf-delegateMgrNatId" value="${esc(co.delegateMgrNatId||'')}" dir="ltr" placeholder="28001011234567"></div>
+        <div class="fg"><label class="fl">نطاق صلاحياته</label>
+          <select class="fi" id="cf-delegateScope">
+            <option value="full" ${(co.delegateScope||'full')==='full'?'selected':''}>كاملة — داخلية وخارجية</option>
+            <option value="external" ${co.delegateScope==='external'?'selected':''}>خارجية فقط (تمثيل أمام الجهات)</option>
+            <option value="limited" ${co.delegateScope==='limited'?'selected':''}>محدودة — بحدود مبلغ أو نوع</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">قيمة حد الصلاحية (جنيه)</label><input class="fi" id="cf-delegateLimit" type="number" value="${co.delegateLimit||''}" dir="ltr" placeholder="للصلاحية المحدودة فقط"></div>
+        <div class="fg fw"><label class="fl">وصف الصلاحيات بالتفصيل</label><textarea class="fi" id="cf-delegateDesc" rows="2" placeholder="التوقيع على العقود حتى 500,000 جنيه، تمثيل الشركة أمام الجهات الحكومية...">${esc(co.delegateDesc||'')}</textarea></div>
+      </div>
+      <div class="fsect" style="margin-top:14px">بيانات التسجيل الرسمي</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رقم الإعلان في الجريدة الرسمية</label><input class="fi" id="cf-officialGazetteNo" value="${esc(co.officialGazetteNo||'')}" dir="ltr" placeholder="مثال: 156 — تاريخ 15/3/2020"></div>
+        <div class="fg"><label class="fl">تاريخ النشر في الجريدة</label><input class="fi" id="cf-officialGazetteDate" type="date" value="${co.officialGazetteDate||''}"></div>
+        <div class="fg"><label class="fl">اسم الجريدة التي نُشر فيها</label><input class="fi" id="cf-gazetteName" value="${esc(co.gazetteName||'')}" placeholder="الوقائع المصرية / جريدة يومية"></div>
+        <div class="fg"><label class="fl">محضر توثيق العقد — رقم التوثيق</label><input class="fi" id="cf-contractNotarizeNo" value="${esc(co.contractNotarizeNo||'')}" dir="ltr"></div>
+      </div>
+    </div></div>
+    <div class="pcard" style="margin-top:14px;border:1px solid rgba(220,38,38,.2)"><div class="ph"><div class="ptitle" style="color:#991b1b">⚠️ ملخص المسؤولية القانونية للشركاء</div></div>
+      <div id="partners-liability-summary" style="padding:14px 18px;font-size:13px;color:var(--muted)">يُحسب تلقائياً بعد إضافة الشركاء من تبويب «الشركاء»</div>
+    </div>
+    <div class="save-bar" style="margin-top:14px"><button class="btn btn-ok" onclick="saveTab('persons-company')">💾 حفظ بيانات شركات الأشخاص</button></div>
+  </div>
+
+  <div id="cpt-shareholding" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📊 هيكل رأس مال شركة المساهمة</div></div><div class="tab-body">
+      <div style="background:var(--primary-xl);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:11px 14px;font-size:12px;color:var(--primary-xd);margin-bottom:16px">
+        ℹ️ وفق ق.159/1981: يجب إيداع 10% من رأس المال المُصدَر في البنك عند التأسيس، ويستكمل 25% خلال 3 أشهر، والباقي خلال 5 سنوات.
+      </div>
+      <div class="fsect">هيكل رأس المال</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رأس المال المُصرَّح Authorized <span class="req">*</span></label><input class="fi" id="cf-capitalAuth" type="number" value="${co.capitalAuth||co.capital||''}" dir="ltr" placeholder="10000000"></div>
+        <div class="fg"><label class="fl">رأس المال المُصدَر Issued</label><input class="fi" id="cf-capitalIssued" type="number" value="${co.capitalIssued||''}" dir="ltr" placeholder="1000000 (10% كحد أدنى عند التأسيس)"></div>
+        <div class="fg"><label class="fl">رأس المال المدفوع Paid-up</label><input class="fi" id="cf-capitalPaid" type="number" value="${co.capitalPaid||''}" dir="ltr"></div>
+        <div class="fg"><label class="fl">تاريخ شهادة البنك (الإيداع)</label><input class="fi" id="cf-bankCertDate" type="date" value="${co.bankCertDate||''}"></div>
+      </div>
+      <div class="fsect" style="margin-top:14px">بيانات الأسهم</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">عدد الأسهم الكلي</label><input class="fi" id="cf-sharesTotal" type="number" value="${co.sharesTotal||''}" dir="ltr" placeholder="1000"></div>
+        <div class="fg"><label class="fl">القيمة الاسمية للسهم (جنيه)</label><input class="fi" id="cf-shareNominalVal" type="number" value="${co.shareNominalVal||''}" dir="ltr" placeholder="1000"></div>
+        <div class="fg"><label class="fl">نوع الأسهم</label>
+          <select class="fi" id="cf-shareType">
+            <option value="nominal" ${(co.shareType||'nominal')==='nominal'?'selected':''}>اسمية (Registered)</option>
+            <option value="bearer" ${co.shareType==='bearer'?'selected':''}>لحاملها (Bearer)</option>
+            <option value="mixed" ${co.shareType==='mixed'?'selected':''}>مختلطة</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">أسهم مؤسسين</label><input class="fi" id="cf-founderShares" type="number" value="${co.founderShares||''}" dir="ltr"></div>
+      </div>
+      <div class="fsect" style="margin-top:14px">مجلس الإدارة</div>
+      <div style="background:var(--card2);border-radius:10px;padding:12px;margin-bottom:12px;font-size:12px;color:var(--muted)">
+        ق.159/1981: يتكون مجلس الإدارة من عدد فردي لا يقل عن 3 أعضاء، مدة العضوية 3 سنوات قابلة للتجديد.
+      </div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رئيس مجلس الإدارة</label><input class="fi" id="cf-boardChair" value="${esc(co.boardChair||'')}" placeholder="الاسم الرباعي + رقمه القومي"></div>
+        <div class="fg"><label class="fl">نائب رئيس مجلس الإدارة</label><input class="fi" id="cf-boardViceChair" value="${esc(co.boardViceChair||'')}"></div>
+        <div class="fg"><label class="fl">عدد أعضاء المجلس</label><input class="fi" id="cf-boardSize" type="number" min="3" value="${co.boardSize||''}" dir="ltr" placeholder="3 كحد أدنى — عدد فردي"></div>
+        <div class="fg"><label class="fl">تاريخ تشكيل المجلس الحالي</label><input class="fi" id="cf-boardFormDate" type="date" value="${co.boardFormDate||''}"></div>
+        <div class="fg"><label class="fl">تاريخ انتهاء دورة المجلس</label><input class="fi" id="cf-boardExpDate" type="date" value="${co.boardExpDate||''}"></div>
+        <div class="fg fw"><label class="fl">أعضاء المجلس</label><textarea class="fi" id="cf-boardMembers" rows="3" placeholder="1- الاسم — الصفة — رقمه القومي&#10;2- الاسم — الصفة — رقمه القومي&#10;3- الاسم — الصفة — رقمه القومي">${esc(co.boardMembers||'')}</textarea></div>
+      </div>
+      <div class="fsect" style="margin-top:14px">مراقب الحسابات والرقابة</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">اسم مراقب الحسابات (Auditor)</label><input class="fi" id="cf-auditor" value="${esc(co.auditor||'')}" placeholder="د. الاسم أو مكتب المحاسبة"></div>
+        <div class="fg"><label class="fl">رقم قيد المراقب في نقابة المحاسبين</label><input class="fi" id="cf-auditorRegNo" value="${esc(co.auditorRegNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">قيد في هيئة الرقابة المالية FRA</label>
+          <select class="fi" id="cf-fraListed">
+            <option value="no" ${(co.fraListed||'no')==='no'?'selected':''}>لا</option>
+            <option value="yes" ${co.fraListed==='yes'?'selected':''}>نعم — مقيدة في FRA</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">مدرجة في البورصة EGX</label>
+          <select class="fi" id="cf-egxListed">
+            <option value="no" ${(co.egxListed||'no')==='no'?'selected':''}>لا</option>
+            <option value="yes" ${co.egxListed==='yes'?'selected':''}>نعم</option>
+            <option value="main" ${co.egxListed==='main'?'selected':''}>نعم — السوق الرئيسي EGX 30</option>
+          </select>
+        </div>
+        <div class="fg"><label class="fl">رقم قيد FRA / EGX</label><input class="fi" id="cf-fraNo" value="${esc(co.fraNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">تاريخ الجمعية العامة الأخيرة</label><input class="fi" id="cf-lastAGM" type="date" value="${co.lastAGM||''}"></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('shareholding')">💾 حفظ بيانات شركة المساهمة</button></div>
+    </div></div>
+  </div>
+
   <div id="cpt-factories" class="cpt">
     <div class="pcard"><div class="ph"><div class="ptitle">🏭 المصانع المتعاقد معها</div><button class="btn btn-ok btn-sm" onclick="openAddFactory()">+ إضافة مصنع</button></div><div id="factories-table"></div></div>
     <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🏪 أماكن التخزين المرخصة</div><button class="btn btn-ok btn-sm" onclick="openAddStorage()">+ إضافة مخزن</button></div><div id="storages-table"></div></div>
@@ -1205,9 +1356,41 @@ async function renderCompanyPage(c){
       <div style="display:flex;gap:8px;margin-top:8px">
         <input class="fi" id="doc-name" placeholder="اسم المستند..." style="flex:1">
         <select class="fi" id="doc-type" style="width:170px">
-          <option>سجل تجاري</option><option>بطاقة ضريبية</option><option>ترخيص EDA</option>
-          <option>شهادة GMP</option><option>عقد تأسيس</option><option>صحيفة استثمار</option>
-          <option>عقد تصنيع</option><option>تأمينات اجتماعية</option><option>أخرى</option>
+          <optgroup label="وثائق التأسيس">
+            <option>عقد التأسيس الأصلي</option>
+            <option>محضر الجمعية التأسيسية</option>
+            <option>نشر الجريدة الرسمية (صحيفة الاستثمار)</option>
+            <option>شهادة تسجيل المحكمة الابتدائية</option>
+          </optgroup>
+          <optgroup label="التسجيل والترخيص">
+            <option>سجل تجاري</option>
+            <option>بطاقة ضريبية</option>
+            <option>ترخيص EDA</option>
+            <option>شهادة GMP</option>
+            <option>صحيفة استثمار GAFI</option>
+          </optgroup>
+          <optgroup label="وثائق شركات الأشخاص">
+            <option>توكيلات الشركاء الموثقة</option>
+            <option>شهادة خلو سجل جنائي (للشركاء)</option>
+            <option>إقرار مصدر الأموال</option>
+          </optgroup>
+          <optgroup label="وثائق شركة المساهمة">
+            <option>محضر الجمعية العامة السنوية (AGM)</option>
+            <option>محضر الجمعية العامة غير العادية (EGM)</option>
+            <option>قرار مجلس الإدارة (تفويض التوقيع)</option>
+            <option>شهادة بنكية بإيداع رأس المال</option>
+            <option>تقرير مراقب الحسابات السنوي</option>
+            <option>الميزانية السنوية المعتمدة</option>
+          </optgroup>
+          <optgroup label="عقود وتوكيلات">
+            <option>عقد تصنيع (Toll)</option>
+            <option>عقد تخزين</option>
+            <option>توكيل رسمي للمدير المُفوَّض</option>
+          </optgroup>
+          <optgroup label="أخرى">
+            <option>تأمينات اجتماعية</option>
+            <option>أخرى</option>
+          </optgroup>
         </select>
       </div>
     </div></div>
@@ -1231,22 +1414,156 @@ async function renderCompanyPage(c){
   });
 
   loadDocs();loadHistory();loadPartnersTable();loadFactoriesTable();loadStoragesTable();loadDistsTable();
+  setTimeout(onLegalFormChange,50);
+  onLegalFormChange();
 }
 
 async function saveTab(tab){
   const co=await dbGet('companies',S.companyId);
   let u={};
-  if(tab==='legal'){const nameAr=val('cf-nameAr');if(!nameAr){toast('الاسم مطلوب','er');return}u={nameAr,nameEn:val('cf-nameEn'),companyType:val('cf-companyType'),legalForm:val('cf-legalForm'),comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),natNo:val('cf-natNo'),capital:val('cf-capital'),city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')};}
+  if(tab==='legal'){
+    const nameAr=val('cf-nameAr');
+    if(!nameAr){toast('الاسم مطلوب','er');return}
+    const dur=val('cf-duration');
+    u={
+      nameAr,nameEn:val('cf-nameEn'),
+      tradeName:val('cf-tradeName'),
+      companyType:val('cf-companyType'),
+      legalForm:val('cf-legalForm'),
+      comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),
+      foundDate:val('cf-foundDate'),
+      duration:dur,
+      durationYears:dur==='custom'?val('cf-durationYears'):'',
+      gafiNo:val('cf-gafiNo'),
+      courtRegNo:val('cf-courtRegNo'),
+      purpose:val('cf-purpose'),
+      natNo:val('cf-natNo'),capital:val('cf-capital'),
+      city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')
+    };
+  }
   else if(tab==='eda'){u={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines'),edaAddress:val('cf-edaAddr')};}
   else if(tab==='tax'){u={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};}
   else if(tab==='persons'){u={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web')};}
+  else if(tab==='persons-company'){u={delegateMgr:val('cf-delegateMgr'),delegateMgrNatId:val('cf-delegateMgrNatId'),delegateScope:val('cf-delegateScope'),delegateLimit:val('cf-delegateLimit'),delegateDesc:val('cf-delegateDesc'),officialGazetteNo:val('cf-officialGazetteNo'),officialGazetteDate:val('cf-officialGazetteDate'),gazetteName:val('cf-gazetteName'),contractNotarizeNo:val('cf-contractNotarizeNo')};}
+  else if(tab==='shareholding'){u={capitalAuth:val('cf-capitalAuth'),capitalIssued:val('cf-capitalIssued'),capitalPaid:val('cf-capitalPaid'),bankCertDate:val('cf-bankCertDate'),sharesTotal:val('cf-sharesTotal'),shareNominalVal:val('cf-shareNominalVal'),shareType:val('cf-shareType'),founderShares:val('cf-founderShares'),boardChair:val('cf-boardChair'),boardViceChair:val('cf-boardViceChair'),boardSize:val('cf-boardSize'),boardFormDate:val('cf-boardFormDate'),boardExpDate:val('cf-boardExpDate'),boardMembers:val('cf-boardMembers'),auditor:val('cf-auditor'),auditorRegNo:val('cf-auditorRegNo'),fraListed:val('cf-fraListed'),egxListed:val('cf-egxListed'),fraNo:val('cf-fraNo'),lastAGM:val('cf-lastAGM')};}
+  else if(tab==='persons-company'){u={
+    delegateMgr:val('cf-delegateMgr'),delegateMgrNatId:val('cf-delegateMgrNatId'),
+    delegateScope:val('cf-delegateScope'),delegateLimit:val('cf-delegateLimit'),
+    delegateDesc:val('cf-delegateDesc'),
+    officialGazetteNo:val('cf-officialGazetteNo'),
+    officialGazetteDate:val('cf-officialGazetteDate'),
+    gazetteName:val('cf-gazetteName'),
+    contractNotarizeNo:val('cf-contractNotarizeNo')
+  };}
+  else if(tab==='shareholding'){u={
+    capitalAuth:val('cf-capitalAuth'),capitalIssued:val('cf-capitalIssued'),
+    capitalPaid:val('cf-capitalPaid'),bankCertDate:val('cf-bankCertDate'),
+    sharesTotal:val('cf-sharesTotal'),shareNominalVal:val('cf-shareNominalVal'),
+    shareType:val('cf-shareType'),founderShares:val('cf-founderShares'),
+    boardChair:val('cf-boardChair'),boardViceChair:val('cf-boardViceChair'),
+    boardSize:val('cf-boardSize'),boardFormDate:val('cf-boardFormDate'),
+    boardExpDate:val('cf-boardExpDate'),boardMembers:val('cf-boardMembers'),
+    auditor:val('cf-auditor'),auditorRegNo:val('cf-auditorRegNo'),
+    fraListed:val('cf-fraListed'),egxListed:val('cf-egxListed'),
+    fraNo:val('cf-fraNo'),lastAGM:val('cf-lastAGM')
+  };}
   Object.assign(co,u,{updatedAt:now()});
   await dbPut('companies',co);
-  await saveHist(co.id,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'}[tab]);
+  await saveHist(co.id,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون','persons-company':'شركات الأشخاص',shareholding:'بيانات المساهمة'}[tab]||tab);
   if(tab==='legal'){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr;document.getElementById('sb-coname2').textContent=co.nameAr;}
   toast('تم الحفظ بنجاح','ok');
 }
 async function saveEgyPct(){const co=await dbGet('companies',S.companyId);co.egyPct=val('cf-egyPct');co.updatedAt=now();await dbPut('companies',co);toast('تم الحفظ','ok');}
+
+
+// ══ LEGAL FORM LOGIC ══
+function onLegalFormChange(){
+  var lf=val('cf-legalForm');
+  var isPersons=lf==='تضامن'||lf==='توصية_بسيطة';
+  var isShareholding=lf==='مساهمة'||lf==='توصية_بالأسهم';
+  // show/hide conditional tabs
+  var tabP=document.getElementById('tab-persons-company');
+  var tabS=document.getElementById('tab-shareholding');
+  if(tabP) tabP.style.display=isPersons?'':'none';
+  if(tabS) tabS.style.display=isShareholding?'':'none';
+  // show legal form notice
+  var notices={
+    'تضامن':'⚠️ شركة تضامن: جميع الشركاء متضامنون — مسؤولية شخصية غير محدودة. يجب أن تشمل السُمة التجارية اسم شريك متضامن. يلزم نشر ملخص العقد في جريدة رسمية.',
+    'توصية_بسيطة':'⚠️ شركة توصية بسيطة: الشركاء المتضامنون مسؤولون مسؤولية كاملة، والموصون محدودو المسؤولية بقيمة حصصهم. الشريك الموصى لا يشارك في الإدارة.',
+    'مساهمة':'ℹ️ شركة مساهمة: يجب إيداع 10% من رأس المال المُصدَر عند التأسيس. مجلس إدارة من 3 أعضاء فأكثر (عدد فردي) لمدة 3 سنوات. مراقب حسابات إلزامي.',
+    'توصية_بالأسهم':'ℹ️ شركة توصية بالأسهم: تجمع بين شركاء متضامنين ومساهمين. يتطلب هيكل رأس مال مزدوج (حصص + أسهم).',
+    'ذ.م.م':'ℹ️ شركة ذات مسؤولية محدودة: المسؤولية محدودة بالحصص. لا تُصدر أسهم قابلة للتداول.',
+    'شخص_واحد':'ℹ️ شركة الشخص الواحد: رأس المال يجب أن يُدفع بالكامل عند التأسيس. لا يجوز أن يكون المؤسس شخصاً طبيعياً يؤسس أكثر من شركة شخص واحد.'
+  };
+  var noticeEl=document.getElementById('legal-form-notice');
+  if(noticeEl){
+    if(notices[lf]){
+      var isWarn=lf==='تضامن'||lf==='توصية_بسيطة';
+      noticeEl.style.display='block';
+      noticeEl.style.cssText='display:block;background:'+(isWarn?'var(--red-light)':'var(--primary-xl)')+';border:1px solid '+(isWarn?'rgba(220,38,38,.3)':'rgba(34,211,238,.3)')+';border-radius:10px;padding:10px 13px;font-size:12px;color:'+(isWarn?'#991b1b':'var(--primary-xd)')+';margin:8px 0';
+      noticeEl.textContent=notices[lf];
+    } else {
+      noticeEl.style.display='none';
+    }
+  }
+  // update partners table label
+  loadLiabilitySummary();
+}
+
+function onEntityTypeChange(){
+  // nothing extra needed — just triggers re-render if needed
+}
+
+function loadLiabilitySummary(){
+  var el=document.getElementById('partners-liability-summary');
+  if(!el)return;
+  var lf=val('cf-legalForm');
+  if(!lf){el.innerHTML='<p style="color:var(--muted);font-size:13px">اختر الشكل القانوني أولاً لعرض ملخص المسؤولية.</p>';return;}
+  dbGetAll('partners','companyId',S.companyId).then(function(rows){
+    rows=rows.filter(function(r){return !r.deletedAt;});
+    if(!rows.length){el.innerHTML='<p style="color:var(--muted);font-size:13px">لا يوجد شركاء مُدخلون بعد — أضف الشركاء من تبويب «الشركاء».</p>';return;}
+    var html='<div style="display:flex;flex-direction:column;gap:8px">';
+    rows.forEach(function(r){
+      var role=r.role||'partner';
+      var roleLabel={solidary:'متضامن — مسؤولية شخصية غير محدودة',limited:'موصى — محدود المسؤولية',shareholder:'مساهم',partner:'شريك',sole:'الشريك الوحيد'}[role]||role;
+      var isUnlimited=role==='solidary'||(lf==='تضامن'&&role==='partner');
+      var bg=isUnlimited?'var(--red-light)':'var(--primary-xl)';
+      var col=isUnlimited?'#991b1b':'var(--primary-xd)';
+      html+='<div style="background:'+bg+';border-radius:8px;padding:9px 13px;display:flex;align-items:center;gap:12px">'
+        +'<div style="font-size:13px;font-weight:600;color:'+col+';flex:1">'+r.name+'</div>'
+        +'<span style="font-size:11px;color:'+col+'">'+roleLabel+'</span>'
+        +'<span style="font-size:11px;font-weight:700;color:'+col+'">'+r.pct+'%</span>'
+        +'</div>';
+    });
+    html+='</div>';
+    el.innerHTML=html;
+  });
+}
+
+// ══ PARTNER MODAL INTERACTIVITY ══
+document.addEventListener('change',function(e){
+  if(e.target.id==='mp-role'){
+    var role=e.target.value;
+    var warn=document.getElementById('mp-solidary-warning');
+    var liab=document.getElementById('mp-liability');
+    var liabRow=document.getElementById('mp-liability-amt-row');
+    if(warn) warn.style.display=(role==='solidary')?'block':'none';
+    if(liab){
+      if(role==='solidary') liab.value='unlimited';
+      else if(role==='limited'||role==='shareholder') liab.value='limited_share';
+    }
+  }
+  if(e.target.id==='mp-liability'){
+    var liabRow=document.getElementById('mp-liability-amt-row');
+    if(liabRow) liabRow.style.display=(e.target.value==='limited_amount')?'block':'none';
+  }
+  if(e.target.id==='cf-duration'){
+    var customRow=document.getElementById('cf-duration-custom-row');
+    if(customRow) customRow.style.display=(e.target.value==='custom')?'block':'none';
+  }
+  if(e.target.id==='cf-legalForm') onLegalFormChange();
+  if(e.target.id==='cf-companyType') onEntityTypeChange();
+});
 
 // ══ PARTNERS ══
 async function loadPartnersTable(){
@@ -1255,17 +1572,81 @@ async function loadPartnersTable(){
   if(!rows.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">🤝</div><p>لا يوجد شركاء — اضغط "+ إضافة شريك"</p></div>';return}
   const total=rows.reduce((s,r)=>s+parseFloat(r.pct||0),0);
   const ok=Math.abs(total-100)<0.01;
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الشريك</th><th>النسبة %</th><th>عدد الحصص</th><th>قيمة الحصة</th><th>الجنسية</th><th>إجراء</th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td><span class="bdg bdg-g">${esc(r.pct)}%</span></td><td>${esc(r.shares||'—')}</td><td>${r.val?esc(r.val)+' ج':'—'}</td><td>${esc(r.nat||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditPartner('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delPartner('${r.id}')">حذف</button></div></td></tr>`).join('')}
-  <tr style="background:var(--card2)"><td colspan="2" style="font-weight:700">الإجمالي: <span class="bdg ${ok?'bdg-g':'bdg-r'}">${total.toFixed(2)}%</span></td><td colspan="4" style="font-size:12px;color:var(--muted)">${ok?'✅ صحيح':'⚠️ يجب أن يساوي 100%'}</td></tr>
-  </tbody></table></div>`;
+  var ROLE_LBL={solidary:'متضامن ⚠️',limited:'موصى',shareholder:'مساهم',partner:'شريك',sole:'الوحيد'};
+  var LIAB_LBL={unlimited:'غير محدودة',limited_share:'بقيمة الحصة',limited_amount:'مبلغ محدد'};
+  var rowsHtml=rows.map(function(r){
+    var role=r.role||'partner';
+    var isUnlimited=role==='solidary';
+    var roleCell='<span style="font-size:10px;padding:2px 7px;border-radius:10px;background:'+(isUnlimited?'var(--red-light)':'var(--primary-xl)')+';color:'+(isUnlimited?'#991b1b':'var(--primary-xd)')+'">'+  (ROLE_LBL[role]||role)+'</span>';
+    var liabCell='<span style="font-size:10px;color:var(--muted)">'+  (LIAB_LBL[r.liability||'unlimited']||'—')+'</span>';
+    var rid=r.id;
+    return '<tr><td style="font-weight:600">'+esc(r.name)+'<div style="font-size:10px;color:var(--muted)">'+esc(r.natid||'—')+'</div></td>'
+      +'<td>'+roleCell+'</td>'
+      +'<td><span class="bdg bdg-g">'+esc(r.pct)+'%</span></td>'
+      +'<td>'+esc(r.shares||'—')+'</td>'
+      +'<td>'+liabCell+'</td>'
+      +'<td>'+esc(r.nat||'—')+'</td>'
+      +'<td><div class="tbl-action">'
+      +'<button class="btn btn-o btn-sm" data-edit="'+rid+'">تعديل</button>'
+      +'<button class="btn btn-x btn-sm" data-del="'+rid+'">حذف</button>'
+      +'</div></td>'
+      +'</tr>';
+  }).join('');
+  el.innerHTML='<div class="tw"><table><thead><tr><th>اسم الشريك / الرقم القومي</th><th>الصفة</th><th>النسبة %</th><th>الحصص</th><th>المسؤولية</th><th>الجنسية</th><th>إجراء</th></tr></thead><tbody>'
+    +rowsHtml
+    +'<tr style="background:rgba(255,255,255,.4)"><td colspan="3" style="font-weight:700">الإجمالي: <span class="bdg '+(ok?'bdg-g':'bdg-r')+'">'+total.toFixed(2)+'%</span></td><td colspan="4" style="font-size:12px;color:var(--muted)">'+(ok?'✅ صحيح':'⚠️ يجب أن يساوي 100%')+'</td></tr>'
+    +'</tbody></table></div>';
+  el.querySelectorAll('[data-edit]').forEach(function(btn){
+    btn.addEventListener('click',function(){openEditPartner(btn.dataset.edit);});
+  });
+  el.querySelectorAll('[data-del]').forEach(function(btn){
+    btn.addEventListener('click',function(){delPartner(btn.dataset.del);});
+  });
 }
-function openAddPartner(){document.getElementById('mp-title').textContent='إضافة شريك جديد';['mp-id','mp-name','mp-pct','mp-nat','mp-shares','mp-val'].forEach(id=>set(id,''));openModal('modal-partner');}
-async function openEditPartner(id){const r=await dbGet('partners',id);if(!r)return;document.getElementById('mp-title').textContent='تعديل بيانات الشريك';set('mp-id',r.id);set('mp-name',r.name);set('mp-pct',r.pct);set('mp-nat',r.nat);set('mp-shares',r.shares);set('mp-val',r.val);openModal('modal-partner');}
+function openAddPartner(){
+  document.getElementById('mp-title').textContent='إضافة شريك جديد';
+  ['mp-id','mp-name','mp-pct','mp-nat','mp-natid','mp-shares','mp-val','mp-joindate','mp-liability-amt'].forEach(function(id){set(id,'');});
+  var roleEl=document.getElementById('mp-role'); if(roleEl) roleEl.value='partner';
+  var liabEl=document.getElementById('mp-liability'); if(liabEl) liabEl.value='unlimited';
+  var warn=document.getElementById('mp-solidary-warning'); if(warn) warn.style.display='none';
+  var liabRow=document.getElementById('mp-liability-amt-row'); if(liabRow) liabRow.style.display='none';
+  openModal('modal-partner');
+}
+async function openEditPartner(id){
+  var r=await dbGet('partners',id); if(!r)return;
+  document.getElementById('mp-title').textContent='تعديل بيانات الشريك';
+  set('mp-id',r.id); set('mp-name',r.name); set('mp-pct',r.pct);
+  set('mp-nat',r.nat); set('mp-natid',r.natid||'');
+  set('mp-shares',r.shares); set('mp-val',r.val);
+  set('mp-joindate',r.joindate||'');
+  set('mp-liability-amt',r.liabilityAmt||'');
+  var roleEl=document.getElementById('mp-role'); if(roleEl) roleEl.value=r.role||'partner';
+  var liabEl=document.getElementById('mp-liability'); if(liabEl) liabEl.value=r.liability||'unlimited';
+  var warn=document.getElementById('mp-solidary-warning');
+  if(warn) warn.style.display=(r.role==='solidary')?'block':'none';
+  var liabRow=document.getElementById('mp-liability-amt-row');
+  if(liabRow) liabRow.style.display=(r.liability==='limited_amount')?'block':'none';
+  openModal('modal-partner');
+}
 async function savePartner(){
-  const name=val('mp-name'),pct=val('mp-pct');if(!name||!pct){toast('الاسم والنسبة مطلوبان','er');return}
-  const eid=val('mp-id'),id=eid||uid();const existing=eid?await dbGet('partners',id):null;
-  await dbPut('partners',{...existing,id,companyId:S.companyId,name,pct,nat:val('mp-nat'),shares:val('mp-shares'),val:val('mp-val'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  var name=val('mp-name'),pct=val('mp-pct');
+  if(!name||!pct){toast('الاسم والنسبة مطلوبان','er');return;}
+  var eid=val('mp-id'),id=eid||uid();
+  var existing=eid?await dbGet('partners',id):null;
+  var role=val('mp-role')||'partner';
+  await dbPut('partners',Object.assign({},existing,{
+    id,companyId:S.companyId,name,pct,
+    role,
+    nat:val('mp-nat'),
+    natid:val('mp-natid'),
+    joindate:val('mp-joindate'),
+    shares:val('mp-shares'),
+    val:val('mp-val'),
+    liability:val('mp-liability'),
+    liabilityAmt:val('mp-liability-amt'),
+    createdAt:(existing&&existing.createdAt)||now(),
+    updatedAt:now()
+  }));
   await saveHist(S.companyId,eid?'تعديل شريك':'إضافة شريك',name);
   closeModal('modal-partner');toast('تم الحفظ','ok');loadPartnersTable();
 }
