@@ -895,6 +895,7 @@ select.fi option{background:#fff;color:var(--text)}
 <canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.45" aria-hidden="true"></canvas>
 <script>
 
+
 // ═══════════════════════════════════════════════
 // DATA LAYER — localStorage persistence
 // ═══════════════════════════════════════════════
@@ -9914,6 +9915,43 @@ function _authHash(p){
   return 'h:'+Math.abs(h).toString(36)+':'+p.length;
 }
 
+// ── Update auth badge in topbar ──────────────────────────────
+function _updateBadge(){
+  var el = document.getElementById('auth-badge');
+  if(!el||!_authUser) return;
+  var r = _ROLES[_authUser.role]||{};
+  el.innerHTML = '<span>'+( r.icon||'👤')+'</span>'
+    +'<span style="color:var(--text)">'+(  _authUser.name||_authUser.username)+'</span>'
+    +'<span style="color:var(--muted);font-size:10px">'+(r.label||'')+'</span>'
+    +'<button onclick="_authLogout()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;margin-right:4px;padding:0 6px" title="تسجيل خروج">⏻</button>';
+}
+
+// ── Save session ──────────────────────────────────────────────
+function _saveSession(user){
+  try{
+    sessionStorage.setItem('_erp_s', JSON.stringify({
+      username:user.username, name:user.name, role:user.role, id:user.id
+    }));
+  }catch(e){}
+}
+
+// ── Logout ────────────────────────────────────────────────────
+function _authLogout(){
+  _authUser = null;
+  try{ sessionStorage.removeItem('_erp_s'); }catch(e){}
+  // Return to company selector
+  document.getElementById('co-screen').style.display = 'flex';
+  var appEl = document.getElementById('app') || document.querySelector('main');
+  if(appEl) appEl.style.display = 'none';
+  var sideEl = document.getElementById('sidebar');
+  if(sideEl) sideEl.style.display = 'none';
+  var topEl = document.querySelector('.topbar');
+  if(topEl) topEl.style.display = 'none';
+  _authUser = null;
+  coRenderGrid();
+}
+
+
 // ── Can user access this page? ────────────────────────────────
 function _canAccess(page){
   if(!_authUser) return false;
@@ -10080,65 +10118,6 @@ function _filterNav(){
   }catch(e){}
 }
 
-// Auth: permission check is done inside go() directly
-// _filterNav is called after each navigation
-
-// Override coEnter to restore session or show login
-const _origCoEnterFlow = _showLoginScreen;
-// Already patched above — on coEnter we call _showLoginScreen
-// But if session exists, skip login
-function _showLoginScreen(){
-  if(_restoreSession()){
-    // Already logged in — just update UI
-    document.getElementById('_auth_login') && (document.getElementById('_auth_login').style.display='none');
-    _updateBadge();
-    _filterNav();
-    go('dashboard');
-    return;
-  }
-  // Show login UI
-  const users = getAll('appUsers');
-  const isFirst = users.length === 0;
-  let el = document.getElementById('_auth_login');
-  if(!el){
-    el = document.createElement('div');
-    el.id = '_auth_login';
-    el.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0d1117,#161b22);display:flex;align-items:center;justify-content:center;font-family:Cairo,sans-serif;direction:rtl';
-    document.body.appendChild(el);
-  }
-  el.style.display = 'flex';
-  el.innerHTML = `
-    <div style="width:100%;max-width:380px;padding:16px">
-      <div style="text-align:center;margin-bottom:28px">
-        <div style="width:64px;height:64px;background:linear-gradient(135deg,#2ea043,#1a7f37);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px">💊</div>
-        <h1 style="color:#fff;font-size:20px;font-weight:700;margin:0">نظام ERP الدوائي</h1>
-        <p style="color:#8b949e;font-size:12px;margin:6px 0 0">سجّل الدخول للمتابعة</p>
-      </div>
-      <div style="background:#161b22;border:1px solid #30363d;border-radius:12px;padding:22px">
-        <div style="margin-bottom:14px">
-          <label style="color:#8b949e;font-size:11px;display:block;margin-bottom:5px">اسم المستخدم</label>
-          <input id="_au" type="text" placeholder="أدخل اسم المستخدم" autocomplete="username"
-            style="width:100%;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-size:13px;color:#fff;font-family:Cairo,sans-serif;box-sizing:border-box;outline:none"
-            onkeydown="if(event.key==='Enter')document.getElementById('_ap').focus()">
-        </div>
-        <div style="margin-bottom:18px">
-          <label style="color:#8b949e;font-size:11px;display:block;margin-bottom:5px">كلمة المرور</label>
-          <input id="_ap" type="password" placeholder="كلمة المرور" autocomplete="current-password"
-            style="width:100%;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-size:13px;color:#fff;font-family:Cairo,sans-serif;box-sizing:border-box;outline:none"
-            onkeydown="if(event.key==='Enter')_doLogin()">
-        </div>
-        <div id="_aerr" style="display:none;color:#f85149;font-size:11px;margin-bottom:12px;padding:8px;background:rgba(248,81,73,.1);border-radius:6px;text-align:center"></div>
-        <button onclick="_doLogin()"
-          style="width:100%;background:linear-gradient(135deg,#2ea043,#1a7f37);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif">
-          تسجيل الدخول
-        </button>
-      </div>
-      ${isFirst?`<div style="margin-top:12px;padding:10px;background:rgba(46,160,67,.08);border:1px solid rgba(46,160,67,.2);border-radius:8px;font-size:11px;color:#8b949e;text-align:center">
-        🔑 أول دخول — اسم المستخدم: <strong style="color:#fff">admin</strong> &nbsp;|&nbsp; كلمة المرور: <strong style="color:#fff">admin123</strong>
-      </div>`:''}
-    </div>`;
-  setTimeout(()=>document.getElementById('_au')?.focus(), 150);
-}
 
 // ── PAGES.users — إدارة المستخدمين ───────────────────────────
 PAGES.users = function(){
@@ -10336,6 +10315,7 @@ if(!navItems.find(function(n){return n.id==='registration';}))
   navItems.push({section:'التسجيل',id:'registration',icon:'📋',label:'سجل الإخطارات'});
 if(!navItems.find(function(n){return n.id==='company';}))
   navItems.push({section:'الإعدادات',id:'company',icon:'🏢',label:'بيانات الشركة'});
+
 </script>
 <script>
 (function(){
