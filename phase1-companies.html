@@ -2633,10 +2633,28 @@ function coEnter(c){
   if(lbl) lbl.textContent = c.name;
 
   /* hide selector, show app */
-  document.getElementById('co-screen').style.display = 'none';
+  // Hide co-screen
+  var _cs = document.getElementById('co-screen');
+  if(_cs) _cs.style.display = 'none';
+
+  // Temporarily hide sidebar/main until login
+  var _sb = document.getElementById('sidebar');
+  var _mn = document.querySelector('main');
+  if(_sb) _sb.style.display = 'none';
+  if(_mn) _mn.style.display = 'none';
+
   renderNav();
-  // Show login screen
-  _showLoginScreen();
+
+  // Check session — if valid skip login
+  if(_restoreSession()){
+    if(_sb) _sb.style.display = '';
+    if(_mn) _mn.style.display = '';
+    _updateBadge();
+    _filterNav();
+    go('dashboard');
+  } else {
+    _showLoginScreen();
+  }
 }
 
 /* ── show selector ── */
@@ -9907,83 +9925,120 @@ function _canAccess(page){
 
 // ── Show login screen ─────────────────────────────────────────
 function _showLoginScreen(){
-  const users = getAll('appUsers');
-  const isFirst = users.length === 0;
+  var users = getAll('appUsers');
+  var isFirst = users.length === 0;
+  var el = document.getElementById('_auth_login');
+  if(!el){ el = document.createElement('div'); el.id = '_auth_login'; document.body.appendChild(el); }
+  el.style.cssText = 'position:fixed;inset:0;z-index:999999;display:flex;align-items:center;justify-content:center;font-family:Tajawal,Cairo,sans-serif;direction:rtl;background:linear-gradient(145deg,#fff8f4 0%,#fef3ec 50%,#fdf6ff 100%)';
+  var coName = '';
+  try{
+    var _cos = JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');
+    var _co  = _cos.find(function(c){return c.id===_coActiveId;});
+    coName = _co ? _co.name : '';
+  }catch(e){}
+  var firstHint = isFirst
+    ? '<div style="background:rgba(34,211,238,.1);border:1px solid rgba(34,211,238,.3);border-radius:10px;padding:10px 13px;font-size:12px;color:#0e7490;margin-bottom:16px;text-align:center">\u{1F510} \u0623\u0648\u0644 \u062F\u062E\u0648\u0644 \u2014 <b>admin</b> / <b>admin123</b></div>'
+    : '';
+  el.innerHTML = ''
+    + '<div style="position:fixed;top:-80px;right:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(34,211,238,.15) 0%,transparent 70%);filter:blur(40px);pointer-events:none"></div>'
+    + '<div style="position:fixed;bottom:40px;left:-60px;width:250px;height:250px;border-radius:50%;background:radial-gradient(circle,rgba(191,219,254,.2) 0%,transparent 70%);filter:blur(40px);pointer-events:none"></div>'
+    + '<div style="width:100%;max-width:400px;padding:16px;position:relative">'
+    + '<div style="text-align:center;margin-bottom:24px">'
+    + '<div style="width:64px;height:64px;background:linear-gradient(135deg,#22d3ee,#06b6d4);border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 14px;box-shadow:0 8px 24px rgba(34,211,238,.35)">\u{1F48A}</div>'
+    + '<h1 style="color:#1c1917;font-size:22px;font-weight:800;margin:0">\u0645\u0631\u062D\u0628\u0627\u064B \u0628\u0643</h1>'
+    + (coName ? '<p style="color:#0e7490;font-size:13px;margin:6px 0 0;font-weight:600">'+coName+'</p>' : '')
+    + '<p style="color:#78716c;font-size:12px;margin:4px 0 0">\u0633\u062C\u0651\u0644 \u062F\u062E\u0648\u0644\u0643 \u0644\u0644\u0645\u062A\u0627\u0628\u0639\u0629</p>'
+    + '</div>'
+    + '<div style="background:rgba(255,255,255,.82);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.9);border-radius:20px;padding:28px;box-shadow:0 16px 48px rgba(234,88,12,.08);position:relative;overflow:hidden">'
+    + '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,#22d3ee,#bfdbfe,#22d3ee)"></div>'
+    + firstHint
+    + '<div style="margin-bottom:14px"><label style="color:#6b7280;font-size:11px;font-weight:700;display:block;margin-bottom:6px">\u0627\u0633\u0645 \u0627\u0644\u0645\u0633\u062A\u062E\u062F\u0645</label>'
+    + '<input id="_au" type="text" placeholder="username" autocomplete="username" '
+    + 'style="width:100%;padding:11px 13px;background:rgba(255,255,255,.85);border:1.5px solid rgba(34,211,238,.25);border-radius:11px;font-size:14px;font-family:Tajawal,Cairo,sans-serif;color:#1c1917;outline:none;box-sizing:border-box;direction:ltr"></div>'
+    + '<div style="margin-bottom:20px"><label style="color:#6b7280;font-size:11px;font-weight:700;display:block;margin-bottom:6px">\u0643\u0644\u0645\u0629 \u0627\u0644\u0645\u0631\u0648\u0631</label>'
+    + '<input id="_ap" type="password" placeholder="\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022" autocomplete="current-password" '
+    + 'style="width:100%;padding:11px 13px;background:rgba(255,255,255,.85);border:1.5px solid rgba(34,211,238,.25);border-radius:11px;font-size:14px;font-family:Tajawal,Cairo,sans-serif;color:#1c1917;outline:none;box-sizing:border-box"></div>'
+    + '<div id="_aerr" style="display:none;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.25);border-radius:9px;padding:9px 13px;font-size:12px;color:#991b1b;margin-bottom:14px;text-align:center"></div>'
+    + '<button id="_login_btn" style="width:100%;padding:13px;background:linear-gradient(135deg,#22d3ee,#06b6d4);color:#fff;border:none;border-radius:13px;font-size:15px;font-weight:800;font-family:Tajawal,Cairo,sans-serif;cursor:pointer;box-shadow:0 6px 20px rgba(34,211,238,.35)">\u062F\u062E\u0648\u0644 \u2190</button>'
+    + '</div>'
+    + '<div style="text-align:center;margin-top:14px">'
+    + '<button id="_back_btn" style="background:none;border:none;color:#78716c;font-size:12px;font-family:Tajawal,Cairo,sans-serif;cursor:pointer;text-decoration:underline">\u2190 \u062A\u063A\u064A\u064A\u0631 \u0627\u0644\u0634\u0631\u0643\u0629</button>'
+    + '</div></div>';
 
-  let el = document.getElementById('_auth_login');
-  if(!el){
-    el = document.createElement('div');
-    el.id = '_auth_login';
-    el.style.cssText = 'position:fixed;inset:0;z-index:99999;background:linear-gradient(135deg,#0d1117,#161b22);display:flex;align-items:center;justify-content:center;font-family:Cairo,sans-serif;direction:rtl';
-    document.body.appendChild(el);
-  }
-  el.style.display = 'flex';
-  el.innerHTML = `
-    <div style="width:100%;max-width:380px;padding:16px">
-      <div style="text-align:center;margin-bottom:28px">
-        <div style="width:64px;height:64px;background:linear-gradient(135deg,#2ea043,#1a7f37);border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:28px;margin:0 auto 12px">💊</div>
-        <h1 style="color:#fff;font-size:20px;font-weight:700;margin:0">نظام ERP الدوائي</h1>
-        <p style="color:#8b949e;font-size:12px;margin:6px 0 0">سجّل الدخول للمتابعة</p>
-      </div>
-      <div style="background:#161b22;border:1px solid #30363d;border-radius:12px;padding:22px">
-        <div style="margin-bottom:14px">
-          <label style="color:#8b949e;font-size:11px;display:block;margin-bottom:5px">اسم المستخدم</label>
-          <input id="_au" type="text" placeholder="أدخل اسم المستخدم" autocomplete="username"
-            style="width:100%;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-size:13px;color:#fff;font-family:Cairo,sans-serif;box-sizing:border-box;outline:none"
-            onkeydown="if(event.key==='Enter')document.getElementById('_ap').focus()">
-        </div>
-        <div style="margin-bottom:18px">
-          <label style="color:#8b949e;font-size:11px;display:block;margin-bottom:5px">كلمة المرور</label>
-          <input id="_ap" type="password" placeholder="كلمة المرور" autocomplete="current-password"
-            style="width:100%;background:#0d1117;border:1px solid #30363d;border-radius:8px;padding:10px 12px;font-size:13px;color:#fff;font-family:Cairo,sans-serif;box-sizing:border-box;outline:none"
-            onkeydown="if(event.key==='Enter')_doLogin()">
-        </div>
-        <div id="_aerr" style="display:none;color:#f85149;font-size:11px;margin-bottom:12px;padding:8px;background:rgba(248,81,73,.1);border-radius:6px;text-align:center"></div>
-        <button onclick="_doLogin()"
-          style="width:100%;background:linear-gradient(135deg,#2ea043,#1a7f37);color:#fff;border:none;border-radius:8px;padding:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:Cairo,sans-serif">
-          تسجيل الدخول
-        </button>
-      </div>
-      ${isFirst?`<div style="margin-top:12px;padding:10px;background:rgba(46,160,67,.08);border:1px solid rgba(46,160,67,.2);border-radius:8px;font-size:11px;color:#8b949e;text-align:center">
-        🔑 أول دخول — اسم المستخدم: <strong style="color:#fff">admin</strong> &nbsp;|&nbsp; كلمة المرور: <strong style="color:#fff">admin123</strong>
-      </div>`:''}
-    </div>`;
-  setTimeout(()=>document.getElementById('_au')?.focus(), 150);
+  // Bind events after DOM is ready
+  setTimeout(function(){
+    var au = document.getElementById('_au');
+    var ap = document.getElementById('_ap');
+    var lb = document.getElementById('_login_btn');
+    var bb = document.getElementById('_back_btn');
+    if(au) au.focus();
+    if(au) au.addEventListener('keydown', function(e){ if(e.key==='Enter' && ap) ap.focus(); });
+    if(ap) ap.addEventListener('keydown', function(e){ if(e.key==='Enter') _doLogin(); });
+    if(lb) lb.addEventListener('click', function(){ _doLogin(); });
+    if(bb) bb.addEventListener('click', function(){ if(typeof _authLogout==='function')_authLogout(); coShowScreen(); });
+  }, 50);
 }
 
 function _doLogin(){
-  const u = (document.getElementById('_au')?.value||'').trim();
-  const p = document.getElementById('_ap')?.value||'';
-  const errEl = document.getElementById('_aerr');
-  const showErr = msg => { errEl.textContent=msg; errEl.style.display='block'; document.getElementById('_ap').value=''; };
+  var u = (document.getElementById('_au')?.value||'').trim();
+  var p = document.getElementById('_ap')?.value||'';
+  var errEl = document.getElementById('_aerr');
+  var showErr = function(msg){
+    if(!errEl) return;
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+    document.getElementById('_ap').value = '';
+    document.getElementById('_ap').focus();
+  };
+  if(errEl) errEl.style.display = 'none';
 
   if(!u||!p){ showErr('يرجى تعبئة اسم المستخدم وكلمة المرور'); return; }
 
-  const users = getAll('appUsers');
+  var users = getAll('appUsers');
 
-  // First time default admin
-  if(users.length===0){
-    if(u==='admin'&&p==='admin123'){
-      insert('appUsers',{username:'admin',password:_authHash('admin123'),name:'مدير النظام',role:'admin',active:true});
+  // First-time default admin
+  if(users.length === 0){
+    if(u === 'admin' && p === 'admin123'){
+      insert('appUsers',{username:'admin',password:_authHash('admin123'),
+        name:'مدير النظام',role:'admin',active:true,createdAt:Date.now()});
       _loginSuccess({username:'admin',name:'مدير النظام',role:'admin'});
       return;
     }
-    showErr('أول دخول: admin / admin123'); return;
+    showErr('أول دخول: اسم المستخدم admin — كلمة المرور admin123');
+    document.getElementById('_au').value = 'admin';
+    return;
   }
 
-  const user = users.find(x=>x.username===u&&x.active!==false);
+  var user = users.find(function(x){ return x.username === u; });
   if(!user){ showErr('اسم المستخدم غير موجود'); return; }
-  if(user.password!==_authHash(p)&&user.password!==p){ showErr('كلمة المرور غير صحيحة'); return; }
-  _loginSuccess({username:user.username,name:user.name,role:user.role,id:user.id});
+  if(user.active === false){ showErr('هذا الحساب موقوف — تواصل مع المدير'); return; }
+  if(user.password !== _authHash(p) && user.password !== p){
+    showErr('كلمة المرور غير صحيحة'); return;
+  }
+
+  _loginSuccess({username:user.username, name:user.name, role:user.role});
 }
 
 function _loginSuccess(sess){
   _authUser = sess;
   try{ sessionStorage.setItem('_erp_s', JSON.stringify(sess)); }catch(e){}
-  document.getElementById('_auth_login').style.display = 'none';
+
+  // Hide login overlay
+  var loginEl = document.getElementById('_auth_login');
+  if(loginEl) loginEl.style.display = 'none';
+
+  // Ensure co-screen hidden, main app visible
+  var coScr = document.getElementById('co-screen');
+  if(coScr) coScr.style.display = 'none';
+  var sidebar = document.getElementById('sidebar');
+  if(sidebar) sidebar.style.display = '';
+  var mainEl  = document.querySelector('main');
+  if(mainEl)  mainEl.style.display  = '';
+
   _updateBadge();
-  // Filter nav by role
   _filterNav();
+
+  // Navigate to dashboard
   go('dashboard');
 }
 
@@ -10271,6 +10326,16 @@ function _saveCoData(){
 if(!navItems.find(function(n){return n.id==='company';}))
   navItems.push({section:'الإعدادات',id:'company',icon:'🏢',label:'بيانات الشركة'});
 
+
+PAGES.registration=function(){
+  var _a=document.getElementById('pg-content');
+  if(_a&&window.renderDrugReg) window.renderDrugReg(_a);
+  else if(_a) _a.innerHTML='<div style="padding:40px;text-align:center"><h3>جاري تحميل وحدة التسجيل...</h3></div>';
+};
+if(!navItems.find(function(n){return n.id==='registration';}))
+  navItems.push({section:'التسجيل',id:'registration',icon:'📋',label:'سجل الإخطارات'});
+if(!navItems.find(function(n){return n.id==='company';}))
+  navItems.push({section:'الإعدادات',id:'company',icon:'🏢',label:'بيانات الشركة'});
 </script>
 <script>
 (function(){
