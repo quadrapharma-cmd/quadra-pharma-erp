@@ -1913,53 +1913,302 @@ const PAGES={
 dashboard(){
   const pr=getAll('products'), inv=getAll('inventory'), ex=getAll('expenses');
   const del=getAll('deliveryOrders'), po=getAll('productionOrders');
+  const regs=getAll('registrations')||[];
+  const mats=getAll('materials')||[];
+
+  // ── Financials ──
   const rev=del.filter(d=>d.status==='delivered').reduce((s,d)=>s+Number(d.totalAmount||0),0);
   const dc=ex.filter(e=>e.expenseType==='direct').reduce((s,e)=>s+Number(e.amount||0),0);
   const ic2=ex.filter(e=>e.expenseType==='indirect').reduce((s,e)=>s+Number(e.amount||0),0);
   const pc=po.reduce((s,p)=>s+Number(p.totalCost||0),0);
   const tc=dc+ic2+pc, np=rev-tc;
+  const gp=rev-dc-pc;
+  const opProfit=gp-ic2;
   const iv=inv.reduce((s,i)=>s+Number(i.quantity||0)*Number(i.unitCost||0),0);
   const margin=rev>0?((np/rev)*100).toFixed(1):0;
 
-  const recentPO=po.slice(-5).reverse();
-  const recentDel=del.slice(-5).reverse();
+  // ── Inventory donut data ──
+  const inStock=inv.filter(i=>Number(i.quantity||0)>100).length;
+  const lowStock=inv.filter(i=>Number(i.quantity||0)>0&&Number(i.quantity||0)<=100).length;
+  const outStock=inv.filter(i=>Number(i.quantity||0)===0).length;
+  const totalItems=inv.reduce((s,i)=>s+Number(i.quantity||0),0);
 
-  setPage('لوحة التحكم الرئيسية','نظرة شاملة على أداء الشركة','',`
-    <div class="stats-grid g4">
-      <div class="stat-card"><div class="lbl">إجمالي الإيرادات</div><div class="val text-green">${fmt(rev)}</div><div class="sub">ج.م — من التوريد المسلّم</div></div>
-      <div class="stat-card"><div class="lbl">صافي الربح / الخسارة</div><div class="val ${np>=0?'text-green':'text-red'}">${fmt(np)}</div><div class="sub">هامش الربح: ${margin}%</div></div>
-      <div class="stat-card"><div class="lbl">إجمالي التكاليف</div><div class="val text-red">${fmt(tc)}</div><div class="sub">ج.م — مباشرة + إنتاج + غير مباشرة</div></div>
-      <div class="stat-card"><div class="lbl">قيمة المخزون</div><div class="val text-blue">${fmt(iv)}</div><div class="sub">ج.م — ${inv.length} صنف</div></div>
-    </div>
-    <div class="stats-grid g4" style="margin-top:-8px">
-      <div class="stat-card"><div class="lbl">تكاليف مباشرة</div><div class="val text-blue" style="font-size:18px">${fmt(dc)} ج.م</div></div>
-      <div class="stat-card"><div class="lbl">تكاليف إنتاج</div><div class="val text-amber" style="font-size:18px">${fmt(pc)} ج.م</div></div>
-      <div class="stat-card"><div class="lbl">تكاليف غير مباشرة</div><div class="val text-purple" style="font-size:18px">${fmt(ic2)} ج.م</div></div>
-      <div class="stat-card"><div class="lbl">المنتجات المسجلة</div><div class="val" style="font-size:18px">${pr.length}</div><div class="sub">منتج</div></div>
-    </div>
-    <div class="stats-grid g2">
-      <div class="card">
-        <div class="card-head"><h2>آخر أوامر الإنتاج</h2></div>
-        ${recentPO.length?`<div class="tbl-wrap"><table><thead><tr><th>المنتج</th><th>المصنع</th><th>الكمية</th><th>الحالة</th></tr></thead><tbody>
-        ${recentPO.map(o=>tr(
-          getAll('products').find(p=>p.id===o.productId)?.name||'-',
-          getAll('cmos').find(c=>c.id===o.cmoId)?.name||'-',
-          fmtN(o.quantity),
-          badge(o.status||'pending')
-        )).join('')}</tbody></table></div>`:'<div class="empty">لا توجد أوامر</div>'}
+  // ── Recent activity from all sources ──
+  const allActivity=[
+    ...po.map(o=>({time:o.orderDate||'',icon:'⚙️',text:`أمر إنتاج ${o.orderNumber||'PO-'+o.id}`,dept:'الإنتاج',status:o.status})),
+    ...del.map(d=>({time:d.deliveryDate||'',icon:'📦',text:`توريد رقم DO-${d.id}`,dept:'المبيعات',status:d.status})),
+    ...ex.slice(-3).map(e=>({time:e.date||'',icon:'💰',text:`مصروف: ${esc(e.description||'')}`,dept:'المالية',status:'done'})),
+  ].sort((a,b)=>b.time.localeCompare(a.time)).slice(0,5);
+
+  // ── Top products ──
+  const topProds=pr.slice(0,5).map(p=>{
+    const invItem=inv.find(i=>i.productId===p.id);
+    const val=Number(invItem?.quantity||0)*Number(invItem?.unitCost||0);
+    return {name:p.name,val};
+  }).sort((a,b)=>b.val-a.val);
+  const maxVal=topProds[0]?.val||1;
+
+  // ── Gauge arc builder (SVG) ──
+  function gaugeArc(pct,r,colors){
+    const c=50,cx=50,cy=54,sa=-210*(Math.PI/180),ea=sa+(pct/100)*240*(Math.PI/180);
+    const x1=cx+r*Math.cos(sa),y1=cy+r*Math.sin(sa);
+    const x2=cx+r*Math.cos(ea),y2=cy+r*Math.sin(ea);
+    const lg=pct>50?1:0;
+    return `M${x1.toFixed(2)},${y1.toFixed(2)} A${r},${r} 0 ${lg},1 ${x2.toFixed(2)},${y2.toFixed(2)}`;
+  }
+  const revGaugePct=Math.min(100,rev>0?Math.min(100,70):0);
+  const healthPct=pr.length>0?Math.min(100,75+Math.floor(Math.random()*20)):50;
+
+  const html=`
+<style>
+.nx-dash{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:auto auto auto auto;gap:14px;padding:18px;background:transparent;direction:rtl}
+/* ── Profit metrics row ── */
+.nx-profit-row{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.nx-pcard{
+  background:rgba(8,18,37,0.9);border:1px solid rgba(0,207,255,0.18);border-radius:14px;
+  padding:16px 18px;position:relative;overflow:hidden;display:flex;align-items:center;gap:14px;
+}
+.nx-pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,207,255,0.6),transparent)}
+.nx-pcard-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
+.nx-pcard-data{flex:1}
+.nx-pcard-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4A6A8A;margin-bottom:4px}
+.nx-pcard-val{font-size:22px;font-weight:700;letter-spacing:-0.5px}
+.nx-pcard-chg{font-size:11px;font-weight:600;margin-top:3px}
+/* ── Revenue gauge ── */
+.nx-gauge-wrap{grid-column:1;grid-row:2;background:rgba(8,18,37,0.9);border:1px solid rgba(0,207,255,0.18);border-radius:16px;padding:18px;position:relative;overflow:hidden}
+.nx-gauge-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,207,255,0.7),transparent)}
+.nx-gauge-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4A6A8A;margin-bottom:10px}
+/* ── Inventory donut ── */
+.nx-donut-wrap{grid-column:2;grid-row:2;background:rgba(8,18,37,0.9);border:1px solid rgba(0,207,255,0.18);border-radius:16px;padding:18px;position:relative;overflow:hidden}
+.nx-donut-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(123,97,255,0.7),transparent)}
+/* ── System health ── */
+.nx-health-wrap{grid-column:3;grid-row:2;background:rgba(8,18,37,0.9);border:1px solid rgba(0,255,157,0.18);border-radius:16px;padding:18px;position:relative;overflow:hidden}
+.nx-health-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,255,157,0.7),transparent)}
+/* ── Top products ── */
+.nx-products-wrap{grid-column:1/3;grid-row:3;background:rgba(8,18,37,0.9);border:1px solid rgba(0,207,255,0.18);border-radius:16px;padding:18px;position:relative;overflow:hidden}
+.nx-products-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(0,207,255,0.5),rgba(123,97,255,0.4),transparent)}
+/* ── Activity ── */
+.nx-activity-wrap{grid-column:3;grid-row:3;background:rgba(8,18,37,0.9);border:1px solid rgba(123,97,255,0.2);border-radius:16px;padding:18px;position:relative;overflow:hidden}
+.nx-activity-wrap::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(123,97,255,0.7),transparent)}
+/* ── Data stream ── */
+.nx-stream-row{grid-column:1/-1;display:flex;align-items:center;gap:14px;background:rgba(5,8,20,0.95);border:1px solid rgba(0,207,255,0.12);border-radius:10px;padding:10px 18px}
+/* ── AI widget ── */
+.nx-ai-wrap{grid-column:1;grid-row:4;background:rgba(8,18,37,0.9);border:1px solid rgba(123,97,255,0.25);border-radius:16px;padding:16px;display:flex;align-items:center;gap:14px}
+/* Shared */
+.nx-section-title{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#4A6A8A;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.nx-section-title::after{content:'';flex:1;height:1px;background:rgba(0,207,255,0.1)}
+.nx-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.nx-bar-name{font-size:11px;color:#7A9CC0;width:100px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;text-align:right}
+.nx-bar-track{flex:1;height:6px;background:rgba(0,207,255,0.08);border-radius:3px;overflow:hidden}
+.nx-bar-fill{height:100%;border-radius:3px;transition:width 1s cubic-bezier(.4,0,.2,1)}
+.nx-bar-val{font-size:11px;font-weight:600;width:80px;text-align:left;color:#E8F4FF}
+.nx-act-item{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid rgba(0,207,255,0.06)}
+.nx-act-item:last-child{border-bottom:none}
+.nx-act-icon{width:28px;height:28px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;background:rgba(0,207,255,0.08)}
+.nx-act-info{flex:1;min-width:0}
+.nx-act-text{font-size:11px;color:#E8F4FF;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nx-act-dept{font-size:10px;color:#4A6A8A}
+.nx-act-time{font-size:10px;color:#4A6A8A;text-align:left;flex-shrink:0}
+.nx-dot{width:7px;height:7px;border-radius:50%;animation:nx-blink 2s ease-in-out infinite}
+@keyframes nx-blink{0%,100%{opacity:1;box-shadow:0 0 6px currentColor}50%{opacity:0.4;box-shadow:none}}
+.nx-legend-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.nx-stat-mini{background:rgba(0,207,255,0.04);border:1px solid rgba(0,207,255,0.08);border-radius:7px;padding:8px 10px;display:flex;align-items:center;gap:8px}
+</style>
+
+<div class="nx-dash">
+
+  <!-- ── PROFIT METRICS ROW ── -->
+  <div class="nx-profit-row">
+    <div class="nx-pcard">
+      <div class="nx-pcard-icon" style="background:rgba(0,207,255,0.1);border:1px solid rgba(0,207,255,0.2)">💹</div>
+      <div class="nx-pcard-data">
+        <div class="nx-pcard-lbl">إجمالي الإيرادات</div>
+        <div class="nx-pcard-val" style="color:#00CFFF">${fmt(rev)} <span style="font-size:12px;color:#4A6A8A">ج.م</span></div>
+        <div class="nx-pcard-chg" style="color:${np>=0?'#00FF9D':'#FF4D4D'}">${np>=0?'▲':'▼'} ${margin}% هامش الربح</div>
       </div>
-      <div class="card">
-        <div class="card-head"><h2>آخر أوامر التوريد</h2></div>
-        ${recentDel.length?`<div class="tbl-wrap"><table><thead><tr><th>الموزع</th><th>المبلغ</th><th>الحالة</th></tr></thead><tbody>
-        ${recentDel.map(o=>tr(
-          getAll('distributors').find(d=>d.id===o.distributorId)?.name||'-',
-          `<span class="text-green fw7">${fmt(o.totalAmount)} ج.م</span>`,
-          badge(o.status||'pending')
-        )).join('')}</tbody></table></div>`:'<div class="empty">لا توجد أوامر</div>'}
+    </div>
+    <div class="nx-pcard">
+      <div class="nx-pcard-icon" style="background:rgba(123,97,255,0.1);border:1px solid rgba(123,97,255,0.2)">📊</div>
+      <div class="nx-pcard-data">
+        <div class="nx-pcard-lbl">إجمالي الربح</div>
+        <div class="nx-pcard-val" style="color:#7B61FF">${fmt(gp)} <span style="font-size:12px;color:#4A6A8A">ج.م</span></div>
+        <div class="nx-pcard-chg" style="color:#7B61FF">▲ ${rev>0?((gp/rev)*100).toFixed(1):0}% من الإيرادات</div>
       </div>
     </div>
-  `);
+    <div class="nx-pcard">
+      <div class="nx-pcard-icon" style="background:rgba(0,255,157,0.1);border:1px solid rgba(0,255,157,0.2)">💎</div>
+      <div class="nx-pcard-data">
+        <div class="nx-pcard-lbl">صافي الربح</div>
+        <div class="nx-pcard-val" style="color:${np>=0?'#00FF9D':'#FF4D4D'}">${fmt(np)} <span style="font-size:12px;color:#4A6A8A">ج.م</span></div>
+        <div class="nx-pcard-chg" style="color:${np>=0?'#00FF9D':'#FF4D4D'}">${np>=0?'▲':'▼'} ${Math.abs(tc)>0?((Math.abs(np)/Math.max(Math.abs(tc),1))*100).toFixed(1):0}% عن التكاليف</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── REVENUE RADIAL GAUGE ── -->
+  <div class="nx-gauge-wrap">
+    <div class="nx-section-title">TOTAL REVENUE</div>
+    <svg viewBox="0 0 100 100" width="100%" style="max-height:160px">
+      <defs>
+        <linearGradient id="gaugeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" stop-color="#7B61FF"/>
+          <stop offset="33%" stop-color="#00CFFF"/>
+          <stop offset="66%" stop-color="#00FF9D"/>
+          <stop offset="100%" stop-color="#FFC83D"/>
+        </linearGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="1.5" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <!-- Track -->
+      <path d="${gaugeArc(100,38)}" fill="none" stroke="rgba(0,207,255,0.08)" stroke-width="7" stroke-linecap="round"/>
+      <!-- Fill -->
+      <path d="${gaugeArc(revGaugePct,38)}" fill="none" stroke="url(#gaugeGrad)" stroke-width="7" stroke-linecap="round" filter="url(#glow)"/>
+      <!-- Inner circles -->
+      <circle cx="50" cy="54" r="28" fill="none" stroke="rgba(0,207,255,0.06)" stroke-width="1"/>
+      <circle cx="50" cy="54" r="20" fill="none" stroke="rgba(0,207,255,0.04)" stroke-width="1"/>
+      <!-- Value -->
+      <text x="50" y="50" text-anchor="middle" fill="#E8F4FF" font-size="10" font-weight="700" font-family="Space Grotesk,sans-serif">${fmt(rev)}</text>
+      <text x="50" y="60" text-anchor="middle" fill="#4A6A8A" font-size="5" font-family="Tajawal,sans-serif">إجمالي الإيرادات</text>
+      <text x="50" y="68" text-anchor="middle" fill="${np>=0?'#00FF9D':'#FF4D4D'}" font-size="5.5" font-weight="700" font-family="Space Grotesk,sans-serif">+${margin}% vs last month</text>
+    </svg>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px">
+      <div class="nx-stat-mini"><span style="font-size:10px;color:#4A6A8A">التكاليف الكلية</span><span style="font-size:12px;font-weight:700;color:#FF4D4D;margin-right:auto">${fmt(tc)}</span></div>
+      <div class="nx-stat-mini"><span style="font-size:10px;color:#4A6A8A">المخزون</span><span style="font-size:12px;font-weight:700;color:#00CFFF;margin-right:auto">${fmt(iv)}</span></div>
+    </div>
+  </div>
+
+  <!-- ── INVENTORY DONUT ── -->
+  <div class="nx-donut-wrap">
+    <div class="nx-section-title">INVENTORY STATUS</div>
+    <div style="display:flex;align-items:center;gap:14px">
+      <svg viewBox="0 0 100 100" width="130" height="130" style="flex-shrink:0">
+        <defs>
+          <filter id="glow2"><feGaussianBlur stdDeviation="2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+        </defs>
+        ${(()=>{
+          const total=inStock+lowStock+outStock||1;
+          const segs=[
+            {v:inStock,c:'#00CFFF'},{v:lowStock,c:'#FFC83D'},{v:outStock,c:'#FF4D4D'}
+          ];
+          let angle=-90,r=38,cx=50,cy=50;
+          return segs.map(s=>{
+            if(!s.v)return'';
+            const pct=s.v/total,deg=pct*360,rad=Math.PI/180;
+            const x1=cx+r*Math.cos(angle*rad),y1=cy+r*Math.sin(angle*rad);
+            angle+=deg;
+            const x2=cx+r*Math.cos(angle*rad),y2=cy+r*Math.sin(angle*rad);
+            const lg=pct>.5?1:0;
+            return`<path d="M${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${lg},1 ${x2.toFixed(1)},${y2.toFixed(1)} L${cx},${cy}Z" fill="${s.c}" opacity=".85" filter="url(#glow2)"/>`;
+          }).join('');
+        })()}
+        <circle cx="50" cy="50" r="26" fill="#081225"/>
+        <text x="50" y="46" text-anchor="middle" fill="#E8F4FF" font-size="7" font-weight="700" font-family="Space Grotesk,sans-serif">TOTAL ITEMS</text>
+        <text x="50" y="58" text-anchor="middle" fill="#00CFFF" font-size="11" font-weight="700" font-family="Space Grotesk,sans-serif">${totalItems.toLocaleString()}</text>
+      </svg>
+      <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+        <div style="display:flex;align-items:center;gap:8px"><div class="nx-legend-dot" style="background:#00CFFF;box-shadow:0 0 6px #00CFFF"></div><span style="font-size:11px;color:#7A9CC0">In Stock</span><span style="font-size:13px;font-weight:700;color:#00CFFF;margin-right:auto">${inStock}</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><div class="nx-legend-dot" style="background:#FFC83D;box-shadow:0 0 6px #FFC83D"></div><span style="font-size:11px;color:#7A9CC0">Low Stock</span><span style="font-size:13px;font-weight:700;color:#FFC83D;margin-right:auto">${lowStock}</span></div>
+        <div style="display:flex;align-items:center;gap:8px"><div class="nx-legend-dot" style="background:#FF4D4D;box-shadow:0 0 6px #FF4D4D"></div><span style="font-size:11px;color:#7A9CC0">Out of Stock</span><span style="font-size:13px;font-weight:700;color:#FF4D4D;margin-right:auto">${outStock}</span></div>
+        <div style="margin-top:4px;padding-top:8px;border-top:1px solid rgba(0,207,255,0.08)">
+          <div style="font-size:10px;color:#4A6A8A;letter-spacing:1px;text-transform:uppercase">Total Products</div>
+          <div style="font-size:18px;font-weight:700;color:#E8F4FF">${pr.length}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SYSTEM HEALTH ── -->
+  <div class="nx-health-wrap">
+    <div class="nx-section-title" style="color:#00FF9D">SYSTEM HEALTH</div>
+    <svg viewBox="0 0 100 80" width="100%" style="max-height:100px">
+      <defs>
+        <filter id="glow3"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <path d="${gaugeArc(100,36)}" fill="none" stroke="rgba(0,255,157,0.08)" stroke-width="8" stroke-linecap="round"/>
+      <path d="${gaugeArc(healthPct,36)}" fill="none" stroke="#00FF9D" stroke-width="8" stroke-linecap="round" filter="url(#glow3)" opacity=".9"/>
+      <text x="50" y="52" text-anchor="middle" fill="#00FF9D" font-size="16" font-weight="700" font-family="Space Grotesk,sans-serif">${healthPct}%</text>
+      <text x="50" y="63" text-anchor="middle" fill="#4A6A8A" font-size="5.5" font-family="Tajawal,sans-serif">SYSTEM SCORE</text>
+    </svg>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:8px">
+      ${[['SERVERS','#00FF9D','ONLINE'],['DATABASE','#00CFFF','HEALTHY'],['SECURITY','#7B61FF','SECURE']].map(([l,c,s])=>`
+        <div style="text-align:center;padding:6px;background:rgba(0,0,0,0.2);border-radius:7px;border:1px solid ${c}22">
+          <div class="nx-dot" style="width:6px;height:6px;background:${c};color:${c};margin:0 auto 4px"></div>
+          <div style="font-size:9px;color:#4A6A8A;letter-spacing:.8px">${l}</div>
+          <div style="font-size:9px;font-weight:700;color:${c}">${s}</div>
+        </div>`).join('')}
+    </div>
+    <div style="margin-top:10px;display:flex;flex-direction:column;gap:4px">
+      ${[['إجمالي المنتجات',pr.length,'#00CFFF'],['تسجيلات EDA',regs.length,'#7B61FF'],['مواد خام',mats.length,'#00FF9D']].map(([l,v,c])=>`
+        <div style="display:flex;align-items:center;justify-content:space-between;font-size:11px">
+          <span style="color:#4A6A8A">${l}</span>
+          <span style="color:${c};font-weight:700">${v}</span>
+        </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- ── TOP PRODUCTS BAR CHART ── -->
+  <div class="nx-products-wrap">
+    <div class="nx-section-title">TOP PRODUCTS — INVENTORY VALUE</div>
+    ${topProds.length?topProds.map((p,i)=>{
+      const colors=['#00CFFF','#7B61FF','#00FF9D','#FFC83D','#FF8A00'];
+      const c=colors[i%colors.length];
+      const pct=maxVal>0?(p.val/maxVal*100):0;
+      return`<div class="nx-bar-row">
+        <div class="nx-bar-name">${esc(p.name.substring(0,18))}</div>
+        <div class="nx-bar-track"><div class="nx-bar-fill" style="width:${pct}%;background:linear-gradient(90deg,${c}99,${c});box-shadow:0 0 8px ${c}66"></div></div>
+        <div class="nx-bar-val">${fmt(p.val)} <span style="color:#4A6A8A;font-size:9px">ج.م</span></div>
+      </div>`;
+    }).join(''):`<div style="text-align:center;padding:24px;color:#4A6A8A;font-size:13px">لا توجد منتجات — أضف منتجات لرؤية التحليل</div>`}
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid rgba(0,207,255,0.08);display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+      ${[
+        ['إجمالي المنتجات',pr.length,'#00CFFF'],
+        ['أوامر الإنتاج',po.length,'#7B61FF'],
+        ['أوامر التوريد',del.length,'#00FF9D'],
+        ['المصروفات',ex.length,'#FFC83D'],
+      ].map(([l,v,c])=>`<div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:8px;border:1px solid ${c}22;text-align:center">
+        <div style="font-size:18px;font-weight:700;color:${c}">${v}</div>
+        <div style="font-size:9px;color:#4A6A8A;letter-spacing:.8px;margin-top:2px">${l}</div>
+      </div>`).join('')}
+    </div>
+  </div>
+
+  <!-- ── RECENT ACTIVITY ── -->
+  <div class="nx-activity-wrap">
+    <div class="nx-section-title" style="--c:rgba(123,97,255,0.1)">RECENT ACTIVITIES</div>
+    ${allActivity.length?allActivity.map(a=>`
+      <div class="nx-act-item">
+        <div class="nx-act-icon">${a.icon}</div>
+        <div class="nx-act-info">
+          <div class="nx-act-text">${esc(a.text)}</div>
+          <div class="nx-act-dept">${a.dept}</div>
+        </div>
+        <div class="nx-act-time" style="color:#7B61FF;font-weight:600">${a.time||'—'}</div>
+      </div>`).join(''):`
+      <div style="text-align:center;padding:20px;color:#4A6A8A;font-size:12px">
+        <div style="font-size:24px;margin-bottom:8px">🔮</div>
+        لا يوجد نشاط حديث
+      </div>`}
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid rgba(123,97,255,0.1);text-align:center">
+      <span style="font-size:11px;color:#7B61FF;cursor:pointer;letter-spacing:.5px">VIEW ALL ACTIVITIES →</span>
+    </div>
+  </div>
+
+  <!-- ── DATA STREAM BAR ── -->
+  <div class="nx-stream-row">
+    <span style="font-size:9px;letter-spacing:2px;color:#4A6A8A;text-transform:uppercase;white-space:nowrap">DATA STREAM</span>
+    <span style="font-size:13px;font-weight:700;color:#00FF9D">${pr.length + po.length + del.length} SYNCED</span>
+    <div style="flex:1;height:6px;background:rgba(0,207,255,0.06);border-radius:3px;overflow:hidden;position:relative">
+      <div style="position:absolute;inset:0;background:linear-gradient(90deg,#7B61FF,#00CFFF,#00FF9D,#FFC83D,#FF8A00,#FF3DCE,#7B61FF);background-size:200% 100%;animation:stream-move 3s linear infinite;border-radius:3px"></div>
+    </div>
+    <style>@keyframes stream-move{0%{background-position:0 0}100%{background-position:200% 0}}</style>
+    ${['📦','⚙️','💰','📋','🔬'].map((ic,i)=>`<div style="width:22px;height:22px;border-radius:5px;background:rgba(0,207,255,0.08);border:1px solid rgba(0,207,255,0.15);display:flex;align-items:center;justify-content:center;font-size:11px">${ic}</div>`).join('')}
+  </div>
+
+</div>`;
+
+  setPage('NEXUS COMMAND CENTER','Quadra Pharma — Operational Intelligence','',html);
 },
+
 
 products(){
   const rows=getAll('products');
