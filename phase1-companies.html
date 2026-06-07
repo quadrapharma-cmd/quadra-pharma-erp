@@ -10958,6 +10958,28 @@ function _saveUser(id){
 // renderNav/go called by coEnter() after company is selected
 
 
+function addIngredientToList(){
+  var name=document.getElementById('ing-name')?document.getElementById('ing-name').value.trim():'';
+  var conc=document.getElementById('ing-conc')?document.getElementById('ing-conc').value.trim():'';
+  var unit=document.getElementById('ing-unit')?document.getElementById('ing-unit').value:'mg';
+  var type=document.getElementById('ing-type')?document.getElementById('ing-type').value:'active';
+  if(!name){if(typeof showNotif==='function')showNotif('ادخل اسم المادة','warning');return;}
+  var list=document.getElementById('ing-list');
+  if(!list)return;
+  var item=document.createElement('div');
+  item.style.cssText='display:flex;align-items:center;gap:8px;padding:6px;background:rgba(2,132,199,0.05);border-radius:6px;margin-bottom:4px';
+  var dataStr=JSON.stringify({name:name,conc:conc,unit:unit,type:type});
+  item.innerHTML='<span style="flex:1;font-size:12px"><strong>'+esc(name)+'</strong>'+(conc?' — '+conc+' '+unit:'')+
+    '<span style="font-size:10px;margin-right:6px;background:rgba(2,132,199,0.1);padding:1px 5px;border-radius:3px;color:var(--primary)">'+type+'</span></span>'+
+    '<button type="button" onclick="this.parentNode.remove()" style="background:none;border:none;color:var(--red,#dc2626);cursor:pointer;font-size:14px">&#xD7;</button>';
+  var hidden=document.createElement('input');
+  hidden.type='hidden';hidden.name='ing';hidden.value=dataStr;
+  item.appendChild(hidden);
+  list.appendChild(item);
+  var ingName=document.getElementById('ing-name');if(ingName)ingName.value='';
+  var ingConc=document.getElementById('ing-conc');if(ingConc)ingConc.value='';
+}
+
 PAGES.company=function(){
   var _a=document.getElementById('pg-content');
   if(!_a)return;
@@ -11883,25 +11905,336 @@ function renderTabParties(r){
   return html;
 }
 
-function renderTabComposition(r){
-  var html='<div class="fsec"><div class="fsec-title">🧪 التركيب الكمي والنوعي</div>';
-  if(r.api_suppliers&&r.api_suppliers.length){
-    html+='<div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">المواد الفعالة (Active Ingredients)</div>'+
-      '<div class="table-wrap"><table><thead><tr><th>المادة</th><th>الكمية/التركيز</th><th>المواصفة</th></tr></thead><tbody>'+
-      r.api_suppliers.map(function(s){return'<tr><td><strong>'+esc(s.material)+'</strong></td><td>'+esc(s.strength||s.spec||'—')+'</td><td><span class="vtag">'+esc(s.spec||'—')+'</span></td></tr>';}).join('')+
-      '</tbody></table></div><div style="height:14px"></div>';
-  }
-  if(r.inactive_ingredients&&r.inactive_ingredients.length){
-    html+='<div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:8px">المواد المساعدة (Excipients)</div>'+
-      '<div class="table-wrap"><table><thead><tr><th>المادة</th><th>الكمية</th><th>الدور</th></tr></thead><tbody>'+
-      r.inactive_ingredients.map(function(e){return'<tr><td>'+esc(e.name)+'</td><td>'+esc(e.qty||'—')+'</td><td style="font-size:11px;color:var(--gray)">'+esc(e.role||'—')+'</td></tr>';}).join('')+
-      '</tbody></table></div>';
-  }
-  if(!((r.api_suppliers||[]).length+(r.inactive_ingredients||[]).length)){
-    html+='<div class="empty" style="padding:24px"><h3>لا توجد بيانات تركيب مُدخلة</h3></div>';
-  }
-  html+='</div>';return html;
+// ══════════════════════════════════════════════════════════════
+// MATERIALS DATABASE — 311 APIs + Common Excipients
+// ══════════════════════════════════════════════════════════════
+var APIS_DB = [
+  // Antibiotics
+  'Amoxicillin','Ampicillin','Azithromycin','Cefadroxil','Cefazolin',
+  'Cefixime','Cefpodoxime','Ceftriaxone','Cephalexin','Ciprofloxacin',
+  'Clarithromycin','Clindamycin','Co-Amoxiclav','Doxycycline','Erythromycin',
+  'Gentamicin','Levofloxacin','Metronidazole','Moxifloxacin','Nitrofurantoin',
+  'Norfloxacin','Ofloxacin','Penicillin G','Penicillin V','Tetracycline',
+  'Trimethoprim','Vancomycin',
+  // Analgesics / NSAIDs
+  'Acetaminophen','Aspirin','Celecoxib','Diclofenac Sodium','Diclofenac Potassium',
+  'Ibuprofen','Indomethacin','Ketoprofen','Ketorolac','Meloxicam',
+  'Naproxen','Nimesulide','Piroxicam','Tramadol HCl',
+  // Cardiovascular
+  'Amlodipine Besylate','Atenolol','Bisoprolol Fumarate','Captopril',
+  'Carvedilol','Digoxin','Diltiazem HCl','Enalapril Maleate','Furosemide',
+  'Hydralazine','Hydrochlorothiazide','Irbesartan','Isosorbide Dinitrate',
+  'Lisinopril','Losartan Potassium','Metoprolol Tartrate','Nifedipine',
+  'Perindopril','Ramipril','Simvastatin','Spironolactone','Telmisartan',
+  'Valsartan','Verapamil HCl',
+  // Diabetes
+  'Acarbose','Dapagliflozin','Empagliflozin','Glibenclamide','Gliclazide',
+  'Glimepiride','Glipizide','Insulin Aspart','Insulin Detemir','Insulin Glargine',
+  'Insulin Human','Linagliptin','Metformin HCl','Pioglitazone','Saxagliptin',
+  'Sitagliptin','Vildagliptin',
+  // GI
+  'Esomeprazole','Famotidine','Lactulose','Lansoprazole','Loperamide',
+  'Mesalazine','Metoclopramide','Omeprazole','Pantoprazole','Rabeprazole',
+  'Ranitidine','Sucralfate',
+  // Respiratory
+  'Beclomethasone','Budesonide','Cetirizine HCl','Dextromethorphan',
+  'Fluticasone','Formoterol','Ipratropium','Loratadine','Montelukast',
+  'Salbutamol','Salmeterol','Terbutaline','Theophylline',
+  // CNS
+  'Alprazolam','Carbamazepine','Donepezil','Fluoxetine','Haloperidol',
+  'Lamotrigine','Levodopa','Lithium Carbonate','Memantine','Olanzapine',
+  'Phenytoin','Quetiapine','Risperidone','Sertraline','Valproic Acid',
+  'Zolpidem',
+  // Vitamins / Minerals / Supplements
+  'Ascorbic Acid (Vit C)','Calcium Carbonate','Calcium Gluconate',
+  'Cholecalciferol (Vit D3)','Cyanocobalamin (Vit B12)','Ferrous Sulfate',
+  'Folic Acid','Magnesium Hydroxide','Mecobalamin','Multivitamin Complex',
+  'Pyridoxine HCl (Vit B6)','Retinol (Vit A)','Riboflavin (Vit B2)',
+  'Thiamine HCl (Vit B1)','Tocopherol (Vit E)','Zinc Sulfate',
+  // Dermatology
+  'Acyclovir','Azelaic Acid','Betamethasone','Clobetasol','Clotrimazole',
+  'Fluconazole','Hydrocortisone','Ketoconazole','Mometasone','Mupirocin',
+  'Nystatin','Salicylic Acid','Silver Sulfadiazine','Tretinoin',
+  // Ophthalmology
+  'Latanoprost','Olopatadine','Pilocarpine','Timolol Maleate',
+  // Hormones
+  'Dexamethasone','Levothyroxine','Methylprednisolone','Prednisolone',
+  'Prednisone','Progesterone',
+  // Anticoagulants
+  'Apixaban','Dabigatran','Enoxaparin Sodium','Rivaroxaban','Warfarin Sodium',
+  // Oncology basics
+  'Capecitabine','Imatinib','Methotrexate','Tamoxifen',
+  // Purified Water / Active Ingredients
+  'Purified Water BP 2019','Purified Water USP','Water for Injection',
+  // Cosmetic AIs
+  'Allantoin','Alpha Arbutin','Bakuchiol','Ceramide','Centella Asiatica',
+  'Collagen Hydrolysate','Glycolic Acid','Hyaluronic Acid','Kojic Acid',
+  'Lactic Acid','Niacinamide','Panthenol','Retinol','Salicylic Acid',
+  'Tocopherol Acetate','Zinc PCA',
+  // Food/NFSA Active Ingredients
+  'Beta-Glucan','Coenzyme Q10','Dextrose','Evening Primrose Oil',
+  'Fish Oil (Omega-3)','Glucosamine','L-Carnitine','Lutein',
+  'Lycopene','Melatonin','Probiotics (Lactobacillus)','Whey Protein',
+];
+
+var EXCIPIENTS_DB = [
+  // Binders
+  'Microcrystalline Cellulose (MCC)','Hydroxypropyl Methylcellulose (HPMC)',
+  'Polyvinylpyrrolidone (PVP)','Starch','Pre-gelatinized Starch',
+  'Hydroxypropyl Cellulose (HPC)','Carboxymethyl Cellulose (CMC)',
+  // Fillers
+  'Lactose Monohydrate','Lactose Anhydrous','Dibasic Calcium Phosphate',
+  'Mannitol','Sorbitol','Sucrose','Dextrose',
+  'Calcium Carbonate','Silicon Dioxide (Aerosil)',
+  // Disintegrants
+  'Croscarmellose Sodium','Sodium Starch Glycolate','Crospovidone',
+  'Low-Substituted HPC',
+  // Lubricants
+  'Magnesium Stearate','Stearic Acid','Talc','Sodium Stearyl Fumarate',
+  'Glyceryl Behenate',
+  // Coatings
+  'Opadry White','Opadry II','Eudragit L100','Eudragit S100',
+  'Shellac','Carnauba Wax','Hydroxypropyl Methylcellulose Phthalate (HPMCP)',
+  // Preservatives
+  'Benzalkonium Chloride','Benzyl Alcohol','Chlorocresol',
+  'Methyl Paraben','Propyl Paraben','Potassium Sorbate','Sodium Benzoate',
+  'Phenol','Thimerosal',
+  // pH Adjusters
+  'Citric Acid Anhydrous','Citric Acid Monohydrate','Tartaric Acid',
+  'Fumaric Acid','Sodium Hydroxide','Hydrochloric Acid',
+  'Sodium Bicarbonate','Trisodium Citrate',
+  // Solvents / Vehicles
+  'Purified Water','Ethanol 95%','Propylene Glycol','Glycerin',
+  'Polyethylene Glycol (PEG) 400','Macrogol 6000',
+  // Emulsifiers / Surfactants
+  'Polysorbate 80 (Tween 80)','Polysorbate 20','Lecithin',
+  'Sodium Lauryl Sulfate','Poloxamer 407','Cremophor EL',
+  // Sweeteners
+  'Sucralose','Aspartame','Saccharin Sodium','Acesulfame K',
+  'Sorbitol Solution','Maltitol','Xylitol',
+  // Flavors / Colors
+  'Vanilla Flavor','Strawberry Flavor','Orange Flavor','Mint Flavor',
+  'Sunset Yellow (E110)','Tartrazine (E102)','Titanium Dioxide (E171)',
+  'Iron Oxide Red','Iron Oxide Yellow','Brilliant Blue',
+  // Gelling / Thickening
+  'Carbomer 934','Carbomer 940','Xanthan Gum','Sodium CMC',
+  'Sodium Alginate','Gelatin','Agar',
+  // Antioxidants
+  'BHA (Butylated Hydroxyanisole)','BHT (Butylated Hydroxytoluene)',
+  'Sodium Metabisulfite','Ascorbic Acid','Tocopherol',
+  // Isotonicity agents
+  'Sodium Chloride','Glucose','Mannitol',
+];
+
+// ══════════════════════════════════════════════════════════════
+// AUTOCOMPLETE ENGINE
+// ══════════════════════════════════════════════════════════════
+function showAutocomplete(inputId,listId,db,onSelect){
+  var inp=document.getElementById(inputId);
+  var list=document.getElementById(listId);
+  if(!inp||!list)return;
+  inp.addEventListener('input',function(){
+    var q=inp.value.trim().toLowerCase();
+    list.innerHTML='';
+    if(q.length<2){list.style.display='none';return;}
+    var hits=db.filter(function(x){return x.toLowerCase().indexOf(q)>=0;}).slice(0,8);
+    if(!hits.length){list.style.display='none';return;}
+    hits.forEach(function(item){
+      var d=document.createElement('div');
+      d.className='ac-item';
+      d.textContent=item;
+      d.addEventListener('mousedown',function(e){
+        e.preventDefault();
+        inp.value=item;
+        list.style.display='none';
+        if(onSelect)onSelect(item);
+      });
+      list.appendChild(d);
+    });
+    list.style.display='block';
+  });
+  inp.addEventListener('blur',function(){setTimeout(function(){list.style.display='none';},150);});
 }
+
+// ══════════════════════════════════════════════════════════════
+// COMPOSITION TAB — Full CRUD
+// ══════════════════════════════════════════════════════════════
+function renderTabComposition(r){
+  if(!r.api_suppliers)r.api_suppliers=[];
+  if(!r.inactive_ingredients)r.inactive_ingredients=[];
+
+  var html='<style>'+
+    '.comp-section{margin-bottom:20px}'+
+    '.comp-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}'+
+    '.comp-head h4{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}'+
+    '.comp-table{width:100%;border-collapse:collapse;font-size:12px}'+
+    '.comp-table th{background:var(--bg2,#f8fafc);font-size:10px;text-transform:uppercase;letter-spacing:.8px;color:var(--muted);padding:7px 10px;border-bottom:1px solid var(--border)}'+
+    '.comp-table td{padding:7px 10px;border-bottom:1px solid var(--gray3,rgba(2,132,199,0.06));vertical-align:middle}'+
+    '.comp-table tr:hover td{background:var(--hover)}'+
+    '.comp-add-row{display:grid;gap:8px;margin-top:10px;background:var(--card2,#f8fafc);border:1px solid var(--border);border-radius:10px;padding:12px}'+
+    '.comp-add-row input,.comp-add-row select{background:var(--card,#fff);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-family:var(--font);font-size:12px;color:var(--text);width:100%}'+
+    '.comp-add-row input:focus,.comp-add-row select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 2px rgba(2,132,199,0.1)}'+
+    '.ac-wrap{position:relative}'+
+    '.ac-list{position:absolute;top:100%;right:0;left:0;background:#fff;border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.1);z-index:999;max-height:200px;overflow-y:auto;display:none}'+
+    '.ac-item{padding:8px 12px;cursor:pointer;font-size:12px;color:var(--text);border-bottom:1px solid var(--gray3)}'+
+    '.ac-item:hover{background:var(--hover);color:var(--primary)}'+
+    '.comp-del{background:none;border:none;cursor:pointer;color:var(--red,#dc2626);font-size:14px;padding:2px 6px;border-radius:4px}'+
+    '.comp-del:hover{background:var(--red-light,#fee2e2)}'+
+    '</style>'+
+
+    // ── API Suppliers ──
+    '<div class="comp-section">'+
+    '<div class="comp-head">'+
+      '<h4 style="color:var(--neon-green,#059669)">💊 المواد الفعالة — Active Ingredients</h4>'+
+      '<button class="btn btn-ok btn-sm" onclick="_compToggleAddApi()">➕ إضافة API</button>'+
+    '</div>'+
+    (r.api_suppliers.length?
+      '<table class="comp-table"><thead><tr><th>اسم المادة الفعالة</th><th>التركيز / الكمية</th><th>المواصفة</th><th>المورد</th><th>بلد المنشأ</th><th></th></tr></thead><tbody>'+
+      r.api_suppliers.map(function(s,i){return(
+        '<tr>'+
+        '<td><strong>'+esc(s.material)+'</strong></td>'+
+        '<td><span style="font-family:monospace;color:var(--primary,#0284c7)">'+esc(s.strength||s.spec||'—')+'</span></td>'+
+        '<td><span style="font-size:10px;background:var(--blue-light,#e0f2fe);color:var(--primary-xd,#075985);padding:2px 6px;border-radius:4px">'+esc(s.spec||'—')+'</span></td>'+
+        '<td style="color:var(--muted)">'+esc(s.supplier||'—')+'</td>'+
+        '<td style="color:var(--muted)">'+esc(s.country||'—')+'</td>'+
+        '<td><button class="comp-del" onclick="_compDelApi('+i+')" title="حذف">🗑</button></td>'+
+        '</tr>'
+      );}).join('')+
+      '</tbody></table>'
+      :'<div style="text-align:center;padding:16px;color:var(--muted);font-size:12px">لا توجد مواد فعالة مُدخلة</div>'
+    )+
+    // Add API row (hidden by default)
+    '<div class="comp-add-row" id="comp-api-add-row" style="display:none;grid-template-columns:2fr 1fr 1fr 1fr 1fr auto">'+
+      '<div class="ac-wrap">'+
+        '<input id="comp-api-name" placeholder="ابدأ بكتابة اسم API..." autocomplete="off">'+
+        '<div class="ac-list" id="comp-api-ac"></div>'+
+      '</div>'+
+      '<input id="comp-api-strength" placeholder="التركيز (مثال: 500mg)" dir="ltr">'+
+      '<input id="comp-api-spec" placeholder="المواصفة (BP/USP)" dir="ltr">'+
+      '<input id="comp-api-supplier" placeholder="المورد">'+
+      '<input id="comp-api-country" placeholder="بلد المنشأ">'+
+      '<button class="btn btn-ok btn-sm" onclick="_compAddApi()">حفظ</button>'+
+    '</div>'+
+    '</div>'+
+
+    // ── Inactive Ingredients ──
+    '<div class="comp-section">'+
+    '<div class="comp-head">'+
+      '<h4 style="color:var(--muted)">🧪 المواد المساعدة — Excipients</h4>'+
+      '<button class="btn btn-o btn-sm" onclick="_compToggleAddExc()">➕ إضافة Excipient</button>'+
+    '</div>'+
+    (r.inactive_ingredients.length?
+      '<table class="comp-table"><thead><tr><th>اسم المادة المساعدة</th><th>الكمية / التركيز</th><th>الدور الوظيفي</th><th>المواصفة</th><th></th></tr></thead><tbody>'+
+      r.inactive_ingredients.map(function(e,i){return(
+        '<tr>'+
+        '<td>'+esc(e.name)+'</td>'+
+        '<td style="font-family:monospace;color:var(--muted)">'+esc(e.qty||'—')+'</td>'+
+        '<td><span style="font-size:10px;background:var(--gray3,rgba(2,132,199,0.08));padding:2px 7px;border-radius:4px;color:var(--muted)">'+esc(e.role||'—')+'</span></td>'+
+        '<td style="font-size:11px;color:var(--muted2)">'+esc(e.spec||'—')+'</td>'+
+        '<td><button class="comp-del" onclick="_compDelExc('+i+')" title="حذف">🗑</button></td>'+
+        '</tr>'
+      );}).join('')+
+      '</tbody></table>'
+      :'<div style="text-align:center;padding:16px;color:var(--muted);font-size:12px">لا توجد مواد مساعدة مُدخلة</div>'
+    )+
+    '<div class="comp-add-row" id="comp-exc-add-row" style="display:none;grid-template-columns:2fr 1fr 1fr 1fr auto">'+
+      '<div class="ac-wrap">'+
+        '<input id="comp-exc-name" placeholder="ابدأ بكتابة اسم Excipient..." autocomplete="off">'+
+        '<div class="ac-list" id="comp-exc-ac"></div>'+
+      '</div>'+
+      '<input id="comp-exc-qty" placeholder="الكمية (مثال: 50mg/tab)" dir="ltr">'+
+      '<input id="comp-exc-role" placeholder="الدور (مثال: Binder)">'+
+      '<input id="comp-exc-spec" placeholder="المواصفة (BP/USP)" dir="ltr">'+
+      '<button class="btn btn-ok btn-sm" onclick="_compAddExc()">حفظ</button>'+
+    '</div>'+
+    '</div>';
+
+  return html;
+}
+
+// ── Bind autocomplete after render ──────────────────────────
+var _compApiAcBound=false,_compExcAcBound=false;
+
+function _compToggleAddApi(){
+  var row=document.getElementById('comp-api-add-row');
+  if(!row)return;
+  var show=row.style.display==='none';
+  row.style.display=show?'grid':'none';
+  if(show&&!_compApiAcBound){
+    _compApiAcBound=true;
+    showAutocomplete('comp-api-name','comp-api-ac',APIS_DB,null);
+  }
+  if(show){setTimeout(function(){var el=document.getElementById('comp-api-name');if(el)el.focus();},50);}
+}
+
+function _compToggleAddExc(){
+  var row=document.getElementById('comp-exc-add-row');
+  if(!row)return;
+  var show=row.style.display==='none';
+  row.style.display=show?'grid':'none';
+  if(show&&!_compExcAcBound){
+    _compExcAcBound=true;
+    showAutocomplete('comp-exc-name','comp-exc-ac',EXCIPIENTS_DB,null);
+  }
+  if(show){setTimeout(function(){var el=document.getElementById('comp-exc-name');if(el)el.focus();},50);}
+}
+
+function _gv(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+
+function _compAddApi(){
+  var name=_gv('comp-api-name');
+  if(!name){alert('أدخل اسم المادة الفعالة');return;}
+  if(!currentRec.api_suppliers)currentRec.api_suppliers=[];
+  currentRec.api_suppliers.push({
+    material:name,
+    strength:_gv('comp-api-strength'),
+    spec:_gv('comp-api-spec'),
+    supplier:_gv('comp-api-supplier'),
+    country:_gv('comp-api-country')
+  });
+  saveData();
+  _compApiAcBound=false;
+  _compExcAcBound=false;
+  renderDBody();
+}
+
+function _compDelApi(idx){
+  if(!confirm('حذف هذه المادة الفعالة؟'))return;
+  currentRec.api_suppliers.splice(idx,1);
+  saveData();
+  renderDBody();
+}
+
+function _compAddExc(){
+  var name=_gv('comp-exc-name');
+  if(!name){alert('أدخل اسم المادة المساعدة');return;}
+  if(!currentRec.inactive_ingredients)currentRec.inactive_ingredients=[];
+  currentRec.inactive_ingredients.push({
+    name:name,
+    qty:_gv('comp-exc-qty'),
+    role:_gv('comp-exc-role'),
+    spec:_gv('comp-exc-spec')
+  });
+  saveData();
+  _compApiAcBound=false;
+  _compExcAcBound=false;
+  renderDBody();
+}
+
+function _compDelExc(idx){
+  if(!confirm('حذف هذه المادة المساعدة؟'))return;
+  currentRec.inactive_ingredients.splice(idx,1);
+  saveData();
+  renderDBody();
+}
+
+window._compToggleAddApi=_compToggleAddApi;
+window._compToggleAddExc=_compToggleAddExc;
+window._compAddApi=_compAddApi;
+window._compDelApi=_compDelApi;
+window._compAddExc=_compAddExc;
+window._compDelExc=_compDelExc;
+
 
 function renderTabChecklist(r){
   var list=r.agency==='nfsa'?CHECKLIST_NFSA:r.agency==='cosm'?CHECKLIST_COSM:CHECKLIST_EDA;
