@@ -11280,21 +11280,6 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('active'))doLogin();
 });
 
-// ══ INIT ══
-(async()=>{
-  await openDB();
-  const saved=sessionStorage.getItem('S');
-  if(saved){
-    try{
-      S=JSON.parse(saved);
-      var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
-      if(co&&!co.deletedAt){startApp();return}
-    }catch{}
-    sessionStorage.removeItem('S');
-  }
-  showScreen('co');renderCompanies();
-})();
-
 
 // ══ LEGAL FORM LOGIC ══
 function onLegalFormChange(){
