@@ -1481,9 +1481,12 @@ table{min-width:500px}
     <div class="logo-icon">ف</div>
     <div class="logo-text"><div class="t1">نظام إدارة</div><div class="t2">الشركة الدوائية</div></div>
   </div>
-  <nav id="nav-menu"></nav>
+  <nav id="nav-menu" class="sb-nav" id2="sb-nav"></nav>
   <div class="sidebar-footer">نظام ERP الدوائي v2.0</div>
 </aside>
+
+<!-- Co-screen (legacy, hidden) -->
+<div id="co-screen" style="display:none"><div id="co-grid"></div></div>
 
 <!-- Sidebar overlay for mobile -->
 <div id="sidebar-overlay" onclick="closeMobSidebar()"></div>
@@ -1529,6 +1532,7 @@ table{min-width:500px}
 
 <div id="modal-root"></div>
 <canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.6" aria-hidden="true"></canvas>
+<div class="tc" id="tc"></div>
 <script>
 
 
@@ -11725,6 +11729,546 @@ function erpSwitchCompany(){
   if(sw) sw.onclick=erpSwitchCompany;
 })();
 
+// ══ RESTORED: Company Page + buildNav + saveTab ══
+function buildNav(){
+  var nav=document.getElementById('sb-nav')||document.getElementById('nav-menu');
+  if(!nav)return;
+  var html='';
+  for(var i=0;i<NAV.length;i++){
+    var n=NAV[i];
+    if(n.sec){html+='<div class="nsec">'+n.sec+'</div>';continue;}
+    var dim=n.soon?' dim':'';
+    var soon=n.soon?'<span class="sb-soon">قريباً</span>':'';
+    html+='<div class="nitem'+dim+'" id="nav-'+n.id+'" data-page="'+n.id+'">'
+         +'<span class="nic">'+n.ic+'</span><span>'+n.lbl+'</span>'+soon+'</div>';
+  }
+  nav.innerHTML=html;
+  nav.addEventListener('click',function(e){
+    var item=e.target.closest('[data-page]');
+    if(!item||item.classList.contains('dim'))return;
+    go(item.dataset.page);
+  });
+}
+
+function startApp(){
+  const cc=coColor(S.coCode);
+  document.getElementById('sb-coname').textContent=S.companyNameAr;
+  document.getElementById('sb-coname2').textContent=S.companyNameAr;
+  document.getElementById('sb-av').textContent=S.nameAr.charAt(0);
+  document.getElementById('sb-av').style.background=`linear-gradient(135deg,${cc},var(--secondary-d))`;
+  document.getElementById('sb-un').textContent=S.nameAr;
+  document.getElementById('sb-ur').textContent=S.role==='admin'?'مدير النظام':'مستخدم';
+  document.getElementById('comment-toggle').style.display='flex';
+  buildNav();showScreen('app');go('dashboard');renderComments();
+}
+
+function go(page){
+  document.querySelectorAll('.nitem').forEach(e=>e.classList.remove('act'));
+  const navEl=document.getElementById('nav-'+page);
+  if(navEl) navEl.classList.add('act');
+  const titles={dashboard:'📊 لوحة التحكم',company:'🏢 بيانات الشركة','drug-reg':'💊 EDA — أدوية بشرية',users:'👥 المستخدمون',settings:'⚙️ إعدادات النظام'};
+  const titleEl=document.getElementById('page-title');
+  if(titleEl) titleEl.textContent=titles[page]||page;
+  const m=document.getElementById('main-content');
+  if(!m) return;
+  const pages={
+    dashboard:renderDashboard,
+    company:renderCompanyPage,
+    'drug-reg':function(c){if(window.renderDrugReg)window.renderDrugReg(c);else c.innerHTML='<div class="es"><p>جاري التحميل...</p></div>';},
+    users:renderUsers,
+    settings:renderSettings
+  };
+  (pages[page]||renderDashboard)(m);
+  closeSidebar();
+}
+
+// ══ DASHBOARD ══
+async function renderDashboard(c){
+  const users=await dbGetAll('users','companyId',S.companyId);
+  const au=users.filter(u=>u.isActive&&!u.deletedAt).length;
+  const logs=await dbGetAll('audit','companyId',S.companyId);
+  var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
+  const recent=logs.slice(-5).reverse();
+  const checks=[{k:'comRegExp',l:'السجل التجاري'},{k:'tollExp',l:'Toll / رخصة المصنع'},{k:'gmpExp',l:'شهادة GMP'},{k:'taxExp',l:'البطاقة الضريبية'}];
+  const warns=checks.filter(x=>co[x.k]).map(x=>{const diff=Math.ceil((new Date(co[x.k])-new Date())/864e5);return{label:x.l,date:fmt(co[x.k]),diff,exp:diff<0}}).filter(x=>x.diff<90);
+
+  let html='';
+  if(warns.length){
+    html+=`<div class="exp-panel"><div class="exp-header">⚠️ ${warns.filter(w=>w.exp).length} وثيقة منتهية — ${warns.filter(w=>!w.exp).length} تنتهي قريباً</div>
+    ${warns.map(w=>`<div class="exp-item"><span style="font-weight:600">${esc(w.label)}</span><span style="font-size:12px;color:var(--muted)">${esc(w.date)}</span><span class="bdg ${w.exp?'bdg-r':'bdg-a'}">${w.exp?'منتهي':w.diff+' يوم'}</span><button class="btn btn-o btn-xs" onclick="go('company')">عرض</button></div>`).join('')}
+    </div>`;
+  }
+
+  html+=`<div class="stats">
+    <div class="sc gr"><div class="sic">👥</div><div class="slbl">المستخدمون النشطون</div><div class="sval gr">${au}</div><div class="sinfo">من ${users.filter(u=>!u.deletedAt).length} إجمالي</div></div>
+    <div class="sc am"><div class="sic">⏳</div><div class="slbl">المواد الخام</div><div class="sval am" style="font-size:18px;padding-top:6px">قريباً</div><div class="sinfo">المرحلة 2</div></div>
+    <div class="sc bl"><div class="sic">💊</div><div class="slbl">المنتجات</div><div class="sval bl" style="font-size:18px;padding-top:6px">قريباً</div><div class="sinfo">المرحلة 3</div></div>
+    <div class="sc re"><div class="sic">📋</div><div class="slbl">سجلات النشاط</div><div class="sval re">${logs.length}</div><div class="sinfo">إجمالي العمليات</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="pcard"><div class="ph"><div class="ptitle">⚡ إجراءات سريعة</div></div>
+    <div style="padding:14px;display:flex;flex-wrap:wrap;gap:10px">
+      <button class="btn btn-ok" onclick="go('company')">🏢 تحديث بيانات الشركة</button>
+      <button class="btn btn-bl" onclick="go('users')">👤 إضافة مستخدم</button>
+      <button class="btn btn-o" onclick="openModal('modal-backup')">💾 نسخ احتياطي</button>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">🏢 الشركة النشطة</div></div>
+    <div style="padding:14px">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-size:13px">الاسم</span><span style="font-size:13px;font-weight:600">${esc(co.nameAr)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-size:13px">النوع</span><span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:var(--muted);font-size:13px">الكود</span><span style="font-family:var(--mono);font-size:12px;color:var(--blue)">${esc(co.code)}</span></div>
+    </div></div>
+  </div>
+  <div class="pcard"><div class="ph"><div class="ptitle">📋 آخر الأنشطة</div></div>
+  ${recent.length?`<div class="tw"><table><thead><tr><th>المستخدم</th><th>العملية</th><th>الوقت</th></tr></thead><tbody>
+  ${recent.map(l=>`<tr><td style="font-weight:600">${esc(l.userName||'—')}</td><td><span class="bdg bdg-b">${esc(l.action)}</span></td><td style="font-size:12px;color:var(--muted)">${fmtDt(l.at)}</td></tr>`).join('')}
+  </tbody></table></div>`:'<div class="es" style="padding:28px"><div class="ei">📋</div><p>لا توجد أنشطة بعد</p></div>'}
+  </div>`;
+  c.innerHTML=html;
+}
+
+// ══ COMPANY PAGE ══
+async function renderCompanyPage(c){
+  var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
+  c.innerHTML=`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div class="page-title" style="margin-bottom:0">🏢 بيانات الشركة <span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+    <button class="btn btn-o btn-sm" onclick="printCompany()">🖨 طباعة</button>
+  </div>
+  <div class="cp-tabs" id="co-tabs">
+    <button class="cp-tab act" data-cpt="cpt-legal">القانونية</button>
+    <button class="cp-tab" data-cpt="cpt-eda">EDA والترخيص</button>
+    <button class="cp-tab" data-cpt="cpt-tax">الضرائب</button>
+    <button class="cp-tab" data-cpt="cpt-persons">المسؤولون</button>
+    <button class="cp-tab" data-cpt="cpt-partners">الشركاء</button>
+    <button class="cp-tab" data-cpt="cpt-factories">المصانع والموزعون</button>
+    <button class="cp-tab" data-cpt="cpt-docs">المستندات</button>
+    <button class="cp-tab" data-cpt="cpt-history">سجل التعديلات</button>
+  </div>
+
+  <div id="cpt-legal" class="cpt act">
+    <div class="pcard"><div class="ph"><div class="ptitle">📋 البيانات القانونية</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fi" id="cf-nameAr" value="${esc(co.nameAr||'')}"></div>
+        <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fi" id="cf-nameEn" value="${esc(co.nameEn||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">نوع الكيان</label><select class="fi" id="cf-companyType"><option value="toll" ${(co.companyType||'toll')==='toll'?'selected':''}>شركة Toll</option><option value="factory" ${co.companyType==='factory'?'selected':''}>مصنع</option></select></div>
+        <div class="fg"><label class="fl">الشكل القانوني</label><select class="fi" id="cf-legalForm"><option value="">اختر...</option>${['شركة ذات مسؤولية محدودة (ش.ذ.م.م)','شركة توصية بسيطة','شركة مساهمة','شركة شخص واحد'].map(v=>`<option ${co.legalForm===v?'selected':''}>${v}</option>`).join('')}</select></div>
+        <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fi" id="cf-comRegNo" value="${esc(co.comRegNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">انتهاء السجل${expBadge(co.comRegExp)}</label><input class="fi" id="cf-comRegExp" type="date" value="${co.comRegExp||''}"></div>
+        <div class="fg"><label class="fl">الرقم القومي للمنشأة</label><input class="fi" id="cf-natNo" value="${esc(co.natNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">رأس المال (جنيه)</label><input class="fi" id="cf-capital" type="number" value="${co.capital||''}" dir="ltr"></div>
+        <div class="fg"><label class="fl">المدينة</label><input class="fi" id="cf-city" value="${esc(co.city||'')}"></div>
+        <div class="fg"><label class="fl">الدولة</label><input class="fi" id="cf-country" value="${esc(co.country||'Egypt')}"></div>
+        <div class="fg fw"><label class="fl">المقر الرئيسي</label><textarea class="fi" id="cf-addr" rows="2">${esc(co.addressAr||'')}</textarea></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('legal')">💾 حفظ البيانات القانونية</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-eda" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">${co.companyType==='factory'?'📋 رخصة مصنع — FM-LPM-02':'📋 قيد Toll لدى الغير — FM-LAD-15'}</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">${co.companyType==='factory'?'رقم رخصة المصنع':'رقم قيد Toll'}</label><input class="fi" id="cf-tollNo" value="${esc(co.tollNo||'')}" dir="ltr" placeholder="${co.companyType==='factory'?'00003/2017':'Toll/57'}"></div>
+        <div class="fg"><label class="fl">تاريخ الإصدار</label><input class="fi" id="cf-tollDate" type="date" value="${co.tollDate||''}"></div>
+        <div class="fg"><label class="fl">تاريخ الانتهاء${expBadge(co.tollExp)}</label><input class="fi" id="cf-tollExp" type="date" value="${co.tollExp||''}"></div>
+        <div class="fg"><label class="fl">كود EDA</label><input class="fi" id="cf-edaCode" value="${esc(co.edaCode||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">شهادة GMP</label><input class="fi" id="cf-gmp" value="${esc(co.gmp||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">انتهاء GMP${expBadge(co.gmpExp)}</label><input class="fi" id="cf-gmpExp" type="date" value="${co.gmpExp||''}"></div>
+        <div class="fg fw"><label class="fl">خطوط الإنتاج</label><input class="fi" id="cf-lines" value="${esc(co.lines||co.productionLines||'')}" placeholder="صلبة، كبسولات، سائل..."></div>
+        <div class="fg fw"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fi" id="cf-edaAddr" rows="2">${esc(co.edaAddress||co.edaAddr||'')}</textarea></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('eda')">💾 حفظ بيانات EDA</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-tax" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">💰 البيانات الضريبية والمالية</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fi" id="cf-taxReg" value="${esc(co.taxReg||co.taxRegNo||'')}" dir="ltr" placeholder="204-999-359"></div>
+        <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fi" id="cf-taxCard" value="${esc(co.taxCard||co.taxCardNo||'')}" dir="ltr" placeholder="509-999-204"></div>
+        <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fi" id="cf-taxDate" type="date" value="${co.taxDate||co.taxCardDate||''}"></div>
+        <div class="fg"><label class="fl">انتهاء البطاقة${expBadge(co.taxExp||co.taxCardExpiry)}</label><input class="fi" id="cf-taxExp" type="date" value="${co.taxExp||co.taxCardExpiry||''}"></div>
+        <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fi" id="cf-taxOfc" value="${esc(co.taxOfc||co.taxOffice||'')}" placeholder="الاستثمار"></div>
+        <div class="fg"><label class="fl">كود النشاط ISIC</label><input class="fi" id="cf-actCode" value="${esc(co.actCode||co.activityCode||'')}" dir="ltr" placeholder="4772"></div>
+        <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fi" id="cf-socIns" value="${esc(co.socIns||co.socialInsuranceNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">ملف ضريبة الدخل</label><input class="fi" id="cf-incTax" value="${esc(co.incTax||co.incomeTaxNo||'')}" dir="ltr"></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('tax')">💾 حفظ البيانات الضريبية</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-persons" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">👤 المسؤولون وجهات الاتصال</div></div><div class="tab-body">
+      <div class="fsect">المسؤولون الرسميون</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رئيس مجلس الإدارة / المدير</label><input class="fi" id="cf-chairman" value="${esc(co.chairman||'')}"></div>
+        <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fi" id="cf-licHolder" value="${esc(co.licHolder||co.licenseHolder||'')}"></div>
+        <div class="fg"><label class="fl">مدير الشركة</label><input class="fi" id="cf-mgr" value="${esc(co.mgr||co.companyManager||'')}"></div>
+        <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fi" id="cf-tech" value="${esc(co.tech||co.technicalConsultant||'')}"></div>
+        <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fi" id="cf-qc" value="${esc(co.qc||co.qcManager||'')}" placeholder="د. الاسم — رقم النقابة"></div>
+        <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fi" id="cf-prod" value="${esc(co.prod||co.productionManager||'')}" placeholder="د. الاسم — رقم النقابة"></div>
+        <div class="fg fw"><label class="fl">مسؤول الشؤون التنظيمية RA</label><input class="fi" id="cf-ra" value="${esc(co.ra||co.raManager||'')}"></div>
+      </div>
+      <div class="fsect">جهات الاتصال</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">الهاتف الرئيسي</label><input class="fi" id="cf-phone" value="${esc(co.phone||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">الفاكس</label><input class="fi" id="cf-fax" value="${esc(co.fax||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" id="cf-email" value="${esc(co.email||'')}" type="email" dir="ltr"></div>
+        <div class="fg"><label class="fl">الموقع الإلكتروني</label><input class="fi" id="cf-web" value="${esc(co.website||co.web||'')}" dir="ltr"></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('persons')">💾 حفظ بيانات المسؤولين</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-partners" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">🤝 الشركاء وتوزيع الحصص</div><div class="pacts"><button class="btn btn-ok btn-sm" onclick="openAddPartner()">+ إضافة شريك</button></div></div>
+    <div id="partners-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">نسبة المشاركة المصرية</div></div>
+    <div class="tab-body">
+      <div class="fg"><label class="fl">نسبة المشاركة المصرية الإجمالية</label><input class="fi" id="cf-egyPct" value="${esc(co.egyPct||'')}" dir="ltr" placeholder="100%" style="max-width:200px"><div style="font-size:11px;color:var(--muted);margin-top:4px">يُطلب من هيئة الدواء والجهات الحكومية</div></div>
+      <div class="save-bar"><button class="btn btn-o btn-sm" onclick="saveEgyPct()">💾 حفظ</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-factories" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">🏭 المصانع المتعاقد معها</div><button class="btn btn-ok btn-sm" onclick="openAddFactory()">+ إضافة مصنع</button></div><div id="factories-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🏪 أماكن التخزين المرخصة</div><button class="btn btn-ok btn-sm" onclick="openAddStorage()">+ إضافة مخزن</button></div><div id="storages-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🚚 الموزعون المعتمدون</div><button class="btn btn-ok btn-sm" onclick="openAddDist()">+ إضافة موزع</button></div><div id="dists-table"></div></div>
+  </div>
+
+  <div id="cpt-docs" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📁 المستندات الرسمية</div></div>
+    <div style="padding:16px">
+      <div id="docs-list-co"></div>
+      <div class="doc-drop" onclick="document.getElementById('doc-inp').click()" style="margin-top:14px">
+        <div style="font-size:24px;margin-bottom:8px">📎</div>
+        <div style="font-size:13px;color:var(--muted)">اضغط لرفع PDF أو صورة</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;opacity:.7">الصور تُضغط تلقائياً — الحد 5MB</div>
+      </div>
+      <input type="file" id="doc-inp" accept=".pdf,image/*" style="display:none" onchange="uploadDoc(this)">
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input class="fi" id="doc-name" placeholder="اسم المستند..." style="flex:1">
+        <select class="fi" id="doc-type" style="width:170px">
+          <option>سجل تجاري</option><option>بطاقة ضريبية</option><option>ترخيص EDA</option>
+          <option>شهادة GMP</option><option>عقد تأسيس</option><option>صحيفة استثمار</option>
+          <option>عقد تصنيع</option><option>تأمينات اجتماعية</option><option>أخرى</option>
+        </select>
+      </div>
+    </div></div>
+  </div>
+
+  <div id="cpt-history" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📜 سجل التعديلات</div></div>
+    <div id="co-history-list"></div></div>
+  </div>
+
+  <div style="margin-top:12px;font-size:11px;color:var(--muted)">إنشاء: ${fmtDt(co.createdAt)} | آخر تحديث: ${fmtDt(co.updatedAt)}</div>`;
+
+  // Tab switching
+  document.querySelectorAll('[data-cpt]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.cp-tab').forEach(b=>b.classList.remove('act'));
+      document.querySelectorAll('.cpt').forEach(p=>p.classList.remove('act'));
+      btn.classList.add('act');
+      document.getElementById(btn.dataset.cpt)?.classList.add('act');
+    });
+  });
+
+  loadDocs();loadHistory();loadPartnersTable();loadFactoriesTable();loadStoragesTable();loadDistsTable();
+}
+
+async function saveTab(tab){
+  var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
+  let u={};
+  if(tab==='legal'){const nameAr=val('cf-nameAr');if(!nameAr){toast('الاسم مطلوب','er');return}u={nameAr,nameEn:val('cf-nameEn'),companyType:val('cf-companyType'),legalForm:val('cf-legalForm'),comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),natNo:val('cf-natNo'),capital:val('cf-capital'),city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')};}
+  else if(tab==='eda'){u={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines'),edaAddress:val('cf-edaAddr')};}
+  else if(tab==='tax'){u={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};}
+  else if(tab==='persons'){u={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web')};}
+  Object.assign(co,u,{updatedAt:now()});
+  var _coIdx=_cos.findIndex(function(c){return c.id===coId;});if(_coIdx>=0){_cos[_coIdx]=co;localStorage.setItem('pharma_companies_v1',JSON.stringify(_cos));}
+  if(typeof saveHist==='function') saveHist(coId,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'}[tab]);
+  if(tab==='legal'&&typeof S!=='undefined'){try{S.companyNameAr=co.nameAr;}catch(e){}document.getElementById('sb-coname').textContent=co.nameAr;document.getElementById('sb-coname2').textContent=co.nameAr;}
+  toast('تم الحفظ بنجاح','ok');
+}
+async function saveEgyPct(){var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};co.egyPct=val('cf-egyPct');co.updatedAt=now();var _coIdx=_cos.findIndex(function(c){return c.id===coId;});if(_coIdx>=0){_cos[_coIdx]=co;localStorage.setItem('pharma_companies_v1',JSON.stringify(_cos));}toast('تم الحفظ','ok');}
+
+// ══ PARTNERS ══
+async function loadPartnersTable(){
+  const el=document.getElementById('partners-table');if(!el)return;
+  const rows=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">🤝</div><p>لا يوجد شركاء — اضغط "+ إضافة شريك"</p></div>';return}
+  const total=rows.reduce((s,r)=>s+parseFloat(r.pct||0),0);
+  const ok=Math.abs(total-100)<0.01;
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الشريك</th><th>النسبة %</th><th>عدد الحصص</th><th>قيمة الحصة</th><th>الجنسية</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td><span class="bdg bdg-g">${esc(r.pct)}%</span></td><td>${esc(r.shares||'—')}</td><td>${r.val?esc(r.val)+' ج':'—'}</td><td>${esc(r.nat||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditPartner('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delPartner('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  <tr style="background:var(--card2)"><td colspan="2" style="font-weight:700">الإجمالي: <span class="bdg ${ok?'bdg-g':'bdg-r'}">${total.toFixed(2)}%</span></td><td colspan="4" style="font-size:12px;color:var(--muted)">${ok?'✅ صحيح':'⚠️ يجب أن يساوي 100%'}</td></tr>
+  </tbody></table></div>`;
+}
+function openAddPartner(){document.getElementById('mp-title').textContent='إضافة شريك جديد';['mp-id','mp-name','mp-pct','mp-nat','mp-shares','mp-val'].forEach(id=>set(id,''));openModal('modal-partner');}
+async function openEditPartner(id){const r=await dbGet('partners',id);if(!r)return;document.getElementById('mp-title').textContent='تعديل بيانات الشريك';set('mp-id',r.id);set('mp-name',r.name);set('mp-pct',r.pct);set('mp-nat',r.nat);set('mp-shares',r.shares);set('mp-val',r.val);openModal('modal-partner');}
+async function savePartner(){
+  const name=val('mp-name'),pct=val('mp-pct');if(!name||!pct){toast('الاسم والنسبة مطلوبان','er');return}
+  const eid=val('mp-id'),id=eid||uid();const existing=eid?await dbGet('partners',id):null;
+  await dbPut('partners',{...existing,id,companyId:S.companyId,name,pct,nat:val('mp-nat'),shares:val('mp-shares'),val:val('mp-val'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  await saveHist(S.companyId,eid?'تعديل شريك':'إضافة شريك',name);
+  closeModal('modal-partner');toast('تم الحفظ','ok');loadPartnersTable();
+}
+async function delPartner(id){if(!confirm('حذف هذا الشريك؟'))return;const r=await dbGet('partners',id);if(!r)return;r.deletedAt=now();await dbPut('partners',r);await saveHist(S.companyId,'حذف شريك',r.name);toast('تم الحذف');loadPartnersTable();}
+
+// ══ FACTORIES ══
+async function loadFactoriesTable(){
+  const el=document.getElementById('factories-table');if(!el)return;
+  const rows=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏭</div><p>لا توجد مصانع متعاقد معها</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المصنع</th><th>العنوان</th><th>خطوط الإنتاج</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.lines||'—')}</td><td style="font-size:11px;color:var(--muted)">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditFactory('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delFactory('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function openAddFactory(){document.getElementById('mf-title').textContent='إضافة مصنع متعاقد';['mf-id','mf-name','mf-addr','mf-prods','mf-lic','mf-lines'].forEach(id=>set(id,''));openModal('modal-factory');}
+async function openEditFactory(id){const r=await dbGet('factories',id);if(!r)return;document.getElementById('mf-title').textContent='تعديل بيانات المصنع';set('mf-id',r.id);set('mf-name',r.name);set('mf-addr',r.addr);set('mf-prods',r.prods);set('mf-lic',r.lic);set('mf-lines',r.lines);openModal('modal-factory');}
+async function saveFactory(){
+  const name=val('mf-name');if(!name){toast('اسم المصنع مطلوب','er');return}
+  const eid=val('mf-id'),id=eid||uid();const existing=eid?await dbGet('factories',id):null;
+  await dbPut('factories',{...existing,id,companyId:S.companyId,name,addr:val('mf-addr'),prods:val('mf-prods'),lic:val('mf-lic'),lines:val('mf-lines'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  await saveHist(S.companyId,eid?'تعديل مصنع':'إضافة مصنع',name);
+  closeModal('modal-factory');toast('تم الحفظ','ok');loadFactoriesTable();
+}
+async function delFactory(id){if(!confirm('حذف؟'))return;const r=await dbGet('factories',id);if(!r)return;r.deletedAt=now();await dbPut('factories',r);toast('تم الحذف');loadFactoriesTable();}
+
+// ══ STORAGES ══
+async function loadStoragesTable(){
+  const el=document.getElementById('storages-table');if(!el)return;
+  const rows=(await dbGetAll('storages','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏪</div><p>لا توجد أماكن تخزين</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المخزن</th><th>العنوان</th><th>المساحة</th><th>النوع</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td>${r.area?esc(r.area)+' م²':'—'}</td><td><span class="bdg bdg-m">${esc(r.type||'—')}</span></td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditStorage('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delStorage('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function openAddStorage(){document.getElementById('ms-title').textContent='إضافة مكان تخزين';['ms-id','ms-name','ms-addr','ms-area'].forEach(id=>set(id,''));set('ms-type','مخزن عادي');openModal('modal-storage');}
+async function openEditStorage(id){const r=await dbGet('storages',id);if(!r)return;document.getElementById('ms-title').textContent='تعديل';set('ms-id',r.id);set('ms-name',r.name);set('ms-addr',r.addr);set('ms-area',r.area);set('ms-type',r.type);openModal('modal-storage');}
+async function saveStorage(){
+  const name=val('ms-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('ms-id'),id=eid||uid();const existing=eid?await dbGet('storages',id):null;
+  await dbPut('storages',{...existing,id,companyId:S.companyId,name,addr:val('ms-addr'),area:val('ms-area'),type:val('ms-type'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  closeModal('modal-storage');toast('تم الحفظ','ok');loadStoragesTable();
+}
+async function delStorage(id){if(!confirm('حذف؟'))return;const r=await dbGet('storages',id);if(!r)return;r.deletedAt=now();await dbPut('storages',r);toast('تم الحذف');loadStoragesTable();}
+
+// ══ DISTRIBUTORS ══
+async function loadDistsTable(){
+  const el=document.getElementById('dists-table');if(!el)return;
+  const rows=(await dbGetAll('distributors','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🚚</div><p>لا يوجد موزعون</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الموزع</th><th>العنوان</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditDist('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delDist('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function openAddDist(){document.getElementById('md-title').textContent='إضافة موزع معتمد';['md-id','md-name','md-addr','md-prods'].forEach(id=>set(id,''));openModal('modal-dist');}
+async function openEditDist(id){const r=await dbGet('distributors',id);if(!r)return;document.getElementById('md-title').textContent='تعديل الموزع';set('md-id',r.id);set('md-name',r.name);set('md-addr',r.addr);set('md-prods',r.prods);openModal('modal-dist');}
+async function saveDist(){
+  const name=val('md-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('md-id'),id=eid||uid();const existing=eid?await dbGet('distributors',id):null;
+  await dbPut('distributors',{...existing,id,companyId:S.companyId,name,addr:val('md-addr'),prods:val('md-prods'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  closeModal('modal-dist');toast('تم الحفظ','ok');loadDistsTable();
+}
+async function delDist(id){if(!confirm('حذف؟'))return;const r=await dbGet('distributors',id);if(!r)return;r.deletedAt=now();await dbPut('distributors',r);toast('تم الحذف');loadDistsTable();}
+
+// ══ DOCUMENTS ══
+async function loadDocs(){
+  const el=document.getElementById('docs-list-co');if(!el)return;
+  const docs=(await dbGetAll('documents','companyId',S.companyId)).filter(d=>!d.deletedAt);
+  if(!docs.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">لا توجد مستندات بعد</div>';return}
+  el.innerHTML=docs.map(d=>`<div class="doc-item"><div class="doc-icon" style="background:${d.type==='pdf'?'rgba(248,81,73,.15)':'rgba(56,139,253,.15)'};color:${d.type==='pdf'?'var(--red)':'var(--blue)'}">${d.type==='pdf'?'PDF':'IMG'}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div></div><button class="btn btn-o btn-sm" onclick="viewDoc('${d.id}')">عرض</button><button class="btn btn-x btn-sm" onclick="delDoc('${d.id}')">حذف</button></div>`).join('');
+}
+async function uploadDoc(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('الملف أكبر من 5MB','er');return}
+  const name=val('doc-name')||file.name,docType=val('doc-type')||'أخرى';
+  toast('جاري المعالجة...','info');
+  try{
+    let data,type,size;
+    if(file.type.startsWith('image/')){const c=await compressImg(file,900,.72);data=c.data;type='img';size=c.size;}
+    else{data=await toB64(file);type='pdf';size=file.size;}
+    await dbPut('documents',{id:uid(),companyId:S.companyId,name,docType,type,data,size,createdAt:now()});
+    input.value='';set('doc-name','');toast('تم رفع المستند','ok');loadDocs();
+  }catch(e){toast('خطأ: '+e.message,'er')}
+}
+const toB64=f=>new Promise((ok,fail)=>{const r=new FileReader();r.onload=e=>ok(e.target.result);r.onerror=()=>fail(new Error('فشل'));r.readAsDataURL(f)});
+const compressImg=(f,maxW,q)=>new Promise((ok,fail)=>{const img=new Image(),url=URL.createObjectURL(f);img.onload=()=>{URL.revokeObjectURL(url);let{width:w,height:h}=img;if(w>maxW){h=Math.round(h*maxW/w);w=maxW}const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);const data=cv.toDataURL('image/jpeg',q);ok({data,size:Math.round(data.length*.75)})};img.onerror=()=>fail(new Error('فشل'));img.src=url;});
+async function viewDoc(id){const d=await dbGet('documents',id);if(!d)return;const w=window.open();w.document.write(d.type==='pdf'?`<iframe src="${d.data}" style="width:100%;height:100vh;border:none"></iframe>`:`<img src="${d.data}" style="max-width:100%">`);}
+async function delDoc(id){if(!confirm('حذف؟'))return;const d=await dbGet('documents',id);if(!d)return;d.deletedAt=now();await dbPut('documents',d);toast('تم الحذف');loadDocs();}
+
+// ══ HISTORY ══
+async function loadHistory(){
+  const el=document.getElementById('co-history-list');if(!el)return;
+  const all=(await dbGetAll('history')).filter(h=>h.recordId===S.companyId).reverse();
+  if(!all.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">📜</div><p>لا توجد تعديلات مسجلة بعد</p></div>';return}
+  el.innerHTML=all.map(h=>`<div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px"><div><span class="bdg bdg-b" style="margin-left:8px">${esc(h.action)}</span>${h.note?`<span style="font-size:12px;color:var(--muted)">${esc(h.note)}</span>`:''}</div><div style="font-size:11px;color:var(--muted);white-space:nowrap">${esc(h.userName||'—')} · ${fmtDt(h.at)}</div></div>`).join('');
+}
+
+// ══ PRINT ══
+async function printCompany(){
+  var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
+  const partners=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  const factories=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  const pr=(l,v)=>v?`<tr><td style="color:#666;font-size:12px;width:200px;padding:6px 0">${l}</td><td style="font-size:13px;font-weight:500;padding:6px 0">${v}</td></tr>`:'';
+  const w=window.open();
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script></body></html>`);
+}
+
+// ══ USERS ══
+let usrQ='';
+async function renderUsers(c){
+  const all=await dbGetAll('users','companyId',S.companyId);
+  const users=all.filter(u=>!u.deletedAt&&(!usrQ||u.nameAr.includes(usrQ)||u.username.includes(usrQ)));
+  c.innerHTML=`<div class="page-title">👥 المستخدمون</div>
+  <div class="pcard"><div class="ph"><div class="ptitle">${all.filter(u=>!u.deletedAt).length} مستخدم</div>
+  <div class="pacts">
+    <div class="sbar"><span style="color:var(--muted)">🔍</span><input placeholder="بحث..." value="${esc(usrQ)}" oninput="usrQ=this.value;renderUsers(document.getElementById('main-content'))"></div>
+    <button class="btn btn-ok btn-sm" onclick="openAddUser()">+ إضافة مستخدم</button>
+  </div></div>
+  <div class="tw"><table><thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>
+  ${users.length?users.map(u=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary-d))">${u.nameAr.charAt(0)}</div><div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--muted)">${esc(u.nameEn||'')}</div></div></div></td>
+    <td><code style="font-size:11px;background:rgba(34,211,238,.08);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
+    <td><span class="bdg ${u.role==='admin'?'bdg-b':'bdg-m'}">${u.role==='admin'?'مدير':'مستخدم'}</span></td>
+    <td style="color:var(--muted)">${esc(u.department||'—')}</td>
+    <td style="font-size:11px;color:var(--muted)">${fmtDt(u.lastLogin)}</td>
+    <td><span class="bdg ${u.isActive?'bdg-g':'bdg-r'}">${u.isActive?'نشط':'موقوف'}</span></td>
+    <td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditUser('${u.id}')">تعديل</button>${u.id!==S.userId?`<button class="btn btn-${u.isActive?'o':'ok'} btn-sm" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}</div></td>
+  </tr>`).join(''):'<tr><td colspan="7"><div class="es"><div class="ei">👥</div><p>لا يوجد مستخدمون</p></div></td></tr>'}
+  </tbody></table></div></div>`;
+}
+function openAddUser(){document.getElementById('mu-title').textContent='إضافة مستخدم جديد';document.getElementById('u-ph').style.display='none';document.getElementById('u-pl').innerHTML='كلمة المرور <span class="req">*</span>';['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title-inp','u-phone','u-email'].forEach(id=>set(id,''));set('u-role','user');openModal('modal-user');}
+async function openEditUser(id){const u=await dbGet('users',id);if(!u)return;document.getElementById('mu-title').textContent='تعديل مستخدم';document.getElementById('u-ph').style.display='block';document.getElementById('u-pl').innerHTML='كلمة مرور جديدة';set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');set('u-user',u.username);set('u-pass','');set('u-role',u.role);set('u-dept',u.department||'');set('u-title-inp',u.jobTitle||'');set('u-phone',u.phone||'');set('u-email',u.email||'');openModal('modal-user');}
+async function saveUser(){
+  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
+  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','er');return}
+  const btn=document.getElementById('btn-su');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    if(id){const u=await dbGet('users',id);if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','er');return}u.passwordHash=await hashPw(pw)}Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});await dbPut('users',u);toast('تم التحديث','ok');}
+    else{if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف','er');return}const all=await dbGetAll('users','companyId',S.companyId);if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','er');return}await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});toast('تم الإضافة','ok');}
+    closeModal('modal-user');renderUsers(document.getElementById('main-content'));
+  }catch(e){toast('خطأ: '+e.message,'er')}
+  btn.innerHTML='حفظ';btn.disabled=false;
+}
+async function toggleUser(id){const u=await dbGet('users',id);if(!u)return;u.isActive=!u.isActive;u.updatedAt=now();await dbPut('users',u);toast(u.isActive?'تم التفعيل':'تم الإيقاف','ok');renderUsers(document.getElementById('main-content'));}
+
+// ══ SETTINGS ══
+function renderSettings(c){
+  c.innerHTML=`<div class="page-title">⚙️ إعدادات النظام</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="pcard"><div class="ph"><div class="ptitle">العرض</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الخط</label><select class="fi" id="s-fs"><option value="13">صغير 13px</option><option value="14" selected>متوسط 14px</option><option value="15">كبير 15px</option></select></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">الطباعة</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الورق</label><select class="fi" id="s-paper"><option value="A4" selected>A4</option><option value="A5">A5</option></select></div>
+      <div class="fg"><label class="fl">هيدر الطباعة</label><input class="fi" id="s-header" placeholder="نص يظهر في رأس كل طباعة"></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">💾 النسخ الاحتياطي</div></div><div class="tab-body" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ok" onclick="exportBackup()">⬇ تصدير نسخة احتياطية</button>
+      <button class="btn btn-o" onclick="openModal('modal-backup')">⬆ استيراد نسخة</button>
+    </div></div>
+  </div>
+  <div style="margin-top:16px;display:flex;justify-content:flex-end">
+    <button class="btn btn-ok" onclick="toast('تم حفظ الإعدادات','ok');document.body.style.fontSize=val('s-fs')+'px'">💾 حفظ الإعدادات</button>
+  </div>`;
+}
+
+// ══ BACKUP ══
+async function exportBackup(){
+  const stores=['companies','users','documents','partners','factories','distributors','storages'];
+  const data={v:3,exportedAt:now()};
+  for(const st of stores)data[st]=await dbGetAll(st);
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
+  a.download=`quadra-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();toast('تم تنزيل النسخة الاحتياطية','ok');
+}
+async function importBackup(input){
+  const file=input.files[0];if(!file)return;
+  if(!confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟'))return;
+  try{
+    const data=JSON.parse(await file.text());
+    if(!data.companies)throw new Error('ملف غير صالح');
+    const stores=['companies','users','documents','partners','factories','distributors','storages'];
+    for(const st of stores)for(const o of data[st]||[])await dbPut(st,o);
+    closeModal('modal-backup');toast('تم الاستيراد بنجاح','ok');renderCompanies();
+  }catch(e){toast('خطأ: '+e.message,'er')}
+}
+
+// ══ COMMENTS ══
+async function renderComments(){
+  const all=await dbGetAll('comments');
+  document.getElementById('comment-count').textContent=all.length;
+  const list=document.getElementById('cp-list');
+  if(!all.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">لا توجد تعليقات بعد</div>';return}
+  list.innerHTML=all.reverse().map(c=>`<div class="cp-item"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between"><span style="color:var(--amber);font-weight:600">${esc(c.page||'عام')}</span><button style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px" onclick="delComment(${c.id})">حذف</button></div><div style="font-size:13px;color:var(--text)">${esc(c.text)}</div></div>`).join('');
+}
+async function addComment(){const text=document.getElementById('cp-text').value.trim();if(!text){toast('اكتب تعليقاً','er');return}const page=document.getElementById('page-title').textContent;await dbPut('comments',{text,page,at:now()});document.getElementById('cp-text').value='';toast('تم إضافة التعليق','ok');renderComments();}
+async function delComment(id){await dbDel('comments',id);renderComments();}
+function toggleComments(){document.getElementById('comment-panel').classList.toggle('open')}
+
+// ══ UI ══
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('sc-'+n)?.classList.add('active')}
+function openModal(id){document.getElementById(id).classList.add('on')}
+function closeModal(id){document.getElementById(id).classList.remove('on')}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay-bg').classList.add('show')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
+document.querySelectorAll('.moverlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');});});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.moverlay.on').forEach(o=>o.classList.remove('on'));
+  if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('active'))doLogin();
+});
+
+// ══ INIT ══
+(async()=>{
+  await openDB();
+  const saved=sessionStorage.getItem('S');
+  if(saved){
+    try{
+      S=JSON.parse(saved);
+      var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
+      if(co&&!co.deletedAt){startApp();return}
+    }catch{}
+    sessionStorage.removeItem('S');
+  }
+  showScreen('co');renderCompanies();
+})();
+
+
+// ══ LEGAL FORM LOGIC ══
+function onLegalFormChange(){
+  var lf=document.getElementById('cf-legalForm');
+  if(!lf)return;
+  var v=lf.value;
+  var isPersons=v==='تضامن'||v==='توصية_بسيطة';
+  var isShareholding=v==='مساهمة'||v==='توصية_بالأسهم';
+  var tabP=document.getElementById('tab-persons-company');
+  var tabS=document.getElementById('tab-shareholding');
+  if(tabP) tabP.style.display=isPersons?'':'none';
+  if(tabS) tabS.style.display=isShareholding?'':'none';
+  var notices={
+    'تضامن':'⚠️ شركة تضامن: مسؤولية شخصية غير محدودة. السُمة التجارية يجب أن تشمل اسم شريك. يلزم نشر ملخص عقد في جريدة رسمية.',
+    'توصية_بسيطة':'⚠️ شركة توصية بسيطة: الشركاء المتضامنون مسؤولون مسؤولية كاملة، الموصون محدودو المسؤولية.',
+    'مساهمة':'ℹ️ شركة مساهمة: إيداع 10% رأس المال المُصدَر عند التأسيس. مجلس إدارة 3+ أعضاء. مراقب حسابات إلزامي.',
+    'توصية_بالأسهم':'ℹ️ شركة توصية بالأسهم: هيكل رأس مال مزدوج (حصص + أسهم).',
+    'ذ.م.م':'ℹ️ ش.ذ.م.م: المسؤولية محدودة بالحصص. لا أسهم قابلة للتداول.',
+    'شخص_واحد':'ℹ️ شركة الشخص الواحد: رأس المال يُدفع بالكامل عند التأسيس.'
+  };
+  var el=document.getElementById('legal-form-notice');
+  if(el){
+    if(notices[v]){
+      var isWarn=v==='تضامن'||v==='توصية_بسيطة';
+      el.style.cssText='display:block;background:'+(isWarn?'var(--red-light,#fee2e2)':'var(--blue-light,#e0f2fe)')+';border:1px solid '+(isWarn?'rgba(220,38,38,.3)':'rgba(2,132,199,.3)')+';border-radius:8px;padding:10px 13px;font-size:12px;color:'+(isWarn?'#991b1b':'#0369a1')+';margin:8px 0 0;grid-column:1/-1';
+      el.textContent=notices[v];
+    } else {
+      el.style.display='none';
+    }
+  }
+}
+function onEntityTypeChange(){}
+function loadLiabilitySummary(){}
 </script>
 <script>
 (function(){
