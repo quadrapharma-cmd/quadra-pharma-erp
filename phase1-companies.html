@@ -4566,26 +4566,26 @@ function loadMaterialReceipts(matId, productionOrderId){
     const available = Number(r.quantityReceived||0) - usedInBatches;
     const isEnough = available > 0;
 
-    return `<div onclick="${isEnough?`selectReceipt(${r.id},${matId},'${mat?.unit||''}',${available},'${suggested}')`:''}"
-      style="cursor:${isEnough?'pointer':'not-allowed'};border:2px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;transition:.15s;opacity:${isEnough?'1':'.5'};background:var(--bg)"
-      id="rcpt-card-${r.id}"
-      onmouseover="this.style.borderColor='#2ea043'"
-      onmouseout="if(!this.classList.contains('selected'))this.style.borderColor='var(--border)'">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <span class="fw7" style="font-size:13px">${r.batchNumber||'بدون رقم دفعة'}</span>
-          ${r.invoiceNumber?`<span style="margin-right:8px;font-size:11px;color:var(--muted)">فاتورة: <code>${r.invoiceNumber}</code></span>`:''}
-        </div>
-        <span class="text-blue fw7" style="font-size:14px">${fmt(r.unitCost)} ج.م/${mat?.unit||''}</span>
-      </div>
-      <div style="display:flex;gap:16px;margin-top:6px;font-size:12px;color:var(--muted)">
-        <span>📅 تاريخ الاستلام: ${r.receiptDate||'—'}</span>
-        <span>🏭 المورد: ${r.supplier||'—'}</span>
-        <span>📦 مستلم: ${fmtN(r.quantityReceived)} ${mat?.unit||''}</span>
-        <span class="${isEnough?'text-green':'text-red'} fw7">✅ متاح: ${fmtN(Math.max(0,available))} ${mat?.unit||''}</span>
-        ${usedInBatches>0?`<span class="text-amber">⚙️ مستخدم في تشغيلات: ${fmtN(usedInBatches)}</span>`:''}
-      </div>
-    </div>`;
+    var _ocl = isEnough ? ('onclick="selectReceipt(' + r.id + ',' + matId + ',\'' + (mat?mat.unit||'':'') + '\',' + available + ',\'' + suggested + '\')"') : '';
+    return '<div ' + _ocl + ' style="cursor:' + (isEnough?'pointer':'not-allowed') + ';border:2px solid var(--border);border-radius:8px;padding:10px 12px;margin-bottom:8px;transition:.15s;background:var(--bg)"' +
+      ' id="rcpt-card-' + r.id + '"' +
+      ' onmouseover="this.style.borderColor=\'#2ea043\'"' +
+      ' onmouseout="if(!this.classList.contains(\'selected\'))this.style.borderColor=\'var(--border)\'">' +
+      '<div style="display:flex;justify-content:space-between;align-items:center">' +
+        '<div>' +
+          '<span class="fw7" style="font-size:13px">' + esc(r.batchNumber||'بدون رقم دفعة') + '</span>' +
+          (r.invoiceNumber ? '<span style="margin-right:8px;font-size:11px;color:var(--muted)">فاتورة: <code>' + r.invoiceNumber + '</code></span>' : '') +
+        '</div>' +
+        '<span class="text-blue fw7" style="font-size:14px">' + fmt(r.unitCost) + ' ج.م/' + (mat?mat.unit||'':'') + '</span>' +
+      '</div>' +
+      '<div style="display:flex;gap:16px;margin-top:6px;font-size:12px;color:var(--muted)">' +
+        '<span>📅 تاريخ الاستلام: ' + (r.receiptDate||'—') + '</span>' +
+        '<span>🏭 المورد: ' + esc(r.supplier||'—') + '</span>' +
+        '<span>📦 مستلم: ' + fmtN(r.quantityReceived) + ' ' + (mat?mat.unit||'':'') + '</span>' +
+        '<span class="' + (isEnough?'text-green':'text-red') + ' fw7">✅ متاح: ' + fmtN(Math.max(0,available)) + ' ' + (mat?mat.unit||'':'') + '</span>' +
+        (usedInBatches>0 ? '<span class="text-amber">⚙️ مستخدم في تشغيلات: ' + fmtN(usedInBatches) + '</span>' : '') +
+      '</div>' +
+    '</div>';
   }).join('');
 
   wrap.style.display = '';
