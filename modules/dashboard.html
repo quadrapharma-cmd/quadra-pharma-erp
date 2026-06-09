@@ -1,0 +1,66 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#0284c7;--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--border:rgba(2,132,199,0.15);--font:'Tajawal',sans-serif}
+body{font-family:var(--font);background:var(--bg);color:var(--text);padding:0;font-size:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:20px}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center}
+.sc-val{font-size:26px;font-weight:700;margin-bottom:4px}
+.sc-lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#f8fafc;padding:8px 10px;text-align:right;font-size:10px;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border)}
+td{padding:8px 10px;border-bottom:1px solid rgba(2,132,199,0.05)}
+tr:hover td{background:rgba(2,132,199,0.03)}
+.bdg{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;border:1px solid}
+.bdg-g{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.bdg-a{background:#fef3c7;color:#92400e;border-color:#fcd34d}
+.bdg-r{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.bdg-b{background:#e0f2fe;color:#0369a1;border-color:#7dd3fc}
+.empty{text-align:center;padding:32px;color:var(--muted);font-size:13px}
+@media(max-width:600px){.grid4{grid-template-columns:1fr 1fr}}
+</style></head><body>
+<div class="grid4" id="stats-row"></div>
+<div class="card">
+  <div class="card-title">📋 آخر التسجيلات</div>
+  <div id="reg-table"><div class="empty">📭 لا توجد تسجيلات بعد</div></div>
+</div>
+<div class="card">
+  <div class="card-title">📦 تنبيهات المخزون</div>
+  <div id="inv-alerts"><div class="empty">✅ لا توجد تنبيهات</div></div>
+</div>
+<script>
+var params=new URLSearchParams(location.search);
+var coId=params.get('co')||'';
+var user={}; try{user=JSON.parse(decodeURIComponent(params.get('user')||'{}'))}catch(e){}
+
+function getCoData(){try{return JSON.parse(localStorage.getItem('qerp_co_'+coId)||'{}')}catch(e){return{}}}
+function fmt(n){return Number(n||0).toLocaleString('ar-EG')}
+
+var d=getCoData();
+var prods=(d.products||[]).length, regs=(d.registrations||[]).length;
+var orders=(d.orders||[]).length, inv=(d.inventory||[]).reduce(function(s,i){return s+Number(i.qty||0)},0);
+
+var stats=[
+  {v:prods,l:'منتجات',c:'#0284c7'},
+  {v:regs, l:'تسجيلات EDA',c:'#d97706'},
+  {v:orders,l:'أوامر إنتاج',c:'#7c3aed'},
+  {v:fmt(inv),l:'وحدات مخزون',c:'#059669'},
+];
+document.getElementById('stats-row').innerHTML=stats.map(function(s){
+  return '<div class="sc"><div class="sc-val" style="color:'+s.c+'">'+s.v+'</div><div class="sc-lbl">'+s.l+'</div></div>';
+}).join('');
+
+if(regs>0){
+  document.getElementById('reg-table').innerHTML='<table><thead><tr><th>رقم الإخطار</th><th>الاسم</th><th>الجهة</th><th>انتهاء الصلاحية</th><th>الحالة</th></tr></thead><tbody>'+
+  (d.registrations||[]).slice(0,8).map(function(r){
+    var days=r.expiryDate?Math.floor((new Date(r.expiryDate)-new Date())/86400000):null;
+    var bdg=days===null?'bdg-b':days<0?'bdg-r':days<90?'bdg-a':'bdg-g';
+    var lbl=days===null?'—':days<0?'منتهية':days<90?(days+' يوم'):'سارية';
+    return '<tr><td><strong>'+r.regNo+'</strong></td><td>'+r.nameAr+'</td><td>'+r.agency+'</td><td>'+(r.expiryDate||'—')+'</td><td><span class="bdg '+bdg+'">'+lbl+'</span></td></tr>';
+  }).join('')+'</tbody></table>';
+}
+</script></body></html>

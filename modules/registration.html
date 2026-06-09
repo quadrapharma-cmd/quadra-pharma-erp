@@ -1,0 +1,131 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#0284c7;--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--border:rgba(2,132,199,0.15);--font:'Tajawal',sans-serif}
+body{font-family:var(--font);background:var(--bg);color:var(--text);padding:0;font-size:14px}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.btn-p{background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;box-shadow:0 2px 8px rgba(2,132,199,0.25)}
+.btn-o{background:#f8fafc;color:#64748b;border-color:var(--border)}
+.btn-o:hover{background:#f0f9ff;color:var(--primary)}
+.ag-tabs{display:flex;gap:4px;padding:4px;background:#f1f5f9;border-radius:9px;margin-bottom:14px}
+.ag-tab{padding:6px 14px;border-radius:6px;border:none;background:transparent;font-family:var(--font);font-size:12px;font-weight:500;color:#64748b;cursor:pointer;transition:all .15s}
+.ag-tab:hover{color:var(--primary)}
+.ag-tab.act{background:#fff;color:#0369a1;font-weight:700;box-shadow:0 2px 6px rgba(2,132,199,0.1)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:600px;font-size:12px}
+th{background:#f8fafc;padding:9px 10px;text-align:right;font-size:10px;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:9px 10px;border-bottom:1px solid rgba(2,132,199,0.05)}
+tr:hover td{background:rgba(2,132,199,0.03)}
+.bdg{display:inline-flex;align-items:center;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;border:1px solid}
+.bdg-g{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.bdg-a{background:#fef3c7;color:#92400e;border-color:#fcd34d}
+.bdg-r{background:#fee2e2;color:#991b1b;border-color:#fca5a5}
+.bdg-b{background:#e0f2fe;color:#0369a1;border-color:#7dd3fc}
+.bdg-v{background:#ede9fe;color:#5b21b6;border-color:#c4b5fd}
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:500;align-items:center;justify-content:center}
+.modal-bg.on{display:flex}
+.modal{background:#fff;border-radius:16px;width:90%;max-width:600px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(2,132,199,0.12)}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:#f8fafc}
+.mt{font-size:13px;font-weight:700;color:var(--primary);text-transform:uppercase;letter-spacing:.5px}
+.mb{padding:20px}
+.mf{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border);background:#f8fafc}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fl{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+.fi{padding:9px 12px;background:#fff;border:1px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;color:#0f172a;outline:none;width:100%;transition:all .2s}
+.fi:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(2,132,199,0.1);background:#f0f9ff}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fw{grid-column:1/-1}
+</style></head><body>
+<div class="toolbar">
+  <button class="btn btn-p" onclick="openModal()">➕ إخطار / تسجيل جديد</button>
+  <div class="ag-tabs">
+    <button class="ag-tab act" onclick="setAg(this,'all')">الكل</button>
+    <button class="ag-tab" onclick="setAg(this,'EDA')">EDA أدوية</button>
+    <button class="ag-tab" onclick="setAg(this,'NFSA')">NFSA غذاء</button>
+    <button class="ag-tab" onclick="setAg(this,'COSM')">EDA مستحضرات</button>
+  </div>
+</div>
+<div class="card"><div class="tw"><table>
+  <thead><tr><th>رقم الإخطار</th><th>الاسم التجاري</th><th>الاسم العلمي</th><th>الجهة</th><th>تاريخ التسجيل</th><th>انتهاء الصلاحية</th><th>الحالة</th><th></th></tr></thead>
+  <tbody id="reg-body"></tbody>
+</table></div></div>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div class="mh"><div class="mt" id="modal-title">إخطار / تسجيل جديد</div>
+      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:#64748b;font-size:18px">✕</button></div>
+    <div class="mb">
+      <div class="fg"><label class="fl">الجهة التنظيمية</label>
+        <select class="fi" id="f-agency"><option value="EDA">EDA — هيئة الدواء المصرية</option><option value="NFSA">NFSA — هيئة سلامة الغذاء</option><option value="COSM">EDA — مستحضرات تجميل</option></select></div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رقم الإخطار / التسجيل *</label><input class="fi" id="f-regNo" placeholder="مثال: 30108/2019"></div>
+        <div class="fg"><label class="fl">نوع الترخيص</label><select class="fi" id="f-licType"><option value="notification">إخطار</option><option value="registration">تسجيل كامل</option><option value="variation">تعديل</option></select></div>
+        <div class="fg fw"><label class="fl">الاسم التجاري (عربي) *</label><input class="fi" id="f-nameAr" placeholder="الاسم بالعربية"></div>
+        <div class="fg fw"><label class="fl">الاسم التجاري (إنجليزي)</label><input class="fi" id="f-nameEn" dir="ltr" placeholder="Trade name in English"></div>
+        <div class="fg fw"><label class="fl">الاسم العلمي / المادة الفعالة</label><input class="fi" id="f-sci" dir="ltr" placeholder="INN / Active ingredient"></div>
+        <div class="fg"><label class="fl">الشكل الصيدلي</label><input class="fi" id="f-form" placeholder="أقراص / شراب / كبسول..."></div>
+        <div class="fg"><label class="fl">التركيز</label><input class="fi" id="f-strength" dir="ltr" placeholder="500mg / 5ml..."></div>
+        <div class="fg"><label class="fl">تاريخ التسجيل</label><input class="fi" type="date" id="f-regDate"></div>
+        <div class="fg"><label class="fl">تاريخ انتهاء الصلاحية</label><input class="fi" type="date" id="f-expDate"></div>
+        <div class="fg fw"><label class="fl">الشركة المصنعة / CMO</label><input class="fi" id="f-mfg" placeholder="اسم المصنع"></div>
+      </div>
+    </div>
+    <div class="mf"><button class="btn btn-o" onclick="closeModal()">إلغاء</button><button class="btn btn-p" onclick="saveRec()">💾 حفظ</button></div>
+  </div>
+</div>
+<script>
+var params=new URLSearchParams(location.search);
+var coId=params.get('co')||'';
+var curAg='all', editId=null;
+function getData(){try{return JSON.parse(localStorage.getItem('qerp_co_'+coId)||'{}')}catch(e){return{}}}
+function saveData(d){localStorage.setItem('qerp_co_'+coId,JSON.stringify(d))}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function setAg(el,ag){curAg=ag;document.querySelectorAll('.ag-tab').forEach(function(x){x.classList.remove('act')});el.classList.add('act');renderTable()}
+
+function renderTable(){
+  var d=getData(), regs=d.registrations||[];
+  if(curAg!=='all') regs=regs.filter(function(r){return r.agency===curAg});
+  var tbody=document.getElementById('reg-body');
+  if(!regs.length){tbody.innerHTML='<tr><td colspan="8"><div class="empty">📭 لا توجد تسجيلات بعد — اضغط ➕ لإضافة إخطار</div></td></tr>';return}
+  tbody.innerHTML=regs.map(function(r){
+    var days=r.expiryDate?Math.floor((new Date(r.expiryDate)-new Date())/86400000):null;
+    var bdg=days===null?'bdg-b':days<0?'bdg-r':days<90?'bdg-a':'bdg-g';
+    var lbl=days===null?'—':days<0?'منتهية':days<90?(days+' يوم'):'سارية';
+    return '<tr><td><strong>'+esc(r.regNo)+'</strong></td><td>'+esc(r.nameAr)+'</td><td style="direction:ltr;text-align:right">'+esc(r.nameEn||r.sciName||'—')+'</td><td><span class="bdg bdg-b">'+esc(r.agency)+'</span></td><td>'+esc(r.regDate||'—')+'</td><td>'+esc(r.expiryDate||'—')+'</td><td><span class="bdg '+bdg+'">'+lbl+'</span></td><td><button class="btn btn-o" onclick="editRec('+r.id+')" style="padding:3px 8px;font-size:11px">تعديل</button> <button onclick="delRec('+r.id+')" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:13px;padding:2px 5px">🗑</button></td></tr>';
+  }).join('');
+}
+
+function openModal(id){
+  editId=id||null;
+  var d=getData(), rec=id?(d.registrations||[]).find(function(r){return r.id===id}):null;
+  document.getElementById('modal-title').textContent=id?'تعديل التسجيل':'إخطار / تسجيل جديد';
+  ['agency','regNo','licType','nameAr','nameEn','sci','form','strength','regDate','expDate','mfg'].forEach(function(k){
+    var el=document.getElementById('f-'+k); if(el) el.value=rec&&rec[k]?rec[k]:'';
+  });
+  document.getElementById('modal-bg').classList.add('on');
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('on');editId=null}
+function gv(id){var el=document.getElementById(id);return el?el.value.trim():''}
+
+function saveRec(){
+  var regNo=gv('f-regNo'), nameAr=gv('f-nameAr');
+  if(!regNo||!nameAr){alert('يرجى إدخال رقم الإخطار والاسم التجاري');return}
+  var d=getData(); if(!d.registrations) d.registrations=[];
+  var obj={id:editId||Date.now(),agency:gv('f-agency'),licType:gv('f-licType'),
+    regNo:regNo,nameAr:nameAr,nameEn:gv('f-nameEn'),sciName:gv('f-sci'),
+    form:gv('f-form'),strength:gv('f-strength'),regDate:gv('f-regDate'),
+    expiryDate:gv('f-expDate'),manufacturer:gv('f-mfg')};
+  if(editId){var i=d.registrations.findIndex(function(r){return r.id===editId});if(i>=0)d.registrations[i]=obj;else d.registrations.push(obj)}
+  else d.registrations.push(obj);
+  saveData(d); closeModal(); renderTable();
+}
+function editRec(id){openModal(id)}
+function delRec(id){if(!confirm('حذف هذا التسجيل؟'))return;var d=getData();d.registrations=(d.registrations||[]).filter(function(r){return r.id!==id});saveData(d);renderTable()}
+
+renderTable();
+</script></body></html>

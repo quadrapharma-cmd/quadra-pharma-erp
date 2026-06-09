@@ -1,2 +1,2 @@
-/phase1-companies.html /index.html 200
+/modules/* /modules/:splat 200
 / /index.html 200

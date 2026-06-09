@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--primary:#0284c7;--bg:#f8fafc;--card:#fff;--text:#0f172a;--muted:#64748b;--border:rgba(2,132,199,0.15);--font:'Tajawal',sans-serif}
+body{font-family:var(--font);background:var(--bg);color:var(--text);padding:0;font-size:14px}
+.toolbar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 14px;border-radius:8px;font-family:var(--font);font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s}
+.btn-p{background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;box-shadow:0 2px 8px rgba(2,132,199,0.25)}
+.btn-o{background:#f8fafc;color:#64748b;border-color:var(--border)}
+.btn-o:hover{background:#f0f9ff;color:var(--primary)}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:500px;font-size:12px}
+th{background:#f8fafc;padding:9px 10px;text-align:right;font-size:10px;color:var(--primary);text-transform:uppercase;letter-spacing:.8px;border-bottom:1px solid var(--border)}
+td{padding:9px 10px;border-bottom:1px solid rgba(2,132,199,0.05)}
+tr:hover td{background:rgba(2,132,199,0.03)}
+.bdg{display:inline-flex;padding:2px 7px;border-radius:20px;font-size:10px;font-weight:600;border:1px solid}
+.bdg-g{background:#d1fae5;color:#065f46;border-color:#6ee7b7}
+.bdg-b{background:#e0f2fe;color:#0369a1;border-color:#7dd3fc}
+.empty{text-align:center;padding:40px;color:var(--muted);font-size:13px}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(15,23,42,0.5);z-index:500;align-items:center;justify-content:center}
+.modal-bg.on{display:flex}
+.modal{background:#fff;border-radius:16px;width:90%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(2,132,199,0.12)}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);background:#f8fafc}
+.mt{font-size:13px;font-weight:700;color:var(--primary);text-transform:uppercase}
+.mb{padding:20px}
+.mf{display:flex;justify-content:flex-end;gap:8px;padding:14px 20px;border-top:1px solid var(--border);background:#f8fafc}
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fl{font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+.fi{padding:9px 12px;background:#fff;border:1px solid var(--border);border-radius:8px;font-family:var(--font);font-size:13px;color:#0f172a;outline:none;width:100%;transition:all .2s}
+.fi:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(2,132,199,0.1)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+</style></head><body>
+<div class="toolbar">
+  <button class="btn btn-p" onclick="openModal()">➕ إضافة جديد</button>
+</div>
+<div class="card"><div class="tw">
+  <table><thead id="tbl-head"></thead><tbody id="tbl-body"></tbody></table>
+</div></div>
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <div class="mh"><div class="mt" id="modal-title">إضافة جديد</div>
+      <button onclick="closeModal()" style="background:none;border:none;cursor:pointer;color:#64748b;font-size:18px">✕</button></div>
+    <div class="mb" id="modal-body"></div>
+    <div class="mf"><button class="btn btn-o" onclick="closeModal()">إلغاء</button><button class="btn btn-p" onclick="saveRec()">💾 حفظ</button></div>
+  </div>
+</div>
+<script>
+var MOD='inventory';
+var params=new URLSearchParams(location.search);
+var coId=params.get('co')||'';
+var editId=null;
+
+// Config per module
+var CFG={
+  products:{key:'products',title:'المنتجات',cols:['الاسم','الاسم العلمي','الشكل','التركيز','الفئة'],
+    fields:[{id:'name',l:'الاسم التجاري *',r:true},{id:'nameEn',l:'الاسم العلمي',dir:'ltr'},{id:'form',l:'الشكل الصيدلي'},{id:'strength',l:'التركيز',dir:'ltr'},{id:'category',l:'الفئة',type:'select',opts:['دواء بشري','مكمل غذائي','تجميل','بيطري']}]},
+  materials:{key:'materials',title:'المواد الخام',cols:['الاسم','النوع','الكمية','الوحدة','المورد'],
+    fields:[{id:'name',l:'اسم المادة *',r:true},{id:'type',l:'النوع',type:'select',opts:['API مادة فعالة','Excipient مادة مساعدة','تغليف أولي','تغليف ثانوي']},{id:'qty',l:'الكمية',type:'number'},{id:'unit',l:'الوحدة',opts:['kg','g','L','pcs','box']},{id:'supplier',l:'المورد'},{id:'spec',l:'المواصفة',dir:'ltr'}]},
+  finance:{key:'entries',title:'القيود المالية',cols:['التاريخ','البيان','المدين','الدائن','الرصيد'],
+    fields:[{id:'date',l:'التاريخ *',type:'date',r:true},{id:'desc',l:'البيان *',r:true},{id:'debit',l:'مبلغ المدين',type:'number'},{id:'credit',l:'مبلغ الدائن',type:'number'},{id:'acc',l:'الحساب'}]},
+  production:{key:'orders',title:'أوامر الإنتاج',cols:['رقم الأمر','المنتج','الكمية','تاريخ البدء','الحالة'],
+    fields:[{id:'orderNo',l:'رقم الأمر *',r:true},{id:'product',l:'المنتج *',r:true},{id:'qty',l:'الكمية المطلوبة',type:'number'},{id:'startDate',l:'تاريخ البدء',type:'date'},{id:'status',l:'الحالة',type:'select',opts:['مخطط','جاري','منتهي','موقوف']}]},
+  quality:{key:'qcChecks',title:'فحوصات الجودة',cols:['التاريخ','المنتج','نوع الفحص','النتيجة','الملاحظات'],
+    fields:[{id:'date',l:'التاريخ *',type:'date',r:true},{id:'product',l:'المنتج *',r:true},{id:'testType',l:'نوع الفحص'},{id:'result',l:'النتيجة',type:'select',opts:['مطابق','غير مطابق','قيد الفحص']},{id:'notes',l:'ملاحظات'}]},
+  bom:{key:'bom',title:'وصفات الإنتاج',cols:['المنتج','المادة','الكمية','الوحدة'],
+    fields:[{id:'product',l:'المنتج *',r:true},{id:'material',l:'المادة *',r:true},{id:'qty',l:'الكمية',type:'number'},{id:'unit',l:'الوحدة'}]},
+  expenses:{key:'expenses',title:'المصروفات',cols:['التاريخ','البيان','القسم','المبلغ','النوع'],
+    fields:[{id:'date',l:'التاريخ *',type:'date',r:true},{id:'desc',l:'البيان *',r:true},{id:'dept',l:'القسم'},{id:'amount',l:'المبلغ',type:'number'},{id:'type',l:'النوع',type:'select',opts:['مباشر','غير مباشر']}]},
+  payroll:{key:'payroll',title:'الرواتب',cols:['الاسم','الوظيفة','الراتب الأساسي','البدلات','الخصومات'],
+    fields:[{id:'name',l:'اسم الموظف *',r:true},{id:'title',l:'الوظيفة'},{id:'basic',l:'الراتب الأساسي',type:'number'},{id:'allowances',l:'البدلات',type:'number'},{id:'deductions',l:'الخصومات',type:'number'}]},
+  inventory:{key:'inventory',title:'المخزون',cols:['المنتج','الدفعة','الكمية','تاريخ الإنتاج','تاريخ الانتهاء'],
+    fields:[{id:'product',l:'المنتج *',r:true},{id:'batch',l:'رقم الدفعة',dir:'ltr'},{id:'qty',l:'الكمية',type:'number'},{id:'mfgDate',l:'تاريخ الإنتاج',type:'date'},{id:'expDate',l:'تاريخ الانتهاء',type:'date'}]},
+  deliveries:{key:'deliveries',title:'أوامر التوريد',cols:['رقم الأمر','العميل','التاريخ','المبلغ','الحالة'],
+    fields:[{id:'orderNo',l:'رقم الأمر *',r:true},{id:'client',l:'العميل *',r:true},{id:'date',l:'التاريخ',type:'date'},{id:'amount',l:'المبلغ الإجمالي',type:'number'},{id:'status',l:'الحالة',type:'select',opts:['معلق','جاري','تم التسليم','ملغي']}]},
+  company:{key:'companyInfo',title:'بيانات الشركة',cols:['البيان','القيمة'],
+    fields:[{id:'nameAr',l:'الاسم التجاري (عربي) *',r:true},{id:'nameEn',l:'الاسم التجاري (إنجليزي)',dir:'ltr'},{id:'legalForm',l:'الشكل القانوني',type:'select',opts:['ذ.م.م','مساهمة','شخص واحد','تضامن']},{id:'taxId',l:'الرقم الضريبي',dir:'ltr'},{id:'address',l:'العنوان'},{id:'phone',l:'الهاتف',dir:'ltr'},{id:'email',l:'البريد الإلكتروني',dir:'ltr'}]},
+  users:{key:'users',title:'المستخدمون',cols:['الاسم','اسم المستخدم','الدور','الحالة'],
+    fields:[{id:'name',l:'الاسم الكامل *',r:true},{id:'username',l:'اسم المستخدم *',r:true,dir:'ltr'},{id:'password',l:'كلمة المرور',type:'password',dir:'ltr'},{id:'role',l:'الدور',type:'select',opts:['admin','ra','production','finance','quality','sales','viewer']}]},
+};
+
+var cfg=CFG[MOD]||{key:MOD,title:MOD,cols:[],fields:[]};
+
+function getData(){try{return JSON.parse(localStorage.getItem('qerp_co_'+coId)||'{}')}catch(e){return{}}}
+function saveStorage(d){localStorage.setItem('qerp_co_'+coId,JSON.stringify(d))}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function hash(s){var h=0;for(var i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return String(h)}
+
+function renderTable(){
+  var d=getData(), rows=d[cfg.key]||[];
+  // thead
+  document.getElementById('tbl-head').innerHTML='<tr>'+cfg.cols.map(function(c){return'<th>'+c+'</th>'}).join('')+'<th></th></tr>';
+  if(!rows.length){document.getElementById('tbl-body').innerHTML='<tr><td colspan="'+(cfg.cols.length+1)+'"><div class="empty">📭 لا توجد بيانات — اضغط ➕ لإضافة</div></td></tr>';return}
+  document.getElementById('tbl-body').innerHTML=rows.map(function(r){
+    var cells=cfg.fields.slice(0,cfg.cols.length).map(function(f){
+      var v=r[f.id]||''; return'<td>'+(v?esc(v):'<span style="color:#94a3b8">—</span>')+'</td>';
+    }).join('');
+    return'<tr>'+cells+'<td><button class="btn btn-o" onclick="openModal('+r.id+')" style="padding:3px 8px;font-size:11px">تعديل</button> <button onclick="delRec('+r.id+')" style="background:none;border:none;cursor:pointer;color:#dc2626;font-size:13px;padding:2px 5px">🗑</button></td></tr>';
+  }).join('');
+}
+
+function openModal(id){
+  editId=id||null;
+  var d=getData(), rec=id?(d[cfg.key]||[]).find(function(r){return r.id===id}):null;
+  document.getElementById('modal-title').textContent=id?'تعديل':'إضافة جديد';
+  document.getElementById('modal-body').innerHTML=cfg.fields.map(function(f){
+    var val=rec&&rec[f.id]?rec[f.id]:'';
+    var inp='';
+    if(f.type==='select'&&f.opts){
+      inp='<select class="fi" id="mf-'+f.id+'">'+f.opts.map(function(o){return'<option value="'+esc(o)+'"'+(val===o?' selected':'')+'>'+esc(o)+'</option>'}).join('')+'</select>';
+    } else {
+      inp='<input class="fi" id="mf-'+f.id+'" type="'+(f.type||'text')+'" value="'+esc(val)+'"'+(f.dir?' dir="'+f.dir+'"':'')+'>';
+    }
+    return'<div class="fg"><label class="fl">'+f.l+'</label>'+inp+'</div>';
+  }).join('');
+  document.getElementById('modal-bg').classList.add('on');
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('on');editId=null}
+function gv(id){var el=document.getElementById(id);return el?el.value.trim():''}
+
+function saveRec(){
+  var req=cfg.fields.filter(function(f){return f.r});
+  for(var i=0;i<req.length;i++){if(!gv('mf-'+req[i].id)){alert('يرجى ملء الحقول المطلوبة');return}}
+  var obj={id:editId||Date.now()};
+  cfg.fields.forEach(function(f){
+    var v=gv('mf-'+f.id);
+    if(f.type==='password'&&v) obj[f.id]=hash(v);
+    else obj[f.id]=v;
+  });
+  var d=getData(); if(!d[cfg.key]) d[cfg.key]=[];
+  if(editId){var idx=d[cfg.key].findIndex(function(r){return r.id===editId});if(idx>=0)d[cfg.key][idx]=obj;else d[cfg.key].push(obj)}
+  else d[cfg.key].push(obj);
+  saveStorage(d); closeModal(); renderTable();
+}
+function delRec(id){if(!confirm('حذف هذا السجل؟'))return;var d=getData();d[cfg.key]=(d[cfg.key]||[]).filter(function(r){return r.id!==id});saveStorage(d);renderTable()}
+parent.postMessage({type:'setTitle',title:cfg.title},'*');
+renderTable();
+</script></body></html>
