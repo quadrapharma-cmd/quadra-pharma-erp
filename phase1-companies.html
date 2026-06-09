@@ -6,6 +6,38 @@
 <title>Quadra Pharma ERP</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+/* ══ LAYOUT — SINGLE SOURCE OF TRUTH ══ */
+:root{--sw:224px;--th:60px}
+
+.topbar{
+  position:fixed;
+  top:0;right:var(--sw);left:0;
+  height:var(--th);
+  display:flex;align-items:center;
+  padding:0 18px;gap:10px;
+  flex-wrap:nowrap;
+  background:rgba(255,255,255,0.95);
+  backdrop-filter:blur(20px);
+  -webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(2,132,199,0.15);
+  box-shadow:0 1px 8px rgba(2,132,199,0.06);
+  z-index:100;
+  overflow:hidden;
+}
+
+.main{
+  margin-right:var(--sw);
+  margin-top:var(--th);
+  padding:22px;
+  min-height:calc(100vh - var(--th));
+  box-sizing:border-box;
+}
+
+/* Sidebar hidden on mobile — topbar full width */
+@media(max-width:768px){
+  .topbar{right:0}
+  .main{margin-right:0;margin-top:var(--th)}
+}
 
 *{box-sizing:border-box;margin:0;padding:0}
 
@@ -27,7 +59,7 @@ nav{flex:1;padding:10px 8px;overflow-y:auto}
 
 /* MAIN */
 main{margin-right:240px;flex:1;display:flex;flex-direction:column;min-height:100vh}
-.topbar{background:var(--sidebar);border-bottom:1px solid var(--border);padding:14px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
+
 .topbar-left h1{font-size:20px;font-weight:700;color:var(--text)}
 .topbar-left p{font-size:12px;color:var(--muted);margin-top:2px}
 .content{padding:24px 28px;flex:1;min-width:0}
@@ -255,74 +287,7 @@ strong{font-weight:700;color:var(--text)}
 
 
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  /* ── LIGHT SLATE PALETTE ── */
-  --primary:#0284c7;
-  --primary-d:#0369a1;
-  --primary-xd:#075985;
-  --primary-l:#e0f2fe;
-  --primary-xl:#f0f9ff;
-  --secondary:#7c3aed;
-  --secondary-d:#6d28d9;
-  --secondary-xd:#5b21b6;
-  --neon-cyan:#0284c7;
-  --neon-green:#059669;
-  --neon-magenta:#db2777;
-  --neon-violet:#7c3aed;
-  --neon-lime:#65a30d;
-  --neon-amber:#d97706;
-  --neon-orange:#ea580c;
 
-  /* ── Backgrounds ── */
-  --bg:#f8fafc;
-  --bg-solid:#f8fafc;
-  --bg2:#f1f5f9;
-  --bg3:#e2e8f0;
-  --sb-bg:#ffffff;
-  --card:#ffffff;
-  --card2:#f8fafc;
-  --card-border:rgba(2,132,199,0.15);
-  --glass-border:rgba(2,132,199,0.2);
-
-  /* ── Orbs ── */
-  --orb1:rgba(2,132,199,0.08);
-  --orb2:rgba(124,58,237,0.07);
-  --orb3:rgba(5,150,105,0.06);
-  --orb4:rgba(219,39,119,0.05);
-
-  /* ── Text ── */
-  --text:#0f172a;
-  --muted:#64748b;
-  --muted2:#94a3b8;
-
-  /* ── Semantic ── */
-  --green:#059669;--gl:#10b981;--gbg:#d1fae5;
-  --blue:#0284c7;--blue-light:#e0f2fe;
-  --red:#dc2626;--red-light:#fee2e2;
-  --amber:#d97706;--amber-light:#fef3c7;
-  --purple:#7c3aed;
-
-  /* ── Status badges ── */
-  --bdg-active-bg:#d1fae5;--bdg-active-txt:#065f46;--bdg-active-bdr:#6ee7b7;
-  --bdg-pending-bg:#e0f2fe;--bdg-pending-txt:#0369a1;--bdg-pending-bdr:#7dd3fc;
-  --bdg-warn-bg:#fef3c7;--bdg-warn-txt:#92400e;--bdg-warn-bdr:#fcd34d;
-  --bdg-expired-bg:#fee2e2;--bdg-expired-txt:#991b1b;--bdg-expired-bdr:#fca5a5;
-
-  /* ── Misc ── */
-  --hover:rgba(2,132,199,0.06);
-  --r:12px;--rl:14px;--sw:224px;--th:64px;
-  --font:'Tajawal',sans-serif;--mono:'Space Grotesk',sans-serif;
-  --shadow-glass:0 4px 24px rgba(2,132,199,0.08),0 1px 6px rgba(0,0,0,0.06);
-  --shadow-card:0 2px 12px rgba(2,132,199,0.06),0 1px 4px rgba(0,0,0,0.04);
-  --shadow-neon:0 4px 16px rgba(2,132,199,0.25);
-  --shadow-green:0 4px 16px rgba(5,150,105,0.25);
-  --shadow-red:0 4px 16px rgba(220,38,38,0.2);
-
-  /* ── Legacy aliases ── */
-  --border:rgba(2,132,199,0.15);
-  --gray:var(--muted);--gray2:var(--muted2);
-  --gray3:rgba(2,132,199,0.1);--gray4:rgba(248,250,252,0.8);
-}
 body{font-family:var(--font);background:#f8fafc;color:var(--text);min-height:100vh}
 .screen{display:none;width:100%;min-height:100vh;position:relative}
 .screen.active{display:flex}
@@ -404,10 +369,10 @@ textarea.fi{resize:vertical;min-height:75px}
 .ui{flex:1;min-width:0}
 .un{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ur{font-size:11px;color:var(--muted)}
-.topbar{position:fixed;top:0;right:var(--sw);left:0;height:var(--th);background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(2,132,199,0.12);box-shadow:0 1px 8px rgba(2,132,199,0.06);display:flex;align-items:center;padding:0 18px;gap:10px;z-index:100;overflow:visible}
+
 .tb-menu{display:none;background:none;border:none;color:var(--text);cursor:pointer;font-size:20px;padding:4px}
 .tb-bc{flex:1;font-size:14px;font-weight:600;min-width:0}
-.main{margin-right:var(--sw);margin-top:var(--th);padding:22px;min-height:calc(100vh - var(--th))}
+
 
 /* ══ COMPONENTS ══ */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
@@ -525,8 +490,8 @@ tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(34,2
   .sidebar.open{transform:translateX(0)}
   .tb-menu{display:flex!important}
   .overlay-bg.show{display:block}
-  .topbar{right:0}
-  .main{margin-right:0}
+  
+  
   .fgrid{grid-template-columns:1fr}
 }
 /* ══ REGISTRATION MODULE ══ */
@@ -695,12 +660,7 @@ tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(34,2
   border-left:1px solid rgba(255,255,255,.85) !important;
   box-shadow:none !important;
 }
-.topbar{
-  background:rgba(255,255,255,0.7) !important;
-  backdrop-filter:blur(24px) !important;
-  -webkit-backdrop-filter:blur(24px) !important;
-  border-bottom:1.5px solid rgba(34,211,238,.15) !important;
-}
+
 
 /* ══ GLASS CARDS FIX ══ */
 .pcard{
@@ -969,13 +929,13 @@ body::before{
 .sb-ur{color:#64748b !important}
 
 /* ── TOPBAR ── */
-.topbar{background:rgba(255,255,255,0.9) !important;backdrop-filter:blur(20px) !important;border-bottom:1px solid rgba(2,132,199,0.12) !important;box-shadow:0 1px 8px rgba(2,132,199,0.06) !important}
+
 #page-title{color:#0f172a !important;font-size:15px !important;font-weight:600 !important;letter-spacing:0.3px}
 .topbar .btn-o{border-color:rgba(2,132,199,0.2) !important;color:#0284c7 !important;background:#f0f9ff !important}
 .topbar .btn-o:hover{background:#e0f2fe !important}
 
 /* ── MAIN ── */
-.main{background:transparent !important}
+
 
 /* ── STAT CARDS ── */
 .sc{background:#ffffff !important;border:1px solid rgba(2,132,199,0.12) !important;border-radius:12px !important;backdrop-filter:none !important;box-shadow:0 2px 12px rgba(2,132,199,0.06),0 1px 3px rgba(0,0,0,0.04) !important;transition:all .2s !important}
@@ -1197,7 +1157,7 @@ label,.fl,.login-label{color:#64748b !important;font-size:11px !important;letter
 }
 
 /* ── Topbar pg-action — wrap on small screens ── */
-.topbar{flex-wrap:wrap;gap:6px}
+
 .topbar-left{min-width:0;flex:1}
 .topbar-left h1{font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .topbar-left p{font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px}
@@ -1210,7 +1170,7 @@ label,.fl,.login-label{color:#64748b !important;font-size:11px !important;letter
 .tb-actions .btn{font-size:11px;padding:5px 8px}
 
 /* ── Content area ── */
-.content,.main{min-width:0;overflow-x:hidden}
+.content,
 
 /* ── Stats grid responsive ── */
 .stats-grid{display:grid;gap:12px}
@@ -1230,7 +1190,7 @@ table{min-width:500px}
 
 /* ══ TABLET — 768px to 1024px ══ */
 @media(max-width:1024px){
-  :root{--sw:200px;--th:52px}
+  
   .stats-grid.g4{grid-template-columns:repeat(2,1fr)}
   .nx-dash{grid-template-columns:1fr 1fr}
   .nx-profit-row{grid-template-columns:1fr 1fr}
@@ -1245,7 +1205,7 @@ table{min-width:500px}
 
 /* ══ MOBILE — under 768px ══ */
 @media(max-width:768px){
-  :root{--sw:260px;--th:50px}
+  
 
   /* Sidebar: slide-in overlay */
   .sidebar{
@@ -1259,10 +1219,10 @@ table{min-width:500px}
   #mob-menu-btn{display:flex}
 
   /* Main fills full width */
-  .main{margin-right:0!important;padding:12px}
+  
 
   /* Topbar layout */
-  .topbar{padding:0 12px;height:var(--th);min-height:var(--th);flex-wrap:nowrap;gap:8px;overflow-x:auto}
+  
   .topbar-left h1{font-size:13px}
   .topbar-left p{display:none}
   #search-wrap{display:none}
@@ -1342,8 +1302,8 @@ table{min-width:500px}
 
 
 /* ══ TOPBAR DEFINITIVE FIX ══ */
-.topbar{flex-wrap:nowrap!important;height:var(--th)!important;overflow:hidden!important}
-.main{margin-top:var(--th)!important}
+
+
 .tb-actions{flex-wrap:nowrap!important;overflow-x:auto!important;max-width:55vw!important}
 #pg-action{flex-wrap:nowrap!important;overflow-x:auto!important}
 </style>
