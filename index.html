@@ -585,48 +585,6 @@ function loadPage(id){
   // Pass context via URL params
   var url=p.mod+'?co='+encodeURIComponent(_co?_co.id:'')+'&user='+encodeURIComponent(JSON.stringify(_user||{}))+'&t='+Date.now();
 
-  fetch(url)
-    .then(function(r){
-      if(!r.ok) throw new Error('HTTP '+r.status);
-      return r.text();
-    })
-    .then(function(html){
-      // Extract <body> content and <style>/<script> tags
-      var parser=new DOMParser();
-      var doc=parser.parseFromString(html,'text/html');
-
-      // Clear area
-      area.innerHTML='';
-
-      // Inject styles
-      doc.querySelectorAll('style').forEach(function(s){
-        var el=document.createElement('style');
-        el.textContent=s.textContent;
-        area.appendChild(el);
-      });
-
-      // Inject body content
-      var wrapper=document.createElement('div');
-      wrapper.id='mod-content-'+id;
-      wrapper.innerHTML=doc.body.innerHTML;
-
-      // Remove script tags from innerHTML (they don't execute)
-      wrapper.querySelectorAll('script').forEach(function(s){s.remove()});
-      area.appendChild(wrapper);
-
-      // Re-execute scripts with module context
-      window._MOD_CO = _co ? _co.id : '';
-      window._MOD_USER = JSON.stringify(_user||{});
-      doc.querySelectorAll('script').forEach(function(s){
-        var el = document.createElement('script');
-        var prefix = 'var params={get:function(k){return k==="co"?window._MOD_CO:k==="user"?window._MOD_USER:""}};';
-        el.textContent = prefix + s.textContent;
-        area.appendChild(el);
-      });
-    })
-    .catch(function(err){
-      area.innerHTML='<div style="text-align:center;padding:40px;color:#dc2626"><div style="font-size:24px;margin-bottom:8px">⚠️</div>خطأ في تحميل الصفحة<br><small style="color:#94a3b8">'+err.message+'</small></div>';
-    });
 
   if(window.innerWidth<=768) closeSb();
 }
