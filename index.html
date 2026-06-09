@@ -309,7 +309,7 @@ body{font-family:var(--font);background:var(--bg);color:var(--text);min-height:1
     <button class="tb-btn" id="notif-btn">🔔</button>
   </div>
   <main class="main-area">
-    <iframe class="module-frame" id="module-frame" src="" onload="frameLoaded()"></iframe>
+    <div id="module-area" style="width:100%;min-height:600px"></div>
   </main>
 </div>
 
@@ -570,30 +570,66 @@ function buildNav(){
   });
 }
 
+var _curPage = null;
+
 function loadPage(id){
   var p=PAGES.find(function(x){return x.id===id});
   if(!p||!p.mod) return;
+  _curPage=id;
   document.querySelectorAll('.nitem').forEach(function(x){x.classList.remove('act')});
   var ni=document.getElementById('nav-'+id); if(ni) ni.classList.add('act');
   document.getElementById('pg-title').textContent=p.label||'';
-  var frame=document.getElementById('module-frame');
-  frame.src=p.mod+'?co='+(_co?_co.id:'')+'&user='+encodeURIComponent(JSON.stringify(_user||{}));
+  var area=document.getElementById('module-area');
+  area.innerHTML='<div style="text-align:center;padding:40px;color:#64748b"><div style="font-size:24px;margin-bottom:8px">⏳</div>جاري التحميل...</div>';
+
+  // Pass context via URL params
+  var url=p.mod+'?co='+encodeURIComponent(_co?_co.id:'')+'&user='+encodeURIComponent(JSON.stringify(_user||{}))+'&t='+Date.now();
+
+  fetch(url)
+    .then(function(r){
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.text();
+    })
+    .then(function(html){
+      // Extract <body> content and <style>/<script> tags
+      var parser=new DOMParser();
+      var doc=parser.parseFromString(html,'text/html');
+
+      // Clear area
+      area.innerHTML='';
+
+      // Inject styles
+      doc.querySelectorAll('style').forEach(function(s){
+        var el=document.createElement('style');
+        el.textContent=s.textContent;
+        area.appendChild(el);
+      });
+
+      // Inject body content
+      var wrapper=document.createElement('div');
+      wrapper.id='mod-content-'+id;
+      wrapper.innerHTML=doc.body.innerHTML;
+
+      // Remove script tags from innerHTML (they don't execute)
+      wrapper.querySelectorAll('script').forEach(function(s){s.remove()});
+      area.appendChild(wrapper);
+
+      // Re-execute scripts
+      doc.querySelectorAll('script').forEach(function(s){
+        var el=document.createElement('script');
+        el.textContent=s.textContent;
+        // Override params to use current context
+        var ctx='var params=new URLSearchParams("co="+encodeURIComponent("'+(_co?_co.id:'')+'")+"&user="+encodeURIComponent(''+JSON.stringify(_user||{}).replace(/'/g,"\'")+''));';
+        el.textContent=ctx+s.textContent;
+        area.appendChild(el);
+      });
+    })
+    .catch(function(err){
+      area.innerHTML='<div style="text-align:center;padding:40px;color:#dc2626"><div style="font-size:24px;margin-bottom:8px">⚠️</div>خطأ في تحميل الصفحة<br><small style="color:#94a3b8">'+err.message+'</small></div>';
+    });
+
   if(window.innerWidth<=768) closeSb();
 }
-
-function frameLoaded(){
-  var frame=document.getElementById('module-frame');
-  try{
-    var h=frame.contentDocument.body.scrollHeight;
-    frame.style.minHeight=Math.max(600,h+40)+'px';
-  }catch(e){}
-}
-
-// postMessage from modules
-window.addEventListener('message',function(e){
-  if(e.data&&e.data.type==='navigate') loadPage(e.data.page);
-  if(e.data&&e.data.type==='setTitle') document.getElementById('pg-title').textContent=e.data.title;
-});
 
 // ══════════════════════════════════════════════════
 // MOBILE SIDEBAR
@@ -621,7 +657,7 @@ function doLogout(){
   try{sessionStorage.removeItem('_s')}catch(e){}
   document.getElementById('central-dash').style.display='none';
   document.getElementById('app').style.display='none';
-  document.getElementById('module-frame').src='';
+  document.getElementById('module-area').innerHTML='';
   goStep(0);
   document.getElementById('login-screen').style.display='flex';
 }

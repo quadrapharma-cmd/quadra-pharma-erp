@@ -1,8 +1,7 @@
 /*
-  X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
-  Cache-Control: no-store
+  Cache-Control: no-store, no-cache
+  Referrer-Policy: strict-origin-when-cross-origin
 
 /modules/*
-  X-Frame-Options: ALLOWALL
-  Content-Security-Policy: frame-ancestors *
+  Cache-Control: no-store, no-cache
