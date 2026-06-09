@@ -11173,7 +11173,101 @@ async function printCompany(){
   const factories=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
   const pr=(l,v)=>v?`<tr><td style="color:#666;font-size:12px;width:200px;padding:6px 0">${l}</td><td style="font-size:13px;font-weight:500;padding:6px 0">${v}</td></tr>`:'';
   const w=window.open();
-  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script>
+// ══════════════════════════════════════════════════════════════════
+// CLOUDFLARE D1 API LAYER
+// Falls back to localStorage if API not available
+// ══════════════════════════════════════════════════════════════════
+var API_BASE = localStorage.getItem('_api_base') || '';
+
+var _useD1 = false;
+
+// Check if we're on Cloudflare (API available)
+(function detectD1(){
+  if(!API_BASE) return;
+  fetch(API_BASE + '/api/stats')
+    .then(function(r){ if(r.ok){ _useD1=true; console.log('D1 API connected'); }})
+    .catch(function(){});
+})();
+
+// ── API helpers ────────────────────────────────────────────────
+function apiGet(path){
+  return fetch(API_BASE+'/api'+path).then(function(r){return r.json()});
+}
+function apiPost(path, data){
+  return fetch(API_BASE+'/api'+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){return r.json()});
+}
+function apiPut(path, data){
+  return fetch(API_BASE+'/api'+path,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){return r.json()});
+}
+function apiDel(path){
+  return fetch(API_BASE+'/api'+path,{method:'DELETE'}).then(function(r){return r.json()});
+}
+
+// ── Override erpDoLogin to use D1 when available ───────────────
+var _orig_erpDoLogin = typeof erpDoLogin === 'function' ? erpDoLogin : null;
+function erpDoLogin(){
+  if(!_useD1){ if(_orig_erpDoLogin) _orig_erpDoLogin(); return; }
+  var u = (document.getElementById('erp-u')||document.getElementById('pw-inp'))||{value:''};
+  var p = (document.getElementById('erp-p')||document.getElementById('erp-pw'))||{value:''};
+  if(!u.value||!p.value){ if(_orig_erpDoLogin) _orig_erpDoLogin(); return; }
+  apiPost('/login',{username:u.value.trim(),password:p.value})
+    .then(function(res){
+      if(res.ok){
+        _authUser=res.user;
+        try{sessionStorage.setItem('_erp_s',JSON.stringify(res.user));}catch(e){}
+        var el=document.getElementById('erp-login-screen'); if(el) el.style.display='none';
+        erpShowCentral();
+      } else {
+        var err=document.getElementById('erp-pw-err')||document.getElementById('erp-login-err');
+        if(err){err.textContent=res.error||'خطأ في تسجيل الدخول';err.classList.add('show');}
+      }
+    })
+    .catch(function(){ if(_orig_erpDoLogin) _orig_erpDoLogin(); });
+}
+
+// ── Override data functions when D1 available ─────────────────
+var _origGetAll = typeof getAll==='function'?getAll:null;
+var _d1Cache = {};
+
+function getAll(table){
+  if(!_useD1||!_authUser) return _origGetAll?_origGetAll(table):[];
+  // Return cache immediately, refresh async
+  if(_d1Cache[table]) return _d1Cache[table];
+  apiGet('/co/'+(_authUser.company_id||'')+'/'+table)
+    .then(function(rows){ _d1Cache[table]=rows||[]; })
+    .catch(function(){});
+  return [];
+}
+
+function insert(table, obj){
+  if(!_useD1||!_authUser){ return typeof _origInsert==='function'?_origInsert(table,obj):null; }
+  _d1Cache[table]=null; // invalidate cache
+  return apiPost('/co/'+(_authUser.company_id||'')+'/'+table, obj);
+}
+
+function update(table, obj){
+  if(!_useD1||!_authUser){ return typeof _origUpdate==='function'?_origUpdate(table,obj):null; }
+  _d1Cache[table]=null;
+  return apiPut('/co/'+(_authUser.company_id||'')+'/'+table+'/'+obj.id, obj);
+}
+
+function remove(table, id){
+  if(!_useD1||!_authUser){ return typeof _origRemove==='function'?_origRemove(table,id):null; }
+  _d1Cache[table]=null;
+  return apiDel('/co/'+(_authUser.company_id||'')+'/'+table+'/'+id);
+}
+
+// ── Set API base (called after deploy) ─────────────────────────
+function setApiBase(url){
+  localStorage.setItem('_api_base', url);
+  API_BASE=url;
+  _useD1=false;
+  detectD1();
+  showNotif('API base set: '+url,'success');
+}
+
+</body></html>`);
 }
 
 // ══ USERS ══
