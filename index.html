@@ -614,13 +614,13 @@ function loadPage(id){
       wrapper.querySelectorAll('script').forEach(function(s){s.remove()});
       area.appendChild(wrapper);
 
-      // Re-execute scripts
+      // Re-execute scripts with module context
+      window._MOD_CO = _co ? _co.id : '';
+      window._MOD_USER = JSON.stringify(_user||{});
       doc.querySelectorAll('script').forEach(function(s){
-        var el=document.createElement('script');
-        el.textContent=s.textContent;
-        // Override params to use current context
-        var ctx='var params=new URLSearchParams("co="+encodeURIComponent("'+(_co?_co.id:'')+'")+"&user="+encodeURIComponent(''+JSON.stringify(_user||{}).replace(/'/g,"\'")+''));';
-        el.textContent=ctx+s.textContent;
+        var el = document.createElement('script');
+        var prefix = 'var params={get:function(k){return k==="co"?window._MOD_CO:k==="user"?window._MOD_USER:""}};';
+        el.textContent = prefix + s.textContent;
         area.appendChild(el);
       });
     })
