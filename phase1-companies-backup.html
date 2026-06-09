@@ -1,0 +1,2203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quadra Pharma ERP</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  /* ── Palette: Cyan + Powder + Orange Warm ── */
+  --primary:#22d3ee;      /* cyan 400 */
+  --primary-d:#06b6d4;    /* cyan 500 – hover */
+  --primary-xd:#0e7490;   /* cyan 700 – text on light */
+  --primary-l:#cffafe;    /* cyan 100 – light bg */
+  --primary-xl:#ecfeff;   /* cyan 50  – very light */
+  --secondary:#bfdbfe;    /* powder blue */
+  --secondary-d:#93c5fd;  /* powder darker */
+  --secondary-xd:#1e40af; /* powder text */
+
+  /* ── Warm base (orange-tinted ivory) ── */
+  --bg:linear-gradient(145deg,#fff8f4 0%,#fef3ec 50%,#fdf6ff 100%);
+  --bg-solid:#fff8f4;
+  --sb-bg:rgba(255,255,255,0.6);
+  --card:rgba(255,255,255,0.72);
+  --card2:rgba(255,255,255,0.45);
+  --card-border:rgba(255,255,255,0.85);
+  --glass-border:rgba(34,211,238,0.18);
+
+  /* ── Orb colours (warm orange + cyan) ── */
+  --orb1:rgba(234,88,12,0.14);   /* orange */
+  --orb2:rgba(34,211,238,0.13);  /* cyan   */
+  --orb3:rgba(191,219,254,0.18); /* powder */
+  --orb4:rgba(249,168,212,0.12); /* pink   */
+
+  /* ── Text ── */
+  --text:#1c1917;
+  --muted:#78716c;
+  --muted2:#a8a29e;
+
+  /* ── Semantic ── */
+  --green:#059669;--gl:#10b981;--gbg:#d1fae5;
+  --blue:#0284c7;--blue-light:#e0f2fe;
+  --red:#dc2626;--red-light:#fee2e2;
+  --amber:#d97706;--amber-light:#fef3c7;
+  --purple:#7c3aed;
+
+  /* ── Status badges ── */
+  --bdg-active-bg:#d1fae5;--bdg-active-txt:#065f46;--bdg-active-bdr:#34d399;
+  --bdg-pending-bg:#cffafe;--bdg-pending-txt:#0e7490;--bdg-pending-bdr:#22d3ee;
+  --bdg-warn-bg:#fef3c7;--bdg-warn-txt:#92400e;--bdg-warn-bdr:#fbbf24;
+  --bdg-expired-bg:#fee2e2;--bdg-expired-txt:#991b1b;--bdg-expired-bdr:#f87171;
+
+  /* ── Misc ── */
+  --hover:rgba(34,211,238,0.07);
+  --r:12px;--rl:16px;--sw:220px;--th:56px;
+  --font:'Tajawal',sans-serif;--mono:'Space Grotesk',sans-serif;
+  --shadow-glass:0 8px 32px rgba(234,88,12,0.08),0 2px 8px rgba(0,0,0,0.06);
+  --shadow-card:0 4px 16px rgba(234,88,12,0.06),0 1px 4px rgba(0,0,0,0.04);
+
+  /* ── legacy aliases so old code doesn't break ── */
+  --border:rgba(34,211,238,0.2);
+  --gray:var(--muted);--gray2:var(--muted2);
+  --gray3:rgba(34,211,238,0.15);--gray4:rgba(255,255,255,0.5);
+}
+body{font-family:var(--font);background:#fff8f4;background-image:linear-gradient(145deg,#fff8f4 0%,#fef3ec 50%,#fdf6ff 100%);color:var(--text);min-height:100vh}
+.screen{display:none;width:100%;min-height:100vh;position:relative}
+.screen.active{display:flex}
+/* screens sit ON TOP of orbs but are transparent */
+#sc-co,#sc-login,#sc-app{background:transparent}
+#sc-app{background:transparent}
+
+/* ══ COMPANIES SCREEN ══ */
+#sc-co{flex-direction:column;align-items:center;justify-content:center;gap:28px;padding:24px}
+.logo-pill{display:inline-flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--border);border-radius:50px;padding:10px 24px}
+.logo-ic{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--primary),var(--secondary-d));display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff}
+.logo-tx{font-size:20px;font-weight:800}
+.logo-sub{color:var(--muted);font-size:13px;text-align:center}
+.co-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;max-width:860px;width:100%}
+.co-card{background:var(--card);backdrop-filter:blur(14px);border:1px solid var(--card-border);box-shadow:var(--shadow-card);border-radius:var(--rl);padding:22px;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s;position:relative}
+.co-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:var(--shadow-glass)}
+.co-card-ci{font-size:28px;margin-bottom:10px}
+.co-card-cn{font-size:16px;font-weight:700}
+.co-card-cm{font-size:12px;color:var(--muted);margin-top:3px}
+.co-dot{position:absolute;top:14px;left:14px;width:8px;height:8px;border-radius:50%}
+.dot-on{background:var(--gl)}.dot-off{background:var(--muted)}
+.cbg{display:inline-block;font-size:10px;font-weight:600;padding:2px 9px;border-radius:20px;margin-top:9px}
+.cbg-toll{background:var(--primary-xl);color:var(--primary-xd);border:1px solid var(--green)}
+.cbg-factory{background:var(--primary-xl);color:var(--primary-xd);border:1px solid var(--blue)}
+.dd{position:absolute;left:8px;top:44px;background:rgba(255,252,250,.95);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.9);border-radius:14px;padding:5px;z-index:100;min-width:130px;box-shadow:0 12px 32px rgba(234,88,12,.12),0 2px 8px rgba(0,0,0,.08);display:none}
+.dd.show{display:block}
+.dd-item{display:flex;align-items:center;gap:8px;padding:9px 13px;border-radius:9px;cursor:pointer;font-size:13px;color:var(--text);transition:.15s;border:none;background:transparent;font-family:var(--font);width:100%;text-align:right;font-weight:500}
+.dd-item:hover{background:rgba(34,211,238,.1);color:var(--primary-xd)}
+.dd-item.red{color:var(--red)}.dd-item.red:hover{background:var(--red-light)}
+.dd-div{height:1px;background:rgba(34,211,238,.1);margin:3px 4px}
+.co-card-menu{width:28px;height:28px;display:flex;align-items:center;justify-content:center;border-radius:6px;color:var(--muted);cursor:pointer;background:transparent;border:none;font-size:18px;transition:.15s}
+.co-card-menu:hover{background:var(--hover);color:var(--text)}
+.btn-add-co{display:flex;align-items:center;justify-content:center;gap:10px;background:transparent;border:1.5px dashed rgba(34,211,238,.4);border-radius:var(--rl);padding:18px;cursor:pointer;color:var(--muted);font-family:var(--font);font-size:14px;font-weight:600;transition:.2s;width:100%}
+.btn-add-co:hover{background:var(--primary-xl);border-color:var(--primary);color:var(--primary-xd)}
+
+/* ══ LOGIN ══ */
+#sc-login{flex-direction:column;align-items:center;justify-content:center;background:none;padding:20px}
+.lbox{background:var(--card);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:var(--rl);padding:32px;width:100%;max-width:420px;box-shadow:var(--shadow-glass)}
+.lhdr{text-align:center;margin-bottom:22px}
+.co-badge{display:inline-flex;align-items:center;gap:8px;background:var(--primary-xl);border:1px solid var(--primary);border-radius:20px;padding:5px 15px;font-size:12px;color:var(--primary-xd);margin-bottom:14px;cursor:pointer}
+.co-badge:hover{opacity:.8}
+.ltitle{font-size:22px;font-weight:800}
+.lsub{color:var(--muted);font-size:13px;margin-top:4px}
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:13px;font-weight:600;margin-bottom:5px;color:var(--muted)}
+.fl .req{color:var(--red)}
+.fi{width:100%;background:rgba(255,255,255,.75);border:1.5px solid rgba(34,211,238,.2);border-radius:var(--r);padding:10px 13px;color:var(--text);font-family:var(--font);font-size:14px;outline:none;transition:all .15s}
+.fi:focus{border-color:var(--primary);box-shadow:0 0 0 3px rgba(34,211,238,0.15)}
+.fi::placeholder{color:var(--muted)}
+select.fi{cursor:pointer}
+textarea.fi{resize:vertical;min-height:75px}
+.lerr{color:var(--red);font-size:13px;text-align:center;margin:8px 0;display:none}
+.lerr.show{display:block}
+.btnp{width:100%;background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;border:none;border-radius:var(--r);padding:12px;font-family:var(--font);font-size:15px;font-weight:700;cursor:pointer;transition:opacity .15s}.btnp:hover{opacity:.88}
+
+/* ══ APP ══ */
+#sc-app{flex-direction:row;min-height:100vh}
+.sidebar{width:var(--sw);background:var(--sb-bg);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-left:1px solid var(--glass-border);box-shadow:var(--shadow-glass);display:flex;flex-direction:column;height:100vh;position:fixed;right:0;top:0;z-index:100;overflow:hidden}
+.sb-top{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.sb-logo{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800}
+.sb-logo-ic{width:28px;height:28px;border-radius:6px;background:linear-gradient(135deg,var(--primary),var(--secondary-d));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800}
+.sb-co{padding:10px 16px;border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);flex-shrink:0;cursor:pointer;transition:background .15s}
+.sb-co:hover{background:var(--hover)}
+.sb-co strong{display:block;color:var(--text);font-size:13px;margin-bottom:1px}
+.sb-nav{flex:1;overflow-y:auto;padding:6px 0}
+.sb-nav::-webkit-scrollbar{width:3px}
+.sb-nav::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.nsec{padding:8px 16px 3px;font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
+.nitem{display:flex;align-items:center;gap:9px;padding:9px 16px;cursor:pointer;font-size:13px;color:var(--muted);transition:all .15s;position:relative;user-select:none}
+.nitem:hover{background:var(--hover);color:var(--primary-xd)}
+.nitem.act{background:var(--primary-xl);color:var(--primary-xd)}
+.nitem.act::before{content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);width:3px;height:60%;background:linear-gradient(180deg,var(--primary),var(--secondary-d));border-radius:3px 0 0 3px}
+.nitem.dim{opacity:.3;pointer-events:none}
+.nic{width:18px;text-align:center;font-size:14px}
+.sb-soon{margin-right:auto;font-size:10px;padding:1px 6px;background:var(--amber-light);color:#92400e;border:1px solid var(--amber);border-radius:20px}
+.sb-foot{padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:9px;cursor:pointer;flex-shrink:0;transition:background .15s}
+.sb-foot:hover{background:var(--hover)}
+.uav{width:32px;height:32px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary-d));display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff}
+.ui{flex:1;min-width:0}
+.un{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ur{font-size:11px;color:var(--muted)}
+.topbar{position:fixed;top:0;right:var(--sw);left:0;height:var(--th);background:rgba(255,255,255,0.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--glass-border);box-shadow:0 1px 0 rgba(34,211,238,0.15);display:flex;align-items:center;padding:0 18px;gap:10px;z-index:50}
+.tb-menu{display:none;background:none;border:none;color:var(--text);cursor:pointer;font-size:20px;padding:4px}
+.tb-bc{flex:1;font-size:14px;font-weight:600;min-width:0}
+.main{margin-right:var(--sw);margin-top:var(--th);padding:22px;min-height:calc(100vh - var(--th))}
+
+/* ══ COMPONENTS ══ */
+.btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn-ok{background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;border-color:var(--primary)}.btn-ok:hover:not(:disabled){background:linear-gradient(135deg,var(--primary-d),#0891b2)}
+.btn-o{background:transparent;color:var(--muted);border-color:rgba(34,211,238,.2)}.btn-o:hover{border-color:var(--text);color:var(--text)}
+.btn-bl{background:var(--blue);color:#fff;border-color:var(--blue)}.btn-bl:hover{opacity:.85}
+.btn-x{background:transparent;color:var(--red);border-color:var(--red)}.btn-x:hover{background:rgba(248,81,73,.1)}
+.btn-sm{padding:4px 9px;font-size:12px}
+.btn-xs{padding:3px 7px;font-size:11px;border-radius:7px}
+.pcard{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--card-border);border-radius:var(--rl);margin-bottom:18px;overflow:hidden;box-shadow:var(--shadow-card);position:relative}.pcard::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(34,211,238,0.4),rgba(191,219,254,0.4),transparent);pointer-events:none}
+.ph{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
+.ptitle{font-size:14px;font-weight:700;display:flex;align-items:center;gap:7px}
+.pacts{display:flex;gap:7px;flex-wrap:wrap;align-items:center}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-bottom:20px}
+.sc{background:var(--card);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--card-border);border-radius:var(--rl);padding:18px;position:relative;overflow:hidden;box-shadow:var(--shadow-card);transition:transform .2s,box-shadow .2s}.sc:hover{transform:translateY(-3px);box-shadow:var(--shadow-glass)}
+.sc::after{content:'';position:absolute;bottom:0;right:0;width:55px;height:55px;border-radius:50%;opacity:.07}
+.sc.gr::after{background:var(--green)}.sc.bl::after{background:var(--blue)}.sc.am::after{background:var(--amber)}.sc.re::after{background:var(--red)}
+.slbl{font-size:11px;color:var(--muted);font-weight:600;letter-spacing:.4px;margin-bottom:4px}
+.sval{font-size:30px;font-weight:800;line-height:1;margin-bottom:4px}
+.sval.gr{color:var(--gl)}.sval.bl{color:var(--blue)}.sval.am{color:var(--amber)}.sval.re{color:var(--red)}
+.sinfo{font-size:12px;color:var(--muted)}.sic{position:absolute;top:14px;left:14px;font-size:20px;opacity:.4}
+table{width:100%;border-collapse:collapse}.tw{overflow-x:auto}
+thead th{padding:9px 14px;font-size:11px;font-weight:700;color:var(--muted);text-align:right;background:rgba(255,255,255,0.5);border-bottom:1px solid rgba(34,211,238,0.15);white-space:nowrap}
+tbody td{padding:11px 14px;font-size:13px;border-bottom:1px solid rgba(34,211,238,.08);vertical-align:middle}
+tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(34,211,238,0.05)}
+.bdg{display:inline-block;font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px}
+.bdg-g{background:var(--bdg-active-bg);color:var(--bdg-active-txt);border:1px solid var(--bdg-active-bdr)}
+.bdg-b{background:var(--bdg-pending-bg);color:var(--bdg-pending-txt);border:1px solid var(--bdg-pending-bdr)}
+.bdg-a{background:var(--bdg-warn-bg);color:var(--bdg-warn-txt);border:1px solid var(--bdg-warn-bdr)}
+.bdg-r{background:var(--bdg-expired-bg);color:var(--bdg-expired-txt);border:1px solid var(--bdg-expired-bdr)}
+.bdg-p{background:#f3e8ff;color:#6b21a8;border:1px solid #c084fc}
+.bdg-m{background:rgba(255,255,255,0.7);color:var(--muted);border:1px solid rgba(34,211,238,0.2)}
+.page-title{font-size:21px;font-weight:800;margin-bottom:18px;display:flex;align-items:center;gap:9px}
+
+/* CP TABS */
+.cp-tabs{display:flex;overflow-x:auto;gap:2px;background:rgba(255,255,255,.35);backdrop-filter:blur(12px);border-radius:14px;padding:5px;margin-bottom:18px;flex-wrap:nowrap;scrollbar-width:none;border:1px solid rgba(255,255,255,.7)}
+.cp-tabs::-webkit-scrollbar{display:none}
+.cp-tab{background:none;border:none;padding:7px 14px;border-radius:7px;cursor:pointer;font-family:var(--font);font-size:13px;font-weight:500;color:var(--muted);transition:all .15s;white-space:nowrap}
+.cp-tab:hover{color:var(--text)}
+.cp-tab.act{background:rgba(255,255,255,0.9);color:var(--primary-xd);font-weight:700;box-shadow:0 1px 6px rgba(34,211,238,0.2)}
+.cpt{display:none}.cpt.act{display:block}
+.tab-body{padding:18px}
+.save-bar{display:flex;justify-content:flex-end;padding-top:16px;margin-top:8px;border-top:1px solid var(--border)}
+
+/* FORM */
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fw{grid-column:1/-1}
+.fsect{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:14px 0 7px;border-bottom:1px solid var(--border);margin-bottom:14px}
+
+/* TABLE ACTION */
+.tbl-action{display:flex;gap:4px}
+
+/* MODAL */
+.moverlay{display:none;position:fixed;inset:0;background:rgba(234,88,12,0.18);backdrop-filter:blur(4px);z-index:200;align-items:center;justify-content:center;padding:18px}
+.moverlay.on{display:flex}
+.modal{background:rgba(255,252,250,0.98);backdrop-filter:blur(20px);border:1px solid var(--card-border);box-shadow:var(--shadow-glass);border-radius:var(--rl);width:100%;max-width:560px;max-height:92vh;display:flex;flex-direction:column;animation:min .2s ease}
+@keyframes min{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.mhdr{padding:16px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.mtitle{font-size:15px;font-weight:700}
+.mclose{background:none;border:none;color:var(--muted);cursor:pointer;font-size:20px;line-height:1;padding:2px 6px;border-radius:6px}
+.mclose:hover{background:var(--hover);color:var(--text)}
+.mbody{padding:20px;overflow-y:auto;flex:1}
+.mftr{padding:14px 22px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:9px}
+
+/* EXPIRY */
+.exp-panel{background:rgba(255,252,250,0.9);border:1px solid rgba(217,119,6,0.35);border-radius:var(--rl);margin-bottom:18px;overflow:hidden}
+.exp-header{padding:11px 18px;background:rgba(254,243,199,0.8);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--amber)}
+.exp-item{display:flex;align-items:center;justify-content:space-between;padding:10px 18px;border-bottom:1px solid var(--border);font-size:13px;gap:12px;color:var(--text)}
+.exp-item:last-child{border-bottom:none}
+
+/* DOCS */
+.doc-drop{border:2px dashed var(--border);border-radius:var(--r);padding:22px;text-align:center;cursor:pointer;transition:.15s;margin-bottom:12px}
+.doc-drop:hover{border-color:var(--primary);background:var(--primary-xl)}
+.doc-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r);border:1px solid var(--border);margin-bottom:6px}
+.doc-icon{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+
+/* BACKUP */
+.backup-card{background:rgba(255,255,255,.6);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.8);border-radius:14px;padding:16px;margin-bottom:12px}
+
+/* EMPTY STATE */
+.es{text-align:center;padding:40px 18px;color:var(--muted)}
+.es .ei{font-size:40px;margin-bottom:10px;opacity:.5}
+.es h3{font-size:15px;margin-bottom:5px;color:var(--text)}
+
+/* SEARCH */
+.sbar{display:flex;align-items:center;gap:7px;background:rgba(255,255,255,0.6);backdrop-filter:blur(8px);border:1px solid var(--glass-border);border-radius:var(--r);padding:7px 11px}
+.sbar input{background:none;border:none;outline:none;color:var(--text);font-family:var(--font);font-size:13px;width:160px}
+.sbar input::placeholder{color:var(--muted)}
+
+/* COMMENTS */
+.comment-toggle{position:fixed;left:18px;bottom:18px;z-index:150;background:linear-gradient(135deg,var(--primary),var(--secondary-d));color:#fff;border:none;border-radius:50px;padding:9px 16px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:6px;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.comment-panel{position:fixed;left:0;bottom:0;top:0;width:300px;z-index:300;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-100%);transition:.3s;box-shadow:4px 0 24px rgba(0,0,0,.4)}
+.comment-panel.open{transform:translateX(0)}
+.cp-hdr{padding:14px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.cp-list{flex:1;overflow-y:auto;padding:12px}
+.cp-item{margin-bottom:10px;padding:10px 12px;background:var(--card2);border-radius:var(--r);border-right:3px solid var(--amber)}
+.cp-form{padding:12px;border-top:1px solid var(--border)}
+.cp-form textarea{width:100%;padding:8px;background:rgba(255,255,255,.7);border:1.5px solid rgba(34,211,238,.2);border-radius:10px;color:var(--text);font-family:var(--font);font-size:13px;resize:none;outline:none;margin-bottom:8px}
+.cp-form button{width:100%;padding:8px;background:linear-gradient(135deg,var(--primary),var(--primary-d));color:#fff;border:none;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer}
+
+/* TOAST */
+.tc{position:fixed;bottom:24px;left:18px;z-index:400;display:flex;flex-direction:column;gap:7px;pointer-events:none}
+.toast{background:rgba(255,252,250,0.95);backdrop-filter:blur(16px);border:1px solid var(--glass-border);border-radius:var(--r);padding:11px 16px;font-size:13px;display:flex;align-items:center;gap:9px;min-width:220px;max-width:340px;animation:tin .2s ease;pointer-events:auto}
+.toast.ok{border-color:var(--green)}.toast.er{border-color:var(--red)}.toast.info{border-color:var(--blue)}
+@keyframes tin{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+/* MISC */
+.spin{width:14px;height:14px;border:2px solid rgba(255,255,255,.25);border-top-color:var(--text);border-radius:50%;animation:rot .6s linear infinite;display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+.overlay-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99}
+
+@media(max-width:860px){
+  .sidebar{transform:translateX(100%);transition:.3s}
+  .sidebar.open{transform:translateX(0)}
+  .tb-menu{display:flex!important}
+  .overlay-bg.show{display:block}
+  .topbar{right:0}
+  .main{margin-right:0}
+  .fgrid{grid-template-columns:1fr}
+}
+/* ══ REGISTRATION MODULE ══ */
+.agc-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;border:1px solid var(--glass-border);background:var(--card);backdrop-filter:blur(10px);cursor:pointer;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:600;color:var(--muted);transition:.15s}
+.agc-btn:hover{border-color:var(--blue);color:var(--blue)}
+.agc-btn.act-eda{background:var(--primary-xl);border-color:var(--primary);color:var(--primary-xd)}
+.agc-btn.act-nfsa{background:var(--green-light);border-color:var(--green);color:var(--green)}
+.agc-btn.act-cosm{background:#fdf4ff;border-color:#9333ea;color:#9333ea}
+.agc-btn.act-all{background:var(--gray4);border-color:var(--gray2);color:var(--text)}
+.agc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.dot-eda{background:var(--blue)}.dot-nfsa{background:var(--green)}.dot-cosm{background:#9333ea}
+.reg-stats{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.rs{background:var(--card);backdrop-filter:blur(12px);border:1px solid var(--card-border);border-radius:12px;padding:12px;text-align:center;cursor:pointer;transition:.2s;box-shadow:var(--shadow-card)}.rs:hover{transform:translateY(-2px);box-shadow:var(--shadow-glass)}
+.rs:hover{border-color:var(--blue)}.rs-lbl{font-size:11px;color:var(--gray);font-weight:600;margin-bottom:4px}
+.rs-val{font-size:22px;font-weight:800}
+.rs-val.blue{color:var(--blue)}.rs-val.green{color:var(--green)}.rs-val.amber{color:var(--amber)}.rs-val.red{color:var(--red)}.rs-val.purple{color:#9333ea}
+.reg-drawer-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500}
+.reg-drawer-ov.on{display:block}
+.reg-drawer{position:fixed;top:0;right:0;bottom:0;width:740px;max-width:95vw;background:rgba(255,250,248,0.97);backdrop-filter:blur(20px);border-left:1px solid var(--glass-border);box-shadow:-8px 0 40px rgba(234,88,12,0.1);z-index:501;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1)}
+.reg-drawer.open{transform:translateX(0)}
+.rdh{padding:16px 20px;border-bottom:1px solid var(--gray3);display:flex;align-items:flex-start;justify-content:space-between;flex-shrink:0}
+.rdh-title{font-size:16px;font-weight:800}.rdh-sub{font-size:12px;color:var(--gray);margin-top:3px}
+.rdh-close{background:none;border:none;color:var(--gray);cursor:pointer;font-size:20px;padding:3px 7px;border-radius:7px}
+.rdh-close:hover{background:var(--gray4)}
+.rd-tabs{display:flex;gap:2px;padding:10px 14px;border-bottom:1px solid var(--gray3);flex-wrap:wrap;flex-shrink:0;background:var(--gray4)}
+.dtab{background:none;border:none;padding:6px 12px;border-radius:7px;cursor:pointer;font-family:'Tajawal',sans-serif;font-size:12px;font-weight:600;color:var(--gray);transition:.15s;white-space:nowrap}
+.dtab:hover{color:var(--text);background:var(--gray3)}.dtab.act{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.rd-status{display:flex;align-items:center;gap:4px;padding:12px 20px;background:var(--gray4);border-bottom:1px solid var(--gray3);overflow-x:auto;flex-shrink:0}
+.status-step{display:flex;flex-direction:column;align-items:center;gap:3px;flex:1;position:relative;min-width:55px}
+.status-step::after{content:'';position:absolute;top:14px;right:-50%;width:100%;height:2px;background:var(--gray3);z-index:0}
+.status-step:last-child::after{display:none}
+.step-dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--gray3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:#fff;position:relative;z-index:1;transition:.2s}
+.step-dot.done{background:var(--green);border-color:var(--green);color:#fff}
+.step-dot.active{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 0 0 4px var(--primary-l)}
+.step-dot.warn{background:var(--amber);border-color:var(--amber);color:#fff}
+.step-dot.err{background:var(--red);border-color:var(--red);color:#fff}
+.step-lbl{font-size:10px;color:var(--gray);text-align:center;font-weight:600;white-space:nowrap}
+.rd-body{flex:1;overflow-y:auto}.rd-body::-webkit-scrollbar{width:4px}.rd-body::-webkit-scrollbar-thumb{background:var(--gray3);border-radius:2px}
+.rd-foot{padding:12px 20px;border-top:1px solid var(--gray3);display:flex;gap:8px;justify-content:flex-end;flex-shrink:0}
+.fsec{padding:16px 20px;border-bottom:1px solid var(--gray3)}
+.fsec-title{font-size:11px;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.8px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.fsec-title::after{content:'';flex:1;height:1px;background:var(--gray3)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.info-cell{padding:10px 20px;border-bottom:1px solid var(--gray3);border-left:1px solid var(--gray3)}
+.info-cell:nth-child(odd){border-left:none}.info-lbl{font-size:11px;color:var(--gray);font-weight:600;margin-bottom:3px}
+.info-val{font-size:13px;font-weight:600}
+.timeline{padding:16px 20px}
+.tl-item{display:flex;gap:12px;margin-bottom:18px;position:relative}
+.tl-line{position:absolute;right:17px;top:30px;bottom:-18px;width:1px;background:var(--gray3)}
+.tl-item:last-child .tl-line{display:none}
+.tl-dot{width:34px;height:34px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;position:relative;z-index:1}
+.tl-dot.green{background:var(--green-light);border:2px solid var(--green)}.tl-dot.blue{background:var(--blue-light);border:2px solid var(--blue)}
+.tl-dot.amber{background:var(--amber-light);border:2px solid var(--amber)}.tl-dot.red{background:var(--red-light);border:2px solid var(--red)}
+.tl-dot.gray{background:var(--gray4);border:2px solid var(--gray3)}
+.tl-content{flex:1}.tl-title{font-size:13px;font-weight:700;margin-bottom:2px}.tl-meta{font-size:11px;color:var(--gray)}
+.tl-body{font-size:12px;color:var(--gray);margin-top:4px;padding:7px 10px;background:var(--gray4);border-radius:7px;border:1px solid var(--gray3)}
+.var-card{border:1px solid var(--gray3);border-radius:9px;margin:0 20px 10px;overflow:hidden}
+.var-head{padding:10px 14px;display:flex;align-items:center;gap:10px;background:var(--gray4)}
+.var-type{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px}
+.var-type.N{background:var(--green-light);color:var(--green)}.var-type.A{background:var(--amber-light);color:var(--amber)}
+.var-type.B{background:var(--blue-light);color:var(--blue)}.var-type.C{background:var(--red-light);color:var(--red)}
+.var-title{font-size:13px;font-weight:600;flex:1}
+.var-body{padding:10px 14px;border-top:1px solid var(--gray3);font-size:12px;color:var(--gray)}
+.chk-list{padding:0 20px 16px}
+.chk-item{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--gray3)}
+.chk-item:last-child{border-bottom:none}
+.chk-box{width:20px;height:20px;border-radius:4px;border:2px solid var(--gray3);flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;margin-top:2px;font-size:11px;font-weight:700}
+.chk-box.done{background:var(--green);border-color:var(--green);color:#fff}
+.chk-box.na{background:var(--gray4);border-color:var(--gray2);color:var(--gray)}
+.chk-info{flex:1}.chk-name{font-size:13px;font-weight:600}
+.chk-agency{font-size:10px;padding:1px 6px;border-radius:3px;background:var(--gray4);color:var(--gray)}
+.vtag{font-family:monospace;font-size:11px;color:var(--gray);background:var(--gray4);border:1px solid var(--gray3);padding:2px 7px;border-radius:4px}
+.reg-alert{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:8px;font-size:13px;margin:14px 20px 0}
+.reg-alert.warn{background:var(--amber-light);border:1px solid #fde68a;color:var(--amber)}
+.reg-alert.err{background:var(--red-light);border:1px solid #fecaca;color:var(--red)}
+.reg-alert.info{background:var(--primary-xl);border:1px solid var(--primary);color:var(--primary-xd)}
+.reg-moverlay{display:none;position:fixed;inset:0;background:rgba(15,31,61,.7);z-index:600;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px)}
+.reg-moverlay.on{display:flex}
+.reg-modal{background:rgba(255,252,250,0.98);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:14px;width:100%;max-width:600px;max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:su .2s ease}
+@media(max-width:860px){.reg-stats{grid-template-columns:repeat(3,1fr)}.info-grid{grid-template-columns:1fr}.info-cell{border-left:none}.reg-drawer{width:100%}}
+
+/* ══ COMPANIES SCREEN REDESIGN ══ */
+.co-screen-inner{display:flex;flex-direction:column;align-items:center;width:100%;max-width:920px;padding:32px 20px;gap:24px}
+.co-brand{display:flex;align-items:center;gap:16px}
+.co-brand-gem{width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--primary),var(--secondary-d));display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;box-shadow:0 8px 24px rgba(34,211,238,.35);animation:float-gem 4s ease-in-out infinite}
+@keyframes float-gem{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-8px) rotate(3deg)}}
+.co-brand-name{font-size:24px;font-weight:900;background:linear-gradient(135deg,var(--primary-xd),var(--secondary-xd));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.co-brand-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.co-screen-title{font-size:14px;color:var(--muted);font-weight:500}
+.co-screen-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* company cards in selector */
+.co-card{
+  background:rgba(255,255,255,0.55);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.85);
+  border-radius:20px;padding:24px;cursor:pointer;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  position:relative;overflow:hidden;
+}
+.co-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(34,211,238,.5),rgba(191,219,254,.5),transparent)}
+.co-card::after{content:'';position:absolute;inset:0;border-radius:20px;background:linear-gradient(135deg,rgba(34,211,238,.04),rgba(191,219,254,.04));opacity:0;transition:opacity .25s}
+.co-card:hover{transform:translateY(-6px);box-shadow:0 20px 48px rgba(234,88,12,.1),0 4px 16px rgba(34,211,238,.15);border-color:rgba(34,211,238,.4)}
+.co-card:hover::after{opacity:1}
+.co-card-ci{font-size:36px;margin-bottom:12px;display:block}
+.co-card-cn{font-size:16px;font-weight:800;color:var(--text);margin-bottom:4px}
+.co-card-cm{font-size:12px;color:var(--muted);line-height:1.5}
+
+/* ══ LOGIN SCREEN REDESIGN ══ */
+.login-wrap{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;min-height:100vh;padding:24px;gap:16px}
+.login-back{background:rgba(255,255,255,.55);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.8);border-radius:30px;padding:8px 18px;font-family:var(--font);font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .2s}
+.login-back:hover{color:var(--primary-xd);border-color:rgba(34,211,238,.4);background:rgba(255,255,255,.75)}
+.login-card{
+  background:rgba(255,255,255,0.6);
+  backdrop-filter:blur(28px);-webkit-backdrop-filter:blur(28px);
+  border:1px solid rgba(255,255,255,.9);
+  border-radius:28px;padding:36px;
+  width:100%;max-width:420px;
+  box-shadow:0 24px 64px rgba(234,88,12,.1),0 4px 16px rgba(0,0,0,.06);
+  position:relative;overflow:hidden;
+}
+.login-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--secondary-d),var(--primary))}
+.login-co-badge{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(255,255,255,.6);
+  border:1px solid rgba(34,211,238,.25);
+  border-radius:14px;padding:10px 14px;
+  margin-bottom:22px;font-size:13px;color:var(--primary-xd);font-weight:600;
+}
+.login-co-badge-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0}
+.login-title{font-size:26px;font-weight:900;color:var(--text);margin-bottom:4px}
+.login-sub{font-size:13px;color:var(--muted);margin-bottom:24px}
+.login-field{margin-bottom:16px}
+.login-label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:7px;text-transform:uppercase;letter-spacing:.5px}
+.login-input-wrap{position:relative}
+.login-input-icon{position:absolute;right:13px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none}
+.login-input{
+  width:100%;padding:12px 40px 12px 14px;
+  background:rgba(255,255,255,.7);
+  border:1.5px solid rgba(34,211,238,.2);
+  border-radius:12px;
+  font-family:var(--font);font-size:14px;color:var(--text);
+  outline:none;transition:all .2s;
+}
+.login-input:focus{border-color:var(--primary);background:rgba(255,255,255,.9);box-shadow:0 0 0 4px rgba(34,211,238,.15)}
+.login-input::placeholder{color:var(--muted2)}
+.login-btn{
+  width:100%;margin-top:8px;padding:14px;
+  background:linear-gradient(135deg,var(--primary),var(--primary-d));
+  color:#fff;border:none;border-radius:14px;
+  font-family:var(--font);font-size:15px;font-weight:800;
+  cursor:pointer;transition:all .2s;letter-spacing:.3px;
+  box-shadow:0 6px 20px rgba(34,211,238,.35);
+}
+.login-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(34,211,238,.45)}
+.login-btn:active{transform:translateY(0)}
+.lerr{background:var(--red-light);border:1px solid rgba(220,38,38,.3);color:#991b1b;border-radius:10px;padding:10px 14px;font-size:13px;margin-bottom:14px;display:none;border-radius:10px}
+.lerr.show{display:block}
+
+/* ══ APP SIDEBAR GLASS FIX ══ */
+.sidebar{
+  width:var(--sw);
+  background:rgba(255,255,255,0.65) !important;
+  backdrop-filter:blur(24px) !important;
+  -webkit-backdrop-filter:blur(24px) !important;
+  border-left:1px solid rgba(255,255,255,.85) !important;
+  box-shadow:none !important;
+}
+.topbar{
+  background:rgba(255,255,255,0.7) !important;
+  backdrop-filter:blur(24px) !important;
+  -webkit-backdrop-filter:blur(24px) !important;
+  border-bottom:1.5px solid rgba(34,211,238,.15) !important;
+}
+
+/* ══ GLASS CARDS FIX ══ */
+.pcard{
+  background:rgba(255,255,255,0.65) !important;
+  backdrop-filter:blur(20px) !important;
+  -webkit-backdrop-filter:blur(20px) !important;
+  border:1px solid rgba(255,255,255,.88) !important;
+  border-radius:20px !important;
+  box-shadow:0 4px 24px rgba(234,88,12,.06),0 1px 4px rgba(0,0,0,.04) !important;
+}
+.pcard::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(34,211,238,.4),rgba(191,219,254,.35),transparent);
+  pointer-events:none;
+}
+.sc{
+  background:rgba(255,255,255,0.6) !important;
+  backdrop-filter:blur(18px) !important;
+  -webkit-backdrop-filter:blur(18px) !important;
+  border:1px solid rgba(255,255,255,.85) !important;
+  border-radius:18px !important;
+}
+.sc::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,var(--primary),var(--secondary-d));
+  border-radius:18px 18px 0 0;
+}
+
+/* ══ TABS FIX ══ */
+.cp-tabs{
+  display:flex;overflow-x:auto;gap:3px;
+  background:rgba(255,255,255,.4);
+  backdrop-filter:blur(12px);
+  border-radius:14px;padding:5px;
+  margin-bottom:18px;flex-wrap:nowrap;
+  scrollbar-width:none;border:1px solid rgba(255,255,255,.7);
+}
+.cp-tabs::-webkit-scrollbar{display:none}
+.cp-tab{
+  background:transparent;border:none;
+  padding:8px 15px;border-radius:10px;
+  cursor:pointer;font-family:var(--font);
+  font-size:13px;font-weight:500;
+  color:var(--muted);transition:all .2s;white-space:nowrap;
+}
+.cp-tab:hover{color:var(--primary-xd);background:rgba(34,211,238,.08)}
+.cp-tab.act{
+  background:rgba(255,255,255,.9);
+  color:var(--primary-xd);font-weight:700;
+  box-shadow:0 2px 10px rgba(34,211,238,.2);
+  border:1px solid rgba(34,211,238,.2);
+}
+.cpt{display:none}.cpt.act{display:block}
+.tab-body{padding:20px}
+.save-bar{display:flex;justify-content:flex-end;padding-top:16px;margin-top:8px;border-top:1px solid rgba(34,211,238,.12)}
+
+/* ══ MODAL GLASS FIX ══ */
+.moverlay{background:rgba(120,80,40,.12) !important;backdrop-filter:blur(6px) !important;-webkit-backdrop-filter:blur(6px) !important}
+.modal{
+  background:rgba(255,252,250,.92) !important;
+  backdrop-filter:blur(24px) !important;
+  -webkit-backdrop-filter:blur(24px) !important;
+  border:1px solid rgba(255,255,255,.9) !important;
+  border-radius:24px !important;
+  box-shadow:0 24px 64px rgba(234,88,12,.12),0 4px 16px rgba(0,0,0,.08) !important;
+}
+.modal::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--primary),var(--secondary-d),var(--primary));border-radius:24px 24px 0 0}
+.mhdr{border-bottom:1px solid rgba(34,211,238,.12) !important}
+.mftr{border-top:1px solid rgba(34,211,238,.12) !important}
+
+/* ══ TABLE ROWS ══ */
+tbody tr:hover td{background:rgba(34,211,238,.05)}
+tbody td{border-bottom:1px solid rgba(34,211,238,.08)}
+thead th{background:rgba(255,255,255,.55);border-bottom:1px solid rgba(34,211,238,.1)}
+
+/* ══ REG STATS ══ */
+.rs{
+  background:rgba(255,255,255,.65) !important;
+  backdrop-filter:blur(16px) !important;
+  -webkit-backdrop-filter:blur(16px) !important;
+  border:1px solid rgba(255,255,255,.85) !important;
+  border-radius:16px !important;
+}
+
+/* ══ REG DRAWER ══ */
+.reg-drawer{
+  background:rgba(255,252,250,.92) !important;
+  backdrop-filter:blur(24px) !important;
+  -webkit-backdrop-filter:blur(24px) !important;
+  border-left:1px solid rgba(255,255,255,.85) !important;
+}
+.rd-tabs{background:rgba(255,255,255,.5) !important;border-bottom:1px solid rgba(34,211,238,.1) !important}
+.dtab.act{background:rgba(255,255,255,.9) !important;color:var(--primary-xd) !important;box-shadow:0 2px 10px rgba(34,211,238,.15) !important}
+.rd-status{background:rgba(255,255,255,.45) !important;border-bottom:1px solid rgba(34,211,238,.08) !important}
+
+/* ══ NAV ACTIVE ══ */
+.nitem.act{background:rgba(34,211,238,.1) !important;color:var(--primary-xd) !important}
+.nitem:hover{background:rgba(34,211,238,.07) !important}
+
+/* ══ FORM INPUTS ══ */
+.fi{background:rgba(255,255,255,.7);border:1.5px solid rgba(34,211,238,.2);border-radius:10px;color:var(--text)}
+.fi:focus{border-color:var(--primary) !important;background:rgba(255,255,255,.9) !important;box-shadow:0 0 0 3px rgba(34,211,238,.15) !important}
+.fi::placeholder{color:var(--muted2)}
+select.fi option{background:#fff;color:var(--text)}
+
+/* ══ COMMENT PANEL ══ */
+.comment-panel{background:rgba(255,252,250,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-right:1px solid rgba(255,255,255,.8)}
+
+/* ══ TOAST ══ */
+.toast{background:rgba(255,252,250,.95) !important;backdrop-filter:blur(16px) !important;border:1px solid rgba(34,211,238,.2) !important}
+
+/* ══ ORBS Z-INDEX FIX ══ */
+.orbs-layer{z-index:0 !important}
+#sc-co,#sc-login,#sc-app{z-index:1;position:relative}
+
+</style>
+<style>
+@keyframes orb-drift{0%{transform:translate(0,0)}33%{transform:translate(30px,-20px)}66%{transform:translate(-20px,-30px)}100%{transform:translate(0,0)}}
+@keyframes orb-drift2{0%{transform:translate(0,0)}33%{transform:translate(-25px,18px)}66%{transform:translate(18px,25px)}100%{transform:translate(0,0)}}
+.orbs-layer{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.orb-bg{position:absolute;border-radius:50%;filter:blur(56px)}
+.orb-bg.o1{width:380px;height:380px;top:-100px;right:-80px;background:radial-gradient(circle,var(--orb1) 0%,transparent 70%);animation:orb-drift 13s ease-in-out infinite}
+.orb-bg.o2{width:300px;height:300px;bottom:40px;left:-60px;background:radial-gradient(circle,var(--orb2) 0%,transparent 70%);animation:orb-drift2 10s ease-in-out infinite}
+.orb-bg.o3{width:260px;height:260px;top:35%;left:35%;background:radial-gradient(circle,var(--orb3) 0%,transparent 70%);animation:orb-drift 16s ease-in-out infinite 3s}
+.orb-bg.o4{width:220px;height:220px;bottom:15%;right:12%;background:radial-gradient(circle,var(--orb4) 0%,transparent 70%);animation:orb-drift2 9s ease-in-out infinite 6s}
+</style>
+</head>
+<body>
+<div class="orbs-layer" aria-hidden="true">
+  <div class="orb-bg o1"></div>
+  <div class="orb-bg o2"></div>
+  <div class="orb-bg o3"></div>
+  <div class="orb-bg o4"></div>
+</div>
+<!-- COMPANIES SCREEN -->
+<div id="sc-co" class="screen active">
+  <div class="co-screen-inner">
+    <!-- Brand header -->
+    <div class="co-brand">
+      <div class="co-brand-gem">Q</div>
+      <div>
+        <div class="co-brand-name">Quadra Pharma ERP</div>
+        <div class="co-brand-sub">نظام الإدارة الصيدلاني المصري</div>
+      </div>
+    </div>
+    <div class="co-screen-title">اختر شركة للمتابعة</div>
+    <div class="co-grid" id="co-grid"></div>
+    <div class="co-screen-actions">
+      <button class="btn btn-o btn-sm" onclick="openModal('modal-backup')">💾 نسخ احتياطي</button>
+      <button class="btn btn-ok" onclick="openModal('modal-add-co')">✚ إنشاء شركة جديدة</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN SCREEN -->
+<div id="sc-login" class="screen">
+  <div class="login-wrap">
+    <!-- Back pill -->
+    <button class="login-back" onclick="showScreen('co')">
+      ← تغيير الشركة
+    </button>
+    <!-- Glass card -->
+    <div class="login-card">
+      <!-- Company badge -->
+      <div id="lco-badge" class="login-co-badge"></div>
+      <!-- Title -->
+      <div class="login-title">مرحباً بك</div>
+      <div class="login-sub">سجّل دخولك للمتابعة</div>
+      <!-- Error -->
+      <div id="lerr" class="lerr"></div>
+      <!-- Fields -->
+      <div class="login-field">
+        <label class="login-label">اسم المستخدم</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">👤</span>
+          <input class="login-input" id="f-user" dir="ltr" placeholder="username" autocomplete="username">
+        </div>
+      </div>
+      <div class="login-field">
+        <label class="login-label">كلمة المرور</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🔒</span>
+          <input class="login-input" id="f-pass" type="password" dir="ltr" placeholder="••••••••">
+        </div>
+      </div>
+      <button class="login-btn" id="btn-login" onclick="doLogin()">
+        <span id="btn-login-txt">دخول</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- APP SCREEN -->
+<div id="sc-app" class="screen">
+  <div class="overlay-bg" id="overlay-bg" onclick="closeSidebar()"></div>
+  <nav class="sidebar" id="sidebar">
+    <div class="sb-top">
+      <div class="sb-logo">
+        <div class="sb-logo-ic">Q</div>
+        <span id="sb-coname" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:170px">—</span>
+      </div>
+    </div>
+    <div class="sb-co" onclick="doLogout()">
+      <strong id="sb-coname2">—</strong>
+      <span style="font-size:11px">تغيير الشركة ←</span>
+    </div>
+    <div class="sb-nav" id="sb-nav"></div>
+    <div class="sb-foot" onclick="doLogout()">
+      <div class="uav" id="sb-av">؟</div>
+      <div class="ui"><div class="un" id="sb-un">—</div><div class="ur" id="sb-ur">—</div></div>
+      <span style="color:var(--muted);font-size:12px">خروج</span>
+    </div>
+  </nav>
+  <div style="flex:1;display:flex;flex-direction:column;min-height:100vh">
+    <header class="topbar">
+      <button class="tb-menu" onclick="openSidebar()">☰</button>
+      <div class="tb-bc" id="page-title">لوحة التحكم</div>
+    </header>
+    <div class="main" id="main-content"></div>
+  </div>
+</div>
+
+<!-- تعليقات المراجعة -->
+<button class="comment-toggle" id="comment-toggle" onclick="toggleComments()" style="display:none">
+  💬 تعليقاتي <span id="comment-count" style="background:rgba(0,0,0,.25);border-radius:20px;padding:1px 7px;font-size:11px">0</span>
+</button>
+<div class="comment-panel" id="comment-panel">
+  <div class="cp-hdr"><span style="font-size:14px;font-weight:700">تعليقات المراجعة</span><button onclick="toggleComments()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px">✕</button></div>
+  <div class="cp-list" id="cp-list"></div>
+  <div class="cp-form"><textarea id="cp-text" rows="3" placeholder="تعليقك على هذه الصفحة..."></textarea><button onclick="addComment()">إضافة تعليق</button></div>
+</div>
+<div class="tc" id="tc"></div>
+
+<!-- ══ MODALS ══ -->
+<!-- إنشاء شركة -->
+<div class="moverlay" id="modal-add-co"><div class="modal">
+  <div class="mhdr"><span class="mtitle">إنشاء شركة جديدة</span><button class="mclose" onclick="closeModal('modal-add-co')">✕</button></div>
+  <div class="mbody">
+    <div style="background:var(--primary-xl);border:1px solid rgba(34,211,238,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:var(--primary-xd);margin-bottom:16px">ℹ️ سيتم إنشاء حساب مدير تلقائياً مع الشركة</div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">كود الشركة <span class="req">*</span></label><input class="fi" id="nc-code" placeholder="QUAD" maxlength="20" style="text-transform:uppercase;direction:ltr"><div style="font-size:11px;color:var(--muted);margin-top:4px">حروف وأرقام إنجليزية فقط</div></div>
+      <div class="fg"><label class="fl">نوع الكيان <span class="req">*</span></label><select class="fi" id="nc-type"><option value="toll">شركة Toll</option><option value="factory">مصنع</option></select></div>
+      <div class="fg fw"><label class="fl">اسم الشركة بالعربي <span class="req">*</span></label><input class="fi" id="nc-name"></div>
+      <div class="fg"><label class="fl">المدينة</label><input class="fi" id="nc-city" value="Cairo"></div>
+      <div class="fg"><label class="fl">الهاتف</label><input class="fi" id="nc-phone" dir="ltr"></div>
+    </div>
+    <div style="height:1px;background:var(--border);margin:8px 0 16px"></div>
+    <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:12px">بيانات المدير الأول</div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">الاسم <span class="req">*</span></label><input class="fi" id="nc-aname"></div>
+      <div class="fg"><label class="fl">اسم المستخدم <span class="req">*</span></label><input class="fi" id="nc-auser" dir="ltr"></div>
+      <div class="fg fw"><label class="fl">كلمة المرور <span class="req">*</span></label><input class="fi" id="nc-apass" type="password" dir="ltr"><div style="font-size:11px;color:var(--muted);margin-top:4px">8 أحرف على الأقل</div></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-add-co')">إلغاء</button><button class="btn btn-ok" id="btn-add-co" onclick="doAddCompany()">إنشاء الشركة</button></div>
+</div></div>
+
+<!-- حذف شركة -->
+<div class="moverlay" id="modal-del-co"><div class="modal" style="max-width:380px">
+  <div class="mhdr"><span class="mtitle">حذف الشركة</span><button class="mclose" onclick="closeModal('modal-del-co')">✕</button></div>
+  <div class="mbody">
+    <div style="background:var(--red-light);border:1px solid rgba(220,38,38,.3);border-radius:var(--r);padding:10px 14px;font-size:12px;color:#991b1b;margin-bottom:14px">⚠️ سيتم حذف جميع البيانات نهائياً</div>
+    <div class="fg"><label class="fl">اكتب كود الشركة للتأكيد: <strong id="del-co-hint"></strong></label><input class="fi" id="del-co-inp" dir="ltr" style="text-transform:uppercase"></div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-del-co')">إلغاء</button><button class="btn btn-x" onclick="doDeleteCompany()">حذف نهائي</button></div>
+</div></div>
+
+<!-- مستخدم -->
+<div class="moverlay" id="modal-user"><div class="modal">
+  <div class="mhdr"><span class="mtitle" id="mu-title">إضافة مستخدم</span><button class="mclose" onclick="closeModal('modal-user')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="u-id">
+    <div class="fgrid">
+      <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fi" id="u-name"></div>
+      <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fi" id="u-name-en" dir="ltr"></div>
+      <div class="fg"><label class="fl">اسم المستخدم <span class="req">*</span></label><input class="fi" id="u-user" dir="ltr"></div>
+      <div class="fg"><label class="fl" id="u-pl">كلمة المرور <span class="req">*</span></label><input class="fi" id="u-pass" type="password" dir="ltr"><div id="u-ph" style="font-size:11px;color:var(--muted);margin-top:4px;display:none">اتركها فارغة للإبقاء</div></div>
+      <div class="fg"><label class="fl">الدور</label><select class="fi" id="u-role"><option value="user">مستخدم</option><option value="admin">مدير النظام</option></select></div>
+      <div class="fg"><label class="fl">القسم</label><input class="fi" id="u-dept"></div>
+      <div class="fg"><label class="fl">المسمى الوظيفي</label><input class="fi" id="u-title-inp"></div>
+      <div class="fg"><label class="fl">الهاتف</label><input class="fi" id="u-phone" dir="ltr"></div>
+      <div class="fg fw"><label class="fl">البريد الإلكتروني</label><input class="fi" id="u-email" type="email" dir="ltr"></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-user')">إلغاء</button><button class="btn btn-ok" id="btn-su" onclick="saveUser()">حفظ</button></div>
+</div></div>
+
+<!-- شريك -->
+<div class="moverlay" id="modal-partner"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="mp-title">إضافة شريك</span><button class="mclose" onclick="closeModal('modal-partner')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="mp-id">
+    <div class="fg"><label class="fl">اسم الشريك <span class="req">*</span></label><input class="fi" id="mp-name" placeholder="الاسم الرباعي الكامل"></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">نسبة الملكية % <span class="req">*</span></label><input class="fi" id="mp-pct" type="number" min="0" max="100" step="0.01" dir="ltr" placeholder="45.5"></div>
+      <div class="fg"><label class="fl">الجنسية</label><input class="fi" id="mp-nat" placeholder="مصري"></div>
+      <div class="fg"><label class="fl">عدد الحصص</label><input class="fi" id="mp-shares" type="number" dir="ltr"></div>
+      <div class="fg"><label class="fl">قيمة الحصة (جنيه)</label><input class="fi" id="mp-val" type="number" dir="ltr"></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-partner')">إلغاء</button><button class="btn btn-ok" onclick="savePartner()">حفظ</button></div>
+</div></div>
+
+<!-- مصنع -->
+<div class="moverlay" id="modal-factory"><div class="modal" style="max-width:480px">
+  <div class="mhdr"><span class="mtitle" id="mf-title">إضافة مصنع</span><button class="mclose" onclick="closeModal('modal-factory')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="mf-id">
+    <div class="fg"><label class="fl">اسم المصنع <span class="req">*</span></label><input class="fi" id="mf-name" placeholder="مثال: نرهادو إنترناشيونال"></div>
+    <div class="fg"><label class="fl">العنوان</label><input class="fi" id="mf-addr"></div>
+    <div class="fg"><label class="fl">المنتجات المصنّعة</label><textarea class="fi" id="mf-prods" rows="2" placeholder="Dramrin, Purified Water..."></textarea></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">رقم ترخيص المصنع</label><input class="fi" id="mf-lic" dir="ltr"></div>
+      <div class="fg"><label class="fl">خطوط الإنتاج</label><input class="fi" id="mf-lines" placeholder="صلبة، سائل..."></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-factory')">إلغاء</button><button class="btn btn-ok" onclick="saveFactory()">حفظ</button></div>
+</div></div>
+
+<!-- موزع -->
+<div class="moverlay" id="modal-dist"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="md-title">إضافة موزع</span><button class="mclose" onclick="closeModal('modal-dist')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="md-id">
+    <div class="fg"><label class="fl">اسم الموزع <span class="req">*</span></label><input class="fi" id="md-name"></div>
+    <div class="fg"><label class="fl">العنوان</label><input class="fi" id="md-addr"></div>
+    <div class="fg"><label class="fl">المنتجات الموزَّعة</label><textarea class="fi" id="md-prods" rows="2"></textarea></div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-dist')">إلغاء</button><button class="btn btn-ok" onclick="saveDist()">حفظ</button></div>
+</div></div>
+
+<!-- مخزن -->
+<div class="moverlay" id="modal-storage"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="ms-title">إضافة مكان تخزين</span><button class="mclose" onclick="closeModal('modal-storage')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="ms-id">
+    <div class="fg"><label class="fl">اسم المخزن <span class="req">*</span></label><input class="fi" id="ms-name"></div>
+    <div class="fg"><label class="fl">العنوان الكامل</label><textarea class="fi" id="ms-addr" rows="2"></textarea></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">المساحة (م²)</label><input class="fi" id="ms-area" type="number" dir="ltr" placeholder="100"></div>
+      <div class="fg"><label class="fl">نوع التخزين</label><select class="fi" id="ms-type"><option>مخزن عادي</option><option>مخزن مبرد</option><option>مخزن خاص</option></select></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-storage')">إلغاء</button><button class="btn btn-ok" onclick="saveStorage()">حفظ</button></div>
+</div></div>
+
+<!-- نسخ احتياطي -->
+<div class="moverlay" id="modal-backup"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle">النسخ الاحتياطي</span><button class="mclose" onclick="closeModal('modal-backup')">✕</button></div>
+  <div class="mbody">
+    <div class="backup-card"><div style="font-size:14px;font-weight:700;margin-bottom:6px">⬇ تصدير نسخة احتياطية</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px">تصدير جميع البيانات في ملف JSON</div><button class="btn btn-ok btn-sm" onclick="exportBackup()">تنزيل النسخة الاحتياطية</button></div>
+    <div class="backup-card" style="margin-bottom:0"><div style="font-size:14px;font-weight:700;margin-bottom:6px">⬆ استيراد نسخة احتياطية</div><div style="background:var(--amber-light);border:1px solid rgba(217,119,6,.3);border-radius:7px;padding:9px 12px;font-size:12px;color:#92400e;margin-bottom:12px">⚠️ سيتم استبدال البيانات الحالية</div><input type="file" id="import-file" accept=".json" style="display:none" onchange="importBackup(this)"><button class="btn btn-o btn-sm" onclick="document.getElementById('import-file').click()">اختيار ملف JSON</button></div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-backup')">إغلاق</button></div>
+</div></div>
+<script>
+// ══ DB ══
+let DB;
+const openDB=()=>new Promise((ok,fail)=>{
+  const r=indexedDB.open('pharma_erp',6);
+  r.onupgradeneeded=e=>{
+    const d=e.target.result;
+    const stores=[
+      ['companies',[{n:'code',u:true}]],
+      ['users',[{n:'co_u',k:['companyId','username'],u:true},{n:'companyId',k:'companyId'}]],
+      ['audit',[{n:'companyId',k:'companyId'}],true],
+      ['comments',[],true],
+      ['documents',[{n:'companyId',k:'companyId'}]],
+      ['history',[{n:'recordId',k:'recordId'}],true],
+      ['partners',[{n:'companyId',k:'companyId'}]],
+      ['factories',[{n:'companyId',k:'companyId'}]],
+      ['distributors',[{n:'companyId',k:'companyId'}]],
+      ['storages',[{n:'companyId',k:'companyId'}]],
+      ['drugs',[{n:'companyId',k:'companyId'}]],
+    ];
+    for(const[name,idxs,auto]of stores){
+      if(!d.objectStoreNames.contains(name)){
+        const s=d.createObjectStore(name,auto?{keyPath:'id',autoIncrement:true}:{keyPath:'id'});
+        for(const i of idxs)s.createIndex(i.n,i.k||i.n,{unique:i.u||false});
+      }
+    }
+  };
+  r.onsuccess=e=>{DB=e.target.result;ok()};r.onerror=e=>fail(e.target.error);
+});
+const p=r=>new Promise((ok,fail)=>{r.onsuccess=e=>ok(e.target.result);r.onerror=e=>fail(e.target.error)});
+const dbGet=(st,k)=>p(DB.transaction(st).objectStore(st).get(k));
+const dbGetAll=(st,idx,k)=>{const s=DB.transaction(st).objectStore(st);return p(idx?s.index(idx).getAll(k):s.getAll())};
+const dbPut=(st,o)=>p(DB.transaction(st,'readwrite').objectStore(st).put(o));
+const dbDel=(st,k)=>p(DB.transaction(st,'readwrite').objectStore(st).delete(k));
+const uid=()=>crypto.randomUUID();
+const now=()=>new Date().toISOString();
+const fmt=d=>d?new Date(d).toLocaleDateString('ar-EG',{year:'numeric',month:'short',day:'numeric'}):'—';
+const fmtDt=d=>d?new Date(d).toLocaleString('ar-EG',{year:'numeric',month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'}):'—';
+const esc=s=>String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const val=id=>(document.getElementById(id)?.value??'').trim();
+const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??''};
+const COLORS=['#22d3ee','#06b6d4','#bfdbfe','#93c5fd','#f59e0b','#10b981','#f87171','#94a3b8'];
+const coColor=c=>COLORS[c.charCodeAt(0)%COLORS.length];
+const hashPw=async pw=>{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(pw+'qp25'));return Array.from(new Uint8Array(b)).map(x=>x.toString(16).padStart(2,'0')).join('')};
+const chkPw=async(pw,h)=>(await hashPw(pw))===h;
+const expBadge=d=>{if(!d)return'';const diff=Math.ceil((new Date(d)-new Date())/864e5);if(diff<0)return' <span class="bdg bdg-r">منتهي</span>';if(diff<90)return` <span class="bdg bdg-a">${diff} يوم</span>`;return' <span class="bdg bdg-g">ساري</span>'};
+const saveHist=async(recordId,action,note)=>await dbPut('history',{recordId,action,note:note||'',at:now(),userId:S?.userId,userName:S?.nameAr});
+let S=null,delCoId=null;
+
+function toast(msg,type='info'){
+  const t=document.createElement('div');
+  t.className='toast '+(type==='ok'?'ok':type==='er'?'er':'info');
+  t.textContent=(type==='ok'?'✅ ':type==='er'?'❌ ':'ℹ️ ')+msg;
+  document.getElementById('tc').appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320)},3000);
+}
+
+// ══ COMPANIES ══
+async function renderCompanies(){
+  const cos=(await dbGetAll('companies')).filter(c=>!c.deletedAt);
+  const g=document.getElementById('co-grid');
+  if(!cos.length){
+    g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted)"><div style="font-size:44px;margin-bottom:12px;opacity:.4">🏭</div><div style="font-size:15px;color:var(--text);margin-bottom:6px">لا توجد شركات بعد</div><div style="font-size:13px">اضغط "إنشاء شركة جديدة" للبدء</div></div>';
+    return;
+  }
+  g.innerHTML=cos.map(co=>{
+    const cc=coColor(co.code);
+    const isFactory=co.companyType==='factory';
+    return`<div class="co-card" onclick="loginCo('${co.id}')">
+      <div class="co-dot ${co.isActive?'dot-on':'dot-off'}"></div>
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:14px">
+        <div style="width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;background:${cc};box-shadow:0 4px 14px ${cc}55;flex-shrink:0">${co.nameAr.charAt(0)}</div>
+        <div style="position:relative" onclick="event.stopPropagation()">
+          <button class="co-card-menu" onclick="toggleDD('dd-${co.id}')">⋮</button>
+          <div class="dd" id="dd-${co.id}">
+            <button class="dd-item" onclick="closeAllDD();loginCo('${co.id}')">🔑 دخول</button>
+            <div class="dd-div"></div>
+            <button class="dd-item red" onclick="closeAllDD();confirmDelCo('${co.id}')">🗑 حذف</button>
+          </div>
+        </div>
+      </div>
+      <div class="co-card-cn">${esc(co.nameAr)}</div>
+      <div class="co-card-cm">${esc(co.nameEn||'')} · ${esc(co.city||'—')}</div>
+      <div style="margin-top:12px;display:flex;gap:6px;align-items:center">
+        <span style="font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;background:${isFactory?'rgba(34,211,238,.1)':'rgba(191,219,254,.4)'};color:${isFactory?'var(--primary-xd)':'var(--secondary-xd)'};border:1px solid ${isFactory?'rgba(34,211,238,.25)':'rgba(191,219,254,.6)'}">${isFactory?'مصنع':'Toll'}</span>
+        <span style="font-size:10px;color:var(--muted)">${co.isActive?'نشطة':'موقوفة'}</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDD(id){closeAllDD();document.getElementById(id)?.classList.add('show')}
+function closeAllDD(){document.querySelectorAll('.dd.show').forEach(d=>d.classList.remove('show'))}
+document.addEventListener('click',closeAllDD);
+
+async function doAddCompany(){
+  const code=val('nc-code').toUpperCase(),name=val('nc-name'),aname=val('nc-aname'),auser=val('nc-auser'),apass=val('nc-apass');
+  if(!code||!name||!aname||!auser||!apass){toast('يرجى ملء الحقول المطلوبة','er');return}
+  if(!/^[A-Z0-9]+$/.test(code)){toast('الكود: حروف وأرقام إنجليزية فقط','er');return}
+  if(apass.length<8){toast('كلمة المرور 8 أحرف على الأقل','er');return}
+  const all=await dbGetAll('companies');
+  if(all.find(c=>c.code===code&&!c.deletedAt)){toast('كود الشركة موجود بالفعل','er');return}
+  const btn=document.getElementById('btn-add-co');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    const coId=uid();
+    await dbPut('companies',{id:coId,code,nameAr:name,nameEn:'',companyType:val('nc-type')||'toll',city:val('nc-city'),country:'Egypt',phone:val('nc-phone'),isActive:true,createdAt:now(),updatedAt:now()});
+    await dbPut('users',{id:uid(),companyId:coId,nameAr:aname,username:auser,passwordHash:await hashPw(apass),role:'admin',isActive:true,failedAttempts:0,createdAt:now(),updatedAt:now()});
+    closeModal('modal-add-co');
+    ['nc-code','nc-name','nc-phone','nc-aname','nc-auser','nc-apass'].forEach(id=>set(id,''));set('nc-city','Cairo');
+    toast('تم إنشاء الشركة بنجاح','ok');renderCompanies();
+  }catch(e){toast('خطأ: '+e.message,'er')}
+  btn.innerHTML='إنشاء الشركة';btn.disabled=false;
+}
+
+function confirmDelCo(id){
+  delCoId=id;
+  dbGet('companies',id).then(co=>{
+    if(!co)return;
+    document.getElementById('del-co-hint').textContent=co.code;
+    set('del-co-inp','');openModal('modal-del-co');
+  });
+}
+async function doDeleteCompany(){
+  if(!delCoId)return;const co=await dbGet('companies',delCoId);if(!co)return;
+  if(val('del-co-inp').toUpperCase()!==co.code){toast('كود الشركة غير صحيح','er');return}
+  co.deletedAt=now();co.isActive=false;await dbPut('companies',co);
+  const users=await dbGetAll('users','companyId',delCoId);
+  for(const u of users){u.deletedAt=now();await dbPut('users',u)}
+  closeModal('modal-del-co');delCoId=null;toast('تم الحذف');renderCompanies();
+}
+
+// ══ LOGIN ══
+let loginCoId=null;
+function loginCo(id){
+  loginCoId=id;
+  dbGet('companies',id).then(co=>{
+    if(!co)return;
+    const colors=['#22d3ee','#06b6d4','#0891b2','#0e7490','#155e75','#164e63','#7c3aed','#0d9488'];
+    const col=colors[co.code.charCodeAt(0)%colors.length];
+    const badge=document.getElementById('lco-badge');
+    badge.innerHTML=`<div class="login-co-badge-icon" style="background:${col}">${co.nameAr.charAt(0)}</div><div><div style="font-size:13px;font-weight:700;color:var(--text)">${esc(co.nameAr)}</div><div style="font-size:11px;color:var(--muted);margin-top:1px">${esc(co.code)} · ${co.companyType==='factory'?'مصنع':'Toll'}</div></div>`;
+    document.getElementById('f-user').value='';
+    document.getElementById('f-pass').value='';
+    document.getElementById('lerr').classList.remove('show');
+    showScreen('login');
+  });
+}
+async function doLogin(){
+  const username=val('f-user'),password=val('f-pass');
+  const err=document.getElementById('lerr');err.classList.remove('show');
+  if(!username||!password){err.textContent='يرجى ملء جميع الحقول';err.classList.add('show');return}
+  const btn=document.getElementById('btn-login');
+  const btntxt=document.getElementById('btn-login-txt');
+  if(btntxt) btntxt.innerHTML='<span class="spin"></span>';
+  btn.disabled=true;
+  try{
+    const co=await dbGet('companies',loginCoId);
+    if(!co||co.deletedAt){err.textContent='الشركة غير موجودة';err.classList.add('show');return}
+    const users=await dbGetAll('users','companyId',co.id);
+    const u=users.find(x=>x.username===username&&!x.deletedAt);
+    if(!u||!u.isActive){err.textContent='بيانات الدخول غير صحيحة';err.classList.add('show');return}
+    if(u.lockedUntil&&new Date(u.lockedUntil)>new Date()){err.textContent='الحساب مقفل 30 دقيقة';err.classList.add('show');return}
+    if(!(await chkPw(password,u.passwordHash))){
+      u.failedAttempts=(u.failedAttempts||0)+1;
+      if(u.failedAttempts>=5)u.lockedUntil=new Date(Date.now()+30*60000).toISOString();
+      await dbPut('users',u);
+      err.textContent='كلمة المرور غير صحيحة'+(u.failedAttempts>=3?` (${5-u.failedAttempts} محاولات متبقية)`:'');
+      err.classList.add('show');return;
+    }
+    u.failedAttempts=0;u.lockedUntil=null;u.lastLogin=now();await dbPut('users',u);
+    S={companyId:co.id,userId:u.id,nameAr:u.nameAr,companyNameAr:co.nameAr,coCode:co.code,role:u.role};
+    sessionStorage.setItem('S',JSON.stringify(S));startApp();
+  }catch(e){err.textContent='خطأ: '+e.message;err.classList.add('show')}
+  const btntxt2=document.getElementById('btn-login-txt');
+  if(btntxt2) btntxt2.textContent='دخول';
+  btn.disabled=false;
+}
+function doLogout(){S=null;sessionStorage.removeItem('S');loginCoId=null;showScreen('co');renderCompanies();document.getElementById('comment-toggle').style.display='none';document.getElementById('comment-panel').classList.remove('open');}
+
+// ══ APP ══
+const NAV=[
+  {sec:'الرئيسية'},
+  {id:'dashboard',lbl:'لوحة التحكم',ic:'📊'},
+  {sec:'الشركة'},
+  {id:'company',lbl:'بيانات الشركة',ic:'🏢'},
+  {id:'drug-reg',lbl:'EDA — أدوية بشرية',ic:'💊'},
+  {sec:'الإعدادات'},
+  {id:'users',lbl:'المستخدمون',ic:'👥'},
+  {id:'settings',lbl:'إعدادات النظام',ic:'⚙️'},
+  {sec:'الإنتاج'},
+  {id:'materials',lbl:'المواد الخام',ic:'🧪',soon:true},
+  {id:'products',lbl:'المنتجات',ic:'💊',soon:true},
+  {id:'production',lbl:'الإنتاج',ic:'🏭',soon:true},
+];
+
+function buildNav(){
+  const nav=document.getElementById('sb-nav');
+  nav.innerHTML=NAV.map(n=>{
+    if(n.sec)return`<div class="nsec">${n.sec}</div>`;
+    return`<div class="nitem ${n.soon?'dim':''}" id="nav-${n.id}" onclick="${n.soon?'':"`go('${n.id}')`"}">
+      <span class="nic">${n.ic}</span><span>${n.lbl}</span>
+      ${n.soon?'<span class="sb-soon">قريباً</span>':''}
+    </div>`;
+  }).join('');
+}
+
+function startApp(){
+  const cc=coColor(S.coCode);
+  document.getElementById('sb-coname').textContent=S.companyNameAr;
+  document.getElementById('sb-coname2').textContent=S.companyNameAr;
+  document.getElementById('sb-av').textContent=S.nameAr.charAt(0);
+  document.getElementById('sb-av').style.background=`linear-gradient(135deg,${cc},var(--secondary-d))`;
+  document.getElementById('sb-un').textContent=S.nameAr;
+  document.getElementById('sb-ur').textContent=S.role==='admin'?'مدير النظام':'مستخدم';
+  document.getElementById('comment-toggle').style.display='flex';
+  buildNav();showScreen('app');go('dashboard');renderComments();
+}
+
+function go(page){
+  document.querySelectorAll('.nitem').forEach(e=>e.classList.remove('act'));
+  const navEl=document.getElementById('nav-'+page);
+  if(navEl) navEl.classList.add('act');
+  const titles={dashboard:'📊 لوحة التحكم',company:'🏢 بيانات الشركة','drug-reg':'💊 EDA — أدوية بشرية',users:'👥 المستخدمون',settings:'⚙️ إعدادات النظام'};
+  const titleEl=document.getElementById('page-title');
+  if(titleEl) titleEl.textContent=titles[page]||page;
+  const m=document.getElementById('main-content');
+  if(!m) return;
+  const pages={
+    dashboard:renderDashboard,
+    company:renderCompanyPage,
+    'drug-reg':function(c){if(window.renderDrugReg)window.renderDrugReg(c);else c.innerHTML='<div class="es"><p>جاري التحميل...</p></div>';},
+    users:renderUsers,
+    settings:renderSettings
+  };
+  (pages[page]||renderDashboard)(m);
+  closeSidebar();
+}
+
+// ══ DASHBOARD ══
+async function renderDashboard(c){
+  const users=await dbGetAll('users','companyId',S.companyId);
+  const au=users.filter(u=>u.isActive&&!u.deletedAt).length;
+  const logs=await dbGetAll('audit','companyId',S.companyId);
+  const co=await dbGet('companies',S.companyId);
+  const recent=logs.slice(-5).reverse();
+  const checks=[{k:'comRegExp',l:'السجل التجاري'},{k:'tollExp',l:'Toll / رخصة المصنع'},{k:'gmpExp',l:'شهادة GMP'},{k:'taxExp',l:'البطاقة الضريبية'}];
+  const warns=checks.filter(x=>co[x.k]).map(x=>{const diff=Math.ceil((new Date(co[x.k])-new Date())/864e5);return{label:x.l,date:fmt(co[x.k]),diff,exp:diff<0}}).filter(x=>x.diff<90);
+
+  let html='';
+  if(warns.length){
+    html+=`<div class="exp-panel"><div class="exp-header">⚠️ ${warns.filter(w=>w.exp).length} وثيقة منتهية — ${warns.filter(w=>!w.exp).length} تنتهي قريباً</div>
+    ${warns.map(w=>`<div class="exp-item"><span style="font-weight:600">${esc(w.label)}</span><span style="font-size:12px;color:var(--muted)">${esc(w.date)}</span><span class="bdg ${w.exp?'bdg-r':'bdg-a'}">${w.exp?'منتهي':w.diff+' يوم'}</span><button class="btn btn-o btn-xs" onclick="go('company')">عرض</button></div>`).join('')}
+    </div>`;
+  }
+
+  html+=`<div class="stats">
+    <div class="sc gr"><div class="sic">👥</div><div class="slbl">المستخدمون النشطون</div><div class="sval gr">${au}</div><div class="sinfo">من ${users.filter(u=>!u.deletedAt).length} إجمالي</div></div>
+    <div class="sc am"><div class="sic">⏳</div><div class="slbl">المواد الخام</div><div class="sval am" style="font-size:18px;padding-top:6px">قريباً</div><div class="sinfo">المرحلة 2</div></div>
+    <div class="sc bl"><div class="sic">💊</div><div class="slbl">المنتجات</div><div class="sval bl" style="font-size:18px;padding-top:6px">قريباً</div><div class="sinfo">المرحلة 3</div></div>
+    <div class="sc re"><div class="sic">📋</div><div class="slbl">سجلات النشاط</div><div class="sval re">${logs.length}</div><div class="sinfo">إجمالي العمليات</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="pcard"><div class="ph"><div class="ptitle">⚡ إجراءات سريعة</div></div>
+    <div style="padding:14px;display:flex;flex-wrap:wrap;gap:10px">
+      <button class="btn btn-ok" onclick="go('company')">🏢 تحديث بيانات الشركة</button>
+      <button class="btn btn-bl" onclick="go('users')">👤 إضافة مستخدم</button>
+      <button class="btn btn-o" onclick="openModal('modal-backup')">💾 نسخ احتياطي</button>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">🏢 الشركة النشطة</div></div>
+    <div style="padding:14px">
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-size:13px">الاسم</span><span style="font-size:13px;font-weight:600">${esc(co.nameAr)}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--border)"><span style="color:var(--muted);font-size:13px">النوع</span><span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+      <div style="display:flex;justify-content:space-between;padding:8px 0"><span style="color:var(--muted);font-size:13px">الكود</span><span style="font-family:var(--mono);font-size:12px;color:var(--blue)">${esc(co.code)}</span></div>
+    </div></div>
+  </div>
+  <div class="pcard"><div class="ph"><div class="ptitle">📋 آخر الأنشطة</div></div>
+  ${recent.length?`<div class="tw"><table><thead><tr><th>المستخدم</th><th>العملية</th><th>الوقت</th></tr></thead><tbody>
+  ${recent.map(l=>`<tr><td style="font-weight:600">${esc(l.userName||'—')}</td><td><span class="bdg bdg-b">${esc(l.action)}</span></td><td style="font-size:12px;color:var(--muted)">${fmtDt(l.at)}</td></tr>`).join('')}
+  </tbody></table></div>`:'<div class="es" style="padding:28px"><div class="ei">📋</div><p>لا توجد أنشطة بعد</p></div>'}
+  </div>`;
+  c.innerHTML=html;
+}
+
+// ══ COMPANY PAGE ══
+async function renderCompanyPage(c){
+  const co=await dbGet('companies',S.companyId);
+  c.innerHTML=`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div class="page-title" style="margin-bottom:0">🏢 بيانات الشركة <span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+    <button class="btn btn-o btn-sm" onclick="printCompany()">🖨 طباعة</button>
+  </div>
+  <div class="cp-tabs" id="co-tabs">
+    <button class="cp-tab act" data-cpt="cpt-legal">القانونية</button>
+    <button class="cp-tab" data-cpt="cpt-eda">EDA والترخيص</button>
+    <button class="cp-tab" data-cpt="cpt-tax">الضرائب</button>
+    <button class="cp-tab" data-cpt="cpt-persons">المسؤولون</button>
+    <button class="cp-tab" data-cpt="cpt-partners">الشركاء</button>
+    <button class="cp-tab" data-cpt="cpt-factories">المصانع والموزعون</button>
+    <button class="cp-tab" data-cpt="cpt-docs">المستندات</button>
+    <button class="cp-tab" data-cpt="cpt-history">سجل التعديلات</button>
+  </div>
+
+  <div id="cpt-legal" class="cpt act">
+    <div class="pcard"><div class="ph"><div class="ptitle">📋 البيانات القانونية</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fi" id="cf-nameAr" value="${esc(co.nameAr||'')}"></div>
+        <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fi" id="cf-nameEn" value="${esc(co.nameEn||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">نوع الكيان</label><select class="fi" id="cf-companyType"><option value="toll" ${(co.companyType||'toll')==='toll'?'selected':''}>شركة Toll</option><option value="factory" ${co.companyType==='factory'?'selected':''}>مصنع</option></select></div>
+        <div class="fg"><label class="fl">الشكل القانوني</label><select class="fi" id="cf-legalForm"><option value="">اختر...</option>${['شركة ذات مسؤولية محدودة (ش.ذ.م.م)','شركة توصية بسيطة','شركة مساهمة','شركة شخص واحد'].map(v=>`<option ${co.legalForm===v?'selected':''}>${v}</option>`).join('')}</select></div>
+        <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fi" id="cf-comRegNo" value="${esc(co.comRegNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">انتهاء السجل${expBadge(co.comRegExp)}</label><input class="fi" id="cf-comRegExp" type="date" value="${co.comRegExp||''}"></div>
+        <div class="fg"><label class="fl">الرقم القومي للمنشأة</label><input class="fi" id="cf-natNo" value="${esc(co.natNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">رأس المال (جنيه)</label><input class="fi" id="cf-capital" type="number" value="${co.capital||''}" dir="ltr"></div>
+        <div class="fg"><label class="fl">المدينة</label><input class="fi" id="cf-city" value="${esc(co.city||'')}"></div>
+        <div class="fg"><label class="fl">الدولة</label><input class="fi" id="cf-country" value="${esc(co.country||'Egypt')}"></div>
+        <div class="fg fw"><label class="fl">المقر الرئيسي</label><textarea class="fi" id="cf-addr" rows="2">${esc(co.addressAr||'')}</textarea></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('legal')">💾 حفظ البيانات القانونية</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-eda" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">${co.companyType==='factory'?'📋 رخصة مصنع — FM-LPM-02':'📋 قيد Toll لدى الغير — FM-LAD-15'}</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">${co.companyType==='factory'?'رقم رخصة المصنع':'رقم قيد Toll'}</label><input class="fi" id="cf-tollNo" value="${esc(co.tollNo||'')}" dir="ltr" placeholder="${co.companyType==='factory'?'00003/2017':'Toll/57'}"></div>
+        <div class="fg"><label class="fl">تاريخ الإصدار</label><input class="fi" id="cf-tollDate" type="date" value="${co.tollDate||''}"></div>
+        <div class="fg"><label class="fl">تاريخ الانتهاء${expBadge(co.tollExp)}</label><input class="fi" id="cf-tollExp" type="date" value="${co.tollExp||''}"></div>
+        <div class="fg"><label class="fl">كود EDA</label><input class="fi" id="cf-edaCode" value="${esc(co.edaCode||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">شهادة GMP</label><input class="fi" id="cf-gmp" value="${esc(co.gmp||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">انتهاء GMP${expBadge(co.gmpExp)}</label><input class="fi" id="cf-gmpExp" type="date" value="${co.gmpExp||''}"></div>
+        <div class="fg fw"><label class="fl">خطوط الإنتاج</label><input class="fi" id="cf-lines" value="${esc(co.lines||co.productionLines||'')}" placeholder="صلبة، كبسولات، سائل..."></div>
+        <div class="fg fw"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fi" id="cf-edaAddr" rows="2">${esc(co.edaAddress||co.edaAddr||'')}</textarea></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('eda')">💾 حفظ بيانات EDA</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-tax" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">💰 البيانات الضريبية والمالية</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fi" id="cf-taxReg" value="${esc(co.taxReg||co.taxRegNo||'')}" dir="ltr" placeholder="204-999-359"></div>
+        <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fi" id="cf-taxCard" value="${esc(co.taxCard||co.taxCardNo||'')}" dir="ltr" placeholder="509-999-204"></div>
+        <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fi" id="cf-taxDate" type="date" value="${co.taxDate||co.taxCardDate||''}"></div>
+        <div class="fg"><label class="fl">انتهاء البطاقة${expBadge(co.taxExp||co.taxCardExpiry)}</label><input class="fi" id="cf-taxExp" type="date" value="${co.taxExp||co.taxCardExpiry||''}"></div>
+        <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fi" id="cf-taxOfc" value="${esc(co.taxOfc||co.taxOffice||'')}" placeholder="الاستثمار"></div>
+        <div class="fg"><label class="fl">كود النشاط ISIC</label><input class="fi" id="cf-actCode" value="${esc(co.actCode||co.activityCode||'')}" dir="ltr" placeholder="4772"></div>
+        <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fi" id="cf-socIns" value="${esc(co.socIns||co.socialInsuranceNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">ملف ضريبة الدخل</label><input class="fi" id="cf-incTax" value="${esc(co.incTax||co.incomeTaxNo||'')}" dir="ltr"></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('tax')">💾 حفظ البيانات الضريبية</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-persons" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">👤 المسؤولون وجهات الاتصال</div></div><div class="tab-body">
+      <div class="fsect">المسؤولون الرسميون</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رئيس مجلس الإدارة / المدير</label><input class="fi" id="cf-chairman" value="${esc(co.chairman||'')}"></div>
+        <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fi" id="cf-licHolder" value="${esc(co.licHolder||co.licenseHolder||'')}"></div>
+        <div class="fg"><label class="fl">مدير الشركة</label><input class="fi" id="cf-mgr" value="${esc(co.mgr||co.companyManager||'')}"></div>
+        <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fi" id="cf-tech" value="${esc(co.tech||co.technicalConsultant||'')}"></div>
+        <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fi" id="cf-qc" value="${esc(co.qc||co.qcManager||'')}" placeholder="د. الاسم — رقم النقابة"></div>
+        <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fi" id="cf-prod" value="${esc(co.prod||co.productionManager||'')}" placeholder="د. الاسم — رقم النقابة"></div>
+        <div class="fg fw"><label class="fl">مسؤول الشؤون التنظيمية RA</label><input class="fi" id="cf-ra" value="${esc(co.ra||co.raManager||'')}"></div>
+      </div>
+      <div class="fsect">جهات الاتصال</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">الهاتف الرئيسي</label><input class="fi" id="cf-phone" value="${esc(co.phone||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">الفاكس</label><input class="fi" id="cf-fax" value="${esc(co.fax||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" id="cf-email" value="${esc(co.email||'')}" type="email" dir="ltr"></div>
+        <div class="fg"><label class="fl">الموقع الإلكتروني</label><input class="fi" id="cf-web" value="${esc(co.website||co.web||'')}" dir="ltr"></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('persons')">💾 حفظ بيانات المسؤولين</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-partners" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">🤝 الشركاء وتوزيع الحصص</div><div class="pacts"><button class="btn btn-ok btn-sm" onclick="openAddPartner()">+ إضافة شريك</button></div></div>
+    <div id="partners-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">نسبة المشاركة المصرية</div></div>
+    <div class="tab-body">
+      <div class="fg"><label class="fl">نسبة المشاركة المصرية الإجمالية</label><input class="fi" id="cf-egyPct" value="${esc(co.egyPct||'')}" dir="ltr" placeholder="100%" style="max-width:200px"><div style="font-size:11px;color:var(--muted);margin-top:4px">يُطلب من هيئة الدواء والجهات الحكومية</div></div>
+      <div class="save-bar"><button class="btn btn-o btn-sm" onclick="saveEgyPct()">💾 حفظ</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-factories" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">🏭 المصانع المتعاقد معها</div><button class="btn btn-ok btn-sm" onclick="openAddFactory()">+ إضافة مصنع</button></div><div id="factories-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🏪 أماكن التخزين المرخصة</div><button class="btn btn-ok btn-sm" onclick="openAddStorage()">+ إضافة مخزن</button></div><div id="storages-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🚚 الموزعون المعتمدون</div><button class="btn btn-ok btn-sm" onclick="openAddDist()">+ إضافة موزع</button></div><div id="dists-table"></div></div>
+  </div>
+
+  <div id="cpt-docs" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📁 المستندات الرسمية</div></div>
+    <div style="padding:16px">
+      <div id="docs-list-co"></div>
+      <div class="doc-drop" onclick="document.getElementById('doc-inp').click()" style="margin-top:14px">
+        <div style="font-size:24px;margin-bottom:8px">📎</div>
+        <div style="font-size:13px;color:var(--muted)">اضغط لرفع PDF أو صورة</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;opacity:.7">الصور تُضغط تلقائياً — الحد 5MB</div>
+      </div>
+      <input type="file" id="doc-inp" accept=".pdf,image/*" style="display:none" onchange="uploadDoc(this)">
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input class="fi" id="doc-name" placeholder="اسم المستند..." style="flex:1">
+        <select class="fi" id="doc-type" style="width:170px">
+          <option>سجل تجاري</option><option>بطاقة ضريبية</option><option>ترخيص EDA</option>
+          <option>شهادة GMP</option><option>عقد تأسيس</option><option>صحيفة استثمار</option>
+          <option>عقد تصنيع</option><option>تأمينات اجتماعية</option><option>أخرى</option>
+        </select>
+      </div>
+    </div></div>
+  </div>
+
+  <div id="cpt-history" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📜 سجل التعديلات</div></div>
+    <div id="co-history-list"></div></div>
+  </div>
+
+  <div style="margin-top:12px;font-size:11px;color:var(--muted)">إنشاء: ${fmtDt(co.createdAt)} | آخر تحديث: ${fmtDt(co.updatedAt)}</div>`;
+
+  // Tab switching
+  document.querySelectorAll('[data-cpt]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.cp-tab').forEach(b=>b.classList.remove('act'));
+      document.querySelectorAll('.cpt').forEach(p=>p.classList.remove('act'));
+      btn.classList.add('act');
+      document.getElementById(btn.dataset.cpt)?.classList.add('act');
+    });
+  });
+
+  loadDocs();loadHistory();loadPartnersTable();loadFactoriesTable();loadStoragesTable();loadDistsTable();
+}
+
+async function saveTab(tab){
+  const co=await dbGet('companies',S.companyId);
+  let u={};
+  if(tab==='legal'){const nameAr=val('cf-nameAr');if(!nameAr){toast('الاسم مطلوب','er');return}u={nameAr,nameEn:val('cf-nameEn'),companyType:val('cf-companyType'),legalForm:val('cf-legalForm'),comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),natNo:val('cf-natNo'),capital:val('cf-capital'),city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')};}
+  else if(tab==='eda'){u={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines'),edaAddress:val('cf-edaAddr')};}
+  else if(tab==='tax'){u={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};}
+  else if(tab==='persons'){u={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web')};}
+  Object.assign(co,u,{updatedAt:now()});
+  await dbPut('companies',co);
+  await saveHist(co.id,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'}[tab]);
+  if(tab==='legal'){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr;document.getElementById('sb-coname2').textContent=co.nameAr;}
+  toast('تم الحفظ بنجاح','ok');
+}
+async function saveEgyPct(){const co=await dbGet('companies',S.companyId);co.egyPct=val('cf-egyPct');co.updatedAt=now();await dbPut('companies',co);toast('تم الحفظ','ok');}
+
+// ══ PARTNERS ══
+async function loadPartnersTable(){
+  const el=document.getElementById('partners-table');if(!el)return;
+  const rows=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">🤝</div><p>لا يوجد شركاء — اضغط "+ إضافة شريك"</p></div>';return}
+  const total=rows.reduce((s,r)=>s+parseFloat(r.pct||0),0);
+  const ok=Math.abs(total-100)<0.01;
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الشريك</th><th>النسبة %</th><th>عدد الحصص</th><th>قيمة الحصة</th><th>الجنسية</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td><span class="bdg bdg-g">${esc(r.pct)}%</span></td><td>${esc(r.shares||'—')}</td><td>${r.val?esc(r.val)+' ج':'—'}</td><td>${esc(r.nat||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditPartner('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delPartner('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  <tr style="background:var(--card2)"><td colspan="2" style="font-weight:700">الإجمالي: <span class="bdg ${ok?'bdg-g':'bdg-r'}">${total.toFixed(2)}%</span></td><td colspan="4" style="font-size:12px;color:var(--muted)">${ok?'✅ صحيح':'⚠️ يجب أن يساوي 100%'}</td></tr>
+  </tbody></table></div>`;
+}
+function openAddPartner(){document.getElementById('mp-title').textContent='إضافة شريك جديد';['mp-id','mp-name','mp-pct','mp-nat','mp-shares','mp-val'].forEach(id=>set(id,''));openModal('modal-partner');}
+async function openEditPartner(id){const r=await dbGet('partners',id);if(!r)return;document.getElementById('mp-title').textContent='تعديل بيانات الشريك';set('mp-id',r.id);set('mp-name',r.name);set('mp-pct',r.pct);set('mp-nat',r.nat);set('mp-shares',r.shares);set('mp-val',r.val);openModal('modal-partner');}
+async function savePartner(){
+  const name=val('mp-name'),pct=val('mp-pct');if(!name||!pct){toast('الاسم والنسبة مطلوبان','er');return}
+  const eid=val('mp-id'),id=eid||uid();const existing=eid?await dbGet('partners',id):null;
+  await dbPut('partners',{...existing,id,companyId:S.companyId,name,pct,nat:val('mp-nat'),shares:val('mp-shares'),val:val('mp-val'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  await saveHist(S.companyId,eid?'تعديل شريك':'إضافة شريك',name);
+  closeModal('modal-partner');toast('تم الحفظ','ok');loadPartnersTable();
+}
+async function delPartner(id){if(!confirm('حذف هذا الشريك؟'))return;const r=await dbGet('partners',id);if(!r)return;r.deletedAt=now();await dbPut('partners',r);await saveHist(S.companyId,'حذف شريك',r.name);toast('تم الحذف');loadPartnersTable();}
+
+// ══ FACTORIES ══
+async function loadFactoriesTable(){
+  const el=document.getElementById('factories-table');if(!el)return;
+  const rows=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏭</div><p>لا توجد مصانع متعاقد معها</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المصنع</th><th>العنوان</th><th>خطوط الإنتاج</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.lines||'—')}</td><td style="font-size:11px;color:var(--muted)">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditFactory('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delFactory('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function openAddFactory(){document.getElementById('mf-title').textContent='إضافة مصنع متعاقد';['mf-id','mf-name','mf-addr','mf-prods','mf-lic','mf-lines'].forEach(id=>set(id,''));openModal('modal-factory');}
+async function openEditFactory(id){const r=await dbGet('factories',id);if(!r)return;document.getElementById('mf-title').textContent='تعديل بيانات المصنع';set('mf-id',r.id);set('mf-name',r.name);set('mf-addr',r.addr);set('mf-prods',r.prods);set('mf-lic',r.lic);set('mf-lines',r.lines);openModal('modal-factory');}
+async function saveFactory(){
+  const name=val('mf-name');if(!name){toast('اسم المصنع مطلوب','er');return}
+  const eid=val('mf-id'),id=eid||uid();const existing=eid?await dbGet('factories',id):null;
+  await dbPut('factories',{...existing,id,companyId:S.companyId,name,addr:val('mf-addr'),prods:val('mf-prods'),lic:val('mf-lic'),lines:val('mf-lines'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  await saveHist(S.companyId,eid?'تعديل مصنع':'إضافة مصنع',name);
+  closeModal('modal-factory');toast('تم الحفظ','ok');loadFactoriesTable();
+}
+async function delFactory(id){if(!confirm('حذف؟'))return;const r=await dbGet('factories',id);if(!r)return;r.deletedAt=now();await dbPut('factories',r);toast('تم الحذف');loadFactoriesTable();}
+
+// ══ STORAGES ══
+async function loadStoragesTable(){
+  const el=document.getElementById('storages-table');if(!el)return;
+  const rows=(await dbGetAll('storages','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏪</div><p>لا توجد أماكن تخزين</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المخزن</th><th>العنوان</th><th>المساحة</th><th>النوع</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td>${r.area?esc(r.area)+' م²':'—'}</td><td><span class="bdg bdg-m">${esc(r.type||'—')}</span></td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditStorage('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delStorage('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function openAddStorage(){document.getElementById('ms-title').textContent='إضافة مكان تخزين';['ms-id','ms-name','ms-addr','ms-area'].forEach(id=>set(id,''));set('ms-type','مخزن عادي');openModal('modal-storage');}
+async function openEditStorage(id){const r=await dbGet('storages',id);if(!r)return;document.getElementById('ms-title').textContent='تعديل';set('ms-id',r.id);set('ms-name',r.name);set('ms-addr',r.addr);set('ms-area',r.area);set('ms-type',r.type);openModal('modal-storage');}
+async function saveStorage(){
+  const name=val('ms-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('ms-id'),id=eid||uid();const existing=eid?await dbGet('storages',id):null;
+  await dbPut('storages',{...existing,id,companyId:S.companyId,name,addr:val('ms-addr'),area:val('ms-area'),type:val('ms-type'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  closeModal('modal-storage');toast('تم الحفظ','ok');loadStoragesTable();
+}
+async function delStorage(id){if(!confirm('حذف؟'))return;const r=await dbGet('storages',id);if(!r)return;r.deletedAt=now();await dbPut('storages',r);toast('تم الحذف');loadStoragesTable();}
+
+// ══ DISTRIBUTORS ══
+async function loadDistsTable(){
+  const el=document.getElementById('dists-table');if(!el)return;
+  const rows=(await dbGetAll('distributors','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🚚</div><p>لا يوجد موزعون</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الموزع</th><th>العنوان</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditDist('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delDist('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+function openAddDist(){document.getElementById('md-title').textContent='إضافة موزع معتمد';['md-id','md-name','md-addr','md-prods'].forEach(id=>set(id,''));openModal('modal-dist');}
+async function openEditDist(id){const r=await dbGet('distributors',id);if(!r)return;document.getElementById('md-title').textContent='تعديل الموزع';set('md-id',r.id);set('md-name',r.name);set('md-addr',r.addr);set('md-prods',r.prods);openModal('modal-dist');}
+async function saveDist(){
+  const name=val('md-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('md-id'),id=eid||uid();const existing=eid?await dbGet('distributors',id):null;
+  await dbPut('distributors',{...existing,id,companyId:S.companyId,name,addr:val('md-addr'),prods:val('md-prods'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  closeModal('modal-dist');toast('تم الحفظ','ok');loadDistsTable();
+}
+async function delDist(id){if(!confirm('حذف؟'))return;const r=await dbGet('distributors',id);if(!r)return;r.deletedAt=now();await dbPut('distributors',r);toast('تم الحذف');loadDistsTable();}
+
+// ══ DOCUMENTS ══
+async function loadDocs(){
+  const el=document.getElementById('docs-list-co');if(!el)return;
+  const docs=(await dbGetAll('documents','companyId',S.companyId)).filter(d=>!d.deletedAt);
+  if(!docs.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">لا توجد مستندات بعد</div>';return}
+  el.innerHTML=docs.map(d=>`<div class="doc-item"><div class="doc-icon" style="background:${d.type==='pdf'?'rgba(248,81,73,.15)':'rgba(56,139,253,.15)'};color:${d.type==='pdf'?'var(--red)':'var(--blue)'}">${d.type==='pdf'?'PDF':'IMG'}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div></div><button class="btn btn-o btn-sm" onclick="viewDoc('${d.id}')">عرض</button><button class="btn btn-x btn-sm" onclick="delDoc('${d.id}')">حذف</button></div>`).join('');
+}
+async function uploadDoc(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('الملف أكبر من 5MB','er');return}
+  const name=val('doc-name')||file.name,docType=val('doc-type')||'أخرى';
+  toast('جاري المعالجة...','info');
+  try{
+    let data,type,size;
+    if(file.type.startsWith('image/')){const c=await compressImg(file,900,.72);data=c.data;type='img';size=c.size;}
+    else{data=await toB64(file);type='pdf';size=file.size;}
+    await dbPut('documents',{id:uid(),companyId:S.companyId,name,docType,type,data,size,createdAt:now()});
+    input.value='';set('doc-name','');toast('تم رفع المستند','ok');loadDocs();
+  }catch(e){toast('خطأ: '+e.message,'er')}
+}
+const toB64=f=>new Promise((ok,fail)=>{const r=new FileReader();r.onload=e=>ok(e.target.result);r.onerror=()=>fail(new Error('فشل'));r.readAsDataURL(f)});
+const compressImg=(f,maxW,q)=>new Promise((ok,fail)=>{const img=new Image(),url=URL.createObjectURL(f);img.onload=()=>{URL.revokeObjectURL(url);let{width:w,height:h}=img;if(w>maxW){h=Math.round(h*maxW/w);w=maxW}const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);const data=cv.toDataURL('image/jpeg',q);ok({data,size:Math.round(data.length*.75)})};img.onerror=()=>fail(new Error('فشل'));img.src=url;});
+async function viewDoc(id){const d=await dbGet('documents',id);if(!d)return;const w=window.open();w.document.write(d.type==='pdf'?`<iframe src="${d.data}" style="width:100%;height:100vh;border:none"></iframe>`:`<img src="${d.data}" style="max-width:100%">`);}
+async function delDoc(id){if(!confirm('حذف؟'))return;const d=await dbGet('documents',id);if(!d)return;d.deletedAt=now();await dbPut('documents',d);toast('تم الحذف');loadDocs();}
+
+// ══ HISTORY ══
+async function loadHistory(){
+  const el=document.getElementById('co-history-list');if(!el)return;
+  const all=(await dbGetAll('history')).filter(h=>h.recordId===S.companyId).reverse();
+  if(!all.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">📜</div><p>لا توجد تعديلات مسجلة بعد</p></div>';return}
+  el.innerHTML=all.map(h=>`<div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px"><div><span class="bdg bdg-b" style="margin-left:8px">${esc(h.action)}</span>${h.note?`<span style="font-size:12px;color:var(--muted)">${esc(h.note)}</span>`:''}</div><div style="font-size:11px;color:var(--muted);white-space:nowrap">${esc(h.userName||'—')} · ${fmtDt(h.at)}</div></div>`).join('');
+}
+
+// ══ PRINT ══
+async function printCompany(){
+  const co=await dbGet('companies',S.companyId);
+  const partners=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  const factories=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  const pr=(l,v)=>v?`<tr><td style="color:#666;font-size:12px;width:200px;padding:6px 0">${l}</td><td style="font-size:13px;font-weight:500;padding:6px 0">${v}</td></tr>`:'';
+  const w=window.open();
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script></body></html>`);
+}
+
+// ══ USERS ══
+let usrQ='';
+async function renderUsers(c){
+  const all=await dbGetAll('users','companyId',S.companyId);
+  const users=all.filter(u=>!u.deletedAt&&(!usrQ||u.nameAr.includes(usrQ)||u.username.includes(usrQ)));
+  c.innerHTML=`<div class="page-title">👥 المستخدمون</div>
+  <div class="pcard"><div class="ph"><div class="ptitle">${all.filter(u=>!u.deletedAt).length} مستخدم</div>
+  <div class="pacts">
+    <div class="sbar"><span style="color:var(--muted)">🔍</span><input placeholder="بحث..." value="${esc(usrQ)}" oninput="usrQ=this.value;renderUsers(document.getElementById('main-content'))"></div>
+    <button class="btn btn-ok btn-sm" onclick="openAddUser()">+ إضافة مستخدم</button>
+  </div></div>
+  <div class="tw"><table><thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>
+  ${users.length?users.map(u=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary-d))">${u.nameAr.charAt(0)}</div><div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--muted)">${esc(u.nameEn||'')}</div></div></div></td>
+    <td><code style="font-size:11px;background:rgba(34,211,238,.08);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
+    <td><span class="bdg ${u.role==='admin'?'bdg-b':'bdg-m'}">${u.role==='admin'?'مدير':'مستخدم'}</span></td>
+    <td style="color:var(--muted)">${esc(u.department||'—')}</td>
+    <td style="font-size:11px;color:var(--muted)">${fmtDt(u.lastLogin)}</td>
+    <td><span class="bdg ${u.isActive?'bdg-g':'bdg-r'}">${u.isActive?'نشط':'موقوف'}</span></td>
+    <td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditUser('${u.id}')">تعديل</button>${u.id!==S.userId?`<button class="btn btn-${u.isActive?'o':'ok'} btn-sm" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}</div></td>
+  </tr>`).join(''):'<tr><td colspan="7"><div class="es"><div class="ei">👥</div><p>لا يوجد مستخدمون</p></div></td></tr>'}
+  </tbody></table></div></div>`;
+}
+function openAddUser(){document.getElementById('mu-title').textContent='إضافة مستخدم جديد';document.getElementById('u-ph').style.display='none';document.getElementById('u-pl').innerHTML='كلمة المرور <span class="req">*</span>';['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title-inp','u-phone','u-email'].forEach(id=>set(id,''));set('u-role','user');openModal('modal-user');}
+async function openEditUser(id){const u=await dbGet('users',id);if(!u)return;document.getElementById('mu-title').textContent='تعديل مستخدم';document.getElementById('u-ph').style.display='block';document.getElementById('u-pl').innerHTML='كلمة مرور جديدة';set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');set('u-user',u.username);set('u-pass','');set('u-role',u.role);set('u-dept',u.department||'');set('u-title-inp',u.jobTitle||'');set('u-phone',u.phone||'');set('u-email',u.email||'');openModal('modal-user');}
+async function saveUser(){
+  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
+  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','er');return}
+  const btn=document.getElementById('btn-su');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    if(id){const u=await dbGet('users',id);if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','er');return}u.passwordHash=await hashPw(pw)}Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});await dbPut('users',u);toast('تم التحديث','ok');}
+    else{if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف','er');return}const all=await dbGetAll('users','companyId',S.companyId);if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','er');return}await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});toast('تم الإضافة','ok');}
+    closeModal('modal-user');renderUsers(document.getElementById('main-content'));
+  }catch(e){toast('خطأ: '+e.message,'er')}
+  btn.innerHTML='حفظ';btn.disabled=false;
+}
+async function toggleUser(id){const u=await dbGet('users',id);if(!u)return;u.isActive=!u.isActive;u.updatedAt=now();await dbPut('users',u);toast(u.isActive?'تم التفعيل':'تم الإيقاف','ok');renderUsers(document.getElementById('main-content'));}
+
+// ══ SETTINGS ══
+function renderSettings(c){
+  c.innerHTML=`<div class="page-title">⚙️ إعدادات النظام</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="pcard"><div class="ph"><div class="ptitle">العرض</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الخط</label><select class="fi" id="s-fs"><option value="13">صغير 13px</option><option value="14" selected>متوسط 14px</option><option value="15">كبير 15px</option></select></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">الطباعة</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الورق</label><select class="fi" id="s-paper"><option value="A4" selected>A4</option><option value="A5">A5</option></select></div>
+      <div class="fg"><label class="fl">هيدر الطباعة</label><input class="fi" id="s-header" placeholder="نص يظهر في رأس كل طباعة"></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">💾 النسخ الاحتياطي</div></div><div class="tab-body" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ok" onclick="exportBackup()">⬇ تصدير نسخة احتياطية</button>
+      <button class="btn btn-o" onclick="openModal('modal-backup')">⬆ استيراد نسخة</button>
+    </div></div>
+  </div>
+  <div style="margin-top:16px;display:flex;justify-content:flex-end">
+    <button class="btn btn-ok" onclick="toast('تم حفظ الإعدادات','ok');document.body.style.fontSize=val('s-fs')+'px'">💾 حفظ الإعدادات</button>
+  </div>`;
+}
+
+// ══ BACKUP ══
+async function exportBackup(){
+  const stores=['companies','users','documents','partners','factories','distributors','storages'];
+  const data={v:3,exportedAt:now()};
+  for(const st of stores)data[st]=await dbGetAll(st);
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
+  a.download=`quadra-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();toast('تم تنزيل النسخة الاحتياطية','ok');
+}
+async function importBackup(input){
+  const file=input.files[0];if(!file)return;
+  if(!confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟'))return;
+  try{
+    const data=JSON.parse(await file.text());
+    if(!data.companies)throw new Error('ملف غير صالح');
+    const stores=['companies','users','documents','partners','factories','distributors','storages'];
+    for(const st of stores)for(const o of data[st]||[])await dbPut(st,o);
+    closeModal('modal-backup');toast('تم الاستيراد بنجاح','ok');renderCompanies();
+  }catch(e){toast('خطأ: '+e.message,'er')}
+}
+
+// ══ COMMENTS ══
+async function renderComments(){
+  const all=await dbGetAll('comments');
+  document.getElementById('comment-count').textContent=all.length;
+  const list=document.getElementById('cp-list');
+  if(!all.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">لا توجد تعليقات بعد</div>';return}
+  list.innerHTML=all.reverse().map(c=>`<div class="cp-item"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between"><span style="color:var(--amber);font-weight:600">${esc(c.page||'عام')}</span><button style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px" onclick="delComment(${c.id})">حذف</button></div><div style="font-size:13px;color:var(--text)">${esc(c.text)}</div></div>`).join('');
+}
+async function addComment(){const text=document.getElementById('cp-text').value.trim();if(!text){toast('اكتب تعليقاً','er');return}const page=document.getElementById('page-title').textContent;await dbPut('comments',{text,page,at:now()});document.getElementById('cp-text').value='';toast('تم إضافة التعليق','ok');renderComments();}
+async function delComment(id){await dbDel('comments',id);renderComments();}
+function toggleComments(){document.getElementById('comment-panel').classList.toggle('open')}
+
+// ══ UI ══
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('sc-'+n)?.classList.add('active')}
+function openModal(id){document.getElementById(id).classList.add('on')}
+function closeModal(id){document.getElementById(id).classList.remove('on')}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay-bg').classList.add('show')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
+document.querySelectorAll('.moverlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');});});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.moverlay.on').forEach(o=>o.classList.remove('on'));
+  if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('active'))doLogin();
+});
+
+// ══ INIT ══
+(async()=>{
+  await openDB();
+  const saved=sessionStorage.getItem('S');
+  if(saved){
+    try{
+      S=JSON.parse(saved);
+      const co=await dbGet('companies',S.companyId);
+      if(co&&!co.deletedAt){startApp();return}
+    }catch{}
+    sessionStorage.removeItem('S');
+  }
+  showScreen('co');renderCompanies();
+})();
+</script>
+<!-- ══ REGISTRATION: DRAWER ══ -->
+<div class="reg-drawer-ov" id="reg-ov" onclick="closeDrawer()"></div>
+<div class="reg-drawer" id="reg-drawer">
+  <div class="rdh">
+    <div>
+      <div class="rdh-title" id="dr-title">—</div>
+      <div class="rdh-sub" id="dr-sub">—</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn btn-outline btn-sm" onclick="editCurrentRecord()">✏️ تعديل</button>
+      <button class="btn btn-outline btn-sm" onclick="exportRecord()">📤</button>
+      <button class="rdh-close" onclick="closeDrawer()">✕</button>
+    </div>
+  </div>
+  <div class="rd-status" id="dr-status"></div>
+  <div class="rd-tabs" id="dr-tabs">
+    <button class="dtab act" data-dt="info" onclick="switchDTab(this)">📋 بيانات الإخطار</button>
+    <button class="dtab" data-dt="parties" onclick="switchDTab(this)">🏢 الأطراف</button>
+    <button class="dtab" data-dt="composition" onclick="switchDTab(this)">🧪 التركيب</button>
+    <button class="dtab" data-dt="checklist" onclick="switchDTab(this)">✅ Checklist</button>
+    <button class="dtab" data-dt="variations" onclick="switchDTab(this)">🔄 Variations</button>
+    <button class="dtab" data-dt="timeline" onclick="switchDTab(this)">📅 السجل الزمني</button>
+  </div>
+  <div class="rd-body" id="dr-body"></div>
+  <div class="rd-foot">
+    <button class="btn btn-outline" onclick="closeDrawer()">إغلاق</button>
+    <button class="btn btn-primary btn-sm" onclick="editCurrentRecord()">✏️ تعديل هذا الإخطار</button>
+  </div>
+</div>
+
+<!-- ══ REGISTRATION: MODAL ══ -->
+<div class="reg-moverlay" id="reg-modal">
+  <div class="reg-modal">
+    <div class="mh"><span class="mt" id="reg-modal-title">✚ إخطار جديد</span><button class="mc" onclick="closeRegModal()">✕</button></div>
+    <div class="mb" id="reg-modal-body"></div>
+    <div class="mf">
+      <button class="btn btn-outline" onclick="closeRegModal()">إلغاء</button>
+      <button class="btn btn-primary" onclick="saveRecord()">💾 حفظ الإخطار</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+
+// ══ REG DATA ══
+var REG_KEY='qp_reg_v1';
+function getKey(){ return REG_KEY+'_'+(window.S&&window.S.companyId?window.S.companyId:'default'); }
+var records=[], filtered=[], currentRec=null, currentTab='info', editMode=false;
+var currentAgency='all', currentPage=1, perPage=15, sortField='invalidation_date', sortDir=1;
+
+var AGENCY_LBL={
+  eda_drug:{lbl:'EDA — أدوية بشرية', short:'EDA أدوية', cls:'bb'},
+  nfsa:    {lbl:'NFSA — أغذية خاصة', short:'NFSA',      cls:'bg'},
+  cosm:    {lbl:'EDA — تجميل',        short:'تجميل',     cls:'bgr'},
+};
+var LICENSE_LBL={local:'محلي',toll:'Toll',import:'استيراد',export:'تصدير',under_license:'تحت ترخيص','local/toll':'محلي/Toll'};
+var FORM_LBL={tablet:'أقراص',capsule:'كبسولات',syrup:'شراب',suspension:'تعليق',injection:'حقن',cream:'كريم',ointment:'مرهم',powder:'مسحوق',gel:'جل',liquid:'سائل',sachet:'ساشيه',drops:'قطرات',spray:'رذاذ',suppository:'تحاميل',patch:'لصقات',lotion:'لوشن',tube:'أنبوبة',other:'أخرى'};
+var STATUS_CFG={
+  active:   {lbl:'سارية ✓',      cls:'bg'},
+  expiring: {lbl:'تنتهي قريباً', cls:'ba'},
+  expired:  {lbl:'منتهية ✗',     cls:'br'},
+  pending:  {lbl:'قيد التسجيل',  cls:'bb'},
+  suspended:{lbl:'موقوفة ⚠',    cls:'bgr'},
+};
+var REG_STEPS_EDA=[{key:'submitted',lbl:'تقديم الملف'},{key:'nodcar',lbl:'NODCAR'},{key:'inspection',lbl:'زيارة تحليل'},{key:'committee',lbl:'اللجنة الفنية'},{key:'licensed',lbl:'إخطار التسجيل'},{key:'post_market',lbl:'ما بعد التسجيل'}];
+var REG_STEPS_NFSA=[{key:'submitted',lbl:'تقديم الطلب'},{key:'review',lbl:'مراجعة الملف'},{key:'inspection',lbl:'زيارة ميدانية'},{key:'licensed',lbl:'شهادة التسجيل'},{key:'renewal',lbl:'تجديد'}];
+var REG_STEPS_COSM=[{key:'submitted',lbl:'تقديم الطلب'},{key:'review',lbl:'المراجعة'},{key:'licensed',lbl:'إخطار التسجيل'},{key:'renewal',lbl:'تجديد'}];
+var CHECKLIST_EDA=[{id:'cl1',name:'ملف CTD كامل (Module 1-5)',required:true},{id:'cl2',name:'نتيجة NODCAR — أول 3 تشغيلات مطابقة',required:true},{id:'cl3',name:'زيارة تحليل EDA — مكتملة',required:true},{id:'cl4',name:'دراسة الثبات — Accelerated 6 شهور',required:true},{id:'cl5',name:'دراسة الثبات — Long-term جارية',required:true},{id:'cl6',name:'Process Validation — 3 تشغيلات',required:true},{id:'cl7',name:'شهادة GMP للمصنع سارية',required:true},{id:'cl8',name:'رسوم التفتيش الدوري محددة',required:false},{id:'cl9',name:'توقيع قرار اللجنة الفنية',required:false},{id:'cl10',name:'متطلبات اليقظة الصيدلية (Pharmacovigilance)',required:true}];
+var CHECKLIST_NFSA=[{id:'n1',name:'شهادة تحليل (CoA) من معمل معتمد',required:true},{id:'n2',name:'سجل تجاري ساري',required:true},{id:'n3',name:'إعلان المكونات (Declaration of Ingredients)',required:true},{id:'n4',name:'القيمة الغذائية (Nutritional Information)',required:true},{id:'n5',name:'Heavy Metals — رصاص/كادميوم/زرنيخ/زئبق',required:true},{id:'n6',name:'Pesticide Residue',required:true},{id:'n7',name:'بطاقة بيانات المنتج مختومة',required:true},{id:'n8',name:'عقد التصنيع (إن اختلف المصنع)',required:false}];
+var CHECKLIST_COSM=[{id:'c1',name:'بيان تركيب المنتج مختوم',required:true},{id:'c2',name:'Notification Request (F) على المنصة الإلكترونية',required:true},{id:'c3',name:'Artwork — موك أب مكتمل ومعتمد',required:true},{id:'c4',name:'عقد التصنيع Toll Manufacturing',required:false},{id:'c5',name:'شهادة تحليل المنتج النهائي',required:true},{id:'c6',name:'CoA المواد الخام الرئيسية',required:false}];
+
+var SEED=[
+  {id:1,agency:'eda_drug',reg_no:'30108/2019',soft_file:'5927',user_id:'User-35398',name_ar:'ماء نقي دستور الأدوية البريطاني 2019',name_en:'Purified Water BP 2019',form:'sachet',strength:'50ml',physical:'محلول شفاف عديم اللون',shelf_life:36,storage:'لا تتجاوز 30°C',approved_pack:'ساشيه 50مل (طبقتان LDPE+بوليستر)',price:[{size:'50ml ساشيه',price:'2 جنيه'}],license_type:'local',marketing_type:'محلي',reg_date:'2024-08-22',invalidation_date:'2029-02-28',license_holder:'Quadra Pharm — مصر',manufacturer:'Kareem Pharma — مصر',packager:'Kareem Pharma — مصر',storage_site:'Kareem Pharma — مصنع',release_site:'Kareem Pharma — مصنع',api_suppliers:[{material:'Purified Water',supplier:'—',country:'مصر',spec:'BP 2019'}],inactive_ingredients:[],reg_steps:{submitted:'done',nodcar:'done',inspection:'done',committee:'done',licensed:'done',post_market:'active'},checklist:{cl1:'done',cl2:'done',cl3:'done',cl4:'done',cl5:'active',cl6:'done',cl7:'done',cl8:'done',cl9:'done',cl10:'active'},variations:[{id:'v1',date:'2025-03-15',type:'N',category:'إداري',desc:'تغيير مالك الترخيص',status:'approved'},{id:'v2',date:'2025-10-01',type:'B',category:'تصنيع',desc:'نقل مكان التصنيع والتخزين',status:'approved'}],stability:{tracking_id:'26432',type:'Post License Variation',status:'commented',deadline:'2026-08-25',comments:5},timeline:[{date:'2019-03-21',icon:'📋',color:'blue',title:'الإخطار الأصلي — ميديسنيا للصناعات الدوائية',body:'رقم 30108/2019'},{date:'2024-08-22',icon:'🔄',color:'amber',title:'إعادة إصدار الإخطار — نقل ملكية وتغيير مكان التصنيع',body:'من ميديسنيا → كوادرا فارم'},{date:'2026-02-18',icon:'🔬',color:'green',title:'CADC — مطابقة 3 تشغيلات',body:'نتيجة مطابق لكل الدفعات'},{date:'2026-05-25',icon:'⚠️',color:'amber',title:'EDA Stability — Commented Application',body:'5 تعليقات يجب استيفاؤها — Tracking ID: 26432'}],status:'active',qf_code:'CAPP.041.04',committee_decree:'',notes:'أول 3 تشغيلات — تعهد عدم الإفراج حتى صدور المطابقة من CADC'},
+  {id:2,agency:'eda_drug',reg_no:'29925/2022',soft_file:'0',user_id:'User-1037',name_ar:'وونكيور بودرة موضعية',name_en:'Wouncure Topical Powder',form:'powder',strength:'—',physical:'مسحوق أبيض متجانس',shelf_life:36,storage:'لا تتجاوز 30°C في مكان جاف',approved_pack:'زجاجة HDPE بيضاء 10جم أو 20جم',price:[{size:'10 جم',price:'34 جنيه'},{size:'20 جم',price:'60 جنيه'}],license_type:'toll',marketing_type:'محلي',reg_date:'2022-07-26',invalidation_date:'2032-11-10',license_holder:'Quadra Pharm — مصر',manufacturer:'Badr Pharma for Pharmaceutical Industries — مصر',packager:'Badr Pharma for Pharmaceutical Industries — مصر',storage_site:'Badr Pharma — مصنع',release_site:'Badr Pharma — مصنع',api_suppliers:[{material:'Neomycin Sulphate',supplier:'Sichuan Long March',country:'الصين',spec:'BP2018'},{material:'Bacitracin Zinc',supplier:'North China Pharmaceutical',country:'الصين',spec:'BP2018'},{material:'Cysteine',supplier:'Tianjin Tianyao',country:'الصين',spec:'BP2018'},{material:'Maize Starch',supplier:'—',country:'—',spec:'BP2018'}],inactive_ingredients:[{name:'Maize Starch',qty:'977mg/g',spec:'BP2018',role:'حشو'}],reg_steps:{submitted:'done',nodcar:'done',inspection:'done',committee:'done',licensed:'done',post_market:'active'},checklist:{cl1:'done',cl2:'done',cl3:'done',cl4:'done',cl5:'done',cl6:'active',cl7:'done',cl8:'done',cl9:'done',cl10:'active'},variations:[{id:'v3',date:'2026-04-16',type:'B',category:'جودة — طريقة تحليل',desc:'Variation طريقة تحليل Wouncure',status:'under_review'}],stability:null,timeline:[{date:'2022-07-26',icon:'📋',color:'green',title:'إخطار تسجيل نهائي — EDA',body:'رقم 29925/2022 — Toll Manufacturing'},{date:'2026-04-16',icon:'🔄',color:'amber',title:'طلب Variation — استفسار تعديل',body:'hdr.variation@edaegypt.gov.eg — رد باستيفاء'}],status:'active',qf_code:'CAPP.041.04',committee_decree:'370/2006',notes:'شركة باد فارما مصنع Toll'},
+  {id:3,agency:'nfsa',reg_no:'2022/4001',soft_file:'025407',user_id:'—',name_ar:'دكستروسيل 40 جل',name_en:'Dextrosel 40 Gel',form:'gel',strength:'10g دكستروز/أنبوبة 25g',physical:'جل شفاف',shelf_life:24,storage:'لا تتجاوز درجة حرارة الغرفة',approved_pack:'علبة كرتون × 3 أنابيب × 25جم = 75جم',price:[{size:'75 جم (3 أنابيب)',price:'—'}],license_type:'local',marketing_type:'محلي',reg_date:'2022-01-11',invalidation_date:'2027-08-13',license_holder:'Quadra Consumer — مصر',manufacturer:'أورجانيكس للمكملات الغذائية — مصر',packager:'أورجانيكس — مصر',storage_site:'أورجانيكس — مدينة السادات',release_site:'—',api_suppliers:[{material:'Dextrose',supplier:'—',country:'مصر',spec:'USP42'},{material:'Potassium Sorbate E202',supplier:'—',country:'—',spec:'USP42'}],inactive_ingredients:[{name:'Purified Water',qty:'14g/25g',spec:'',role:'سائل'},{name:'Sodium CMC E466',qty:'929mg/25g',spec:'',role:'قوام'},{name:'Citric Acid E330',qty:'20mg/25g',spec:'',role:'منظم pH'},{name:'Vanilla Flavor',qty:'6mg/25g',spec:'',role:'نكهة'}],nutritional:{energy:40,fat:0,carbs:10,sugars:10,protein:0,sodium:0,serving:'25g أنبوبة'},food_category:'أغذية للحالات المرضية',nfsa_decree:'قرار مجلس الإدارة رقم 1 لسنة 2018',nfsa_company_code:'1122',reg_steps:{submitted:'done',review:'done',inspection:'done',licensed:'done',renewal:'active'},checklist:{n1:'done',n2:'done',n3:'done',n4:'done',n5:'done',n6:'done',n7:'done',n8:'na'},variations:[{id:'v4',date:'2025-12-21',type:'N',category:'إداري',desc:'تغيير اسم الشركة من الحلو فارما إلى Quadra Consumer',status:'approved'}],stability:null,timeline:[{date:'2022-01-11',icon:'📋',color:'green',title:'شهادة التسجيل — NFSA',body:'رقم 2022/4001 — أغذية للحالات المرضية — 5 سنوات'},{date:'2025-12-21',icon:'🔄',color:'blue',title:'تغيير اسم الشركة',body:'الحلو فارما → Quadra Consumer'}],status:'active',qf_code:'NFSA-2018/1',committee_decree:'',notes:'Dextrosel لرفع سكر الدم — يستخدم تحت إشراف طبي فقط'},
+  {id:4,agency:'cosm',reg_no:'15742/2010',soft_file:'11/2011',user_id:'—',name_ar:'سميلي فريش غسول للفم',name_en:'Smilly Fresh Mouth Wash',form:'liquid',strength:'60/100/120ml',physical:'سائل',shelf_life:36,storage:'—',approved_pack:'زجاجة بلاستيك 60/100/120ml في كرتون',price:[{size:'60ml',price:'—'},{size:'100ml',price:'—'},{size:'120ml',price:'—'}],license_type:'local/toll',marketing_type:'محلي',reg_date:'2010-10-05',invalidation_date:'2020-10-04',license_holder:'Quadra Pharm — Egypt',manufacturer:'Hi Care Pharmaceuticals And Cosmetics — مصر',packager:'Hi Care — مصر',storage_site:'Hi Care — مصنع',release_site:'—',api_suppliers:[{material:'Thymol',supplier:'—',country:'—',spec:'0.05%',role:'مطهر'},{material:'Chlorhexidine',supplier:'—',country:'—',spec:'0.3%',role:'مطهر'}],inactive_ingredients:[{name:'Menthol',qty:'0.2%',spec:'',role:'منعش'},{name:'Glycerin',qty:'5%',spec:'',role:'مرطب'},{name:'Ethanol 95%',qty:'2%',spec:'',role:'مذيب'},{name:'Water',qty:'to 100%',spec:'',role:'وسيط'}],cosmetic_category:'غسول الفم',reg_steps:{submitted:'done',review:'done',licensed:'done',renewal:'expired'},checklist:{c1:'done',c2:'done',c3:'done',c4:'done',c5:'done',c6:'done'},variations:[{id:'v5',date:'2011-05-12',type:'N',category:'إضافة عبوة',desc:'إضافة عبوة Plastic Bottle 60ml with Atomizer',status:'approved'},{id:'v6',date:'2011-01-01',type:'N',category:'نقل ملكية',desc:'نقل ملكية من سبوة فارم إلى كوادرا فارم',status:'approved'}],stability:null,timeline:[{date:'2010-10-05',icon:'📋',color:'blue',title:'إخطار تسجيل — وزارة الصحة',body:'رقم 15742/2010 — Cosmetics Dept'},{date:'2011-01-01',icon:'🔄',color:'amber',title:'نقل ملكية',body:'من سبوة فارم → كوادرا فارم'},{date:'2020-10-04',icon:'❌',color:'red',title:'انتهاء التسجيل',body:'الإخطار منتهي — يحتاج تجديد'}],status:'expired',qf_code:'FM-RCP-27',committee_decree:'',notes:'الإخطار منتهي منذ 2020 — يحتاج إعادة تسجيل'},
+];
+
+function loadData(){
+  try{var s=localStorage.getItem(getKey());records=s?JSON.parse(s):JSON.parse(JSON.stringify(SEED));}
+  catch(e){records=JSON.parse(JSON.stringify(SEED));}
+  if(!records.length) records=JSON.parse(JSON.stringify(SEED));
+}
+function saveData(){localStorage.setItem(getKey(),JSON.stringify(records));}
+
+function daysLeft(d){if(!d)return null;return Math.floor((new Date(d)-Date.now())/864e5);}
+function computeStatus(r){
+  if(r.status==='pending'||r.status==='suspended') return r.status;
+  var d=daysLeft(r.invalidation_date);
+  if(d===null) return 'pending';
+  if(d<0) return 'expired';
+  if(d<=365) return 'expiring';
+  return 'active';
+}
+function fmtReg(s){if(!s)return'—';return new Date(s).toLocaleDateString('ar-EG',{year:'numeric',month:'short',day:'numeric'});}
+function ic(label,value){return '<div class="info-cell"><div class="info-lbl">'+label+'</div><div class="info-val">'+value+'</div></div>';}
+function statusBdg(st){var s=STATUS_CFG[st]||{lbl:st,cls:'bgr'};return'<span class="badge '+s.cls+'">'+s.lbl+'</span>';}
+function agencyBdg(ag){var a=AGENCY_LBL[ag]||{lbl:ag,cls:'bgr'};return'<span class="badge '+a.cls+'">'+a.lbl+'</span>';}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── RENDER PAGE ──
+window.renderDrugReg=function(c){
+  loadData();
+  c.innerHTML=buildRegPage();
+  applyFilters();
+};
+
+function buildRegPage(){
+  return '<div class="ph">'+
+    '<div class="ph-left"><h2>📋 سجل الإخطارات التنظيمية</h2><p>EDA أدوية · NFSA أغذية · EDA تجميل</p></div>'+
+    '<div style="display:flex;gap:8px">'+
+      '<button class="btn btn-outline btn-sm" onclick="exportAll()">📤 تصدير</button>'+
+      '<button class="btn btn-primary btn-sm" onclick="openNewModal()">+ إخطار جديد</button>'+
+    '</div>'+
+  '</div>'+
+  // Agency filter
+  '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">'+
+    '<button class="agc-btn act-all" data-ag="all" onclick="filterAgency(\'all\',this)">🏛️ الكل <span id="cnt-all">0</span></button>'+
+    '<button class="agc-btn" data-ag="eda_drug" onclick="filterAgency(\'eda_drug\',this)"><span class="agc-dot dot-eda"></span> EDA أدوية <span id="cnt-eda_drug">0</span></button>'+
+    '<button class="agc-btn" data-ag="nfsa" onclick="filterAgency(\'nfsa\',this)"><span class="agc-dot dot-nfsa"></span> NFSA <span id="cnt-nfsa">0</span></button>'+
+    '<button class="agc-btn" data-ag="cosm" onclick="filterAgency(\'cosm\',this)"><span class="agc-dot dot-cosm"></span> تجميل <span id="cnt-cosm">0</span></button>'+
+  '</div>'+
+  // Stats
+  '<div class="reg-stats">'+
+    '<div class="rs" onclick="filterStatus(\'\')"><div class="rs-lbl">الكل</div><div class="rs-val blue" id="st-total">0</div></div>'+
+    '<div class="rs"><div class="rs-lbl">سارية ✓</div><div class="rs-val green" id="st-active">0</div></div>'+
+    '<div class="rs"><div class="rs-lbl">تنتهي قريباً</div><div class="rs-val amber" id="st-expiring">0</div></div>'+
+    '<div class="rs"><div class="rs-lbl">منتهية ✗</div><div class="rs-val red" id="st-expired">0</div></div>'+
+    '<div class="rs"><div class="rs-lbl">قيد التسجيل</div><div class="rs-val purple" id="st-pending">0</div></div>'+
+  '</div>'+
+  // Toolbar
+  '<div class="reg-toolbar">'+
+    '<div class="search-wrap" style="flex:1;min-width:180px">'+
+      '<svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>'+
+      '<input class="search-inp" style="width:100%;padding-right:36px" id="reg-srch" placeholder="بحث بالاسم أو رقم الإخطار أو المادة الفعالة..." oninput="applyFilters()">'+
+    '</div>'+
+    '<select class="fc" id="flt-status" style="width:150px" onchange="applyFilters()">'+
+      '<option value="">كل الحالات</option><option value="active">سارية</option>'+
+      '<option value="expiring">تنتهي قريباً</option><option value="expired">منتهية</option>'+
+      '<option value="pending">قيد التسجيل</option>'+
+    '</select>'+
+    '<select class="fc" id="flt-license" style="width:140px" onchange="applyFilters()">'+
+      '<option value="">كل الترخيص</option><option value="local">محلي</option>'+
+      '<option value="toll">Toll</option><option value="import">استيراد</option>'+
+    '</select>'+
+  '</div>'+
+  // Table
+  '<div class="card">'+
+    '<div class="card-header">'+
+      '<span class="card-title">قائمة الإخطارات <span id="tbl-count" style="font-size:12px;color:var(--gray)"></span></span>'+
+      '<span style="font-size:12px;color:var(--gray2)" id="tbl-info"></span>'+
+    '</div>'+
+    '<div class="table-wrap">'+
+      '<table><thead><tr>'+
+        '<th onclick="sortBy(\'reg_no\')" style="cursor:pointer">رقم الإخطار ↕</th>'+
+        '<th onclick="sortBy(\'name_ar\')" style="cursor:pointer">اسم المنتج ↕</th>'+
+        '<th>الشكل</th><th>الجهة</th><th>نوع الترخيص</th>'+
+        '<th>مالك الترخيص</th><th>المصنع</th>'+
+        '<th onclick="sortBy(\'invalidation_date\')" style="cursor:pointer">انتهاء التسجيل ↕</th>'+
+        '<th>الحالة</th><th></th>'+
+      '</tr></thead>'+
+      '<tbody id="reg-tbl-body"></tbody></table>'+
+    '</div>'+
+    '<div style="padding:12px 18px;border-top:1px solid var(--gray3);display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--gray)">'+
+      '<span id="pg-info-reg"></span>'+
+      '<div style="display:flex;gap:6px">'+
+        '<button class="btn btn-outline btn-sm" id="pg-prev-reg" onclick="prevPage()">‹ السابق</button>'+
+        '<button class="btn btn-outline btn-sm" id="pg-next-reg" onclick="nextPage()">التالي ›</button>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function applyFilters(){
+  var q=(document.getElementById('reg-srch')||{value:''}).value.toLowerCase();
+  var fs=(document.getElementById('flt-status')||{value:''}).value;
+  var fl=(document.getElementById('flt-license')||{value:''}).value;
+  filtered=records.filter(function(r){
+    var ag=currentAgency==='all'||r.agency===currentAgency;
+    var mq=!q||(r.name_ar||'').includes(q)||(r.name_en||'').toLowerCase().includes(q)||(r.reg_no||'').includes(q);
+    var ms=!fs||computeStatus(r)===fs;
+    var ml=!fl||r.license_type===fl;
+    return ag&&mq&&ms&&ml;
+  });
+  if(sortField){
+    filtered.sort(function(a,b){
+      var av=a[sortField]||'',bv=b[sortField]||'';
+      return sortDir*(av<bv?-1:av>bv?1:0);
+    });
+  }
+  updateStats();
+  renderRegTable();
+}
+
+function updateStats(){
+  var all=records;
+  var cnt={all:all.length,eda_drug:0,nfsa:0,cosm:0};
+  var st={total:all.length,active:0,expiring:0,expired:0,pending:0};
+  all.forEach(function(r){
+    if(cnt[r.agency]!==undefined) cnt[r.agency]++;
+    var s=computeStatus(r);
+    if(st[s]!==undefined) st[s]++;
+  });
+  Object.keys(cnt).forEach(function(k){var e=document.getElementById('cnt-'+k);if(e)e.textContent=cnt[k];});
+  Object.keys(st).forEach(function(k){var e=document.getElementById('st-'+k);if(e)e.textContent=st[k];});
+}
+
+function renderRegTable(){
+  var tb=document.getElementById('reg-tbl-body');if(!tb)return;
+  var total=filtered.length;
+  var start=(currentPage-1)*perPage;
+  var page=filtered.slice(start,start+perPage);
+  var totalPg=Math.ceil(total/perPage)||1;
+  var ci=document.getElementById('tbl-count');if(ci)ci.textContent='('+total+')';
+  var ti=document.getElementById('tbl-info');if(ti)ti.textContent='عرض '+(total?start+1:0)+' - '+Math.min(start+perPage,total)+' من '+total;
+  var pi=document.getElementById('pg-info-reg');if(pi)pi.textContent='صفحة '+currentPage+' / '+totalPg;
+  var pp=document.getElementById('pg-prev-reg');if(pp)pp.disabled=currentPage<=1;
+  var pn=document.getElementById('pg-next-reg');if(pn)pn.disabled=currentPage>=totalPg;
+  if(!page.length){
+    tb.innerHTML='<tr><td colspan="10"><div class="empty"><div style="font-size:36px;margin-bottom:12px">📋</div><h3>لا توجد إخطارات</h3><p>اضغط "+ إخطار جديد" لإضافة أول إخطار</p></div></td></tr>';
+    return;
+  }
+  tb.innerHTML=page.map(function(r){
+    var st=computeStatus(r);
+    var d=daysLeft(r.invalidation_date);
+    var dStr=d===null?'—':d<0?'منتهي منذ '+Math.abs(d)+' يوم':(d===0?'اليوم ❗':d+' يوم');
+    var dCol=d===null?'':d<0?'color:var(--red)':d<180?'color:var(--amber)':'';
+    var hasStab=r.stability&&r.stability.status==='commented';
+    return '<tr onclick="openDrawer('+r.id+')" style="cursor:pointer">'+
+      '<td><span style="font-family:monospace;font-size:12px">'+esc(r.reg_no)+'</span>'+
+        (hasStab?'<span title="تعليقات ثبات" style="color:var(--amber);margin-right:4px"> ⚠️</span>':'')+'</td>'+
+      '<td><div style="font-weight:600">'+(r.name_ar?esc(r.name_ar):(esc(r.name_en)||'—'))+'</div>'+
+        (r.name_en&&r.name_ar?'<div style="font-size:11px;color:var(--gray2)">'+esc(r.name_en)+'</div>':'')+'</td>'+
+      '<td>'+esc(FORM_LBL[r.form]||r.form||'—')+'</td>'+
+      '<td>'+agencyBdg(r.agency)+'</td>'+
+      '<td><span class="badge bgr" style="font-size:10px">'+esc(LICENSE_LBL[r.license_type]||r.license_type||'—')+'</span></td>'+
+      '<td style="font-size:12px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.license_holder||'—')+'</td>'+
+      '<td style="font-size:12px;max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">'+esc(r.manufacturer||'—')+'</td>'+
+      '<td><div style="font-size:12px;'+dCol+'">'+fmtReg(r.invalidation_date)+'</div>'+
+        '<div style="font-size:11px;'+dCol+'">'+dStr+'</div></td>'+
+      '<td>'+statusBdg(st)+'</td>'+
+      '<td onclick="event.stopPropagation()"><div style="display:flex;gap:4px">'+
+        '<button class="btn-edit" onclick="openDrawer('+r.id+')" title="عرض">👁</button>'+
+        '<button class="btn-edit" onclick="openEditModal('+r.id+')" title="تعديل">✏️</button>'+
+        '<button class="btn-del" onclick="deleteRecord('+r.id+')" title="حذف">🗑</button>'+
+      '</div></td>'+
+    '</tr>';
+  }).join('');
+}
+
+function filterAgency(ag,btn){
+  currentAgency=ag;currentPage=1;
+  document.querySelectorAll('.agc-btn').forEach(function(b){b.className='agc-btn';});
+  if(btn){
+    var cls=ag==='all'?'act-all':ag==='nfsa'?'act-nfsa':ag==='cosm'?'act-cosm':'act-eda';
+    btn.className='agc-btn '+cls;
+  }
+  applyFilters();
+}
+function filterStatus(s){var e=document.getElementById('flt-status');if(e)e.value=s;applyFilters();}
+function sortBy(f){if(sortField===f)sortDir*=-1;else{sortField=f;sortDir=1;}applyFilters();}
+function prevPage(){if(currentPage>1){currentPage--;renderRegTable();}}
+function nextPage(){var tp=Math.ceil(filtered.length/perPage)||1;if(currentPage<tp){currentPage++;renderRegTable();}}
+
+// ── DRAWER ──
+function openDrawer(id){
+  currentRec=records.find(function(r){return r.id===id;});
+  if(!currentRec)return;
+  document.getElementById('dr-title').textContent=currentRec.name_ar||currentRec.name_en;
+  document.getElementById('dr-sub').textContent=currentRec.reg_no+' · '+(AGENCY_LBL[currentRec.agency]||{lbl:currentRec.agency}).lbl;
+  renderDStatus();
+  // reset tabs
+  document.querySelectorAll('.dtab').forEach(function(b){b.classList.remove('act');});
+  var firstTab=document.querySelector('.dtab[data-dt="info"]');
+  if(firstTab)firstTab.classList.add('act');
+  currentTab='info';
+  renderDBody();
+  document.getElementById('reg-drawer').classList.add('open');
+  document.getElementById('reg-ov').classList.add('on');
+}
+function closeDrawer(){
+  document.getElementById('reg-drawer').classList.remove('open');
+  document.getElementById('reg-ov').classList.remove('on');
+}
+window.closeDrawer=closeDrawer;
+window.openDrawer=openDrawer;
+
+function renderDStatus(){
+  var r=currentRec;
+  var steps=r.agency==='nfsa'?REG_STEPS_NFSA:r.agency==='cosm'?REG_STEPS_COSM:REG_STEPS_EDA;
+  document.getElementById('dr-status').innerHTML=steps.map(function(s,i){
+    var st=(r.reg_steps&&r.reg_steps[s.key])||'pending';
+    var dotCls=st==='done'?'done':st==='active'?'active':st==='warn'?'warn':st==='expired'?'err':'';
+    var icon=st==='done'?'✓':st==='active'?'●':st==='expired'?'✕':(i+1);
+    return '<div class="status-step"><div class="step-dot '+dotCls+'">'+icon+'</div><div class="step-lbl">'+s.lbl+'</div></div>';
+  }).join('');
+}
+
+function switchDTab(btn){
+  document.querySelectorAll('.dtab').forEach(function(b){b.classList.remove('act');});
+  btn.classList.add('act');
+  currentTab=btn.dataset.dt;
+  renderDBody();
+}
+window.switchDTab=switchDTab;
+
+function renderDBody(){
+  var body=document.getElementById('dr-body');
+  if(!body)return;
+  var r=currentRec;
+  if(currentTab==='info') body.innerHTML=renderTabInfo(r);
+  else if(currentTab==='parties') body.innerHTML=renderTabParties(r);
+  else if(currentTab==='composition') body.innerHTML=renderTabComposition(r);
+  else if(currentTab==='checklist') body.innerHTML=renderTabChecklist(r);
+  else if(currentTab==='variations') body.innerHTML=renderTabVariations(r);
+  else if(currentTab==='timeline') body.innerHTML=renderTabTimeline(r);
+  // bind checklist
+  body.querySelectorAll('.chk-box[data-cid]').forEach(function(el){
+    el.addEventListener('click',function(){toggleCheck(el.dataset.cid);});
+  });
+}
+
+function renderTabInfo(r){
+  var st=computeStatus(r);
+  var d=daysLeft(r.invalidation_date);
+  var html='';
+  if(st==='expired') html+='<div class="reg-alert err">❌ الإخطار منتهٍ منذ '+Math.abs(d)+' يوم — يجب تجديده فوراً</div>';
+  if(st==='expiring'&&d<=180) html+='<div class="reg-alert warn">⚠️ ينتهي الإخطار بعد <strong>'+d+' يوم</strong> — '+fmtReg(r.invalidation_date)+' — ابدأ إجراءات التجديد</div>';
+  if(r.stability&&r.stability.status==='commented') html+='<div class="reg-alert info">📊 دراسة الثبات بها '+r.stability.comments+' تعليقات — Tracking ID: '+r.stability.tracking_id+' — موعد الاستيفاء: '+fmtReg(r.stability.deadline)+'</div>';
+  html+='<div class="fsec"><div class="fsec-title">🪪 بيانات الإخطار الرسمية</div><div class="info-grid">'+
+    ic('رقم الإخطار','<span style="font-family:monospace;color:var(--blue)">'+esc(r.reg_no)+'</span>')+
+    ic('Soft File No.',esc(r.soft_file||'—'))+
+    ic('الجهة التنظيمية',agencyBdg(r.agency))+
+    ic('نوع الترخيص','<span class="badge bgr" style="font-size:10px">'+esc(LICENSE_LBL[r.license_type]||r.license_type)+'</span>')+
+    ic('تاريخ الإصدار',fmtReg(r.reg_date))+
+    ic('تاريخ الإبطال','<strong style="'+(st==='expired'?'color:var(--red)':st==='expiring'?'color:var(--amber)':'')+'" >'+fmtReg(r.invalidation_date)+'</strong>')+
+    ic('أيام متبقية',d===null?'—':d<0?'<span style="color:var(--red)">منتهي منذ '+Math.abs(d)+' يوم</span>':'<span style="'+(d<180?'color:var(--amber)':'color:var(--green)')+'">'+d+' يوم</span>')+
+    ic('حالة الإخطار',statusBdg(st))+
+    (r.qf_code?ic('Code No.',esc(r.qf_code)):'')+
+    (r.committee_decree?ic('القرار الوزاري',esc(r.committee_decree)):'')+
+  '</div></div>';
+  html+='<div class="fsec"><div class="fsec-title">💊 بيانات المستحضر</div><div class="info-grid">'+
+    ic('الاسم التجاري (عربي)',esc(r.name_ar||'—'))+
+    ic('Product Name (EN)',esc(r.name_en||'—'))+
+    ic('الشكل الدوائي',esc(FORM_LBL[r.form]||r.form||'—'))+
+    ic('التركيز / القوة',esc(r.strength||'—'))+
+    ic('الخصائص الفيزيائية',esc(r.physical||'—'))+
+    ic('مدة الصلاحية',r.shelf_life?r.shelf_life+' شهر':'—')+
+    ic('ظروف التخزين',esc(r.storage||'—'))+
+    ic('العبوة المعتمدة',esc(r.approved_pack||'—'))+
+    (r.purpose_of_use?ic('الغرض من الاستخدام',esc(r.purpose_of_use)):'')+
+  '</div></div>';
+  if(r.price&&r.price.length){
+    html+='<div class="fsec"><div class="fsec-title">💰 الأسعار المعتمدة</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>الحجم</th><th>السعر</th></tr></thead><tbody>'+
+      r.price.map(function(p){return'<tr><td>'+esc(p.size)+'</td><td><strong style="color:var(--amber)">'+esc(p.price)+'</strong></td></tr>';}).join('')+
+      '</tbody></table></div></div>';
+  }
+  if(r.agency==='nfsa'&&r.nutritional){
+    var n=r.nutritional;
+    html+='<div class="fsec"><div class="fsec-title">📊 القيمة الغذائية ('+esc(n.serving)+')</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>العنصر</th><th>القيمة</th></tr></thead><tbody>'+
+      '<tr><td>الطاقة</td><td>'+n.energy+' Kcal</td></tr>'+
+      '<tr><td>الكربوهيدرات</td><td>'+n.carbs+' g (منها سكريات: '+n.sugars+' g)</td></tr>'+
+      '<tr><td>البروتين</td><td>'+n.protein+' g</td></tr>'+
+      '<tr><td>الصوديوم</td><td>'+n.sodium+' g</td></tr>'+
+      '</tbody></table></div></div>';
+  }
+  if(r.notes){html+='<div class="fsec"><div class="fsec-title">📝 ملاحظات</div><p style="font-size:13px;color:var(--gray);line-height:1.7">'+esc(r.notes)+'</p></div>';}
+  return html;
+}
+
+function renderTabParties(r){
+  var html='<div class="fsec"><div class="fsec-title">🏢 الأطراف الرئيسية</div><div class="info-grid">'+
+    ic('مالك الترخيص','<strong>'+esc(r.license_holder||'—')+'</strong>')+
+    ic('المصنع (FPP)',esc(r.manufacturer||'—'))+
+    ic('الجهة القائمة بالتعبئة',esc(r.packager||'—'))+
+    ic('موقع التخزين',esc(r.storage_site||'—'))+
+    ic('موقع الإفراج',esc(r.release_site||'—'))+
+  '</div></div>';
+  if(r.api_suppliers&&r.api_suppliers.length){
+    html+='<div class="fsec"><div class="fsec-title">🧬 موردو المواد الفعالة (API Suppliers)</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>المادة الفعالة</th><th>المورد</th><th>البلد</th><th>المواصفة</th>'+(r.agency==='cosm'?'<th>الدور</th>':'')+'</tr></thead><tbody>'+
+      r.api_suppliers.map(function(s){return'<tr><td><strong>'+esc(s.material)+'</strong></td><td>'+esc(s.supplier||'—')+'</td><td>'+esc(s.country||'—')+'</td><td><span class="vtag">'+esc(s.spec||'—')+'</span></td>'+(r.agency==='cosm'?'<td style="font-size:11px;color:var(--gray)">'+esc(s.role||'—')+'</td>':'')+'</tr>';}).join('')+
+      '</tbody></table></div></div>';
+  }
+  return html;
+}
+
+function renderTabComposition(r){
+  var html='<div class="fsec"><div class="fsec-title">🧪 التركيب الكمي والنوعي</div>';
+  if(r.api_suppliers&&r.api_suppliers.length){
+    html+='<div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:8px">المواد الفعالة (Active Ingredients)</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>المادة</th><th>الكمية/التركيز</th><th>المواصفة</th></tr></thead><tbody>'+
+      r.api_suppliers.map(function(s){return'<tr><td><strong>'+esc(s.material)+'</strong></td><td>'+esc(s.strength||s.spec||'—')+'</td><td><span class="vtag">'+esc(s.spec||'—')+'</span></td></tr>';}).join('')+
+      '</tbody></table></div><div style="height:14px"></div>';
+  }
+  if(r.inactive_ingredients&&r.inactive_ingredients.length){
+    html+='<div style="font-size:12px;font-weight:700;color:var(--gray);margin-bottom:8px">المواد المساعدة (Excipients)</div>'+
+      '<div class="table-wrap"><table><thead><tr><th>المادة</th><th>الكمية</th><th>الدور</th></tr></thead><tbody>'+
+      r.inactive_ingredients.map(function(e){return'<tr><td>'+esc(e.name)+'</td><td>'+esc(e.qty||'—')+'</td><td style="font-size:11px;color:var(--gray)">'+esc(e.role||'—')+'</td></tr>';}).join('')+
+      '</tbody></table></div>';
+  }
+  if(!((r.api_suppliers||[]).length+(r.inactive_ingredients||[]).length)){
+    html+='<div class="empty" style="padding:24px"><h3>لا توجد بيانات تركيب مُدخلة</h3></div>';
+  }
+  html+='</div>';return html;
+}
+
+function renderTabChecklist(r){
+  var list=r.agency==='nfsa'?CHECKLIST_NFSA:r.agency==='cosm'?CHECKLIST_COSM:CHECKLIST_EDA;
+  var chk=r.checklist||{};
+  var done=list.filter(function(c){return chk[c.id]==='done';}).length;
+  var pct=done/list.length*100;
+  var html='<div class="fsec"><div class="fsec-title">متطلبات ما بعد التسجيل — '+done+'/'+list.length+' مكتمل</div>'+
+    '<div style="height:6px;background:var(--gray3);border-radius:3px;margin-bottom:14px;overflow:hidden">'+
+    '<div style="height:100%;width:'+pct+'%;background:var(--green);border-radius:3px;transition:width .5s"></div>'+
+    '</div></div>';
+  html+='<div class="chk-list">';
+  list.forEach(function(c){
+    var st=chk[c.id]||'pending';
+    var boxCls=st==='done'?'done':st==='na'?'na':'';
+    var icon=st==='done'?'✓':st==='na'?'—':'';
+    html+='<div class="chk-item">'+
+      '<div class="chk-box '+boxCls+'" data-cid="'+c.id+'">'+icon+'</div>'+
+      '<div class="chk-info">'+
+        '<div class="chk-name">'+(c.required?'<span style="color:var(--red)">* </span>':'')+esc(c.name)+'</div>'+
+        '<div style="margin-top:3px;display:flex;gap:6px">'+
+          '<span class="chk-agency">'+(r.agency==='nfsa'?'NFSA':r.agency==='cosm'?'تجميل':'EDA أدوية')+'</span>'+
+          '<span style="font-size:10px;color:var(--gray2)">'+(c.required?'إلزامي':'اختياري')+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>';
+  });
+  html+='</div>';return html;
+}
+
+function toggleCheck(cid){
+  if(!currentRec)return;
+  if(!currentRec.checklist)currentRec.checklist={};
+  var cur=currentRec.checklist[cid]||'pending';
+  currentRec.checklist[cid]=cur==='pending'?'done':cur==='done'?'na':'pending';
+  var idx=records.findIndex(function(r){return r.id===currentRec.id;});
+  if(idx>=0)records[idx]=currentRec;
+  saveData();renderDBody();
+}
+window.toggleCheck=toggleCheck;
+
+function renderTabVariations(r){
+  var vars=r.variations||[];
+  var html='<div style="padding:16px 20px 10px;display:flex;align-items:center;justify-content:space-between">'+
+    '<div style="font-size:13px;font-weight:700">سجل المتغيرات ('+vars.length+')</div>'+
+    '<button class="btn btn-primary btn-sm" onclick="addVariation()">✚ إضافة Variation</button>'+
+    '</div>';
+  html+='<div style="padding:0 20px 10px;display:flex;gap:8px;flex-wrap:wrap">'+
+    ['N','A','B','C'].map(function(t,i){
+      var descs=['PAC-N: تغيير فوري عند التقديم','PAC-A: تغيير سنوي','PAC-B: يحتاج قبول EDA','PAC-C: تغيير جوهري — موافقة مسبقة'];
+      return'<span><span class="var-type '+t+'">PAC-'+t+'</span> <span style="font-size:11px;color:var(--gray)">'+descs[i].split(':')[1]+'</span></span>';
+    }).join('')+
+  '</div>';
+  if(!vars.length){
+    html+='<div class="empty" style="padding:24px"><h3>لا توجد متغيرات مسجلة</h3></div>';
+    return html;
+  }
+  vars.forEach(function(v){
+    var stCls=v.status==='approved'?'bg':v.status==='under_review'?'ba':v.status==='rejected'?'br':'bgr';
+    var stLbl=v.status==='approved'?'تمت الموافقة':v.status==='under_review'?'قيد المراجعة':v.status==='rejected'?'مرفوض':'—';
+    html+='<div class="var-card">'+
+      '<div class="var-head">'+
+        '<span class="var-type '+v.type+'">PAC-'+v.type+'</span>'+
+        '<span class="var-title">'+esc(v.desc)+'</span>'+
+        '<span class="badge '+stCls+'">'+stLbl+'</span>'+
+      '</div>'+
+      '<div class="var-body"><span class="vtag">'+esc(v.category)+'</span> <span style="color:var(--gray)">'+fmtReg(v.date)+'</span></div>'+
+    '</div>';
+  });
+  return html;
+}
+
+function renderTabTimeline(r){
+  var tl=r.timeline||[];
+  if(!tl.length)return'<div class="empty" style="padding:30px"><h3>لا يوجد سجل زمني</h3></div>';
+  var html='<div class="timeline">';
+  tl.forEach(function(t,i){
+    html+='<div class="tl-item">'+
+      (i<tl.length-1?'<div class="tl-line"></div>':'')+
+      '<div class="tl-dot '+(t.color||'gray')+'">'+t.icon+'</div>'+
+      '<div class="tl-content">'+
+        '<div class="tl-title">'+esc(t.title)+'</div>'+
+        '<div class="tl-meta">'+fmtReg(t.date)+'</div>'+
+        (t.body?'<div class="tl-body">'+esc(t.body)+'</div>':'')+
+      '</div>'+
+    '</div>';
+  });
+  html+='</div>';return html;
+}
+
+// ── MODAL ADD/EDIT ──
+function openNewModal(){
+  editMode=false;currentRec=null;
+  document.getElementById('reg-modal-title').textContent='✚ تسجيل إخطار جديد';
+  document.getElementById('reg-modal-body').innerHTML=buildModalForm(null);
+  document.getElementById('reg-modal').classList.add('on');
+}
+function openEditModal(id){
+  var r=records.find(function(x){return x.id===id;});
+  if(!r)return;
+  editMode=true;currentRec=r;
+  document.getElementById('reg-modal-title').textContent='✏️ تعديل إخطار — '+r.reg_no;
+  document.getElementById('reg-modal-body').innerHTML=buildModalForm(r);
+  document.getElementById('reg-modal').classList.add('on');
+}
+function editCurrentRecord(){if(currentRec)openEditModal(currentRec.id);}
+function closeRegModal(){document.getElementById('reg-modal').classList.remove('on');}
+window.editCurrentRecord=editCurrentRecord;
+window.openNewModal=openNewModal;
+window.openEditModal=openEditModal;
+window.closeRegModal=closeRegModal;
+
+document.addEventListener('click',function(e){
+  var m=document.getElementById('reg-modal');
+  if(m&&e.target===m)closeRegModal();
+});
+
+function buildModalForm(r){
+  var ag=r?r.agency:'eda_drug';
+  var fOpts=Object.keys(FORM_LBL).map(function(k){return'<option value="'+k+'"'+(r&&r.form===k?' selected':'')+'>'+FORM_LBL[k]+'</option>';}).join('');
+  var lOpts=Object.keys(LICENSE_LBL).map(function(k){return'<option value="'+k+'"'+(r&&r.license_type===k?' selected':'')+'>'+LICENSE_LBL[k]+'</option>';}).join('');
+  return '<div>'+
+    '<div style="margin-bottom:14px"><div style="font-size:12px;font-weight:600;margin-bottom:8px">الجهة التنظيمية <span style="color:var(--red)">*</span></div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap">'+
+      [['eda_drug','💊 EDA — أدوية'],['nfsa','🥗 NFSA — أغذية'],['cosm','💄 EDA — تجميل']].map(function(opt){
+        var cls=opt[0]==='nfsa'?'act-nfsa':opt[0]==='cosm'?'act-cosm':'act-eda';
+        return'<button type="button" class="agc-btn '+(ag===opt[0]?cls:'')+'" data-agency="'+opt[0]+'" onclick="selectRegAgency(this)" style="flex:1;justify-content:center">'+opt[1]+'</button>';
+      }).join('')+
+    '</div><input type="hidden" id="f-agency" value="'+(ag||'eda_drug')+'"></div>'+
+    '<div class="form-grid">'+
+      '<div class="fg"><label class="fl">رقم الإخطار <span class="req">*</span></label><input class="fc" id="f-reg_no" value="'+(r?esc(r.reg_no):'')+'" placeholder="مثال: 29925/2022" dir="ltr"></div>'+
+      '<div class="fg"><label class="fl">Soft File No.</label><input class="fc" id="f-soft_file" value="'+(r?esc(r.soft_file||''):'')+'" dir="ltr"></div>'+
+      '<div class="fg full"><label class="fl">الاسم التجاري (عربي) <span class="req">*</span></label><input class="fc" id="f-name_ar" value="'+(r?esc(r.name_ar||''):'')+'" placeholder="الاسم الكامل بالعربية"></div>'+
+      '<div class="fg full"><label class="fl">Product Name (English)</label><input class="fc" id="f-name_en" value="'+(r?esc(r.name_en||''):'')+'" dir="ltr"></div>'+
+      '<div class="fg"><label class="fl">الشكل الدوائي <span class="req">*</span></label><select class="fc" id="f-form"><option value="">— اختر —</option>'+fOpts+'</select></div>'+
+      '<div class="fg"><label class="fl">نوع الترخيص <span class="req">*</span></label><select class="fc" id="f-license_type">'+lOpts+'</select></div>'+
+      '<div class="fg"><label class="fl">تاريخ إصدار الإخطار <span class="req">*</span></label><input class="fc" type="date" id="f-reg_date" value="'+(r?r.reg_date||'':'')+'" ></div>'+
+      '<div class="fg"><label class="fl">تاريخ الإبطال (انتهاء التسجيل)</label><input class="fc" type="date" id="f-invalidation_date" value="'+(r?r.invalidation_date||'':'')+'" ></div>'+
+      '<div class="fg"><label class="fl">مدة الصلاحية (أشهر)</label><input class="fc" type="number" id="f-shelf_life" value="'+(r?r.shelf_life||36:36)+'" dir="ltr" min="1"></div>'+
+      '<div class="fg"><label class="fl">القرار الوزاري</label><input class="fc" id="f-committee_decree" value="'+(r?esc(r.committee_decree||''):'')+'" placeholder="مثال: 370/2006" dir="ltr"></div>'+
+      '<div class="fg full"><label class="fl">مالك الترخيص <span class="req">*</span></label><input class="fc" id="f-license_holder" value="'+(r?esc(r.license_holder||''):'')+'" placeholder="اسم الشركة والبلد"></div>'+
+      '<div class="fg full"><label class="fl">المصنع <span class="req">*</span></label><input class="fc" id="f-manufacturer" value="'+(r?esc(r.manufacturer||''):'')+'" placeholder="اسم المصنع والبلد"></div>'+
+      '<div class="fg full"><label class="fl">العبوة المعتمدة</label><input class="fc" id="f-approved_pack" value="'+(r?esc(r.approved_pack||''):'')+'" placeholder="نوع العبوة + الأحجام"></div>'+
+      '<div class="fg full"><label class="fl">ظروف التخزين</label><input class="fc" id="f-storage" value="'+(r?esc(r.storage||''):'')+'" placeholder="لا تتجاوز 30°C في مكان جاف"></div>'+
+      '<div class="fg"><label class="fl">الحالة الحالية</label><select class="fc" id="f-status">'+
+        Object.keys(STATUS_CFG).map(function(k){return'<option value="'+k+'"'+(r&&r.status===k?' selected':'')+'>'+STATUS_CFG[k].lbl+'</option>';}).join('')+
+      '</select></div>'+
+      '<div class="fg full"><label class="fl">ملاحظات</label><textarea class="fc" id="f-notes" rows="2">'+(r?esc(r.notes||''):'')+'</textarea></div>'+
+    '</div></div>';
+}
+
+function selectRegAgency(btn){
+  document.querySelectorAll('#reg-modal-body .agc-btn').forEach(function(b){b.className='agc-btn';});
+  var ag=btn.dataset.agency;
+  var cls=ag==='nfsa'?'act-nfsa':ag==='cosm'?'act-cosm':'act-eda';
+  btn.className='agc-btn '+cls;
+  var e=document.getElementById('f-agency');if(e)e.value=ag;
+}
+window.selectRegAgency=selectRegAgency;
+
+function gv(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+
+function saveRecord(){
+  var ag=gv('f-agency')||'eda_drug';
+  var reg_no=gv('f-reg_no'),name_ar=gv('f-name_ar');
+  if(!reg_no){toast('أدخل رقم الإخطار','er');return;}
+  if(!name_ar){toast('أدخل الاسم التجاري','er');return;}
+  var obj={
+    id:editMode&&currentRec?currentRec.id:Date.now(),
+    agency:ag,reg_no:reg_no,soft_file:gv('f-soft_file'),
+    name_ar:name_ar,name_en:gv('f-name_en'),
+    form:gv('f-form'),license_type:gv('f-license_type'),
+    reg_date:gv('f-reg_date'),invalidation_date:gv('f-invalidation_date'),
+    shelf_life:parseInt(gv('f-shelf_life'))||36,
+    committee_decree:gv('f-committee_decree'),
+    license_holder:gv('f-license_holder'),manufacturer:gv('f-manufacturer'),
+    approved_pack:gv('f-approved_pack'),storage:gv('f-storage'),
+    status:gv('f-status'),notes:gv('f-notes'),
+    price:editMode&&currentRec?currentRec.price:[],
+    api_suppliers:editMode&&currentRec?currentRec.api_suppliers:[],
+    inactive_ingredients:editMode&&currentRec?currentRec.inactive_ingredients:[],
+    variations:editMode&&currentRec?currentRec.variations:[],
+    timeline:editMode&&currentRec?currentRec.timeline:[{date:gv('f-reg_date'),icon:'📋',color:'blue',title:'تسجيل الإخطار',body:'رقم '+reg_no}],
+    reg_steps:editMode&&currentRec?currentRec.reg_steps:{},
+    checklist:editMode&&currentRec?currentRec.checklist:{},
+    physical:editMode&&currentRec?currentRec.physical||'':'',
+    strength:editMode&&currentRec?currentRec.strength||'':'',
+    packager:editMode&&currentRec?currentRec.packager||'':'',
+    storage_site:editMode&&currentRec?currentRec.storage_site||'':'',
+    release_site:editMode&&currentRec?currentRec.release_site||'':'',
+    marketing_type:editMode&&currentRec?currentRec.marketing_type||'محلي':'محلي',
+    user_id:editMode&&currentRec?currentRec.user_id||'':'',
+    qf_code:editMode&&currentRec?currentRec.qf_code||'':'',
+    stability:editMode&&currentRec?currentRec.stability:null,
+  };
+  if(editMode){var idx=records.findIndex(function(r){return r.id===obj.id;});if(idx>=0)records[idx]=obj;}
+  else records.unshift(obj);
+  saveData();closeRegModal();applyFilters();
+  toast((editMode?'تم تعديل':'تم إضافة')+' "'+name_ar+'" ✓','ok');
+  if(editMode&&currentRec&&currentRec.id===obj.id){currentRec=obj;renderDStatus();renderDBody();}
+}
+window.saveRecord=saveRecord;
+
+function deleteRecord(id){
+  var r=records.find(function(x){return x.id===id;});if(!r)return;
+  if(!confirm('هل تريد حذف إخطار "'+r.name_ar+'" ('+r.reg_no+') نهائياً؟'))return;
+  records=records.filter(function(x){return x.id!==id;});
+  saveData();if(currentRec&&currentRec.id===id)closeDrawer();
+  applyFilters();toast('تم الحذف','ok');
+}
+window.deleteRecord=deleteRecord;
+
+function addVariation(){
+  var r=currentRec;if(!r)return;
+  var type=prompt('نوع PAC (N/A/B/C):','B');if(!type)return;
+  var cat=prompt('فئة التغيير:','إداري');
+  var desc=prompt('وصف التغيير:','');if(!desc)return;
+  if(!r.variations)r.variations=[];
+  r.variations.unshift({id:'v'+Date.now(),date:new Date().toISOString().slice(0,10),type:type.toUpperCase(),category:cat||'إداري',desc:desc,status:'under_review'});
+  if(!r.timeline)r.timeline=[];
+  r.timeline.unshift({date:new Date().toISOString().slice(0,10),icon:'🔄',color:'amber',title:'Variation جديد — PAC-'+type.toUpperCase(),body:desc});
+  var idx=records.findIndex(function(x){return x.id===r.id;});
+  if(idx>=0)records[idx]=r;
+  saveData();renderDBody();toast('تم إضافة Variation ✓','ok');
+}
+window.addVariation=addVariation;
+
+function exportRecord(){
+  if(!currentRec)return;
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(currentRec,null,2));
+  a.download='reg_'+currentRec.reg_no.replace('/','_')+'.json';
+  a.click();toast('تم التصدير ✓','ok');
+}
+function exportAll(){
+  var data={exported_at:new Date().toISOString(),total:records.length,records:records};
+  var a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
+  a.download='quadra_registrations_'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();toast('تم تصدير '+records.length+' إخطار ✓','ok');
+}
+window.exportRecord=exportRecord;window.exportAll=exportAll;
+
+function toast(msg,type){
+  var t=document.getElementById('toast-container');
+  if(!t)return;
+  var d=document.createElement('div');
+  var icon=type==='ok'?'✅':type==='er'?'❌':type==='warn'?'⚠️':'ℹ️';
+  d.textContent=icon+' '+msg;
+  d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#0f1f3d;color:#fff;padding:11px 20px;border-radius:9px;font-size:13px;z-index:9999;box-shadow:0 6px 20px rgba(0,0,0,.3)';
+  document.body.appendChild(d);
+  setTimeout(function(){d.style.opacity='0';d.style.transition='opacity .3s';setTimeout(function(){d.remove();},320);},2800);
+}
+
+// ── ESC KEY ──
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){
+    var rm=document.getElementById('reg-modal');
+    if(rm&&rm.classList.contains('on')){closeRegModal();e.stopImmediatePropagation();return;}
+    var dr=document.getElementById('reg-drawer');
+    if(dr&&dr.classList.contains('open')){closeDrawer();e.stopImmediatePropagation();}
+  }
+});
+
+})(); // end Registration Module IIFE
+</script>
+
+<canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.55" aria-hidden="true"></canvas>
+<script>
+(function(){
+  const c = document.getElementById('particle-canvas');
+  if(!c) return;
+  const ctx = c.getContext('2d');
+  const colors = ['#22d3ee','#06b6d4','#bfdbfe','#93c5fd','#fdba74','#fca5a5'];
+  let W, H, pts = [];
+  function resize(){ W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  for(let i = 0; i < 28; i++){
+    pts.push({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * window.innerHeight,
+      r: 1.2 + Math.random() * 2.2,
+      vx: (Math.random() - .5) * .3,
+      vy: -.18 - Math.random() * .28,
+      col: colors[Math.floor(Math.random() * colors.length)],
+      a: .25 + Math.random() * .35
+    });
+  }
+  function tick(){
+    ctx.clearRect(0, 0, W, H);
+    pts.forEach(p => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = p.col;
+      ctx.globalAlpha = p.a;
+      ctx.fill();
+      p.x += p.vx; p.y += p.vy;
+      if(p.y < -8){ p.y = H + 4; p.x = Math.random() * W; }
+      if(p.x < 0 || p.x > W) p.vx *= -1;
+    });
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(tick);
+  }
+  tick();
+})();
+</script>
+</body>
+</html>
