@@ -310,7 +310,7 @@ strong{font-weight:700;color:var(--text)}
 
   /* ── Misc ── */
   --hover:rgba(2,132,199,0.06);
-  --r:12px;--rl:14px;--sw:224px;--th:62px;
+  --r:12px;--rl:14px;--sw:224px;--th:64px;
   --font:'Tajawal',sans-serif;--mono:'Space Grotesk',sans-serif;
   --shadow-glass:0 4px 24px rgba(2,132,199,0.08),0 1px 6px rgba(0,0,0,0.06);
   --shadow-card:0 2px 12px rgba(2,132,199,0.06),0 1px 4px rgba(0,0,0,0.04);
@@ -404,10 +404,10 @@ textarea.fi{resize:vertical;min-height:75px}
 .ui{flex:1;min-width:0}
 .un{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .ur{font-size:11px;color:var(--muted)}
-.topbar{position:fixed;top:0;right:var(--sw);left:0;height:auto;min-height:var(--th);background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(2,132,199,0.12);box-shadow:0 1px 8px rgba(2,132,199,0.06);display:flex;align-items:center;padding:0 18px;gap:10px;z-index:100;overflow:visible}
+.topbar{position:fixed;top:0;right:var(--sw);left:0;height:var(--th);background:rgba(255,255,255,0.9);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid rgba(2,132,199,0.12);box-shadow:0 1px 8px rgba(2,132,199,0.06);display:flex;align-items:center;padding:0 18px;gap:10px;z-index:100;overflow:visible}
 .tb-menu{display:none;background:none;border:none;color:var(--text);cursor:pointer;font-size:20px;padding:4px}
 .tb-bc{flex:1;font-size:14px;font-weight:600;min-width:0}
-.main{margin-right:var(--sw);margin-top:0;padding-top:var(--th);padding-right:24px;padding-bottom:24px;padding-left:24px;min-height:100vh;box-sizing:border-box}
+.main{margin-right:var(--sw);margin-top:var(--th);padding:22px;min-height:calc(100vh - var(--th))}
 
 /* ══ COMPONENTS ══ */
 .btn{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:var(--r);font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;white-space:nowrap}
@@ -1206,7 +1206,7 @@ label,.fl,.login-label{color:#64748b !important;font-size:11px !important;letter
 #search-wrap{min-width:120px}
 
 /* ── Action buttons row ── */
-.tb-actions{display:flex;align-items:center;gap:6px;flex-wrap:wrap;flex-shrink:0}
+.tb-actions{display:flex;align-items:center;gap:6px;flex-wrap:nowrap;flex-shrink:0;overflow-x:auto;max-width:calc(100vw - 320px)}
 .tb-actions .btn{font-size:11px;padding:5px 8px}
 
 /* ── Content area ── */
@@ -11174,32 +11174,6 @@ async function printCompany(){
   const pr=(l,v)=>v?`<tr><td style="color:#666;font-size:12px;width:200px;padding:6px 0">${l}</td><td style="font-size:13px;font-weight:500;padding:6px 0">${v}</td></tr>`:'';
   const w=window.open();
   w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script>
-// ── Dynamic topbar height adjustment ──
-function _fixTopbarHeight(){
-  var tb=document.querySelector('.topbar');
-  var mn=document.querySelector('.main');
-  if(!tb||!mn)return;
-  var h=tb.getBoundingClientRect().height;
-  mn.style.paddingTop=(h+2)+'px';
-}
-// Run on load, resize, and page navigation
-document.addEventListener('DOMContentLoaded',function(){
-  _fixTopbarHeight();
-  window.addEventListener('resize',_fixTopbarHeight);
-  // Also run after each go() to handle pg-action changes
-  var _origGo=typeof go==='function'?go:null;
-  if(_origGo){
-    var _goWrapped=function(page){
-      _origGo(page);
-      setTimeout(_fixTopbarHeight,50);
-    };
-    // patch go if it's writable
-    try{ go=_goWrapped; }catch(e){}
-  }
-  setTimeout(_fixTopbarHeight,100);
-  setTimeout(_fixTopbarHeight,500);
-});
-
 </body></html>`);
 }
 
