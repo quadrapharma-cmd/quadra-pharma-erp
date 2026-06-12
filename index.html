@@ -1394,27 +1394,11 @@ tbody td{font-size:14px !important}
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%230284c7'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>Q</text></svg>">
 </head>
 <body><body>
+<!-- ══ SPLASH ══ -->
+<div id="splash-screen" style="display:none"></div>
+
 
 <!-- ══ LOGIN SCREEN ══ -->
-<!-- ══ SPLASH ══ -->
-<div id="splash-screen" style="display:none;position:fixed;inset:0;z-index:99999;background:#020817;font-family:Tajawal,sans-serif;direction:rtl">
-  <canvas id="splash-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
-  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2">
-    <div style="position:relative;width:140px;height:140px;margin-bottom:28px">
-      <canvas id="dna-canvas" width="140" height="140" style="position:absolute;inset:0"></canvas>
-      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
-        <div style="width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,#0284c7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;box-shadow:0 0 30px rgba(2,132,199,.5)">Q</div>
-      </div>
-    </div>
-    <div style="font-size:26px;font-weight:800;color:#f1f5f9;letter-spacing:-.5px;margin-bottom:6px">Quadra Pharma ERP</div>
-    <div style="font-size:13px;color:#475569;margin-bottom:36px;letter-spacing:.5px">نظام الإدارة الصيدلانية المتكامل</div>
-    <div style="width:200px;height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:10px">
-      <div id="splash-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#0284c7,#7c3aed);border-radius:2px"></div>
-    </div>
-    <div id="splash-msg" style="font-size:12px;color:#334155;letter-spacing:.5px">جاري التحميل...</div>
-  </div>
-</div>
-
 <!-- ══ COMPANIES MANAGER ══ -->
 <div id="companies-screen" style="display:none">
   <div style="min-height:100vh;background:linear-gradient(145deg,#f8fafc,#f0f9ff 50%,#f5f3ff);font-family:var(--font);direction:rtl;display:flex;flex-direction:column">
@@ -10923,14 +10907,6 @@ function _getCos(){try{return JSON.parse(localStorage.getItem('pharma_companies_
 function _getCoDB(id){try{return JSON.parse(localStorage.getItem('pharma_data_'+id)||'{}');}catch(e){return{};}}
 function _saveCoDB(id,d){localStorage.setItem('pharma_data_'+id,JSON.stringify(d));}
 
-function showCompaniesManager(){
-  var els=['erp-login-screen','central-dashboard','sidebar'];
-  els.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
-  var mn=document.querySelector('main');if(mn)mn.style.display='none';
-  var sc=document.getElementById('companies-screen');
-  if(sc) sc.style.display='block';
-  _renderCoMgrGrid();
-}
 
 function _renderCoMgrGrid(){
   var grid=document.getElementById('co-mgr-grid');
@@ -11127,108 +11103,131 @@ function _erpAllCompanies(){ return _getCos(); }
 function _erpDataOf(id){ return _getCoDB(id); }
 
 
+// ══ SPLASH ══════════════════════════════════════════
 function showSplash(cb){
-  var sc=document.getElementById('splash-screen');
-  if(!sc){if(cb)cb();return;}
-  sc.style.display='block';
-  _spBg();_spDNA();_spBar(cb);
+  var sp=document.getElementById('splash-screen');
+  if(!sp){if(cb)cb();return;}
+  sp.style.cssText='display:flex!important;position:fixed;inset:0;z-index:99999;background:#020c1a;align-items:center;justify-content:center;overflow:hidden';
+  _spCanvas();_spUI(cb);
 }
-function _spBg(){
-  var c=document.getElementById('splash-canvas');
-  if(!c)return;
+function _spCanvas(){
+  var old=document.getElementById('sp-canvas');if(old)old.remove();
+  var c=document.createElement('canvas');c.id='sp-canvas';
+  c.style.cssText='position:absolute;inset:0;width:100%;height:100%';
+  var sp=document.getElementById('splash-screen');if(sp)sp.insertBefore(c,sp.firstChild);
   c.width=window.innerWidth;c.height=window.innerHeight;
   var ctx=c.getContext('2d'),W=c.width,H=c.height,t=0;
-  var stars=[];
-  for(var i=0;i<200;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,p:Math.random()*6,sp:Math.random()*.007+.002});
-  var pl=[
-    {x:.72,y:.22,r:55,c:'#0a1f3d',ring:1,moons:[{d:88,r:6,sp:.007,c:'#1a3a6b',a:0},{d:112,r:3,sp:.004,c:'#0e2952',a:2}]},
-    {x:.18,y:.68,r:33,c:'#180828',ring:0,moons:[{d:53,r:5,sp:.011,c:'#4a1d8c',a:1},{d:70,r:3,sp:.006,c:'#6b2db3',a:3.5}]},
-    {x:.85,y:.75,r:18,c:'#0a1f0e',ring:0,moons:[]},
-    {x:.36,y:.14,r:11,c:'#1f100e',ring:0,moons:[]},
-  ];
-  pl.forEach(function(p){p.px=p.x*W;p.py=p.y*H;});
+  var stars=[];for(var i=0;i<260;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.4+.2,p:Math.random()*6.28,sp:Math.random()*.006+.002,b:Math.random()>.7});
+  var dots=[];for(var i=0;i<35;i++)dots.push({x:Math.random()*W,y:Math.random()*H,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,r:Math.random()*2+.8});
   function draw(){
     ctx.clearRect(0,0,W,H);
-    var gb=ctx.createLinearGradient(0,H*.25,W,H*.75);
-    gb.addColorStop(0,'transparent');gb.addColorStop(.5,'rgba(124,58,237,.03)');gb.addColorStop(1,'transparent');
-    ctx.fillStyle=gb;ctx.fillRect(0,0,W,H);
+    var bg=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,W*.75);
+    bg.addColorStop(0,'#041030');bg.addColorStop(.6,'#020c1a');bg.addColorStop(1,'#010812');
+    ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+    var gx=ctx.createLinearGradient(0,H*.2,W,H*.8);
+    gx.addColorStop(0,'transparent');gx.addColorStop(.5,'rgba(124,58,237,.025)');gx.addColorStop(1,'transparent');
+    ctx.fillStyle=gx;ctx.fillRect(0,0,W,H);
     stars.forEach(function(s){
-      var a=Math.abs(Math.sin(s.p+t*s.sp))*.8+.1;
+      var a=Math.abs(Math.sin(s.p+t*s.sp))*.85+.08;
       ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(226,232,240,'+a+')';ctx.fill();
+      ctx.fillStyle=s.b?'rgba(56,189,248,'+a+')':'rgba(226,232,240,'+a+')';ctx.fill();
     });
-    pl.forEach(function(p){
-      var g=ctx.createRadialGradient(p.px,p.py,0,p.px,p.py,p.r*2.5);
-      g.addColorStop(0,'rgba(56,189,248,.05)');g.addColorStop(1,'transparent');
-      ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.px,p.py,p.r*2.5,0,Math.PI*2);ctx.fill();
-      if(p.ring){
-        ctx.save();ctx.translate(p.px,p.py);ctx.scale(1,.2);
-        ctx.beginPath();ctx.arc(0,0,p.r*1.8,0,Math.PI*2);
-        ctx.strokeStyle='rgba(56,189,248,.18)';ctx.lineWidth=p.r*.3;ctx.stroke();
-        ctx.restore();
-      }
-      ctx.beginPath();ctx.arc(p.px,p.py,p.r,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();
-      ctx.strokeStyle='rgba(148,163,184,.1)';ctx.lineWidth=1.5;ctx.stroke();
-      p.moons.forEach(function(m){
-        var ma=m.a+t*m.sp;
-        var mx=p.px+Math.cos(ma)*m.d,my=p.py+Math.sin(ma)*m.d*.3;
-        ctx.save();ctx.translate(p.px,p.py);ctx.scale(1,.3);
-        ctx.beginPath();ctx.arc(0,0,m.d,0,Math.PI*2);
-        ctx.strokeStyle='rgba(148,163,184,.05)';ctx.lineWidth=1;ctx.setLineDash([3,7]);ctx.stroke();ctx.setLineDash([]);ctx.restore();
-        ctx.beginPath();ctx.arc(mx,my,m.r,0,Math.PI*2);ctx.fillStyle=m.c;ctx.fill();
-        ctx.strokeStyle='rgba(226,232,240,.1)';ctx.lineWidth=1;ctx.stroke();
-      });
+    dots.forEach(function(d){
+      d.x+=d.vx;d.y+=d.vy;if(d.x<0)d.x=W;if(d.x>W)d.x=0;if(d.y<0)d.y=H;if(d.y>H)d.y=0;
+      ctx.beginPath();ctx.arc(d.x,d.y,d.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(56,189,248,'+(Math.abs(Math.sin(t*.008+d.x*.003))*.25+.05)+')';ctx.fill();
     });
+    var ag=ctx.createRadialGradient(W/2,H/2,0,W/2,H/2,200);
+    ag.addColorStop(0,'rgba(56,189,248,.07)');ag.addColorStop(1,'transparent');
+    ctx.fillStyle=ag;ctx.beginPath();ctx.arc(W/2,H/2,200,0,Math.PI*2);ctx.fill();
     t++;
-    var sc=document.getElementById('splash-screen');
-    if(sc&&sc.style.display!=='none')requestAnimationFrame(draw);
+    if(document.getElementById('splash-screen')&&document.getElementById('splash-screen').style.display!=='none')requestAnimationFrame(draw);
   }
   draw();
 }
-function _spDNA(){
-  var c=document.getElementById('dna-canvas');
-  if(!c)return;
-  var ctx=c.getContext('2d'),cx=70,cy=70,r=62,t=0;
-  function draw(){
-    ctx.clearRect(0,0,140,140);
-    for(var i=0;i<=10;i++){
-      var a=i/10*Math.PI*2+t;
-      var x1=cx+Math.cos(a)*r,y1=cy+Math.sin(a)*r;
-      var x2=cx+Math.cos(a+Math.PI)*r,y2=cy+Math.sin(a+Math.PI)*r;
-      var al=.07+.07*Math.sin(a*2+t);
-      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);
-      ctx.strokeStyle='rgba(56,189,248,'+al+')';ctx.lineWidth=.8;ctx.stroke();
-      var da=.55+.35*Math.sin(a*3+t);
-      ctx.beginPath();ctx.arc(x1,y1,3,0,Math.PI*2);ctx.fillStyle='rgba(56,189,248,'+da+')';ctx.fill();
-      ctx.beginPath();ctx.arc(x2,y2,3,0,Math.PI*2);ctx.fillStyle='rgba(167,139,250,'+da+')';ctx.fill();
-    }
-    t+=.02;
-    var sc=document.getElementById('splash-screen');
-    if(sc&&sc.style.display!=='none')requestAnimationFrame(draw);
-  }
-  draw();
-}
-var _spMsgs=['تهيئة قاعدة البيانات...','تحميل بيانات التسجيل...','مزامنة السجلات...','تجهيز الواجهة...','مرحباً بك ✓'];
-function _spBar(cb){
-  var bar=document.getElementById('splash-bar');
-  var msg=document.getElementById('splash-msg');
+function _spUI(cb){
+  var sp=document.getElementById('splash-screen');if(!sp)return;
+  var ui=document.getElementById('sp-ui');
+  if(!ui){ui=document.createElement('div');ui.id='sp-ui';ui.style.cssText='position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center';sp.appendChild(ui);}
+  ui.innerHTML=
+    '<div style="font-family:Tajawal,sans-serif;font-size:11px;font-weight:700;color:rgba(56,189,248,.45);letter-spacing:4px;margin-bottom:44px">QUADRA PHARMA ERP</div>'+
+    '<div style="position:relative;width:220px;height:220px;margin-bottom:40px">'+
+      '<canvas id="atom-cv" width="220" height="220" style="position:absolute;inset:0"></canvas>'+
+      '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">'+
+        '<div style="width:58px;height:58px;border-radius:17px;background:linear-gradient(135deg,#0284c7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:25px;font-weight:900;color:#fff;font-family:Tajawal,sans-serif;box-shadow:0 0 35px rgba(2,132,199,.55)">Q</div>'+
+      '</div>'+
+    '</div>'+
+    '<div style="font-family:Tajawal,sans-serif;font-size:23px;font-weight:800;color:#f1f5f9;margin-bottom:5px">نظام الإدارة الصيدلانية</div>'+
+    '<div style="font-family:Tajawal,sans-serif;font-size:13px;color:#334155;letter-spacing:1px;margin-bottom:34px">Quadra Pharma ERP v2.0</div>'+
+    '<div style="width:220px;height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:11px">'+
+      '<div id="sp-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#0284c7,#7c3aed,#22d3ee);border-radius:2px"></div>'+
+    '</div>'+
+    '<div id="sp-msg" style="font-family:Tajawal,sans-serif;font-size:12px;color:#334155;letter-spacing:.8px">جاري التحميل...</div>';
+  _spAtom();
+  var msgs=['تهيئة قاعدة البيانات...','تحميل سجلات التسجيل...','مزامنة البيانات الدوائية...','تجهيز واجهة الإدارة...','مرحباً بك ✓'];
   var pct=0,mi=0;
   var iv=setInterval(function(){
-    pct=Math.min(pct+Math.random()*4+1.5,100);
+    pct=Math.min(pct+Math.random()*3.5+1.2,100);
+    var bar=document.getElementById('sp-bar'),msg=document.getElementById('sp-msg');
     if(bar)bar.style.width=pct+'%';
-    var ni=Math.min(Math.floor(pct/22),_spMsgs.length-1);
-    if(ni!==mi&&msg){mi=ni;msg.textContent=_spMsgs[mi];}
+    var ni=Math.min(Math.floor(pct/22),msgs.length-1);
+    if(ni!==mi&&msg){mi=ni;msg.textContent=msgs[mi];}
     if(pct>=100){
-      clearInterval(iv);
+      clearInterval(iv);if(msg)msg.textContent=msgs[msgs.length-1];
       setTimeout(function(){
-        var sc=document.getElementById('splash-screen');
-        if(sc){sc.style.transition='opacity .6s';sc.style.opacity='0';
-          setTimeout(function(){sc.style.display='none';sc.style.opacity='';if(cb)cb();},620);
+        var s2=document.getElementById('splash-screen');
+        if(s2){s2.style.transition='opacity .7s ease';s2.style.opacity='0';
+          setTimeout(function(){s2.style.display='none';s2.style.opacity='';if(cb)cb();},720);
         }else if(cb)cb();
-      },350);
+      },400);
     }
-  },55);
+  },52);
 }
+function _spAtom(){
+  var c=document.getElementById('atom-cv');if(!c)return;
+  var ctx=c.getContext('2d'),cx=110,cy=110,t=0;
+  var orbs=[
+    {rx:98,ry:36,rot:0,   sp:.022,a:0,  col:'56,189,248', ec:'#38bdf8'},
+    {rx:90,ry:34,rot:1.05,sp:.03, a:2.1,col:'167,139,250',ec:'#a78bfa'},
+    {rx:102,ry:30,rot:.52,sp:.017,a:4.2,col:'34,211,238', ec:'#22d3ee'},
+  ];
+  function draw(){
+    ctx.clearRect(0,0,220,220);
+    orbs.forEach(function(o){
+      o.a+=o.sp;
+      ctx.save();ctx.translate(cx,cy);ctx.rotate(o.rot);
+      ctx.beginPath();ctx.ellipse(0,0,o.rx,o.ry,0,0,Math.PI*2);
+      ctx.strokeStyle='rgba('+o.col+',.2)';ctx.lineWidth=1;ctx.stroke();
+      var ex=Math.cos(o.a)*o.rx,ey=Math.sin(o.a)*o.ry;
+      for(var i=1;i<=7;i++){var ta=o.a-i*.13;ctx.beginPath();ctx.arc(Math.cos(ta)*o.rx,Math.sin(ta)*o.ry,3.8-i*.42,0,Math.PI*2);ctx.fillStyle='rgba('+o.col+','+(0.48-i*.055)+')';ctx.fill();}
+      ctx.beginPath();ctx.arc(ex,ey,5.5,0,Math.PI*2);ctx.fillStyle=o.ec;ctx.fill();
+      var eg=ctx.createRadialGradient(ex,ey,0,ex,ey,11);eg.addColorStop(0,o.ec);eg.addColorStop(1,'transparent');
+      ctx.fillStyle=eg;ctx.beginPath();ctx.arc(ex,ey,11,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    });
+    var ng=ctx.createRadialGradient(cx-3,cy-3,0,cx,cy,20);
+    ng.addColorStop(0,'#93c5fd');ng.addColorStop(.5,'#0284c7');ng.addColorStop(1,'#1e3a5f');
+    ctx.beginPath();ctx.arc(cx,cy,20,0,Math.PI*2);ctx.fillStyle=ng;ctx.fill();
+    var pr=22+Math.sin(t*.05)*4;
+    ctx.beginPath();ctx.arc(cx,cy,pr,0,Math.PI*2);
+    ctx.strokeStyle='rgba(56,189,248,'+(0.2+Math.sin(t*.05)*.1)+')';ctx.lineWidth=1.5;ctx.stroke();
+    t++;
+    if(document.getElementById('splash-screen')&&document.getElementById('splash-screen').style.display!=='none')requestAnimationFrame(draw);
+  }
+  draw();
+}
+function showCompaniesManager(){
+  Array.from(document.body.children).forEach(function(el){
+    var id=el.id||'';
+    if(id==='splash-screen'||id==='companies-screen')return;
+    if(el.tagName==='SCRIPT'||el.tagName==='STYLE'||el.tagName==='CANVAS'||el.tagName==='LINK')return;
+    el.style.setProperty('display','none','important');
+  });
+  var sc=document.getElementById('companies-screen');
+  if(sc)sc.style.cssText='display:block!important;position:fixed;inset:0;z-index:99998;overflow-y:auto;background:#0f172a';
+  _renderCoMgrGrid();
+}
+// ══ END SPLASH ══════════════════════════════════════
 
 (function(){
   // Hide old co-screen and app immediately
