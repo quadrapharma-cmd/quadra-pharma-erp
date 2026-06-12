@@ -9,7 +9,7 @@
 
 *{box-sizing:border-box;margin:0;padding:0}
 
-body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:14px}
+body{font-family:'Cairo',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;display:flex;font-size:16px}
 
 /* SIDEBAR */
 aside{width:240px;background:var(--sidebar);border-left:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;right:0;height:100vh;z-index:100;overflow-y:auto}
@@ -12234,7 +12234,38 @@ function renderTabComposition(r){
     '.ac-item:hover{background:var(--hover);color:var(--primary)}'+
     '.comp-del{background:none;border:none;cursor:pointer;color:var(--red,#dc2626);font-size:14px;padding:2px 6px;border-radius:4px}'+
     '.comp-del:hover{background:var(--red-light,#fee2e2)}'+
-    '</style>'+
+    '
+/* ══ FONT SIZE SCALE-UP ══ */
+body,input,select,textarea,button{font-size:16px}
+.nitem{font-size:14px !important}
+.nsec{font-size:11px !important}
+thead th{font-size:12px !important}
+tbody td{font-size:14px !important}
+.btn{font-size:13px !important}
+.btn-sm{font-size:12px !important}
+.badge,.bdg{font-size:11px !important}
+.fl,.login-label,.pw-label{font-size:13px !important}
+.fi,.form-control,.login-inp,.pw-inp{font-size:15px !important}
+.ptitle{font-size:14px !important}
+.sc .sc-val{font-size:28px !important}
+.sc .sc-lbl{font-size:12px !important}
+.pg-title-text,#pg-title{font-size:16px !important}
+.topbar-left h1,#page-title{font-size:16px !important}
+.sb-name,.sb-un{font-size:14px !important}
+.sb-ur,.sb-co{font-size:12px !important}
+.tab,.cp-tab,.dtab,.ag-tab{font-size:13px !important}
+.dd-item{font-size:13px !important}
+.toast{font-size:14px !important}
+.empty,.es{font-size:14px !important}
+.erp-u-name{font-size:14px !important}
+.erp-u-role{font-size:12px !important}
+.login-title{font-size:22px !important}
+.login-sub{font-size:14px !important}
+.login-btn{font-size:16px !important}
+.cd-greeting{font-size:24px !important}
+.cd-co-name{font-size:16px !important}
+.cd-stat-val{font-size:28px !important}
+</style>'+
 
     // ── API Suppliers ──
     '<div class="comp-section">'+
