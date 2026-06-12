@@ -1396,6 +1396,25 @@ tbody td{font-size:14px !important}
 <body><body>
 
 <!-- ══ LOGIN SCREEN ══ -->
+<!-- ══ SPLASH SCREEN ══ -->
+<div id="splash-screen" style="display:none;position:fixed;inset:0;z-index:99999;background:#020817;overflow:hidden;font-family:Tajawal,sans-serif">
+  <canvas id="splash-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2">
+    <div style="position:relative;width:140px;height:140px;margin-bottom:32px">
+      <canvas id="dna-canvas" width="140" height="140" style="position:absolute;inset:0"></canvas>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#0284c7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;box-shadow:0 0 40px rgba(2,132,199,.6)">Q</div>
+      </div>
+    </div>
+    <div style="font-size:26px;font-weight:800;color:#f1f5f9;letter-spacing:-.5px;margin-bottom:8px">Quadra Pharma ERP</div>
+    <div style="font-size:14px;color:#475569;margin-bottom:40px;letter-spacing:.5px">نظام الإدارة الصيدلانية المتكامل</div>
+    <div style="width:200px;height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:12px">
+      <div id="splash-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#0284c7,#7c3aed);border-radius:2px;transition:width .05s linear"></div>
+    </div>
+    <div id="splash-msg" style="font-size:12px;color:#334155;letter-spacing:.5px">جاري التحميل...</div>
+  </div>
+</div>
+
 <!-- ══ COMPANIES MANAGER ══ -->
 <div id="companies-screen" style="display:none;min-height:100vh;background:#0f172a;font-family:var(--font,Tajawal,sans-serif);direction:rtl;position:relative;overflow:hidden">
 
@@ -11255,7 +11274,7 @@ function _erpDataOf(id){ return _getCoDB(id); }
       return;
     }
   }
-  showCompaniesManager();
+  showSplash(showCompaniesManager);
 
   // Hook co-switch-btn
   var sw=document.getElementById('co-switch-btn');
@@ -12041,6 +12060,191 @@ function _coMgrImport(){
     reader.readAsText(file);
   };
   input.click();
+}
+
+
+// ══════════════════════════════════════════════════════════════════
+// SPLASH SCREEN
+// ══════════════════════════════════════════════════════════════════
+function showSplash(onDone){
+  var sc=document.getElementById('splash-screen');
+  if(!sc)return onDone&&onDone();
+  sc.style.display='block';
+  _splashStars();
+  _splashDNA();
+  _splashProgress(onDone);
+}
+
+function _splashStars(){
+  var c=document.getElementById('splash-canvas');
+  if(!c)return;
+  c.width=window.innerWidth; c.height=window.innerHeight;
+  var ctx=c.getContext('2d');
+  var stars=[],planets=[];
+
+  for(var i=0;i<220;i++) stars.push({
+    x:Math.random()*c.width, y:Math.random()*c.height,
+    r:Math.random()*1.5+.2, a:Math.random(), speed:Math.random()*.005+.001
+  });
+
+  var planetDefs=[
+    {x:.75,y:.25,r:55,color:'#0e2a4d',ring:true,ringColor:'rgba(56,189,248,.15)',moons:[{dist:90,r:5,speed:.008,color:'#1e3a5f',angle:0}]},
+    {x:.2,y:.65,r:32,color:'#1a0a2e',ring:false,moons:[{dist:52,r:4,speed:.012,color:'#4c1d95',angle:2},{dist:68,r:3,speed:.007,color:'#6d28d9',angle:4}]},
+    {x:.82,y:.72,r:18,color:'#0d2818',ring:false,moons:[]},
+  ];
+
+  planetDefs.forEach(function(pd){
+    pd.px=pd.x*c.width; pd.py=pd.y*c.height;
+  });
+
+  // Milky way band
+  function drawGalaxy(){
+    var grd=ctx.createLinearGradient(0,c.height*.3,c.width,c.height*.7);
+    grd.addColorStop(0,'transparent');
+    grd.addColorStop(.3,'rgba(56,189,248,.025)');
+    grd.addColorStop(.5,'rgba(124,58,237,.04)');
+    grd.addColorStop(.7,'rgba(56,189,248,.025)');
+    grd.addColorStop(1,'transparent');
+    ctx.fillStyle=grd;
+    ctx.fillRect(0,0,c.width,c.height);
+    // Dust particles
+    for(var i=0;i<80;i++){
+      var x=c.width*(.2+Math.random()*.6);
+      var y=c.height*(.25+.5*(x-c.width*.2)/(c.width*.6))+Math.random()*60-30;
+      ctx.beginPath();
+      ctx.arc(x,y,Math.random()*1.2,0,Math.PI*2);
+      ctx.fillStyle='rgba(148,163,184,'+(Math.random()*.15)+')';
+      ctx.fill();
+    }
+  }
+
+  var t=0;
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    drawGalaxy();
+    // Stars
+    stars.forEach(function(s){
+      s.a+=s.speed; if(s.a>1)s.a=0;
+      var alpha=Math.abs(Math.sin(s.a*Math.PI))*.8+.1;
+      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(226,232,240,'+alpha+')'; ctx.fill();
+    });
+    // Planets
+    planetDefs.forEach(function(pd){
+      // Planet glow
+      var glw=ctx.createRadialGradient(pd.px,pd.py,0,pd.px,pd.py,pd.r*2.5);
+      glw.addColorStop(0,'rgba(56,189,248,.04)');
+      glw.addColorStop(1,'transparent');
+      ctx.fillStyle=glw; ctx.beginPath(); ctx.arc(pd.px,pd.py,pd.r*2.5,0,Math.PI*2); ctx.fill();
+      // Ring
+      if(pd.ring){
+        ctx.save(); ctx.translate(pd.px,pd.py); ctx.scale(1,.22);
+        ctx.beginPath(); ctx.arc(0,0,pd.r*1.8,0,Math.PI*2);
+        ctx.strokeStyle=pd.ringColor; ctx.lineWidth=pd.r*.35; ctx.stroke();
+        ctx.restore();
+      }
+      // Planet body
+      var pgrd=ctx.createRadialGradient(pd.px-pd.r*.3,pd.py-pd.r*.3,pd.r*.1,pd.px,pd.py,pd.r);
+      pgrd.addColorStop(0,'rgba(255,255,255,.08)');
+      pgrd.addColorStop(1,'transparent');
+      ctx.beginPath(); ctx.arc(pd.px,pd.py,pd.r,0,Math.PI*2);
+      ctx.fillStyle=pd.color; ctx.fill();
+      ctx.fillStyle=pgrd; ctx.fill();
+      // Atmosphere rim
+      ctx.beginPath(); ctx.arc(pd.px,pd.py,pd.r,0,Math.PI*2);
+      ctx.strokeStyle='rgba(148,163,184,.12)'; ctx.lineWidth=2; ctx.stroke();
+      // Moons
+      pd.moons.forEach(function(m){
+        m.angle+=m.speed;
+        var mx=pd.px+Math.cos(m.angle+t*.001)*m.dist;
+        var my=pd.py+Math.sin(m.angle+t*.001)*m.dist*.35;
+        // Moon orbit
+        ctx.save(); ctx.translate(pd.px,pd.py); ctx.scale(1,.35);
+        ctx.beginPath(); ctx.arc(0,0,m.dist,0,Math.PI*2);
+        ctx.strokeStyle='rgba(148,163,184,.07)'; ctx.lineWidth=1; ctx.setLineDash([3,6]); ctx.stroke();
+        ctx.setLineDash([]); ctx.restore();
+        ctx.beginPath(); ctx.arc(mx,my,m.r,0,Math.PI*2);
+        ctx.fillStyle=m.color; ctx.fill();
+        ctx.strokeStyle='rgba(226,232,240,.15)'; ctx.lineWidth=1; ctx.stroke();
+      });
+    });
+    t++;
+    if(document.getElementById('splash-screen')&&document.getElementById('splash-screen').style.display!=='none'){
+      requestAnimationFrame(draw);
+    }
+  }
+  draw();
+}
+
+function _splashDNA(){
+  var c=document.getElementById('dna-canvas');
+  if(!c)return;
+  var ctx=c.getContext('2d');
+  var W=140,H=140,cx=70,cy=70;
+  var t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    var n=8;
+    for(var i=0;i<=n;i++){
+      var a=(i/n)*Math.PI*2+t;
+      var r=62;
+      // Outer ring dots
+      var x1=cx+Math.cos(a)*r;
+      var y1=cy+Math.sin(a)*r;
+      var x2=cx+Math.cos(a+Math.PI)*r;
+      var y2=cy+Math.sin(a+Math.PI)*r;
+      // Connector
+      var alpha=.15+.1*Math.sin(a*2);
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
+      ctx.strokeStyle='rgba(56,189,248,'+alpha+')'; ctx.lineWidth=.8; ctx.stroke();
+      // Dots
+      var dotA=.7+.3*Math.sin(a*3);
+      ctx.beginPath(); ctx.arc(x1,y1,3,0,Math.PI*2);
+      ctx.fillStyle='rgba(56,189,248,'+dotA+')'; ctx.fill();
+      ctx.beginPath(); ctx.arc(x2,y2,3,0,Math.PI*2);
+      ctx.fillStyle='rgba(167,139,250,'+dotA+')'; ctx.fill();
+    }
+    // Outer glow ring
+    var grd=ctx.createRadialGradient(cx,cy,55,cx,cy,70);
+    grd.addColorStop(0,'transparent');
+    grd.addColorStop(.6,'rgba(56,189,248,.06)');
+    grd.addColorStop(1,'rgba(56,189,248,.12)');
+    ctx.beginPath(); ctx.arc(cx,cy,68,0,Math.PI*2);
+    ctx.strokeStyle=grd; ctx.lineWidth=4; ctx.stroke();
+    t+=.018;
+    if(document.getElementById('splash-screen')&&document.getElementById('splash-screen').style.display!=='none'){
+      requestAnimationFrame(draw);
+    }
+  }
+  draw();
+}
+
+var _splashMsgs=['تهيئة قاعدة البيانات...','تحميل المعاملات...','مزامنة السجلات...','تحميل نماذج التسجيل...','جاهز ✓'];
+
+function _splashProgress(onDone){
+  var bar=document.getElementById('splash-bar');
+  var msg=document.getElementById('splash-msg');
+  var pct=0, msgIdx=0;
+  var iv=setInterval(function(){
+    pct+=Math.random()*4+2;
+    if(pct>100)pct=100;
+    if(bar) bar.style.width=pct+'%';
+    var idx=Math.floor(pct/_splashMsgs.length/100*_splashMsgs.length*1.2);
+    idx=Math.min(idx,_splashMsgs.length-1);
+    if(msg&&idx!==msgIdx){msgIdx=idx;msg.textContent=_splashMsgs[idx];}
+    if(pct>=100){
+      clearInterval(iv);
+      if(msg) msg.textContent=_splashMsgs[_splashMsgs.length-1];
+      setTimeout(function(){
+        var sc=document.getElementById('splash-screen');
+        if(sc){
+          sc.style.transition='opacity .6s ease';
+          sc.style.opacity='0';
+          setTimeout(function(){sc.style.display='none';sc.style.opacity='';if(onDone)onDone();},600);
+        } else {if(onDone)onDone();}
+      },500);
+    }
+  },60);
 }
 
 </body></html>`);
