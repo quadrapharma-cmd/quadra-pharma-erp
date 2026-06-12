@@ -1341,6 +1341,13 @@ table{min-width:500px}
 }
 
 </style>
+<link rel="manifest" href="/manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Quadra ERP">
+<meta name="theme-color" content="#0284c7">
+<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%230284c7'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>Q</text></svg>">
 </head>
 <body>
 
@@ -1507,6 +1514,7 @@ table{min-width:500px}
     </div>
 
     <div class="tb-actions">
+      <button id="pwa-install-btn" onclick="installPWA()" style="display:none;align-items:center;gap:5px;padding:5px 10px;background:linear-gradient(135deg,#0284c7,#7c3aed);color:#fff;border:none;border-radius:8px;font-family:Tajawal,sans-serif;font-size:12px;font-weight:600;cursor:pointer" title="تثبيت التطبيق">📲 تثبيت</button>
       <button id="alerts-btn" onclick="showAlertsDropdown()"
         style="position:relative;background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;cursor:pointer;color:var(--text);font-size:16px;transition:.15s;flex-shrink:0"
         title="التنبيهات">
@@ -11336,6 +11344,56 @@ function showBackupPanel(){
     document.body.appendChild(overlay);
   }
 }
+
+
+// ══════════════════════════════════════════════════
+// PWA — Service Worker + Install Prompt
+// ══════════════════════════════════════════════════
+var _pwaPrompt = null;
+
+// Register service worker
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('/sw.js')
+      .then(function(reg){
+        console.log('SW registered:', reg.scope);
+      })
+      .catch(function(err){
+        console.log('SW registration failed:', err);
+      });
+  });
+}
+
+// Capture install prompt
+window.addEventListener('beforeinstallprompt', function(e){
+  e.preventDefault();
+  _pwaPrompt = e;
+  // Show install button
+  var btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = 'flex';
+});
+
+// Install button clicked
+function installPWA(){
+  if(!_pwaPrompt) return;
+  _pwaPrompt.prompt();
+  _pwaPrompt.userChoice.then(function(result){
+    if(result.outcome === 'accepted'){
+      if(typeof showNotif==='function') showNotif('تم تثبيت التطبيق بنجاح ✓','success');
+    }
+    _pwaPrompt = null;
+    var btn = document.getElementById('pwa-install-btn');
+    if(btn) btn.style.display = 'none';
+  });
+}
+
+// Detect if already installed
+window.addEventListener('appinstalled', function(){
+  if(typeof showNotif==='function') showNotif('Quadra ERP تم تثبيته على جهازك ✓','success');
+  _pwaPrompt = null;
+  var btn = document.getElementById('pwa-install-btn');
+  if(btn) btn.style.display = 'none';
+});
 
 </body></html>`);
 }
