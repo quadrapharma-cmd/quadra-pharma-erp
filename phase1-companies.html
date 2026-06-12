@@ -1372,18 +1372,18 @@ tbody td{font-size:14px !important}
 .cd-co-name{font-size:16px !important}
 .cd-stat-val{font-size:28px !important}
 
-/* ══ COMPANIES MANAGER ══ */
-#companies-screen{display:none;min-height:100vh;background:linear-gradient(145deg,#f8fafc,#f0f9ff 50%,#f5f3ff);font-family:var(--font,Tajawal,sans-serif);direction:rtl}
-#co-mgr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px}
-.co-mgr-card{background:#fff;border:1px solid rgba(2,132,199,.12);border-radius:16px;padding:20px;transition:all .2s;position:relative;overflow:hidden}
-.co-mgr-card:hover{box-shadow:0 8px 28px rgba(2,132,199,.12);border-color:rgba(2,132,199,.3);transform:translateY(-2px)}
-.co-mgr-gem{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
-.co-mgr-del{position:absolute;top:10px;left:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15);border-radius:7px;padding:4px 9px;font-size:11px;color:#dc2626;cursor:pointer;font-family:var(--font,Tajawal,sans-serif);transition:all .15s}
-.co-mgr-del:hover{background:#fee2e2;border-color:rgba(220,38,38,.3)}
-.co-mgr-enter{width:100%;padding:11px;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;border:none;border-radius:10px;font-family:var(--font,Tajawal,sans-serif);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(2,132,199,.25);transition:all .2s}
-.co-mgr-enter:hover{box-shadow:0 5px 18px rgba(2,132,199,.38);transform:translateY(-1px)}
-.co-mgr-add-card{background:rgba(248,250,252,.7);border:1.5px dashed rgba(2,132,199,.2);border-radius:16px;padding:20px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:180px;color:#94a3b8}
-.co-mgr-add-card:hover{border-color:rgba(2,132,199,.45);color:#0284c7;background:#f0f9ff;transform:translateY(-2px)}
+/* ══ COMPANIES MANAGER DARK ══ */
+.co-mgr-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:22px;transition:all .25s;position:relative;overflow:hidden}
+.co-mgr-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03),transparent);pointer-events:none}
+.co-mgr-card:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.3)}
+.co-mgr-gem{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
+.co-mgr-del{position:absolute;top:12px;left:12px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:5px 10px;font-size:11px;color:#f87171;cursor:pointer;font-family:var(--font,Tajawal,sans-serif);transition:all .15s}
+.co-mgr-del:hover{background:rgba(220,38,38,.25);border-color:rgba(220,38,38,.4)}
+.co-mgr-enter{width:100%;padding:11px;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;border:none;border-radius:11px;font-family:var(--font,Tajawal,sans-serif);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(2,132,199,.3);transition:all .2s;letter-spacing:.2px}
+.co-mgr-enter:hover{box-shadow:0 6px 20px rgba(2,132,199,.45);transform:translateY(-1px)}
+.co-mgr-add-card{background:rgba(255,255,255,.03);border:1.5px dashed rgba(255,255,255,.1);border-radius:18px;padding:20px;cursor:pointer;transition:all .25s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:200px;color:#475569}
+.co-mgr-add-card:hover{border-color:rgba(56,189,248,.4);color:#38bdf8;background:rgba(56,189,248,.05);transform:translateY(-2px)}
+
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1394,6 +1394,118 @@ tbody td{font-size:14px !important}
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%230284c7'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>Q</text></svg>">
 </head>
 <body><body>
+
+<!-- ══ LOGIN SCREEN ══ -->
+<!-- ══ COMPANIES MANAGER ══ -->
+<div id="companies-screen" style="display:none;min-height:100vh;background:#0f172a;font-family:var(--font,Tajawal,sans-serif);direction:rtl;position:relative;overflow:hidden">
+
+  <!-- Decorative orbs -->
+  <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(2,132,199,.18),transparent 70%);top:-180px;right:-120px;pointer-events:none"></div>
+  <div style="position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.14),transparent 70%);bottom:-150px;left:-100px;pointer-events:none"></div>
+  <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(5,150,105,.1),transparent 70%);top:40%;left:40%;pointer-events:none"></div>
+
+  <!-- Grid pattern overlay -->
+  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none"></div>
+
+  <!-- Header -->
+  <div style="position:relative;z-index:10;background:rgba(15,23,42,.8);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);padding:0 28px;height:62px;display:flex;align-items:center;gap:14px">
+    <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0284c7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;box-shadow:0 0 20px rgba(2,132,199,.4)">Q</div>
+    <div style="font-size:16px;font-weight:800;background:linear-gradient(135deg,#38bdf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.3px">Quadra Pharma ERP</div>
+    <div style="flex:1"></div>
+    <button onclick="_coMgrImport()" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.06);color:#94a3b8;font-family:var(--font,Tajawal,sans-serif);font-size:13px;cursor:pointer;transition:all .2s" onmouseenter="this.style.background='rgba(255,255,255,.1)'" onmouseleave="this.style.background='rgba(255,255,255,.06)'">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      استيراد نسخة
+    </button>
+  </div>
+
+  <!-- Body -->
+  <div style="position:relative;z-index:5;padding:36px 28px;max-width:980px;margin:0 auto;width:100%;box-sizing:border-box">
+
+    <!-- Title -->
+    <div style="margin-bottom:32px">
+      <div style="font-size:28px;font-weight:800;color:#f1f5f9;letter-spacing:-.5px;margin-bottom:6px">إدارة الشركات</div>
+      <div style="font-size:15px;color:#64748b">أنشئ شركة جديدة أو ادخل على شركة موجودة</div>
+    </div>
+
+    <!-- Grid -->
+    <div id="co-mgr-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px"></div>
+  </div>
+
+  <!-- Add Company Modal -->
+  <div id="co-add-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center">
+    <div style="background:#1e293b;border:1px solid rgba(255,255,255,.08);border-radius:20px;width:92%;max-width:480px;box-shadow:0 25px 60px rgba(0,0,0,.5);overflow:hidden">
+
+      <!-- Modal header -->
+      <div style="padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:14px;font-weight:700;color:#38bdf8;letter-spacing:.5px" id="co-modal-title">إنشاء شركة جديدة</div>
+        <button onclick="_coMgrCloseModal()" style="background:rgba(255,255,255,.06);border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;color:#94a3b8;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
+      </div>
+
+      <div style="padding:22px" id="co-modal-body">
+        <!-- Step 1 -->
+        <div id="co-step-info">
+          <div style="margin-bottom:14px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">اسم الشركة *</label>
+            <input id="co-inp-name" placeholder="مثال: Quadra Pharm" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:var(--font,Tajawal,sans-serif);font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">نوع النشاط</label>
+            <select id="co-inp-type" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:var(--font,Tajawal,sans-serif);font-size:14px;outline:none">
+              <option style="background:#1e293b">شركة دوائية</option>
+              <option style="background:#1e293b">مصنع أدوية</option>
+              <option style="background:#1e293b">موزع أدوية</option>
+              <option style="background:#1e293b">مستحضرات تجميل</option>
+              <option style="background:#1e293b">مكملات غذائية</option>
+              <option style="background:#1e293b">شركة بيطرية</option>
+            </select>
+          </div>
+          <div style="margin-bottom:18px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px">لون الشركة</label>
+            <div style="display:flex;gap:9px;flex-wrap:wrap">
+              <div onclick="_pickCoColor(this,'0284c7')" data-col="0284c7" style="width:32px;height:32px;border-radius:50%;background:#0284c7;cursor:pointer;border:3px solid #0284c7;box-shadow:0 0 0 2px #1e293b,0 0 0 4px #0284c7"></div>
+              <div onclick="_pickCoColor(this,'7c3aed')" data-col="7c3aed" style="width:32px;height:32px;border-radius:50%;background:#7c3aed;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
+              <div onclick="_pickCoColor(this,'059669')" data-col="059669" style="width:32px;height:32px;border-radius:50%;background:#059669;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
+              <div onclick="_pickCoColor(this,'dc2626')" data-col="dc2626" style="width:32px;height:32px;border-radius:50%;background:#dc2626;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
+              <div onclick="_pickCoColor(this,'d97706')" data-col="d97706" style="width:32px;height:32px;border-radius:50%;background:#d97706;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
+              <div onclick="_pickCoColor(this,'0f766e')" data-col="0f766e" style="width:32px;height:32px;border-radius:50%;background:#0f766e;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
+              <div onclick="_pickCoColor(this,'9333ea')" data-col="9333ea" style="width:32px;height:32px;border-radius:50%;background:#9333ea;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
+              <div onclick="_pickCoColor(this,'be185d')" data-col="be185d" style="width:32px;height:32px;border-radius:50%;background:#be185d;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
+            </div>
+            <input type="hidden" id="co-inp-color" value="0284c7">
+          </div>
+          <div id="co-step-err" style="display:none;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:8px;padding:9px 13px;font-size:13px;color:#fca5a5;margin-bottom:12px"></div>
+          <button onclick="_coStepToAdmin()" style="width:100%;padding:12px;background:linear-gradient(135deg,#0284c7,#7c3aed);color:#fff;border:none;border-radius:11px;font-family:var(--font,Tajawal,sans-serif);font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(2,132,199,.3);letter-spacing:.2px">التالي — إنشاء حساب المدير ←</button>
+        </div>
+
+        <!-- Step 2 -->
+        <div id="co-step-admin" style="display:none">
+          <div style="background:rgba(2,132,199,.1);border:1px solid rgba(2,132,199,.2);border-radius:9px;padding:10px 14px;font-size:13px;color:#7dd3fc;margin-bottom:16px">👑 هذا الحساب سيكون مدير النظام للشركة</div>
+          <div style="margin-bottom:12px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">الاسم الكامل *</label>
+            <input id="co-admin-name" placeholder="مثال: د. هيثم دويدار" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:var(--font,Tajawal,sans-serif);font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">اسم المستخدم *</label>
+            <input id="co-admin-user" dir="ltr" placeholder="admin" autocomplete="off" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:monospace;font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">كلمة المرور *</label>
+            <input id="co-admin-pw" type="password" dir="ltr" placeholder="6 أحرف على الأقل" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:monospace;font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">تأكيد كلمة المرور *</label>
+            <input id="co-admin-pw2" type="password" dir="ltr" placeholder="أعد كتابة كلمة المرور" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:monospace;font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
+          </div>
+          <div id="co-admin-err" style="display:none;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:8px;padding:9px 13px;font-size:13px;color:#fca5a5;margin-bottom:12px"></div>
+          <div style="display:flex;gap:9px">
+            <button onclick="_coStepBack()" style="flex:1;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;font-family:var(--font,Tajawal,sans-serif);font-size:14px;cursor:pointer;color:#94a3b8">← رجوع</button>
+            <button onclick="_coCreate()" style="flex:2;padding:11px;background:linear-gradient(135deg,#0284c7,#7c3aed);color:#fff;border:none;border-radius:10px;font-family:var(--font,Tajawal,sans-serif);font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(2,132,199,.3)">✓ إنشاء الشركة</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ══ LOGIN SCREEN ══ -->
 <!-- ══ COMPANIES MANAGER ══ -->
