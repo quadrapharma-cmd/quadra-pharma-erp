@@ -1372,18 +1372,18 @@ tbody td{font-size:14px !important}
 .cd-co-name{font-size:16px !important}
 .cd-stat-val{font-size:28px !important}
 
-/* ══ COMPANIES MANAGER DARK ══ */
-.co-mgr-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:22px;transition:all .25s;position:relative;overflow:hidden}
-.co-mgr-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.03),transparent);pointer-events:none}
-.co-mgr-card:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.15);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.3)}
-.co-mgr-gem{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;margin-bottom:14px;box-shadow:0 4px 16px rgba(0,0,0,.3)}
-.co-mgr-del{position:absolute;top:12px;left:12px;background:rgba(220,38,38,.12);border:1px solid rgba(220,38,38,.2);border-radius:8px;padding:5px 10px;font-size:11px;color:#f87171;cursor:pointer;font-family:var(--font,Tajawal,sans-serif);transition:all .15s}
-.co-mgr-del:hover{background:rgba(220,38,38,.25);border-color:rgba(220,38,38,.4)}
-.co-mgr-enter{width:100%;padding:11px;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;border:none;border-radius:11px;font-family:var(--font,Tajawal,sans-serif);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(2,132,199,.3);transition:all .2s;letter-spacing:.2px}
-.co-mgr-enter:hover{box-shadow:0 6px 20px rgba(2,132,199,.45);transform:translateY(-1px)}
-.co-mgr-add-card{background:rgba(255,255,255,.03);border:1.5px dashed rgba(255,255,255,.1);border-radius:18px;padding:20px;cursor:pointer;transition:all .25s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:200px;color:#475569}
-.co-mgr-add-card:hover{border-color:rgba(56,189,248,.4);color:#38bdf8;background:rgba(56,189,248,.05);transform:translateY(-2px)}
-
+/* ══ COMPANIES MANAGER ══ */
+#companies-screen{display:none;min-height:100vh;background:linear-gradient(145deg,#f8fafc,#f0f9ff 50%,#f5f3ff);font-family:var(--font,Tajawal,sans-serif);direction:rtl}
+#co-mgr-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px}
+.co-mgr-card{background:#fff;border:1px solid rgba(2,132,199,.12);border-radius:16px;padding:20px;transition:all .2s;position:relative;overflow:hidden}
+.co-mgr-card:hover{box-shadow:0 8px 28px rgba(2,132,199,.12);border-color:rgba(2,132,199,.3);transform:translateY(-2px)}
+.co-mgr-gem{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 12px rgba(0,0,0,.12)}
+.co-mgr-del{position:absolute;top:10px;left:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15);border-radius:7px;padding:4px 9px;font-size:11px;color:#dc2626;cursor:pointer;font-family:var(--font,Tajawal,sans-serif);transition:all .15s}
+.co-mgr-del:hover{background:#fee2e2;border-color:rgba(220,38,38,.3)}
+.co-mgr-enter{width:100%;padding:11px;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;border:none;border-radius:10px;font-family:var(--font,Tajawal,sans-serif);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(2,132,199,.25);transition:all .2s}
+.co-mgr-enter:hover{box-shadow:0 5px 18px rgba(2,132,199,.38);transform:translateY(-1px)}
+.co-mgr-add-card{background:rgba(248,250,252,.7);border:1.5px dashed rgba(2,132,199,.2);border-radius:16px;padding:20px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:180px;color:#94a3b8}
+.co-mgr-add-card:hover{border-color:rgba(2,132,199,.45);color:#0284c7;background:#f0f9ff;transform:translateY(-2px)}
 </style>
 <link rel="manifest" href="/manifest.json">
 <meta name="mobile-web-app-capable" content="yes">
@@ -1393,140 +1393,28 @@ tbody td{font-size:14px !important}
 <meta name="theme-color" content="#0284c7">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%230284c7'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>Q</text></svg>">
 </head>
-<body>
+<body><body>
 
 <!-- ══ LOGIN SCREEN ══ -->
-<!-- ══ SPLASH SCREEN ══ -->
-<div id="splash-screen" style="display:none;position:fixed;inset:0;z-index:99999;background:#020817;overflow:hidden;font-family:Tajawal,sans-serif">
+<!-- ══ SPLASH ══ -->
+<div id="splash-screen" style="display:none;position:fixed;inset:0;z-index:99999;background:#020817;font-family:Tajawal,sans-serif;direction:rtl">
   <canvas id="splash-canvas" style="position:absolute;inset:0;width:100%;height:100%"></canvas>
   <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:2">
-    <div style="position:relative;width:140px;height:140px;margin-bottom:32px">
+    <div style="position:relative;width:140px;height:140px;margin-bottom:28px">
       <canvas id="dna-canvas" width="140" height="140" style="position:absolute;inset:0"></canvas>
       <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
-        <div style="width:54px;height:54px;border-radius:16px;background:linear-gradient(135deg,#0284c7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#fff;box-shadow:0 0 40px rgba(2,132,199,.6)">Q</div>
+        <div style="width:52px;height:52px;border-radius:15px;background:linear-gradient(135deg,#0284c7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#fff;box-shadow:0 0 30px rgba(2,132,199,.5)">Q</div>
       </div>
     </div>
-    <div style="font-size:26px;font-weight:800;color:#f1f5f9;letter-spacing:-.5px;margin-bottom:8px">Quadra Pharma ERP</div>
-    <div style="font-size:14px;color:#475569;margin-bottom:40px;letter-spacing:.5px">نظام الإدارة الصيدلانية المتكامل</div>
-    <div style="width:200px;height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:12px">
-      <div id="splash-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#0284c7,#7c3aed);border-radius:2px;transition:width .05s linear"></div>
+    <div style="font-size:26px;font-weight:800;color:#f1f5f9;letter-spacing:-.5px;margin-bottom:6px">Quadra Pharma ERP</div>
+    <div style="font-size:13px;color:#475569;margin-bottom:36px;letter-spacing:.5px">نظام الإدارة الصيدلانية المتكامل</div>
+    <div style="width:200px;height:2px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:10px">
+      <div id="splash-bar" style="height:100%;width:0%;background:linear-gradient(90deg,#0284c7,#7c3aed);border-radius:2px"></div>
     </div>
     <div id="splash-msg" style="font-size:12px;color:#334155;letter-spacing:.5px">جاري التحميل...</div>
   </div>
 </div>
 
-<!-- ══ COMPANIES MANAGER ══ -->
-<div id="companies-screen" style="display:none;min-height:100vh;background:#0f172a;font-family:var(--font,Tajawal,sans-serif);direction:rtl;position:relative;overflow:hidden">
-
-  <!-- Decorative orbs -->
-  <div style="position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(2,132,199,.18),transparent 70%);top:-180px;right:-120px;pointer-events:none"></div>
-  <div style="position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.14),transparent 70%);bottom:-150px;left:-100px;pointer-events:none"></div>
-  <div style="position:absolute;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(5,150,105,.1),transparent 70%);top:40%;left:40%;pointer-events:none"></div>
-
-  <!-- Grid pattern overlay -->
-  <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px;pointer-events:none"></div>
-
-  <!-- Header -->
-  <div style="position:relative;z-index:10;background:rgba(15,23,42,.8);backdrop-filter:blur(20px);border-bottom:1px solid rgba(255,255,255,.06);padding:0 28px;height:62px;display:flex;align-items:center;gap:14px">
-    <div style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#0284c7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;box-shadow:0 0 20px rgba(2,132,199,.4)">Q</div>
-    <div style="font-size:16px;font-weight:800;background:linear-gradient(135deg,#38bdf8,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:-.3px">Quadra Pharma ERP</div>
-    <div style="flex:1"></div>
-    <button onclick="_coMgrImport()" style="display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.06);color:#94a3b8;font-family:var(--font,Tajawal,sans-serif);font-size:13px;cursor:pointer;transition:all .2s" onmouseenter="this.style.background='rgba(255,255,255,.1)'" onmouseleave="this.style.background='rgba(255,255,255,.06)'">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-      استيراد نسخة
-    </button>
-  </div>
-
-  <!-- Body -->
-  <div style="position:relative;z-index:5;padding:36px 28px;max-width:980px;margin:0 auto;width:100%;box-sizing:border-box">
-
-    <!-- Title -->
-    <div style="margin-bottom:32px">
-      <div style="font-size:28px;font-weight:800;color:#f1f5f9;letter-spacing:-.5px;margin-bottom:6px">إدارة الشركات</div>
-      <div style="font-size:15px;color:#64748b">أنشئ شركة جديدة أو ادخل على شركة موجودة</div>
-    </div>
-
-    <!-- Grid -->
-    <div id="co-mgr-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:16px"></div>
-  </div>
-
-  <!-- Add Company Modal -->
-  <div id="co-add-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);backdrop-filter:blur(8px);z-index:500;align-items:center;justify-content:center">
-    <div style="background:#1e293b;border:1px solid rgba(255,255,255,.08);border-radius:20px;width:92%;max-width:480px;box-shadow:0 25px 60px rgba(0,0,0,.5);overflow:hidden">
-
-      <!-- Modal header -->
-      <div style="padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between">
-        <div style="font-size:14px;font-weight:700;color:#38bdf8;letter-spacing:.5px" id="co-modal-title">إنشاء شركة جديدة</div>
-        <button onclick="_coMgrCloseModal()" style="background:rgba(255,255,255,.06);border:none;width:28px;height:28px;border-radius:7px;cursor:pointer;color:#94a3b8;font-size:16px;display:flex;align-items:center;justify-content:center">✕</button>
-      </div>
-
-      <div style="padding:22px" id="co-modal-body">
-        <!-- Step 1 -->
-        <div id="co-step-info">
-          <div style="margin-bottom:14px">
-            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">اسم الشركة *</label>
-            <input id="co-inp-name" placeholder="مثال: Quadra Pharm" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:var(--font,Tajawal,sans-serif);font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
-          </div>
-          <div style="margin-bottom:14px">
-            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">نوع النشاط</label>
-            <select id="co-inp-type" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:var(--font,Tajawal,sans-serif);font-size:14px;outline:none">
-              <option style="background:#1e293b">شركة دوائية</option>
-              <option style="background:#1e293b">مصنع أدوية</option>
-              <option style="background:#1e293b">موزع أدوية</option>
-              <option style="background:#1e293b">مستحضرات تجميل</option>
-              <option style="background:#1e293b">مكملات غذائية</option>
-              <option style="background:#1e293b">شركة بيطرية</option>
-            </select>
-          </div>
-          <div style="margin-bottom:18px">
-            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:9px">لون الشركة</label>
-            <div style="display:flex;gap:9px;flex-wrap:wrap">
-              <div onclick="_pickCoColor(this,'0284c7')" data-col="0284c7" style="width:32px;height:32px;border-radius:50%;background:#0284c7;cursor:pointer;border:3px solid #0284c7;box-shadow:0 0 0 2px #1e293b,0 0 0 4px #0284c7"></div>
-              <div onclick="_pickCoColor(this,'7c3aed')" data-col="7c3aed" style="width:32px;height:32px;border-radius:50%;background:#7c3aed;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
-              <div onclick="_pickCoColor(this,'059669')" data-col="059669" style="width:32px;height:32px;border-radius:50%;background:#059669;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
-              <div onclick="_pickCoColor(this,'dc2626')" data-col="dc2626" style="width:32px;height:32px;border-radius:50%;background:#dc2626;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
-              <div onclick="_pickCoColor(this,'d97706')" data-col="d97706" style="width:32px;height:32px;border-radius:50%;background:#d97706;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
-              <div onclick="_pickCoColor(this,'0f766e')" data-col="0f766e" style="width:32px;height:32px;border-radius:50%;background:#0f766e;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
-              <div onclick="_pickCoColor(this,'9333ea')" data-col="9333ea" style="width:32px;height:32px;border-radius:50%;background:#9333ea;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
-              <div onclick="_pickCoColor(this,'be185d')" data-col="be185d" style="width:32px;height:32px;border-radius:50%;background:#be185d;cursor:pointer;border:2px solid rgba(255,255,255,.1)"></div>
-            </div>
-            <input type="hidden" id="co-inp-color" value="0284c7">
-          </div>
-          <div id="co-step-err" style="display:none;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:8px;padding:9px 13px;font-size:13px;color:#fca5a5;margin-bottom:12px"></div>
-          <button onclick="_coStepToAdmin()" style="width:100%;padding:12px;background:linear-gradient(135deg,#0284c7,#7c3aed);color:#fff;border:none;border-radius:11px;font-family:var(--font,Tajawal,sans-serif);font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(2,132,199,.3);letter-spacing:.2px">التالي — إنشاء حساب المدير ←</button>
-        </div>
-
-        <!-- Step 2 -->
-        <div id="co-step-admin" style="display:none">
-          <div style="background:rgba(2,132,199,.1);border:1px solid rgba(2,132,199,.2);border-radius:9px;padding:10px 14px;font-size:13px;color:#7dd3fc;margin-bottom:16px">👑 هذا الحساب سيكون مدير النظام للشركة</div>
-          <div style="margin-bottom:12px">
-            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">الاسم الكامل *</label>
-            <input id="co-admin-name" placeholder="مثال: د. هيثم دويدار" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:var(--font,Tajawal,sans-serif);font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
-          </div>
-          <div style="margin-bottom:12px">
-            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">اسم المستخدم *</label>
-            <input id="co-admin-user" dir="ltr" placeholder="admin" autocomplete="off" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:monospace;font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
-          </div>
-          <div style="margin-bottom:12px">
-            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">كلمة المرور *</label>
-            <input id="co-admin-pw" type="password" dir="ltr" placeholder="6 أحرف على الأقل" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:monospace;font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
-          </div>
-          <div style="margin-bottom:16px">
-            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:7px">تأكيد كلمة المرور *</label>
-            <input id="co-admin-pw2" type="password" dir="ltr" placeholder="أعد كتابة كلمة المرور" style="width:100%;box-sizing:border-box;padding:10px 14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#f1f5f9;font-family:monospace;font-size:14px;outline:none" onfocus="this.style.borderColor='rgba(56,189,248,.5)'" onblur="this.style.borderColor='rgba(255,255,255,.1)'">
-          </div>
-          <div id="co-admin-err" style="display:none;background:rgba(220,38,38,.15);border:1px solid rgba(220,38,38,.3);border-radius:8px;padding:9px 13px;font-size:13px;color:#fca5a5;margin-bottom:12px"></div>
-          <div style="display:flex;gap:9px">
-            <button onclick="_coStepBack()" style="flex:1;padding:11px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:10px;font-family:var(--font,Tajawal,sans-serif);font-size:14px;cursor:pointer;color:#94a3b8">← رجوع</button>
-            <button onclick="_coCreate()" style="flex:2;padding:11px;background:linear-gradient(135deg,#0284c7,#7c3aed);color:#fff;border:none;border-radius:10px;font-family:var(--font,Tajawal,sans-serif);font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(2,132,199,.3)">✓ إنشاء الشركة</button>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ LOGIN SCREEN ══ -->
 <!-- ══ COMPANIES MANAGER ══ -->
 <div id="companies-screen" style="display:none">
   <div style="min-height:100vh;background:linear-gradient(145deg,#f8fafc,#f0f9ff 50%,#f5f3ff);font-family:var(--font);direction:rtl;display:flex;flex-direction:column">
@@ -1856,7 +1744,7 @@ tbody td{font-size:14px !important}
 <!-- Sidebar overlay for mobile -->
 <div id="sidebar-overlay" onclick="closeMobSidebar()"></div>
 
-  <div class="topbar" id="main-topbar">
+  <div class="topbar">
     <!-- Hamburger (mobile only) -->
     <button id="mob-menu-btn" onclick="toggleMobSidebar()" aria-label="القائمة">☰</button>
 
@@ -10898,8 +10786,6 @@ function erpShowCentral(){
     _updateBadge();
   }
   erpRenderCentralGrid();
-  var sc2=document.getElementById('companies-screen');if(sc2)sc2.style.display='none';
-  var tb=document.getElementById('main-topbar');if(tb)tb.style.display='';
 }
 
 function erpRenderCentralGrid(){
@@ -11038,12 +10924,11 @@ function _getCoDB(id){try{return JSON.parse(localStorage.getItem('pharma_data_'+
 function _saveCoDB(id,d){localStorage.setItem('pharma_data_'+id,JSON.stringify(d));}
 
 function showCompaniesManager(){
-  ['erp-login-screen','central-dashboard','sidebar','sidebar-overlay','main-topbar'].forEach(function(id){
-    var el=document.getElementById(id);if(el)el.style.display='none';
-  });
-  document.querySelectorAll('main').forEach(function(el){el.style.display='none';});
+  var els=['erp-login-screen','central-dashboard','sidebar'];
+  els.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+  var mn=document.querySelector('main');if(mn)mn.style.display='none';
   var sc=document.getElementById('companies-screen');
-  if(sc) sc.style.cssText='display:block!important;position:fixed;inset:0;z-index:9999;overflow-y:auto';
+  if(sc) sc.style.display='block';
   _renderCoMgrGrid();
 }
 
@@ -11241,410 +11126,116 @@ function _coMgrImport(){
 function _erpAllCompanies(){ return _getCos(); }
 function _erpDataOf(id){ return _getCoDB(id); }
 
-// ══════════════════════════════════════════════════════════════════
-// SPLASH SCREEN
-// ══════════════════════════════════════════════════════════════════
-function showSplash(onDone){
-  var sc=document.getElementById('splash-screen');
-  if(!sc)return onDone&&onDone();
-  sc.style.display='block';
-  _splashStars();
-  _splashDNA();
-  _splashProgress(onDone);
-}
 
-function _splashStars(){
+function showSplash(cb){
+  var sc=document.getElementById('splash-screen');
+  if(!sc){if(cb)cb();return;}
+  sc.style.display='block';
+  _spBg();_spDNA();_spBar(cb);
+}
+function _spBg(){
   var c=document.getElementById('splash-canvas');
   if(!c)return;
-  c.width=window.innerWidth; c.height=window.innerHeight;
-  var ctx=c.getContext('2d');
-  var stars=[],planets=[];
-
-  for(var i=0;i<220;i++) stars.push({
-    x:Math.random()*c.width, y:Math.random()*c.height,
-    r:Math.random()*1.5+.2, a:Math.random(), speed:Math.random()*.005+.001
-  });
-
-  var planetDefs=[
-    {x:.75,y:.25,r:55,color:'#0e2a4d',ring:true,ringColor:'rgba(56,189,248,.15)',moons:[{dist:90,r:5,speed:.008,color:'#1e3a5f',angle:0}]},
-    {x:.2,y:.65,r:32,color:'#1a0a2e',ring:false,moons:[{dist:52,r:4,speed:.012,color:'#4c1d95',angle:2},{dist:68,r:3,speed:.007,color:'#6d28d9',angle:4}]},
-    {x:.82,y:.72,r:18,color:'#0d2818',ring:false,moons:[]},
+  c.width=window.innerWidth;c.height=window.innerHeight;
+  var ctx=c.getContext('2d'),W=c.width,H=c.height,t=0;
+  var stars=[];
+  for(var i=0;i<200;i++)stars.push({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.3+.2,p:Math.random()*6,sp:Math.random()*.007+.002});
+  var pl=[
+    {x:.72,y:.22,r:55,c:'#0a1f3d',ring:1,moons:[{d:88,r:6,sp:.007,c:'#1a3a6b',a:0},{d:112,r:3,sp:.004,c:'#0e2952',a:2}]},
+    {x:.18,y:.68,r:33,c:'#180828',ring:0,moons:[{d:53,r:5,sp:.011,c:'#4a1d8c',a:1},{d:70,r:3,sp:.006,c:'#6b2db3',a:3.5}]},
+    {x:.85,y:.75,r:18,c:'#0a1f0e',ring:0,moons:[]},
+    {x:.36,y:.14,r:11,c:'#1f100e',ring:0,moons:[]},
   ];
-
-  planetDefs.forEach(function(pd){
-    pd.px=pd.x*c.width; pd.py=pd.y*c.height;
-  });
-
-  // Milky way band
-  function drawGalaxy(){
-    var grd=ctx.createLinearGradient(0,c.height*.3,c.width,c.height*.7);
-    grd.addColorStop(0,'transparent');
-    grd.addColorStop(.3,'rgba(56,189,248,.025)');
-    grd.addColorStop(.5,'rgba(124,58,237,.04)');
-    grd.addColorStop(.7,'rgba(56,189,248,.025)');
-    grd.addColorStop(1,'transparent');
-    ctx.fillStyle=grd;
-    ctx.fillRect(0,0,c.width,c.height);
-    // Dust particles
-    for(var i=0;i<80;i++){
-      var x=c.width*(.2+Math.random()*.6);
-      var y=c.height*(.25+.5*(x-c.width*.2)/(c.width*.6))+Math.random()*60-30;
-      ctx.beginPath();
-      ctx.arc(x,y,Math.random()*1.2,0,Math.PI*2);
-      ctx.fillStyle='rgba(148,163,184,'+(Math.random()*.15)+')';
-      ctx.fill();
-    }
-  }
-
-  var t=0;
+  pl.forEach(function(p){p.px=p.x*W;p.py=p.y*H;});
   function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    drawGalaxy();
-    // Stars
+    ctx.clearRect(0,0,W,H);
+    var gb=ctx.createLinearGradient(0,H*.25,W,H*.75);
+    gb.addColorStop(0,'transparent');gb.addColorStop(.5,'rgba(124,58,237,.03)');gb.addColorStop(1,'transparent');
+    ctx.fillStyle=gb;ctx.fillRect(0,0,W,H);
     stars.forEach(function(s){
-      s.a+=s.speed; if(s.a>1)s.a=0;
-      var alpha=Math.abs(Math.sin(s.a*Math.PI))*.8+.1;
-      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle='rgba(226,232,240,'+alpha+')'; ctx.fill();
+      var a=Math.abs(Math.sin(s.p+t*s.sp))*.8+.1;
+      ctx.beginPath();ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(226,232,240,'+a+')';ctx.fill();
     });
-    // Planets
-    planetDefs.forEach(function(pd){
-      // Planet glow
-      var glw=ctx.createRadialGradient(pd.px,pd.py,0,pd.px,pd.py,pd.r*2.5);
-      glw.addColorStop(0,'rgba(56,189,248,.04)');
-      glw.addColorStop(1,'transparent');
-      ctx.fillStyle=glw; ctx.beginPath(); ctx.arc(pd.px,pd.py,pd.r*2.5,0,Math.PI*2); ctx.fill();
-      // Ring
-      if(pd.ring){
-        ctx.save(); ctx.translate(pd.px,pd.py); ctx.scale(1,.22);
-        ctx.beginPath(); ctx.arc(0,0,pd.r*1.8,0,Math.PI*2);
-        ctx.strokeStyle=pd.ringColor; ctx.lineWidth=pd.r*.35; ctx.stroke();
+    pl.forEach(function(p){
+      var g=ctx.createRadialGradient(p.px,p.py,0,p.px,p.py,p.r*2.5);
+      g.addColorStop(0,'rgba(56,189,248,.05)');g.addColorStop(1,'transparent');
+      ctx.fillStyle=g;ctx.beginPath();ctx.arc(p.px,p.py,p.r*2.5,0,Math.PI*2);ctx.fill();
+      if(p.ring){
+        ctx.save();ctx.translate(p.px,p.py);ctx.scale(1,.2);
+        ctx.beginPath();ctx.arc(0,0,p.r*1.8,0,Math.PI*2);
+        ctx.strokeStyle='rgba(56,189,248,.18)';ctx.lineWidth=p.r*.3;ctx.stroke();
         ctx.restore();
       }
-      // Planet body
-      var pgrd=ctx.createRadialGradient(pd.px-pd.r*.3,pd.py-pd.r*.3,pd.r*.1,pd.px,pd.py,pd.r);
-      pgrd.addColorStop(0,'rgba(255,255,255,.08)');
-      pgrd.addColorStop(1,'transparent');
-      ctx.beginPath(); ctx.arc(pd.px,pd.py,pd.r,0,Math.PI*2);
-      ctx.fillStyle=pd.color; ctx.fill();
-      ctx.fillStyle=pgrd; ctx.fill();
-      // Atmosphere rim
-      ctx.beginPath(); ctx.arc(pd.px,pd.py,pd.r,0,Math.PI*2);
-      ctx.strokeStyle='rgba(148,163,184,.12)'; ctx.lineWidth=2; ctx.stroke();
-      // Moons
-      pd.moons.forEach(function(m){
-        m.angle+=m.speed;
-        var mx=pd.px+Math.cos(m.angle+t*.001)*m.dist;
-        var my=pd.py+Math.sin(m.angle+t*.001)*m.dist*.35;
-        // Moon orbit
-        ctx.save(); ctx.translate(pd.px,pd.py); ctx.scale(1,.35);
-        ctx.beginPath(); ctx.arc(0,0,m.dist,0,Math.PI*2);
-        ctx.strokeStyle='rgba(148,163,184,.07)'; ctx.lineWidth=1; ctx.setLineDash([3,6]); ctx.stroke();
-        ctx.setLineDash([]); ctx.restore();
-        ctx.beginPath(); ctx.arc(mx,my,m.r,0,Math.PI*2);
-        ctx.fillStyle=m.color; ctx.fill();
-        ctx.strokeStyle='rgba(226,232,240,.15)'; ctx.lineWidth=1; ctx.stroke();
+      ctx.beginPath();ctx.arc(p.px,p.py,p.r,0,Math.PI*2);ctx.fillStyle=p.c;ctx.fill();
+      ctx.strokeStyle='rgba(148,163,184,.1)';ctx.lineWidth=1.5;ctx.stroke();
+      p.moons.forEach(function(m){
+        var ma=m.a+t*m.sp;
+        var mx=p.px+Math.cos(ma)*m.d,my=p.py+Math.sin(ma)*m.d*.3;
+        ctx.save();ctx.translate(p.px,p.py);ctx.scale(1,.3);
+        ctx.beginPath();ctx.arc(0,0,m.d,0,Math.PI*2);
+        ctx.strokeStyle='rgba(148,163,184,.05)';ctx.lineWidth=1;ctx.setLineDash([3,7]);ctx.stroke();ctx.setLineDash([]);ctx.restore();
+        ctx.beginPath();ctx.arc(mx,my,m.r,0,Math.PI*2);ctx.fillStyle=m.c;ctx.fill();
+        ctx.strokeStyle='rgba(226,232,240,.1)';ctx.lineWidth=1;ctx.stroke();
       });
     });
     t++;
-    if(document.getElementById('splash-screen')&&document.getElementById('splash-screen').style.display!=='none'){
-      requestAnimationFrame(draw);
-    }
+    var sc=document.getElementById('splash-screen');
+    if(sc&&sc.style.display!=='none')requestAnimationFrame(draw);
   }
   draw();
 }
-
-function _splashDNA(){
+function _spDNA(){
   var c=document.getElementById('dna-canvas');
   if(!c)return;
-  var ctx=c.getContext('2d');
-  var W=140,H=140,cx=70,cy=70;
-  var t=0;
+  var ctx=c.getContext('2d'),cx=70,cy=70,r=62,t=0;
   function draw(){
-    ctx.clearRect(0,0,W,H);
-    var n=8;
-    for(var i=0;i<=n;i++){
-      var a=(i/n)*Math.PI*2+t;
-      var r=62;
-      // Outer ring dots
-      var x1=cx+Math.cos(a)*r;
-      var y1=cy+Math.sin(a)*r;
-      var x2=cx+Math.cos(a+Math.PI)*r;
-      var y2=cy+Math.sin(a+Math.PI)*r;
-      // Connector
-      var alpha=.15+.1*Math.sin(a*2);
-      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2);
-      ctx.strokeStyle='rgba(56,189,248,'+alpha+')'; ctx.lineWidth=.8; ctx.stroke();
-      // Dots
-      var dotA=.7+.3*Math.sin(a*3);
-      ctx.beginPath(); ctx.arc(x1,y1,3,0,Math.PI*2);
-      ctx.fillStyle='rgba(56,189,248,'+dotA+')'; ctx.fill();
-      ctx.beginPath(); ctx.arc(x2,y2,3,0,Math.PI*2);
-      ctx.fillStyle='rgba(167,139,250,'+dotA+')'; ctx.fill();
+    ctx.clearRect(0,0,140,140);
+    for(var i=0;i<=10;i++){
+      var a=i/10*Math.PI*2+t;
+      var x1=cx+Math.cos(a)*r,y1=cy+Math.sin(a)*r;
+      var x2=cx+Math.cos(a+Math.PI)*r,y2=cy+Math.sin(a+Math.PI)*r;
+      var al=.07+.07*Math.sin(a*2+t);
+      ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);
+      ctx.strokeStyle='rgba(56,189,248,'+al+')';ctx.lineWidth=.8;ctx.stroke();
+      var da=.55+.35*Math.sin(a*3+t);
+      ctx.beginPath();ctx.arc(x1,y1,3,0,Math.PI*2);ctx.fillStyle='rgba(56,189,248,'+da+')';ctx.fill();
+      ctx.beginPath();ctx.arc(x2,y2,3,0,Math.PI*2);ctx.fillStyle='rgba(167,139,250,'+da+')';ctx.fill();
     }
-    // Outer glow ring
-    var grd=ctx.createRadialGradient(cx,cy,55,cx,cy,70);
-    grd.addColorStop(0,'transparent');
-    grd.addColorStop(.6,'rgba(56,189,248,.06)');
-    grd.addColorStop(1,'rgba(56,189,248,.12)');
-    ctx.beginPath(); ctx.arc(cx,cy,68,0,Math.PI*2);
-    ctx.strokeStyle=grd; ctx.lineWidth=4; ctx.stroke();
-    t+=.018;
-    if(document.getElementById('splash-screen')&&document.getElementById('splash-screen').style.display!=='none'){
-      requestAnimationFrame(draw);
-    }
+    t+=.02;
+    var sc=document.getElementById('splash-screen');
+    if(sc&&sc.style.display!=='none')requestAnimationFrame(draw);
   }
   draw();
 }
-
-var _splashMsgs=['تهيئة قاعدة البيانات...','تحميل المعاملات...','مزامنة السجلات...','تحميل نماذج التسجيل...','جاهز ✓'];
-
-function _splashProgress(onDone){
+var _spMsgs=['تهيئة قاعدة البيانات...','تحميل بيانات التسجيل...','مزامنة السجلات...','تجهيز الواجهة...','مرحباً بك ✓'];
+function _spBar(cb){
   var bar=document.getElementById('splash-bar');
   var msg=document.getElementById('splash-msg');
-  var pct=0, msgIdx=0;
+  var pct=0,mi=0;
   var iv=setInterval(function(){
-    pct+=Math.random()*4+2;
-    if(pct>100)pct=100;
-    if(bar) bar.style.width=pct+'%';
-    var idx=Math.floor(pct/_splashMsgs.length/100*_splashMsgs.length*1.2);
-    idx=Math.min(idx,_splashMsgs.length-1);
-    if(msg&&idx!==msgIdx){msgIdx=idx;msg.textContent=_splashMsgs[idx];}
+    pct=Math.min(pct+Math.random()*4+1.5,100);
+    if(bar)bar.style.width=pct+'%';
+    var ni=Math.min(Math.floor(pct/22),_spMsgs.length-1);
+    if(ni!==mi&&msg){mi=ni;msg.textContent=_spMsgs[mi];}
     if(pct>=100){
       clearInterval(iv);
-      if(msg) msg.textContent=_splashMsgs[_splashMsgs.length-1];
       setTimeout(function(){
         var sc=document.getElementById('splash-screen');
-        if(sc){
-          sc.style.transition='opacity .6s ease';
-          sc.style.opacity='0';
-          setTimeout(function(){sc.style.display='none';sc.style.opacity='';if(onDone)onDone();},600);
-        } else {if(onDone)onDone();}
-      },500);
+        if(sc){sc.style.transition='opacity .6s';sc.style.opacity='0';
+          setTimeout(function(){sc.style.display='none';sc.style.opacity='';if(cb)cb();},620);
+        }else if(cb)cb();
+      },350);
     }
-  },60);
+  },55);
 }
 
-</body></html>`);
-}
-
-// ══ USERS ══
-let usrQ='';
-async function renderUsers(c){
-  const all=await dbGetAll('users','companyId',S.companyId);
-  const users=all.filter(u=>!u.deletedAt&&(!usrQ||u.nameAr.includes(usrQ)||u.username.includes(usrQ)));
-  c.innerHTML=`<div class="page-title">👥 المستخدمون</div>
-  <div class="pcard"><div class="ph"><div class="ptitle">${all.filter(u=>!u.deletedAt).length} مستخدم</div>
-  <div class="pacts">
-    <div class="sbar"><span style="color:var(--muted)">🔍</span><input placeholder="بحث..." value="${esc(usrQ)}" oninput="usrQ=this.value;renderUsers(document.getElementById('main-content'))"></div>
-    <button class="btn btn-ok btn-sm" onclick="openAddUser()">+ إضافة مستخدم</button>
-  </div></div>
-  <div class="tw"><table><thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>
-  ${users.length?users.map(u=>`<tr>
-    <td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary-d))">${u.nameAr.charAt(0)}</div><div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--muted)">${esc(u.nameEn||'')}</div></div></div></td>
-    <td><code style="font-size:11px;background:rgba(34,211,238,.08);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
-    <td><span class="bdg ${u.role==='admin'?'bdg-b':'bdg-m'}">${u.role==='admin'?'مدير':'مستخدم'}</span></td>
-    <td style="color:var(--muted)">${esc(u.department||'—')}</td>
-    <td style="font-size:11px;color:var(--muted)">${fmtDt(u.lastLogin)}</td>
-    <td><span class="bdg ${u.isActive?'bdg-g':'bdg-r'}">${u.isActive?'نشط':'موقوف'}</span></td>
-    <td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditUser('${u.id}')">تعديل</button>${u.id!==S.userId?`<button class="btn btn-${u.isActive?'o':'ok'} btn-sm" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}</div></td>
-  </tr>`).join(''):'<tr><td colspan="7"><div class="es"><div class="ei">👥</div><p>لا يوجد مستخدمون</p></div></td></tr>'}
-  </tbody></table></div></div>`;
-}
-function openAddUser(){document.getElementById('mu-title').textContent='إضافة مستخدم جديد';document.getElementById('u-ph').style.display='none';document.getElementById('u-pl').innerHTML='كلمة المرور <span class="req">*</span>';['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title-inp','u-phone','u-email'].forEach(id=>set(id,''));set('u-role','user');openModal('modal-user');}
-async function openEditUser(id){const u=await dbGet('users',id);if(!u)return;document.getElementById('mu-title').textContent='تعديل مستخدم';document.getElementById('u-ph').style.display='block';document.getElementById('u-pl').innerHTML='كلمة مرور جديدة';set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');set('u-user',u.username);set('u-pass','');set('u-role',u.role);set('u-dept',u.department||'');set('u-title-inp',u.jobTitle||'');set('u-phone',u.phone||'');set('u-email',u.email||'');openModal('modal-user');}
-async function saveUser(){
-  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
-  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','er');return}
-  const btn=document.getElementById('btn-su');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
-  try{
-    if(id){const u=await dbGet('users',id);if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','er');return}u.passwordHash=await hashPw(pw)}Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});await dbPut('users',u);toast('تم التحديث','ok');}
-    else{if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف','er');return}const all=await dbGetAll('users','companyId',S.companyId);if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','er');return}await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});toast('تم الإضافة','ok');}
-    closeModal('modal-user');renderUsers(document.getElementById('main-content'));
-  }catch(e){toast('خطأ: '+e.message,'er')}
-  btn.innerHTML='حفظ';btn.disabled=false;
-}
-async function toggleUser(id){const u=await dbGet('users',id);if(!u)return;u.isActive=!u.isActive;u.updatedAt=now();await dbPut('users',u);toast(u.isActive?'تم التفعيل':'تم الإيقاف','ok');renderUsers(document.getElementById('main-content'));}
-
-// ══ SETTINGS ══
-function renderSettings(c){
-  c.innerHTML=`<div class="page-title">⚙️ إعدادات النظام</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
-    <div class="pcard"><div class="ph"><div class="ptitle">العرض</div></div><div class="tab-body">
-      <div class="fg"><label class="fl">حجم الخط</label><select class="fi" id="s-fs"><option value="13">صغير 13px</option><option value="14" selected>متوسط 14px</option><option value="15">كبير 15px</option></select></div>
-    </div></div>
-    <div class="pcard"><div class="ph"><div class="ptitle">الطباعة</div></div><div class="tab-body">
-      <div class="fg"><label class="fl">حجم الورق</label><select class="fi" id="s-paper"><option value="A4" selected>A4</option><option value="A5">A5</option></select></div>
-      <div class="fg"><label class="fl">هيدر الطباعة</label><input class="fi" id="s-header" placeholder="نص يظهر في رأس كل طباعة"></div>
-    </div></div>
-    <div class="pcard"><div class="ph"><div class="ptitle">💾 النسخ الاحتياطي</div></div><div class="tab-body" style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-ok" onclick="exportBackup()">⬇ تصدير نسخة احتياطية</button>
-      <button class="btn btn-o" onclick="openModal('modal-backup')">⬆ استيراد نسخة</button>
-    </div></div>
-  </div>
-  <div style="margin-top:16px;display:flex;justify-content:flex-end">
-    <button class="btn btn-ok" onclick="toast('تم حفظ الإعدادات','ok');document.body.style.fontSize=val('s-fs')+'px'">💾 حفظ الإعدادات</button>
-  </div>`;
-}
-
-// ══ BACKUP ══
-async function exportBackup(){
-  const stores=['companies','users','documents','partners','factories','distributors','storages'];
-  const data={v:3,exportedAt:now()};
-  for(const st of stores)data[st]=await dbGetAll(st);
-  const a=document.createElement('a');
-  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
-  a.download=`quadra-backup-${new Date().toISOString().slice(0,10)}.json`;
-  a.click();toast('تم تنزيل النسخة الاحتياطية','ok');
-}
-async function importBackup(input){
-  const file=input.files[0];if(!file)return;
-  if(!confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟'))return;
-  try{
-    const data=JSON.parse(await file.text());
-    if(!data.companies)throw new Error('ملف غير صالح');
-    const stores=['companies','users','documents','partners','factories','distributors','storages'];
-    for(const st of stores)for(const o of data[st]||[])await dbPut(st,o);
-    closeModal('modal-backup');toast('تم الاستيراد بنجاح','ok');renderCompanies();
-  }catch(e){toast('خطأ: '+e.message,'er')}
-}
-
-// ══ COMMENTS ══
-async function renderComments(){
-  const all=await dbGetAll('comments');
-  document.getElementById('comment-count').textContent=all.length;
-  const list=document.getElementById('cp-list');
-  if(!all.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">لا توجد تعليقات بعد</div>';return}
-  list.innerHTML=all.reverse().map(c=>`<div class="cp-item"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between"><span style="color:var(--amber);font-weight:600">${esc(c.page||'عام')}</span><button style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px" onclick="delComment(${c.id})">حذف</button></div><div style="font-size:13px;color:var(--text)">${esc(c.text)}</div></div>`).join('');
-}
-async function addComment(){const text=document.getElementById('cp-text').value.trim();if(!text){toast('اكتب تعليقاً','er');return}const page=document.getElementById('page-title').textContent;await dbPut('comments',{text,page,at:now()});document.getElementById('cp-text').value='';toast('تم إضافة التعليق','ok');renderComments();}
-async function delComment(id){await dbDel('comments',id);renderComments();}
-function toggleComments(){document.getElementById('comment-panel').classList.toggle('open')}
-
-// ══ UI ══
-function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('sc-'+n)?.classList.add('active')}
-function openModal(id){document.getElementById(id).classList.add('on')}
-function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay-bg').classList.add('show')}
-function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
-document.querySelectorAll('.moverlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');});});
-document.addEventListener('keydown',e=>{
-  if(e.key==='Escape')document.querySelectorAll('.moverlay.on').forEach(o=>o.classList.remove('on'));
-  if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('active'))doLogin();
-});
-
-
-// ══ LEGAL FORM LOGIC ══
-function onLegalFormChange(){
-  var lf=document.getElementById('cf-legalForm');
-  if(!lf)return;
-  var v=lf.value;
-  var isPersons=v==='تضامن'||v==='توصية_بسيطة';
-  var isShareholding=v==='مساهمة'||v==='توصية_بالأسهم';
-  var tabP=document.getElementById('tab-persons-company');
-  var tabS=document.getElementById('tab-shareholding');
-  if(tabP) tabP.style.display=isPersons?'':'none';
-  if(tabS) tabS.style.display=isShareholding?'':'none';
-  var notices={
-    'تضامن':'⚠️ شركة تضامن: مسؤولية شخصية غير محدودة. السُمة التجارية يجب أن تشمل اسم شريك. يلزم نشر ملخص عقد في جريدة رسمية.',
-    'توصية_بسيطة':'⚠️ شركة توصية بسيطة: الشركاء المتضامنون مسؤولون مسؤولية كاملة، الموصون محدودو المسؤولية.',
-    'مساهمة':'ℹ️ شركة مساهمة: إيداع 10% رأس المال المُصدَر عند التأسيس. مجلس إدارة 3+ أعضاء. مراقب حسابات إلزامي.',
-    'توصية_بالأسهم':'ℹ️ شركة توصية بالأسهم: هيكل رأس مال مزدوج (حصص + أسهم).',
-    'ذ.م.م':'ℹ️ ش.ذ.م.م: المسؤولية محدودة بالحصص. لا أسهم قابلة للتداول.',
-    'شخص_واحد':'ℹ️ شركة الشخص الواحد: رأس المال يُدفع بالكامل عند التأسيس.'
-  };
-  var el=document.getElementById('legal-form-notice');
-  if(el){
-    if(notices[v]){
-      var isWarn=v==='تضامن'||v==='توصية_بسيطة';
-      el.style.cssText='display:block;background:'+(isWarn?'var(--red-light,#fee2e2)':'var(--blue-light,#e0f2fe)')+';border:1px solid '+(isWarn?'rgba(220,38,38,.3)':'rgba(2,132,199,.3)')+';border-radius:8px;padding:10px 13px;font-size:12px;color:'+(isWarn?'#991b1b':'#0369a1')+';margin:8px 0 0;grid-column:1/-1';
-      el.textContent=notices[v];
-    } else {
-      el.style.display='none';
-    }
-  }
-}
-function onEntityTypeChange(){}
-function loadLiabilitySummary(){}
-
-function renderDrugReg(el){if(window.renderDrugReg)window.renderDrugReg(el);}// ═══════════════════════════════════════════════════════════════
-// LOGIN — Clean rewrite
-// ═══════════════════════════════════════════════════════════════
-
-
-// ── Step navigation ──────────────────────────────────────────────
-
-// ── Get all companies ────────────────────────────────────────────
-
-// ── Get all users — DEDUPLICATED by username ─────────────────────
-
-
-
-// ── Show login screen ────────────────────────────────────────────
-
-// ── Render user grid ─────────────────────────────────────────────
-
-// ── Pick user ────────────────────────────────────────────────────
-
-// ── Login ────────────────────────────────────────────────────────
-
-// ── Eye toggle ───────────────────────────────────────────────────
-
-
-// ── Forgot password ──────────────────────────────────────────────
-
-// ── Logout ───────────────────────────────────────────────────────
-
-
-
-// ══════════════════════════════════════════════════════════════════
-// LOGIN — Setup + Auth system
-// Flow: First run → Create Company → Create Admin → Login
-//       After that → Login directly
-// ══════════════════════════════════════════════════════════════════
- // which company we're logging into
-
-
-// ── Helpers ──────────────────────────────────────────────────────
-function _gvl(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
-function _loginErr(id, msg){ var el=document.getElementById(id); if(el){el.textContent=msg;el.classList.add('show');} }
-function _loginClearErr(id){ var el=document.getElementById(id); if(el) el.classList.remove('show'); }
-function _getAllCompanies(){ try{return JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){return[];} }
-function _getCoData(id){ try{return JSON.parse(localStorage.getItem('pharma_data_'+id)||'{}');}catch(e){return{};} }
-function _saveCoData(id,d){ localStorage.setItem('pharma_data_'+id, JSON.stringify(d)); }
-
-// ── Step navigation ───────────────────────────────────────────────
-
-// ── Show login screen ─────────────────────────────────────────────
-
-// ── Build login page with company info ───────────────────────────
-
-
-// ── SETUP: Pick color ─────────────────────────────────────────────
-
-// ── SETUP: Next to admin creation ────────────────────────────────
-
-// ── SETUP: Create company + admin ────────────────────────────────
-
-
-// ── LOGIN ────────────────────────────────────────────────────────
-
-
-// ── RESET PASSWORD ────────────────────────────────────────────────
-
-// ── LOGOUT ────────────────────────────────────────────────────────
-
-
-
-
-// ══════════════════════════════════════════════════════════════════
-// AUTH SYSTEM — Setup + Login
-// ══════════════════════════════════════════════════════════════════
 (function(){
-  // Hide ALL app elements on boot
-  ['sidebar','co-screen','central-dashboard','topbar','erp-topbar','app-topbar'].forEach(function(id){
-    var el=document.getElementById(id);if(el)el.style.display='none';
-  });
-  document.querySelectorAll('main,.topbar,nav.topbar').forEach(function(el){el.style.display='none';});
+  // Hide old co-screen and app immediately
+  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
+  var mn=document.querySelector('main');     if(mn) mn.style.display='none';
+  var ocs=document.getElementById('co-screen'); if(ocs) ocs.style.display='none';
+  var cd=document.getElementById('central-dashboard'); if(cd) cd.style.display='none';
 
   // Restore session
   var sess=null;
@@ -12460,8 +12051,220 @@ function _coMgrImport(){
   input.click();
 }
 
+</body></html>`);
+}
+
+// ══ USERS ══
+let usrQ='';
+async function renderUsers(c){
+  const all=await dbGetAll('users','companyId',S.companyId);
+  const users=all.filter(u=>!u.deletedAt&&(!usrQ||u.nameAr.includes(usrQ)||u.username.includes(usrQ)));
+  c.innerHTML=`<div class="page-title">👥 المستخدمون</div>
+  <div class="pcard"><div class="ph"><div class="ptitle">${all.filter(u=>!u.deletedAt).length} مستخدم</div>
+  <div class="pacts">
+    <div class="sbar"><span style="color:var(--muted)">🔍</span><input placeholder="بحث..." value="${esc(usrQ)}" oninput="usrQ=this.value;renderUsers(document.getElementById('main-content'))"></div>
+    <button class="btn btn-ok btn-sm" onclick="openAddUser()">+ إضافة مستخدم</button>
+  </div></div>
+  <div class="tw"><table><thead><tr><th>المستخدم</th><th>اسم الدخول</th><th>الدور</th><th>القسم</th><th>آخر دخول</th><th>الحالة</th><th>إجراء</th></tr></thead><tbody>
+  ${users.length?users.map(u=>`<tr>
+    <td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--secondary-d))">${u.nameAr.charAt(0)}</div><div><div style="font-weight:600">${esc(u.nameAr)}</div><div style="font-size:11px;color:var(--muted)">${esc(u.nameEn||'')}</div></div></div></td>
+    <td><code style="font-size:11px;background:rgba(34,211,238,.08);padding:2px 7px;border-radius:4px;direction:ltr;display:inline-block">${esc(u.username)}</code></td>
+    <td><span class="bdg ${u.role==='admin'?'bdg-b':'bdg-m'}">${u.role==='admin'?'مدير':'مستخدم'}</span></td>
+    <td style="color:var(--muted)">${esc(u.department||'—')}</td>
+    <td style="font-size:11px;color:var(--muted)">${fmtDt(u.lastLogin)}</td>
+    <td><span class="bdg ${u.isActive?'bdg-g':'bdg-r'}">${u.isActive?'نشط':'موقوف'}</span></td>
+    <td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditUser('${u.id}')">تعديل</button>${u.id!==S.userId?`<button class="btn btn-${u.isActive?'o':'ok'} btn-sm" onclick="toggleUser('${u.id}')">${u.isActive?'إيقاف':'تفعيل'}</button>`:''}</div></td>
+  </tr>`).join(''):'<tr><td colspan="7"><div class="es"><div class="ei">👥</div><p>لا يوجد مستخدمون</p></div></td></tr>'}
+  </tbody></table></div></div>`;
+}
+function openAddUser(){document.getElementById('mu-title').textContent='إضافة مستخدم جديد';document.getElementById('u-ph').style.display='none';document.getElementById('u-pl').innerHTML='كلمة المرور <span class="req">*</span>';['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title-inp','u-phone','u-email'].forEach(id=>set(id,''));set('u-role','user');openModal('modal-user');}
+async function openEditUser(id){const u=await dbGet('users',id);if(!u)return;document.getElementById('mu-title').textContent='تعديل مستخدم';document.getElementById('u-ph').style.display='block';document.getElementById('u-pl').innerHTML='كلمة مرور جديدة';set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');set('u-user',u.username);set('u-pass','');set('u-role',u.role);set('u-dept',u.department||'');set('u-title-inp',u.jobTitle||'');set('u-phone',u.phone||'');set('u-email',u.email||'');openModal('modal-user');}
+async function saveUser(){
+  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
+  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','er');return}
+  const btn=document.getElementById('btn-su');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    if(id){const u=await dbGet('users',id);if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','er');return}u.passwordHash=await hashPw(pw)}Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});await dbPut('users',u);toast('تم التحديث','ok');}
+    else{if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف','er');return}const all=await dbGetAll('users','companyId',S.companyId);if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','er');return}await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});toast('تم الإضافة','ok');}
+    closeModal('modal-user');renderUsers(document.getElementById('main-content'));
+  }catch(e){toast('خطأ: '+e.message,'er')}
+  btn.innerHTML='حفظ';btn.disabled=false;
+}
+async function toggleUser(id){const u=await dbGet('users',id);if(!u)return;u.isActive=!u.isActive;u.updatedAt=now();await dbPut('users',u);toast(u.isActive?'تم التفعيل':'تم الإيقاف','ok');renderUsers(document.getElementById('main-content'));}
+
+// ══ SETTINGS ══
+function renderSettings(c){
+  c.innerHTML=`<div class="page-title">⚙️ إعدادات النظام</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="pcard"><div class="ph"><div class="ptitle">العرض</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الخط</label><select class="fi" id="s-fs"><option value="13">صغير 13px</option><option value="14" selected>متوسط 14px</option><option value="15">كبير 15px</option></select></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">الطباعة</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الورق</label><select class="fi" id="s-paper"><option value="A4" selected>A4</option><option value="A5">A5</option></select></div>
+      <div class="fg"><label class="fl">هيدر الطباعة</label><input class="fi" id="s-header" placeholder="نص يظهر في رأس كل طباعة"></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">💾 النسخ الاحتياطي</div></div><div class="tab-body" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ok" onclick="exportBackup()">⬇ تصدير نسخة احتياطية</button>
+      <button class="btn btn-o" onclick="openModal('modal-backup')">⬆ استيراد نسخة</button>
+    </div></div>
+  </div>
+  <div style="margin-top:16px;display:flex;justify-content:flex-end">
+    <button class="btn btn-ok" onclick="toast('تم حفظ الإعدادات','ok');document.body.style.fontSize=val('s-fs')+'px'">💾 حفظ الإعدادات</button>
+  </div>`;
+}
+
+// ══ BACKUP ══
+async function exportBackup(){
+  const stores=['companies','users','documents','partners','factories','distributors','storages'];
+  const data={v:3,exportedAt:now()};
+  for(const st of stores)data[st]=await dbGetAll(st);
+  const a=document.createElement('a');
+  a.href='data:application/json;charset=utf-8,'+encodeURIComponent(JSON.stringify(data,null,2));
+  a.download=`quadra-backup-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();toast('تم تنزيل النسخة الاحتياطية','ok');
+}
+async function importBackup(input){
+  const file=input.files[0];if(!file)return;
+  if(!confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟'))return;
+  try{
+    const data=JSON.parse(await file.text());
+    if(!data.companies)throw new Error('ملف غير صالح');
+    const stores=['companies','users','documents','partners','factories','distributors','storages'];
+    for(const st of stores)for(const o of data[st]||[])await dbPut(st,o);
+    closeModal('modal-backup');toast('تم الاستيراد بنجاح','ok');renderCompanies();
+  }catch(e){toast('خطأ: '+e.message,'er')}
+}
+
+// ══ COMMENTS ══
+async function renderComments(){
+  const all=await dbGetAll('comments');
+  document.getElementById('comment-count').textContent=all.length;
+  const list=document.getElementById('cp-list');
+  if(!all.length){list.innerHTML='<div style="text-align:center;padding:24px;color:var(--muted);font-size:13px">لا توجد تعليقات بعد</div>';return}
+  list.innerHTML=all.reverse().map(c=>`<div class="cp-item"><div style="font-size:11px;color:var(--muted);margin-bottom:4px;display:flex;justify-content:space-between"><span style="color:var(--amber);font-weight:600">${esc(c.page||'عام')}</span><button style="background:none;border:none;cursor:pointer;color:var(--muted);font-size:11px" onclick="delComment(${c.id})">حذف</button></div><div style="font-size:13px;color:var(--text)">${esc(c.text)}</div></div>`).join('');
+}
+async function addComment(){const text=document.getElementById('cp-text').value.trim();if(!text){toast('اكتب تعليقاً','er');return}const page=document.getElementById('page-title').textContent;await dbPut('comments',{text,page,at:now()});document.getElementById('cp-text').value='';toast('تم إضافة التعليق','ok');renderComments();}
+async function delComment(id){await dbDel('comments',id);renderComments();}
+function toggleComments(){document.getElementById('comment-panel').classList.toggle('open')}
+
+// ══ UI ══
+function showScreen(n){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('sc-'+n)?.classList.add('active')}
+function openModal(id){document.getElementById(id).classList.add('on')}
+function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay-bg').classList.add('show')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay-bg').classList.remove('show')}
+document.querySelectorAll('.moverlay').forEach(o=>{o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on');});});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape')document.querySelectorAll('.moverlay.on').forEach(o=>o.classList.remove('on'));
+  if(e.key==='Enter'&&document.getElementById('sc-login').classList.contains('active'))doLogin();
+});
 
 
+// ══ LEGAL FORM LOGIC ══
+function onLegalFormChange(){
+  var lf=document.getElementById('cf-legalForm');
+  if(!lf)return;
+  var v=lf.value;
+  var isPersons=v==='تضامن'||v==='توصية_بسيطة';
+  var isShareholding=v==='مساهمة'||v==='توصية_بالأسهم';
+  var tabP=document.getElementById('tab-persons-company');
+  var tabS=document.getElementById('tab-shareholding');
+  if(tabP) tabP.style.display=isPersons?'':'none';
+  if(tabS) tabS.style.display=isShareholding?'':'none';
+  var notices={
+    'تضامن':'⚠️ شركة تضامن: مسؤولية شخصية غير محدودة. السُمة التجارية يجب أن تشمل اسم شريك. يلزم نشر ملخص عقد في جريدة رسمية.',
+    'توصية_بسيطة':'⚠️ شركة توصية بسيطة: الشركاء المتضامنون مسؤولون مسؤولية كاملة، الموصون محدودو المسؤولية.',
+    'مساهمة':'ℹ️ شركة مساهمة: إيداع 10% رأس المال المُصدَر عند التأسيس. مجلس إدارة 3+ أعضاء. مراقب حسابات إلزامي.',
+    'توصية_بالأسهم':'ℹ️ شركة توصية بالأسهم: هيكل رأس مال مزدوج (حصص + أسهم).',
+    'ذ.م.م':'ℹ️ ش.ذ.م.م: المسؤولية محدودة بالحصص. لا أسهم قابلة للتداول.',
+    'شخص_واحد':'ℹ️ شركة الشخص الواحد: رأس المال يُدفع بالكامل عند التأسيس.'
+  };
+  var el=document.getElementById('legal-form-notice');
+  if(el){
+    if(notices[v]){
+      var isWarn=v==='تضامن'||v==='توصية_بسيطة';
+      el.style.cssText='display:block;background:'+(isWarn?'var(--red-light,#fee2e2)':'var(--blue-light,#e0f2fe)')+';border:1px solid '+(isWarn?'rgba(220,38,38,.3)':'rgba(2,132,199,.3)')+';border-radius:8px;padding:10px 13px;font-size:12px;color:'+(isWarn?'#991b1b':'#0369a1')+';margin:8px 0 0;grid-column:1/-1';
+      el.textContent=notices[v];
+    } else {
+      el.style.display='none';
+    }
+  }
+}
+function onEntityTypeChange(){}
+function loadLiabilitySummary(){}
+
+function renderDrugReg(el){if(window.renderDrugReg)window.renderDrugReg(el);}// ═══════════════════════════════════════════════════════════════
+// LOGIN — Clean rewrite
+// ═══════════════════════════════════════════════════════════════
+
+
+// ── Step navigation ──────────────────────────────────────────────
+
+// ── Get all companies ────────────────────────────────────────────
+
+// ── Get all users — DEDUPLICATED by username ─────────────────────
+
+
+
+// ── Show login screen ────────────────────────────────────────────
+
+// ── Render user grid ─────────────────────────────────────────────
+
+// ── Pick user ────────────────────────────────────────────────────
+
+// ── Login ────────────────────────────────────────────────────────
+
+// ── Eye toggle ───────────────────────────────────────────────────
+
+
+// ── Forgot password ──────────────────────────────────────────────
+
+// ── Logout ───────────────────────────────────────────────────────
+
+
+
+// ══════════════════════════════════════════════════════════════════
+// LOGIN — Setup + Auth system
+// Flow: First run → Create Company → Create Admin → Login
+//       After that → Login directly
+// ══════════════════════════════════════════════════════════════════
+ // which company we're logging into
+
+
+// ── Helpers ──────────────────────────────────────────────────────
+function _gvl(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
+function _loginErr(id, msg){ var el=document.getElementById(id); if(el){el.textContent=msg;el.classList.add('show');} }
+function _loginClearErr(id){ var el=document.getElementById(id); if(el) el.classList.remove('show'); }
+function _getAllCompanies(){ try{return JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){return[];} }
+function _getCoData(id){ try{return JSON.parse(localStorage.getItem('pharma_data_'+id)||'{}');}catch(e){return{};} }
+function _saveCoData(id,d){ localStorage.setItem('pharma_data_'+id, JSON.stringify(d)); }
+
+// ── Step navigation ───────────────────────────────────────────────
+
+// ── Show login screen ─────────────────────────────────────────────
+
+// ── Build login page with company info ───────────────────────────
+
+
+// ── SETUP: Pick color ─────────────────────────────────────────────
+
+// ── SETUP: Next to admin creation ────────────────────────────────
+
+// ── SETUP: Create company + admin ────────────────────────────────
+
+
+// ── LOGIN ────────────────────────────────────────────────────────
+
+
+// ── RESET PASSWORD ────────────────────────────────────────────────
+
+// ── LOGOUT ────────────────────────────────────────────────────────
+
+
+
+
+// ══════════════════════════════════════════════════════════════════
+// AUTH SYSTEM — Setup + Login
+// ══════════════════════════════════════════════════════════════════
 var _attCount = 0, _MAX_ATT = 5, _loginCoId = null;
 var _RLBL={admin:'مدير النظام',finance:'مدير مالي',production:'مدير إنتاج',ra:'مسؤول تسجيل',sales:'مبيعات',viewer:'عارض',quality:'جودة',warehouse:'مخازن'};
 
@@ -12528,8 +12331,6 @@ function erpShowLogin(){
   ['sidebar','#sidebar-overlay'].forEach(function(s){var el=document.querySelector(s)||document.getElementById(s.replace('#',''));if(el)el.style.display='none';});
   var mn=document.querySelector('main');if(mn)mn.style.display='none';
   var cd=document.getElementById('central-dashboard');if(cd)cd.style.display='none';
-  var sc2=document.getElementById('companies-screen');if(sc2)sc2.style.display='none';
-  var tb=document.getElementById('main-topbar');if(tb)tb.style.display='none';
   var ls=document.getElementById('erp-login-screen');if(!ls)return;
   ls.style.display='flex';
   var cos=_getCos();
