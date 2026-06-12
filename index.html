@@ -3916,15 +3916,14 @@ function saveDB(){
 
 /* ── bootstrap: show selector on load ── */
 (function(){
+  // Companies managed by showCompaniesManager()
   const list = _coGetAll();
-  /* first-time: create a default company */
   if(list.length === 0){
     list.push({ id:'co_default', name:'الشركة الدوائية',
                 type:'شركة دوائية', color:'2ea043' });
     _coSetAll(list);
   }
-  coRenderGrid();
-  /* app starts only after user picks a company */
+  // coRenderGrid() — replaced by showCompaniesManager in erpBoot
 })();
 
 
@@ -11091,6 +11090,10 @@ function _coMgrImport(){
 }
 
 
+// ── Aliases for backward compatibility ──
+function _erpAllCompanies(){ return _getCos(); }
+function _erpDataOf(id){ return _getCoDB(id); }
+
 (function(){
   // Hide old co-screen and app immediately
   var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
@@ -11715,15 +11718,6 @@ function _errco(id,msg){var el=document.getElementById(id);if(el){el.textContent
 function _clearErrco(id){var el=document.getElementById(id);if(el)el.style.display='none';}
 
 // ── Show companies manager ────────────────────────────────────────
-function showCompaniesManager(){
-  // Hide everything else
-  var ls=document.getElementById('erp-login-screen');if(ls)ls.style.display='none';
-  var cd=document.getElementById('central-dashboard');if(cd)cd.style.display='none';
-  var sb=document.getElementById('sidebar');if(sb)sb.style.display='none';
-  var mn=document.querySelector('main');if(mn)mn.style.display='none';
-  var sc=document.getElementById('companies-screen');if(sc)sc.style.display='block';
-  _renderCoMgrGrid();
-}
 
 // ── Render companies grid ─────────────────────────────────────────
 function _renderCoMgrGrid(){
