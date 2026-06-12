@@ -1837,7 +1837,7 @@ tbody td{font-size:14px !important}
 <!-- Sidebar overlay for mobile -->
 <div id="sidebar-overlay" onclick="closeMobSidebar()"></div>
 
-  <div class="topbar">
+  <div class="topbar" id="main-topbar">
     <!-- Hamburger (mobile only) -->
     <button id="mob-menu-btn" onclick="toggleMobSidebar()" aria-label="القائمة">☰</button>
 
@@ -10879,6 +10879,8 @@ function erpShowCentral(){
     _updateBadge();
   }
   erpRenderCentralGrid();
+  var sc2=document.getElementById('companies-screen');if(sc2)sc2.style.display='none';
+  var tb=document.getElementById('main-topbar');if(tb)tb.style.display='';
 }
 
 function erpRenderCentralGrid(){
@@ -11017,11 +11019,12 @@ function _getCoDB(id){try{return JSON.parse(localStorage.getItem('pharma_data_'+
 function _saveCoDB(id,d){localStorage.setItem('pharma_data_'+id,JSON.stringify(d));}
 
 function showCompaniesManager(){
-  var els=['erp-login-screen','central-dashboard','sidebar'];
-  els.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
-  var mn=document.querySelector('main');if(mn)mn.style.display='none';
+  ['erp-login-screen','central-dashboard','sidebar','sidebar-overlay','main-topbar'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.querySelectorAll('main').forEach(function(el){el.style.display='none';});
   var sc=document.getElementById('companies-screen');
-  if(sc) sc.style.display='block';
+  if(sc) sc.style.cssText='display:block!important;position:fixed;inset:0;z-index:9999;overflow-y:auto';
   _renderCoMgrGrid();
 }
 
@@ -11220,11 +11223,11 @@ function _erpAllCompanies(){ return _getCos(); }
 function _erpDataOf(id){ return _getCoDB(id); }
 
 (function(){
-  // Hide old co-screen and app immediately
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main');     if(mn) mn.style.display='none';
-  var ocs=document.getElementById('co-screen'); if(ocs) ocs.style.display='none';
-  var cd=document.getElementById('central-dashboard'); if(cd) cd.style.display='none';
+  // Hide ALL app elements on boot
+  ['sidebar','co-screen','central-dashboard','topbar','erp-topbar','app-topbar'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.style.display='none';
+  });
+  document.querySelectorAll('main,.topbar,nav.topbar').forEach(function(el){el.style.display='none';});
 
   // Restore session
   var sess=null;
@@ -12320,6 +12323,8 @@ function erpShowLogin(){
   ['sidebar','#sidebar-overlay'].forEach(function(s){var el=document.querySelector(s)||document.getElementById(s.replace('#',''));if(el)el.style.display='none';});
   var mn=document.querySelector('main');if(mn)mn.style.display='none';
   var cd=document.getElementById('central-dashboard');if(cd)cd.style.display='none';
+  var sc2=document.getElementById('companies-screen');if(sc2)sc2.style.display='none';
+  var tb=document.getElementById('main-topbar');if(tb)tb.style.display='none';
   var ls=document.getElementById('erp-login-screen');if(!ls)return;
   ls.style.display='flex';
   var cos=_getCos();
