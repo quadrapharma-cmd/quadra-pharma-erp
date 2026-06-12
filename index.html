@@ -1383,6 +1383,107 @@ tbody td{font-size:14px !important}
 <body><body>
 
 <!-- ══ LOGIN SCREEN ══ -->
+<!-- ══ COMPANIES MANAGER ══ -->
+<div id="companies-screen" style="display:none">
+  <div style="min-height:100vh;background:linear-gradient(145deg,#f8fafc,#f0f9ff 50%,#f5f3ff);font-family:var(--font);direction:rtl;display:flex;flex-direction:column">
+
+    <!-- Header -->
+    <div style="background:rgba(255,255,255,.9);backdrop-filter:blur(20px);border-bottom:1px solid rgba(2,132,199,0.12);padding:0 24px;height:58px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10">
+      <div style="width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#0284c7,#7c3aed);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;color:#fff">Q</div>
+      <div style="font-size:15px;font-weight:800;background:linear-gradient(135deg,#0284c7,#7c3aed);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Quadra Pharma ERP</div>
+      <div style="flex:1"></div>
+      <button onclick="_coMgrImport()" style="padding:6px 12px;border:1px solid rgba(2,132,199,0.2);border-radius:8px;background:#f8fafc;color:#64748b;font-family:var(--font);font-size:12px;cursor:pointer">📂 استيراد نسخة</button>
+    </div>
+
+    <!-- Body -->
+    <div style="padding:28px 24px;max-width:900px;margin:0 auto;width:100%">
+      <div style="font-size:22px;font-weight:800;color:#0f172a;margin-bottom:4px">إدارة الشركات</div>
+      <div style="font-size:14px;color:#64748b;margin-bottom:24px">أنشئ شركة أو اختر شركة موجودة للدخول عليها</div>
+
+      <!-- Companies grid -->
+      <div id="co-mgr-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;margin-bottom:20px"></div>
+
+      <!-- Error -->
+      <div id="co-mgr-err" style="display:none;background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:10px 14px;font-size:13px;color:#991b1b;margin-bottom:14px"></div>
+    </div>
+  </div>
+
+  <!-- Add Company Modal -->
+  <div id="co-add-modal" style="display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);backdrop-filter:blur(4px);z-index:500;align-items:center;justify-content:center">
+    <div style="background:#fff;border-radius:18px;width:90%;max-width:480px;box-shadow:0 20px 60px rgba(2,132,199,.12);overflow:hidden">
+      <div style="padding:18px 22px;border-bottom:1px solid rgba(2,132,199,0.1);background:#f8fafc;display:flex;align-items:center;justify-content:space-between">
+        <div style="font-size:14px;font-weight:700;color:#0284c7;text-transform:uppercase;letter-spacing:.5px" id="co-modal-title">إنشاء شركة جديدة</div>
+        <button onclick="_coMgrCloseModal()" style="background:none;border:none;font-size:20px;cursor:pointer;color:#64748b">✕</button>
+      </div>
+      <div style="padding:22px" id="co-modal-body">
+        <!-- Step 1: Company info -->
+        <div id="co-step-info">
+          <div style="margin-bottom:14px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">اسم الشركة *</label>
+            <input id="co-inp-name" class="login-inp" placeholder="مثال: Quadra Pharm" style="background:#f8fafc">
+          </div>
+          <div style="margin-bottom:14px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">نوع النشاط</label>
+            <select id="co-inp-type" class="login-inp" style="background:#f8fafc">
+              <option>شركة دوائية</option>
+              <option>مصنع أدوية</option>
+              <option>موزع أدوية</option>
+              <option>مستحضرات تجميل</option>
+              <option>مكملات غذائية</option>
+              <option>شركة بيطرية</option>
+            </select>
+          </div>
+          <div style="margin-bottom:18px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">لون الشركة</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <div onclick="_pickCoColor(this,'0284c7')" data-col="0284c7" style="width:30px;height:30px;border-radius:50%;background:#0284c7;cursor:pointer;border:3px solid #0284c7;box-shadow:0 0 0 2px #fff,0 0 0 4px #0284c7"></div>
+              <div onclick="_pickCoColor(this,'7c3aed')" data-col="7c3aed" style="width:30px;height:30px;border-radius:50%;background:#7c3aed;cursor:pointer"></div>
+              <div onclick="_pickCoColor(this,'059669')" data-col="059669" style="width:30px;height:30px;border-radius:50%;background:#059669;cursor:pointer"></div>
+              <div onclick="_pickCoColor(this,'dc2626')" data-col="dc2626" style="width:30px;height:30px;border-radius:50%;background:#dc2626;cursor:pointer"></div>
+              <div onclick="_pickCoColor(this,'d97706')" data-col="d97706" style="width:30px;height:30px;border-radius:50%;background:#d97706;cursor:pointer"></div>
+              <div onclick="_pickCoColor(this,'0f766e')" data-col="0f766e" style="width:30px;height:30px;border-radius:50%;background:#0f766e;cursor:pointer"></div>
+              <div onclick="_pickCoColor(this,'9333ea')" data-col="9333ea" style="width:30px;height:30px;border-radius:50%;background:#9333ea;cursor:pointer"></div>
+              <div onclick="_pickCoColor(this,'be185d')" data-col="be185d" style="width:30px;height:30px;border-radius:50%;background:#be185d;cursor:pointer"></div>
+            </div>
+            <input type="hidden" id="co-inp-color" value="0284c7">
+          </div>
+          <div id="co-step-err" class="login-err"></div>
+          <button onclick="_coStepToAdmin()" class="login-btn">التالي — إنشاء حساب المدير ←</button>
+        </div>
+
+        <!-- Step 2: Admin account -->
+        <div id="co-step-admin" style="display:none">
+          <div style="background:#f0f9ff;border:1px solid rgba(2,132,199,.15);border-radius:10px;padding:10px 14px;font-size:12px;color:#0369a1;margin-bottom:16px">
+            👑 هذا الحساب سيكون مدير النظام للشركة
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">الاسم الكامل *</label>
+            <input id="co-admin-name" class="login-inp" placeholder="مثال: د. هيثم دويدار" style="background:#f8fafc">
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">اسم المستخدم *</label>
+            <input id="co-admin-user" class="login-inp" dir="ltr" placeholder="admin" autocomplete="off" style="background:#f8fafc">
+          </div>
+          <div style="margin-bottom:12px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">كلمة المرور *</label>
+            <input id="co-admin-pw" class="login-inp" type="password" dir="ltr" placeholder="6 أحرف على الأقل" style="background:#f8fafc">
+          </div>
+          <div style="margin-bottom:16px">
+            <label style="display:block;font-size:11px;font-weight:600;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px">تأكيد كلمة المرور *</label>
+            <input id="co-admin-pw2" class="login-inp" type="password" dir="ltr" placeholder="أعد كتابة كلمة المرور" style="background:#f8fafc">
+          </div>
+          <div id="co-admin-err" class="login-err"></div>
+          <div style="display:flex;gap:8px">
+            <button onclick="_coStepBack()" style="flex:1;padding:11px;background:#f8fafc;border:1px solid rgba(2,132,199,.2);border-radius:10px;font-family:var(--font);font-size:14px;cursor:pointer;color:#64748b">← رجوع</button>
+            <button onclick="_coCreate()" style="flex:2;padding:11px;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;border:none;border-radius:10px;font-family:var(--font);font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 12px rgba(2,132,199,.3)">✓ إنشاء الشركة</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
 <div id="erp-login-screen" style="display:none">
   <div class="login-orb o1"></div>
   <div class="login-orb o2"></div>
@@ -10811,7 +10912,7 @@ function erpAddCompany(){
       return;
     }
   }
-  erpShowLogin();
+  showCompaniesManager();
 
   // Hook co-switch-btn
   var sw=document.getElementById('co-switch-btn');
@@ -11390,6 +11491,224 @@ window.addEventListener('appinstalled', function(){
   if(btn) btn.style.display = 'none';
 });
 
+
+// ══════════════════════════════════════════════════════════════════
+// COMPANIES MANAGER — First screen before login
+// ══════════════════════════════════════════════════════════════════
+var _coMgrEditId = null;
+var _coPickedColor = '0284c7';
+
+function _gvco(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function _errco(id,msg){var el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}}
+function _clearErrco(id){var el=document.getElementById(id);if(el)el.style.display='none';}
+
+// ── Show companies manager ────────────────────────────────────────
+function showCompaniesManager(){
+  // Hide everything else
+  var ls=document.getElementById('erp-login-screen');if(ls)ls.style.display='none';
+  var cd=document.getElementById('central-dashboard');if(cd)cd.style.display='none';
+  var sb=document.getElementById('sidebar');if(sb)sb.style.display='none';
+  var mn=document.querySelector('main');if(mn)mn.style.display='none';
+  var sc=document.getElementById('companies-screen');if(sc)sc.style.display='block';
+  _renderCoMgrGrid();
+}
+
+// ── Render companies grid ─────────────────────────────────────────
+function _renderCoMgrGrid(){
+  var grid=document.getElementById('co-mgr-grid');
+  if(!grid)return;
+  var cos=[];
+  try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}
+
+  grid.innerHTML='';
+
+  // Add company card
+  var addCard=document.createElement('div');
+  addCard.style.cssText='background:rgba(248,250,252,.6);border:1.5px dashed rgba(2,132,199,.2);border-radius:16px;padding:20px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:160px;color:#94a3b8';
+  addCard.onmouseenter=function(){this.style.borderColor='rgba(2,132,199,.4)';this.style.color='#0284c7';};
+  addCard.onmouseleave=function(){this.style.borderColor='rgba(2,132,199,.2)';this.style.color='#94a3b8';};
+  addCard.onclick=_coMgrOpenAdd;
+  addCard.innerHTML='<div style="font-size:28px">➕</div><div style="font-size:14px;font-weight:600">شركة جديدة</div>';
+  grid.appendChild(addCard);
+
+  // Company cards
+  cos.forEach(function(c){
+    var db={};
+    try{db=JSON.parse(localStorage.getItem('pharma_data_'+c.id)||'{}');}catch(e){}
+    var users=(db.appUsers||[]).length;
+    var prods=(db.products||[]).length;
+    var regs=(db.registrations||[]).length;
+    var col='#'+(c.color||'0284c7');
+
+    var card=document.createElement('div');
+    card.style.cssText='background:#fff;border:1px solid rgba(2,132,199,.12);border-radius:16px;padding:20px;transition:all .2s;position:relative;overflow:hidden';
+    card.innerHTML=
+      // Delete btn
+      '<button onclick="event.stopPropagation();_coMgrDelete(''+c.id+'')" style="position:absolute;top:10px;left:10px;background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.15);border-radius:7px;padding:4px 8px;font-size:11px;color:#dc2626;cursor:pointer">🗑 حذف</button>'+
+      // Gem
+      '<div style="width:48px;height:48px;border-radius:14px;background:'+col+';display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:900;color:#fff;margin-bottom:12px;box-shadow:0 4px 12px rgba(0,0,0,.12)">'+(c.name||'?')[0].toUpperCase()+'</div>'+
+      '<div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:3px">'+esc(c.name)+'</div>'+
+      '<div style="font-size:12px;color:#64748b;margin-bottom:14px">'+esc(c.type||'')+'</div>'+
+      '<div style="display:flex;gap:12px;margin-bottom:16px">'+
+        '<div style="font-size:11px;color:#94a3b8"><strong style="display:block;font-size:16px;font-weight:700;color:#0284c7">'+prods+'</strong>منتج</div>'+
+        '<div style="font-size:11px;color:#94a3b8"><strong style="display:block;font-size:16px;font-weight:700;color:#0284c7">'+regs+'</strong>تسجيل</div>'+
+        '<div style="font-size:11px;color:#94a3b8"><strong style="display:block;font-size:16px;font-weight:700;color:#0284c7">'+users+'</strong>مستخدم</div>'+
+      '</div>'+
+      // Enter button
+      '<button onclick="_coMgrEnter(''+c.id+'')" style="width:100%;padding:10px;background:linear-gradient(135deg,#0284c7,#0369a1);color:#fff;border:none;border-radius:10px;font-family:var(--font);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 10px rgba(2,132,199,.25)">دخول على الشركة ←</button>';
+    grid.insertBefore(card, addCard);
+  });
+}
+
+// ── Enter company (go to login) ───────────────────────────────────
+function _coMgrEnter(coId){
+  var sc=document.getElementById('companies-screen');if(sc)sc.style.display='none';
+  var ls=document.getElementById('erp-login-screen');if(ls)ls.style.display='flex';
+  // Set login for this company
+  _loginCoId=coId;
+  var cos=[];
+  try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}
+  var co=cos.find(function(c){return c.id===coId;});
+  if(co){
+    var logo=document.getElementById('login-logo');
+    var title=document.getElementById('login-co-title');
+    if(logo){logo.textContent=(co.name||'Q')[0].toUpperCase();logo.style.background='linear-gradient(135deg,#'+(co.color||'0284c7')+',#7c3aed)';}
+    if(title) title.textContent=co.name;
+  }
+  // Reset fields
+  var u=document.getElementById('login-user');if(u)u.value='';
+  var p=document.getElementById('login-pw');if(p){p.value='';p.type='password';}
+  _attCount=0;
+  var bar=document.getElementById('erp-att-bar');if(bar)bar.style.display='none';
+  var fill=document.getElementById('erp-att-fill');if(fill)fill.style.width='0%';
+  var btn=document.getElementById('login-btn');if(btn)btn.disabled=false;
+  var err=document.getElementById('login-err');if(err)err.classList.remove('show');
+  // Add back button
+  var sub=document.getElementById('login-co-sub');
+  if(sub) sub.innerHTML='<button onclick="showCompaniesManager()" style="background:none;border:none;color:#0284c7;font-family:var(--font);font-size:13px;cursor:pointer;padding:0">← العودة لقائمة الشركات</button>';
+  erpGoStep('login');
+  setTimeout(function(){var u2=document.getElementById('login-user');if(u2)u2.focus();},150);
+}
+
+// ── Delete company ────────────────────────────────────────────────
+function _coMgrDelete(id){
+  var cos=[];
+  try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}
+  var co=cos.find(function(c){return c.id===id;});
+  if(!confirm('حذف شركة "'+( co?co.name:id)+'" وكل بياناتها نهائياً؟')) return;
+  localStorage.removeItem('pharma_data_'+id);
+  localStorage.setItem('pharma_companies_v1', JSON.stringify(cos.filter(function(c){return c.id!==id;})));
+  _renderCoMgrGrid();
+}
+
+// ── Open add modal ────────────────────────────────────────────────
+function _coMgrOpenAdd(){
+  _coPickedColor='0284c7';
+  // Reset fields
+  ['co-inp-name','co-admin-name','co-admin-user','co-admin-pw','co-admin-pw2'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  var sel=document.getElementById('co-inp-type');if(sel)sel.selectedIndex=0;
+  var col=document.getElementById('co-inp-color');if(col)col.value='0284c7';
+  // Reset color picker
+  document.querySelectorAll('[data-col]').forEach(function(d){
+    d.style.boxShadow='none';d.style.border='none';
+  });
+  var first=document.querySelector('[data-col="0284c7"]');
+  if(first){first.style.boxShadow='0 0 0 2px #fff,0 0 0 4px #0284c7';first.style.border='3px solid #0284c7';}
+  _clearErrco('co-step-err');_clearErrco('co-admin-err');
+  // Show step 1
+  document.getElementById('co-step-info').style.display='block';
+  document.getElementById('co-step-admin').style.display='none';
+  document.getElementById('co-modal-title').textContent='إنشاء شركة جديدة';
+  var m=document.getElementById('co-add-modal');if(m)m.style.display='flex';
+  setTimeout(function(){var el=document.getElementById('co-inp-name');if(el)el.focus();},150);
+}
+
+function _coMgrCloseModal(){
+  var m=document.getElementById('co-add-modal');if(m)m.style.display='none';
+}
+
+function _pickCoColor(el,color){
+  _coPickedColor=color;
+  document.querySelectorAll('[data-col]').forEach(function(d){d.style.boxShadow='none';d.style.border='none';});
+  el.style.boxShadow='0 0 0 2px #fff,0 0 0 4px #'+color;
+  el.style.border='3px solid #'+color;
+  var inp=document.getElementById('co-inp-color');if(inp)inp.value=color;
+}
+
+function _coStepToAdmin(){
+  _clearErrco('co-step-err');
+  var name=_gvco('co-inp-name');
+  if(!name){_errco('co-step-err','يرجى إدخال اسم الشركة');return;}
+  document.getElementById('co-step-info').style.display='none';
+  document.getElementById('co-step-admin').style.display='block';
+  document.getElementById('co-modal-title').textContent='إنشاء حساب المدير';
+  setTimeout(function(){var el=document.getElementById('co-admin-name');if(el)el.focus();},150);
+}
+
+function _coStepBack(){
+  document.getElementById('co-step-admin').style.display='none';
+  document.getElementById('co-step-info').style.display='block';
+  document.getElementById('co-modal-title').textContent='إنشاء شركة جديدة';
+}
+
+function _coCreate(){
+  _clearErrco('co-admin-err');
+  var name=_gvco('co-admin-name'), user=_gvco('co-admin-user');
+  var pw=_gvco('co-admin-pw'), pw2=_gvco('co-admin-pw2');
+  if(!name){_errco('co-admin-err','أدخل الاسم الكامل');return;}
+  if(!user){_errco('co-admin-err','أدخل اسم المستخدم');return;}
+  if(pw.length<4){_errco('co-admin-err','كلمة المرور قصيرة — 4 أحرف على الأقل');return;}
+  if(pw!==pw2){_errco('co-admin-err','كلمتا المرور غير متطابقتين');return;}
+  // Create company
+  var coId='co_'+Date.now();
+  var cos=[];
+  try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}
+  cos.push({id:coId,name:_gvco('co-inp-name'),type:_gvco('co-inp-type'),color:_coPickedColor});
+  localStorage.setItem('pharma_companies_v1',JSON.stringify(cos));
+  // Create admin user
+  var db=JSON.parse(JSON.stringify(typeof defaultDB!=='undefined'?defaultDB:{appUsers:[],_seq:{}}));
+  db.appUsers=[{id:1,username:user,name:name,role:'admin',
+    password:typeof _authHash==='function'?_authHash(pw):pw,
+    active:true,createdAt:Date.now()}];
+  localStorage.setItem('pharma_data_'+coId,JSON.stringify(db));
+  // Close modal and refresh
+  _coMgrCloseModal();
+  _renderCoMgrGrid();
+  if(typeof showNotif==='function') showNotif('✓ تم إنشاء الشركة بنجاح','success');
+}
+
+// ── Import backup ─────────────────────────────────────────────────
+function _coMgrImport(){
+  var input=document.createElement('input');
+  input.type='file';input.accept='.json';
+  input.onchange=function(e){
+    var file=e.target.files[0];if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        var backup=JSON.parse(ev.target.result);
+        if(!backup.companies&&!backup.app){alert('ملف غير صالح');return;}
+        if(!confirm('استيراد '+backup.companies.length+' شركة؟ البيانات الحالية ستُضاف (لن تُحذف).')) return;
+        var cos=[];
+        try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(ex){}
+        backup.companies.forEach(function(c){
+          if(!cos.find(function(x){return x.id===c.info.id;})){
+            cos.push(c.info);
+            localStorage.setItem('pharma_data_'+c.info.id,JSON.stringify(c.data));
+          }
+        });
+        localStorage.setItem('pharma_companies_v1',JSON.stringify(cos));
+        _renderCoMgrGrid();
+        if(typeof showNotif==='function') showNotif('✓ تم الاستيراد بنجاح','success');
+      }catch(ex){alert('خطأ: '+ex.message);}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
 </body></html>`);
 }
 
@@ -11795,12 +12114,12 @@ function erpLogout(){
   var cd=document.getElementById('central-dashboard');if(cd)cd.style.display='none';
   var sb=document.getElementById('sidebar');if(sb)sb.style.display='none';
   var mn=document.querySelector('main');if(mn)mn.style.display='none';
-  erpShowLogin();
+  showCompaniesManager();
 }
 function erpSwitchCompany(){
   var sb=document.getElementById('sidebar');if(sb)sb.style.display='none';
   var mn=document.querySelector('main');if(mn)mn.style.display='none';
-  erpShowCentral();
+  showCompaniesManager();
 }
 </script>
 <script>
