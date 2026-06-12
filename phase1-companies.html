@@ -10879,6 +10879,218 @@ function erpAddCompany(){
 
 
 // ── Boot ──────────────────────────────────────────────────────
+
+// ══════════════════════════════════════════════════════════════════
+// COMPANIES MANAGER
+// ══════════════════════════════════════════════════════════════════
+var _coPickedColor='0284c7';
+
+function _gvco(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function _errco(id,msg){var el=document.getElementById(id);if(el){el.textContent=msg;el.style.display='block';}}
+function _clearEco(id){var el=document.getElementById(id);if(el)el.style.display='none';}
+function _getCos(){try{return JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){return[];}}
+function _getCoDB(id){try{return JSON.parse(localStorage.getItem('pharma_data_'+id)||'{}');}catch(e){return{};}}
+function _saveCoDB(id,d){localStorage.setItem('pharma_data_'+id,JSON.stringify(d));}
+
+function showCompaniesManager(){
+  var els=['erp-login-screen','central-dashboard','sidebar'];
+  els.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+  var mn=document.querySelector('main');if(mn)mn.style.display='none';
+  var sc=document.getElementById('companies-screen');
+  if(sc) sc.style.display='block';
+  _renderCoMgrGrid();
+}
+
+function _renderCoMgrGrid(){
+  var grid=document.getElementById('co-mgr-grid');
+  if(!grid)return;
+  var cos=_getCos();
+  grid.innerHTML='';
+
+  cos.forEach(function(c){
+    var db=_getCoDB(c.id);
+    var users=(db.appUsers||[]).length;
+    var prods=(db.products||[]).length;
+    var regs=(db.registrations||[]).length;
+    var col='#'+(c.color||'0284c7');
+    var card=document.createElement('div');
+    card.className='co-mgr-card';
+
+    var delBtn=document.createElement('button');
+    delBtn.className='co-mgr-del';
+    delBtn.textContent='🗑 حذف';
+    delBtn.onclick=(function(cid){return function(e){e.stopPropagation();_coMgrDelete(cid);};})(c.id);
+
+    var gem=document.createElement('div');
+    gem.className='co-mgr-gem';
+    gem.style.background=col;
+    gem.textContent=(c.name||'?')[0].toUpperCase();
+
+    var info=document.createElement('div');
+    info.innerHTML=
+      '<div style="font-size:15px;font-weight:700;color:#0f172a;margin-bottom:3px">'+esc(c.name)+'</div>'+
+      '<div style="font-size:12px;color:#64748b;margin-bottom:14px">'+esc(c.type||'')+'</div>'+
+      '<div style="display:flex;gap:12px;margin-bottom:16px">'+
+        '<div style="font-size:11px;color:#94a3b8"><strong style="display:block;font-size:16px;font-weight:700;color:#0284c7">'+prods+'</strong>منتج</div>'+
+        '<div style="font-size:11px;color:#94a3b8"><strong style="display:block;font-size:16px;font-weight:700;color:#0284c7">'+regs+'</strong>تسجيل</div>'+
+        '<div style="font-size:11px;color:#94a3b8"><strong style="display:block;font-size:16px;font-weight:700;color:#0284c7">'+users+'</strong>مستخدم</div>'+
+      '</div>';
+
+    var enterBtn=document.createElement('button');
+    enterBtn.className='co-mgr-enter';
+    enterBtn.textContent='دخول على الشركة ←';
+    enterBtn.onclick=(function(cid){return function(){_coMgrEnter(cid);};})(c.id);
+
+    card.appendChild(delBtn);
+    card.appendChild(gem);
+    card.appendChild(info);
+    card.appendChild(enterBtn);
+    grid.appendChild(card);
+  });
+
+  // Add card
+  var add=document.createElement('div');
+  add.className='co-mgr-add-card';
+  add.innerHTML='<div style="font-size:28px">➕</div><div style="font-size:14px;font-weight:600">شركة جديدة</div>';
+  add.onclick=_coMgrOpenAdd;
+  grid.appendChild(add);
+}
+
+function _coMgrEnter(coId){
+  window._loginCoId=coId;
+  var sc=document.getElementById('companies-screen');if(sc)sc.style.display='none';
+  var ls=document.getElementById('erp-login-screen');if(ls)ls.style.display='flex';
+  var cos=_getCos();
+  var co=cos.find(function(c){return c.id===coId;});
+  if(co){
+    var logo=document.getElementById('login-logo');
+    var title=document.getElementById('login-co-title');
+    if(logo){logo.textContent=(co.name||'Q')[0].toUpperCase();logo.style.background='linear-gradient(135deg,#'+(co.color||'0284c7')+',#7c3aed)';}
+    if(title) title.textContent=co.name;
+  }
+  var sub=document.getElementById('login-co-sub');
+  if(sub){
+    sub.innerHTML='';
+    var backBtn=document.createElement('button');
+    backBtn.style.cssText='background:none;border:none;color:#0284c7;font-family:var(--font);font-size:13px;cursor:pointer;padding:0';
+    backBtn.textContent='← العودة لقائمة الشركات';
+    backBtn.onclick=showCompaniesManager;
+    sub.appendChild(backBtn);
+  }
+  var u=document.getElementById('login-user');if(u)u.value='';
+  var p=document.getElementById('login-pw');if(p){p.value='';p.type='password';}
+  window._attCount=0;
+  var bar=document.getElementById('erp-att-bar');if(bar)bar.style.display='none';
+  var fill=document.getElementById('erp-att-fill');if(fill)fill.style.width='0%';
+  var btn=document.getElementById('login-btn');if(btn)btn.disabled=false;
+  var err=document.getElementById('login-err');if(err)err.classList.remove('show');
+  erpGoStep('login');
+  setTimeout(function(){var u2=document.getElementById('login-user');if(u2)u2.focus();},150);
+}
+
+function _coMgrDelete(id){
+  var cos=_getCos();
+  var co=cos.find(function(c){return c.id===id;});
+  if(!confirm('حذف شركة "'+(co?co.name:id)+'" وكل بياناتها نهائياً؟')) return;
+  localStorage.removeItem('pharma_data_'+id);
+  localStorage.setItem('pharma_companies_v1',JSON.stringify(cos.filter(function(c){return c.id!==id;})));
+  _renderCoMgrGrid();
+}
+
+function _coMgrOpenAdd(){
+  _coPickedColor='0284c7';
+  ['co-inp-name','co-admin-name','co-admin-user','co-admin-pw','co-admin-pw2'].forEach(function(id){
+    var el=document.getElementById(id);if(el)el.value='';
+  });
+  var sel=document.getElementById('co-inp-type');if(sel)sel.selectedIndex=0;
+  var col=document.getElementById('co-inp-color');if(col)col.value='0284c7';
+  document.querySelectorAll('[data-col]').forEach(function(d){d.style.boxShadow='none';d.style.border='none';});
+  var first=document.querySelector('[data-col="0284c7"]');
+  if(first){first.style.boxShadow='0 0 0 2px #fff,0 0 0 4px #0284c7';first.style.border='3px solid #0284c7';}
+  _clearEco('co-step-err');_clearEco('co-admin-err');
+  var si=document.getElementById('co-step-info');if(si)si.style.display='block';
+  var sa=document.getElementById('co-step-admin');if(sa)sa.style.display='none';
+  var mt=document.getElementById('co-modal-title');if(mt)mt.textContent='إنشاء شركة جديدة';
+  var m=document.getElementById('co-add-modal');if(m)m.style.display='flex';
+  setTimeout(function(){var el=document.getElementById('co-inp-name');if(el)el.focus();},150);
+}
+
+function _coMgrCloseModal(){var m=document.getElementById('co-add-modal');if(m)m.style.display='none';}
+
+function _pickCoColor(el,color){
+  _coPickedColor=color;
+  document.querySelectorAll('[data-col]').forEach(function(d){d.style.boxShadow='none';d.style.border='none';});
+  el.style.boxShadow='0 0 0 2px #fff,0 0 0 4px #'+color;
+  el.style.border='3px solid #'+color;
+  var inp=document.getElementById('co-inp-color');if(inp)inp.value=color;
+}
+
+function _coStepToAdmin(){
+  _clearEco('co-step-err');
+  if(!_gvco('co-inp-name')){_errco('co-step-err','يرجى إدخال اسم الشركة');return;}
+  var si=document.getElementById('co-step-info');if(si)si.style.display='none';
+  var sa=document.getElementById('co-step-admin');if(sa)sa.style.display='block';
+  var mt=document.getElementById('co-modal-title');if(mt)mt.textContent='إنشاء حساب المدير';
+  setTimeout(function(){var el=document.getElementById('co-admin-name');if(el)el.focus();},150);
+}
+
+function _coStepBack(){
+  var sa=document.getElementById('co-step-admin');if(sa)sa.style.display='none';
+  var si=document.getElementById('co-step-info');if(si)si.style.display='block';
+  var mt=document.getElementById('co-modal-title');if(mt)mt.textContent='إنشاء شركة جديدة';
+}
+
+function _coCreate(){
+  _clearEco('co-admin-err');
+  var name=_gvco('co-admin-name'),user=_gvco('co-admin-user');
+  var pw=_gvco('co-admin-pw'),pw2=_gvco('co-admin-pw2');
+  if(!name){_errco('co-admin-err','أدخل الاسم الكامل');return;}
+  if(!user){_errco('co-admin-err','أدخل اسم المستخدم');return;}
+  if(pw.length<4){_errco('co-admin-err','كلمة المرور قصيرة — 4 أحرف على الأقل');return;}
+  if(pw!==pw2){_errco('co-admin-err','كلمتا المرور غير متطابقتين');return;}
+  var coId='co_'+Date.now();
+  var cos=_getCos();
+  cos.push({id:coId,name:_gvco('co-inp-name'),type:_gvco('co-inp-type'),color:_coPickedColor});
+  localStorage.setItem('pharma_companies_v1',JSON.stringify(cos));
+  var db=JSON.parse(JSON.stringify(typeof defaultDB!=='undefined'?defaultDB:{appUsers:[],_seq:{}}));
+  db.appUsers=[{id:1,username:user,name:name,role:'admin',
+    password:typeof _authHash==='function'?_authHash(pw):pw,
+    active:true,createdAt:Date.now()}];
+  _saveCoDB(coId,db);
+  _coMgrCloseModal();
+  _renderCoMgrGrid();
+  if(typeof showNotif==='function') showNotif('✓ تم إنشاء الشركة بنجاح','success');
+}
+
+function _coMgrImport(){
+  var input=document.createElement('input');
+  input.type='file';input.accept='.json';
+  input.onchange=function(e){
+    var file=e.target.files[0];if(!file)return;
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      try{
+        var backup=JSON.parse(ev.target.result);
+        if(!backup.companies){alert('ملف غير صالح');return;}
+        if(!confirm('استيراد '+backup.companies.length+' شركة؟')) return;
+        var cos=_getCos();
+        backup.companies.forEach(function(c){
+          if(!cos.find(function(x){return x.id===c.info.id;})){
+            cos.push(c.info);
+            localStorage.setItem('pharma_data_'+c.info.id,JSON.stringify(c.data));
+          }
+        });
+        localStorage.setItem('pharma_companies_v1',JSON.stringify(cos));
+        _renderCoMgrGrid();
+        if(typeof showNotif==='function') showNotif('✓ تم الاستيراد بنجاح','success');
+      }catch(ex){alert('خطأ: '+ex.message);}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
+}
+
+
 (function(){
   // Hide old co-screen and app immediately
   var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
