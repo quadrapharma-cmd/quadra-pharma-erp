@@ -1543,6 +1543,175 @@ table{min-width:500px}
 <div class="tc" id="tc"></div>
 <script>
 
+// ══════════════════════════════════════════════════════════════
+// INDEXEDDB STORAGE — Unlimited local storage
+// Replaces localStorage with IndexedDB (GBs available)
+// ══════════════════════════════════════════════════════════════
+var _idb = null;
+var _idbReady = false;
+var _idbQueue = [];
+
+function _openIDB(cb){
+  if(_idbReady){ cb(_idb); return; }
+  var req = indexedDB.open('QuadraPharmaERP', 1);
+  req.onupgradeneeded = function(e){
+    var db = e.target.result;
+    if(!db.objectStoreNames.contains('kv')){
+      db.createObjectStore('kv');
+    }
+  };
+  req.onsuccess = function(e){
+    _idb = e.target.result;
+    _idbReady = true;
+    _idbQueue.forEach(function(fn){ fn(_idb); });
+    _idbQueue = [];
+    cb(_idb);
+  };
+  req.onerror = function(){
+    // Fallback to localStorage if IDB fails
+    console.warn('IDB failed, falling back to localStorage');
+    cb(null);
+  };
+}
+
+// IDB get
+function idbGet(key, cb){
+  _openIDB(function(db){
+    if(!db){ cb(localStorage.getItem(key)); return; }
+    var tx  = db.transaction('kv','readonly');
+    var req = tx.objectStore('kv').get(key);
+    req.onsuccess = function(){ cb(req.result !== undefined ? req.result : null); };
+    req.onerror   = function(){ cb(localStorage.getItem(key)); };
+  });
+}
+
+// IDB set
+function idbSet(key, val, cb){
+  _openIDB(function(db){
+    if(!db){ try{localStorage.setItem(key,val);}catch(e){} if(cb)cb(); return; }
+    var tx  = db.transaction('kv','readwrite');
+    var req = tx.objectStore('kv').put(val, key);
+    req.onsuccess = function(){ if(cb)cb(); };
+    req.onerror   = function(){
+      try{localStorage.setItem(key,val);}catch(e){}
+      if(cb)cb();
+    };
+  });
+}
+
+// IDB delete
+function idbDel(key, cb){
+  _openIDB(function(db){
+    if(!db){ localStorage.removeItem(key); if(cb)cb(); return; }
+    var tx  = db.transaction('kv','readwrite');
+    tx.objectStore('kv').delete(key);
+    tx.oncomplete = function(){ if(cb)cb(); };
+  });
+}
+
+// IDB get all keys
+function idbKeys(cb){
+  _openIDB(function(db){
+    if(!db){ cb(Object.keys(localStorage)); return; }
+    var tx  = db.transaction('kv','readonly');
+    var req = tx.objectStore('kv').getAllKeys();
+    req.onsuccess = function(){ cb(req.result||[]); };
+    req.onerror   = function(){ cb([]); };
+  });
+}
+
+// ── Override storage functions ─────────────────────────────────
+// Patch saveDB to use IDB
+var _origSaveDB_idb = function(){
+  var key = _coActiveId ? ('pharma_data_'+_coActiveId) : 'pharma_erp_v2';
+  var val = JSON.stringify(DB);
+  idbSet(key, val);
+  // Also keep small localStorage copy for fast boot
+  try{
+    if(val.length < 500000) localStorage.setItem(key, val);
+  }catch(e){}
+};
+
+// Patch loadDB to use IDB (async — returns promise-like)
+function loadDBAsync(coId, cb){
+  var key = coId ? ('pharma_data_'+coId) : 'pharma_erp_v2';
+  idbGet(key, function(val){
+    if(val){
+      try{
+        var parsed = JSON.parse(val);
+        cb(parsed);
+        return;
+      }catch(e){}
+    }
+    cb(Object.assign({}, defaultDB));
+  });
+}
+
+// Patch companies list
+function saveCompaniesList(cos){
+  var val = JSON.stringify(cos);
+  idbSet('pharma_companies_v1', val);
+  try{ localStorage.setItem('pharma_companies_v1', val); }catch(e){}
+}
+
+function loadCompaniesList(cb){
+  idbGet('pharma_companies_v1', function(val){
+    if(val){
+      try{ cb(JSON.parse(val)); return; }catch(e){}
+    }
+    // Fallback to localStorage
+    try{
+      var ls = localStorage.getItem('pharma_companies_v1');
+      if(ls){ cb(JSON.parse(ls)); return; }
+    }catch(e){}
+    cb([]);
+  });
+}
+
+// ── Migrate existing localStorage data to IDB ─────────────────
+function migrateToIDB(){
+  var migrated = 0;
+  // Migrate all pharma_ keys from localStorage to IDB
+  for(var i=0; i<localStorage.length; i++){
+    var key = localStorage.key(i);
+    if(key && key.startsWith('pharma_')){
+      var val = localStorage.getItem(key);
+      if(val){
+        idbSet(key, val);
+        migrated++;
+      }
+    }
+  }
+  if(migrated > 0){
+    console.log('Migrated '+migrated+' keys to IndexedDB');
+    idbSet('_migrated_v1', 'true');
+  }
+}
+
+// Auto-migrate on first load
+_openIDB(function(db){
+  if(!db) return;
+  idbGet('_migrated_v1', function(done){
+    if(!done) migrateToIDB();
+  });
+});
+
+// ── Patch saveDB to use IDB automatically ─────────────────────
+// Hook into the existing saveDB calls
+var _patchSaveDB = setInterval(function(){
+  if(typeof saveDB === 'function'){
+    clearInterval(_patchSaveDB);
+    var _origSave = saveDB;
+    saveDB = function(){
+      _origSave();  // keep original (localStorage)
+      _origSaveDB_idb();  // also save to IDB
+    };
+    console.log('IDB storage layer active — unlimited storage');
+  }
+}, 100);
+
+
+
 
 // ═══════════════════════════════════════════════
 // DATA LAYER — localStorage persistence
