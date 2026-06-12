@@ -1380,84 +1380,166 @@ tbody td{font-size:14px !important}
 <meta name="theme-color" content="#0284c7">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%230284c7'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>Q</text></svg>">
 </head>
-<body>
+<body><body>
 
-<!-- ══ LOGIN v3: user picker ══ -->
+<!-- ══ LOGIN SCREEN ══ -->
 <div id="erp-login-screen" style="display:none">
   <div class="login-orb o1"></div>
   <div class="login-orb o2"></div>
-  <div class="erp-steps" id="erp-steps">
-    <div class="erp-dot a" id="erp-d0"></div>
-    <div class="erp-dot" id="erp-d1"></div>
-    <div class="erp-dot" id="erp-d2"></div>
-  </div>
-  <!-- VIEW 1: user picker -->
-  <div class="erp-view act" id="erp-v-pick">
-    <div class="login-box" style="max-width:480px">
+
+  <!-- STEP: إنشاء شركة (أول مرة) -->
+  <div class="erp-view" id="erp-v-setup">
+    <div class="login-box" style="max-width:460px">
       <div class="login-logo">Q</div>
-      <div class="login-title">Quadra Pharma ERP</div>
-      <div class="login-sub" style="margin-bottom:22px">من أنت؟ اختر حسابك</div>
-      <div class="erp-user-grid" id="erp-user-grid"></div>
-      <div style="font-size:12px;color:#9ca3af;text-align:center;margin-top:4px">
-        كلمة المرور مطلوبة في الخطوة التالية
-      </div>
-    </div>
-  </div>
-  <!-- VIEW 2: password -->
-  <div class="erp-view" id="erp-v-pass">
-    <div class="login-box">
-      <button class="erp-back" onclick="erpGoStep(0)">← تغيير المستخدم</button>
-      <div class="erp-sel-user">
-        <div class="erp-sel-av" id="erp-sel-av">A</div>
-        <div>
-          <div id="erp-sel-name" style="font-size:15px;font-weight:700;color:#1c1917"></div>
-          <div id="erp-sel-role" style="font-size:12px;color:#78716c;margin-top:2px"></div>
+      <div class="login-title">مرحباً في Quadra ERP</div>
+      <div class="login-sub" style="margin-bottom:20px">أنشئ شركتك للبدء</div>
+      <div class="login-field">
+        <label class="login-label">اسم الشركة *</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🏢</span>
+          <input class="login-inp" id="setup-co-name" placeholder="مثال: Quadra Pharm">
         </div>
       </div>
-      <div class="login-err" id="erp-pw-err"></div>
-      <div class="erp-att-bar" id="erp-att-bar"><div class="erp-att-fill" id="erp-att-fill"></div></div>
       <div class="login-field">
-        <label class="login-label" for="erp-pw">كلمة المرور</label>
+        <label class="login-label">نوع النشاط</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🏭</span>
+          <select class="login-inp" id="setup-co-type" style="padding-right:40px">
+            <option>شركة دوائية</option>
+            <option>مصنع أدوية</option>
+            <option>موزع أدوية</option>
+            <option>مستحضرات تجميل</option>
+            <option>مكملات غذائية</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:16px">
+        <label class="login-label">لون الشركة</label>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap" id="color-picker">
+          <div onclick="_setupColor(this,'0284c7')" style="width:28px;height:28px;border-radius:50%;background:#0284c7;cursor:pointer;border:3px solid #0284c7;box-shadow:0 0 0 2px #fff,0 0 0 4px #0284c7" data-color="0284c7"></div>
+          <div onclick="_setupColor(this,'7c3aed')" style="width:28px;height:28px;border-radius:50%;background:#7c3aed;cursor:pointer" data-color="7c3aed"></div>
+          <div onclick="_setupColor(this,'059669')" style="width:28px;height:28px;border-radius:50%;background:#059669;cursor:pointer" data-color="059669"></div>
+          <div onclick="_setupColor(this,'dc2626')" style="width:28px;height:28px;border-radius:50%;background:#dc2626;cursor:pointer" data-color="dc2626"></div>
+          <div onclick="_setupColor(this,'d97706')" style="width:28px;height:28px;border-radius:50%;background:#d97706;cursor:pointer" data-color="d97706"></div>
+          <div onclick="_setupColor(this,'0f766e')" style="width:28px;height:28px;border-radius:50%;background:#0f766e;cursor:pointer" data-color="0f766e"></div>
+        </div>
+        <input type="hidden" id="setup-co-color" value="0284c7">
+      </div>
+      <div class="login-err" id="setup-co-err"></div>
+      <button class="login-btn" onclick="_setupStep2()">التالي ←</button>
+    </div>
+  </div>
+
+  <!-- STEP: إنشاء مدير النظام -->
+  <div class="erp-view" id="erp-v-admin">
+    <div class="login-box" style="max-width:420px">
+      <button class="erp-back" onclick="erpGoStep('setup')">← رجوع</button>
+      <div class="login-logo">👑</div>
+      <div class="login-title">إنشاء حساب المدير</div>
+      <div class="login-sub" style="margin-bottom:18px">سيكون مدير النظام</div>
+      <div class="login-field">
+        <label class="login-label">الاسم الكامل *</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">👤</span>
+          <input class="login-inp" id="setup-name" placeholder="مثال: د. هيثم دويدار">
+        </div>
+      </div>
+      <div class="login-field">
+        <label class="login-label">اسم المستخدم *</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🔑</span>
+          <input class="login-inp" id="setup-user" dir="ltr" placeholder="مثال: admin" autocomplete="off">
+        </div>
+      </div>
+      <div class="login-field">
+        <label class="login-label">كلمة المرور *</label>
         <div class="login-input-wrap">
           <span class="login-input-icon">🔒</span>
-          <input class="login-inp" type="password" id="erp-pw" dir="ltr" placeholder="••••••••"
-                 autocomplete="current-password" oninput="erpClearPwErr()"
-                 onkeydown="if(event.key==='Enter')erpDoLogin()"
-                 onkeyup="document.getElementById('erp-caps').style.display=event.getModifierState('CapsLock')?'block':'none'">
-          <span id="erp-eye" style="position:absolute;left:13px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#9ca3af" onclick="erpToggleEye()">👁</span>
+          <input class="login-inp" type="password" id="setup-pw" dir="ltr" placeholder="6 أحرف على الأقل">
         </div>
-        <div class="erp-caps" id="erp-caps">⚠️ Caps Lock مفعّل</div>
       </div>
-      <button class="login-btn" id="erp-pw-btn" onclick="erpDoLogin()">دخول ←</button>
-      <button class="erp-forgot-btn" onclick="erpGoStep(2)">نسيت كلمة المرور؟</button>
+      <div class="login-field">
+        <label class="login-label">تأكيد كلمة المرور *</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🔒</span>
+          <input class="login-inp" type="password" id="setup-pw2" dir="ltr" placeholder="أعد كتابة كلمة المرور">
+        </div>
+      </div>
+      <div class="login-err" id="setup-admin-err"></div>
+      <button class="login-btn" onclick="_setupCreate()">✓ إنشاء والبدء</button>
     </div>
   </div>
-  <!-- VIEW 3: reset via admin -->
+
+  <!-- STEP: تسجيل الدخول -->
+  <div class="erp-view" id="erp-v-login">
+    <div class="login-box" style="max-width:420px">
+      <div class="login-logo" id="login-logo">Q</div>
+      <div class="login-title" id="login-co-title">تسجيل الدخول</div>
+      <div class="login-sub" style="margin-bottom:20px" id="login-co-sub">أدخل بياناتك</div>
+      <div class="login-field">
+        <label class="login-label">اسم المستخدم</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">👤</span>
+          <input class="login-inp" id="login-user" dir="ltr" placeholder="username"
+            onkeydown="if(event.key==='Enter')document.getElementById('login-pw').focus()">
+        </div>
+      </div>
+      <div class="login-field">
+        <label class="login-label">كلمة المرور</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">🔒</span>
+          <input class="login-inp" type="password" id="login-pw" dir="ltr" placeholder="••••••••"
+            onkeydown="if(event.key==='Enter')erpDoLogin()"
+            onkeyup="document.getElementById('caps-warn').style.display=event.getModifierState('CapsLock')?'block':'none'">
+          <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);cursor:pointer;font-size:16px;color:#94a3b8" onclick="_loginTogEye()">👁</span>
+        </div>
+        <div id="caps-warn" style="display:none;font-size:12px;color:#d97706;margin-top:4px">⚠️ Caps Lock مفعّل</div>
+      </div>
+      <div class="login-err" id="login-err"></div>
+      <div class="erp-att-bar" id="erp-att-bar"><div class="erp-att-fill" id="erp-att-fill"></div></div>
+      <button class="login-btn" id="login-btn" onclick="erpDoLogin()">دخول ←</button>
+      <div id="co-switcher" style="margin-top:14px;display:none">
+        <div style="font-size:11px;color:#94a3b8;text-align:center;margin-bottom:8px">— اختر شركة أخرى —</div>
+        <div id="co-switcher-list"></div>
+      </div>
+      <button class="erp-forgot-btn" onclick="erpGoStep('forgot')" style="margin-top:8px">نسيت كلمة المرور؟</button>
+    </div>
+  </div>
+
+  <!-- STEP: نسيت كلمة المرور -->
   <div class="erp-view" id="erp-v-forgot">
-    <div class="login-box">
-      <button class="erp-back" onclick="erpGoStep(1)">← رجوع</button>
-      <div class="login-logo" style="background:linear-gradient(135deg,#f59e0b,#d97706);font-size:22px">🔑</div>
-      <div class="login-title">استعادة الوصول</div>
-      <div class="login-sub" style="margin-bottom:20px">يحتاج المدير تأكيد هويته</div>
-      <div class="login-err" id="erp-reset-err"></div>
+    <div class="login-box" style="max-width:420px">
+      <button class="erp-back" onclick="erpGoStep('login')">← رجوع</button>
+      <div class="login-logo">🔑</div>
+      <div class="login-title">استعادة كلمة المرور</div>
+      <div class="login-sub" style="margin-bottom:18px">يحتاج تأكيد من مدير النظام</div>
+      <div class="login-field">
+        <label class="login-label">اسم المستخدم المراد تغييره</label>
+        <div class="login-input-wrap">
+          <span class="login-input-icon">👤</span>
+          <input class="login-inp" id="reset-user" dir="ltr" placeholder="username">
+        </div>
+      </div>
       <div class="login-field">
         <label class="login-label">كلمة مرور المدير</label>
         <div class="login-input-wrap">
           <span class="login-input-icon">👑</span>
-          <input class="login-inp" type="password" id="erp-admin-pw" dir="ltr" placeholder="admin password">
+          <input class="login-inp" type="password" id="reset-admin-pw" dir="ltr" placeholder="admin password">
         </div>
       </div>
       <div class="login-field">
         <label class="login-label">كلمة المرور الجديدة</label>
         <div class="login-input-wrap">
           <span class="login-input-icon">🔐</span>
-          <input class="login-inp" type="password" id="erp-new-pw" dir="ltr" placeholder="6 أحرف على الأقل">
+          <input class="login-inp" type="password" id="reset-new-pw" dir="ltr" placeholder="6 أحرف على الأقل">
         </div>
       </div>
-      <button class="login-btn" onclick="erpDoReset()">تعيين كلمة المرور الجديدة</button>
+      <div class="login-err" id="reset-err"></div>
+      <button class="login-btn" onclick="erpDoReset()">تعيين كلمة المرور</button>
     </div>
   </div>
 </div>
+
 
 <!-- ══ CENTRAL DASHBOARD ══ -->
 <div id="central-dashboard" style="display:none">
@@ -10526,302 +10608,29 @@ if(!navItems.find(function(n){return n.id==='company';}))
 
 // ════════════════════════════════════════════════════════════════
 // ERP LOGIN v3  —  User Picker → Password → Central Dashboard
-// ════════════════════════════════════════════════════════════════
-var _erpPicked   = null;   // currently selected user object
-var _erpAttempts = 0;
-var _ERP_MAX_ATT = 5;
+// ════════════════════════════════════════════════════════════════   // currently selected user object
 
 // ── helpers ───────────────────────────────────────────────────
-function _erpAllCompanies(){
-  try{ return JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]'); }
-  catch(e){ return []; }
-}
-function _erpDataOf(coId){
-  try{ return JSON.parse(localStorage.getItem('pharma_data_'+coId)||'{}'); }
-  catch(e){ return {}; }
-}
 function _erpSaveDataOf(coId,d){
   try{ localStorage.setItem('pharma_data_'+coId,JSON.stringify(d)); }catch(e){}
 }
-function _erpAllUsers(){
-  // gather all users across all companies, tagging which company each belongs to
-  var users=[];
-  _erpAllCompanies().forEach(function(c){
-    var d=_erpDataOf(c.id);
-    (d.appUsers||[]).forEach(function(u){
-      users.push(Object.assign({},u,{_coId:c.id,_coName:c.name,_coColor:'#'+(c.color||'22d3ee')}));
-    });
-  });
-  return users;
-}
 
 // ── Step switcher ─────────────────────────────────────────────
-function erpGoStep(n){
-  ['erp-v-pick','erp-v-pass','erp-v-forgot'].forEach(function(id,i){
-    var el=document.getElementById(id);
-    if(el) el.className='erp-view'+(i===n?' act':'');
-  });
-  ['erp-d0','erp-d1','erp-d2'].forEach(function(id,i){
-    var el=document.getElementById(id);
-    if(el) el.className='erp-dot'+(i<n?' d':i===n?' a':'');
-  });
-}
 
 // ── Show login overlay ────────────────────────────────────────
-function erpShowLogin(){
-  // Hide app
-  var sb=document.getElementById('sidebar');
-  var mn=document.querySelector('main');
-  if(sb) sb.style.display='none';
-  if(mn) mn.style.display='none';
-  var cd=document.getElementById('central-dashboard');
-  if(cd) cd.style.display='none';
-
-  var el=document.getElementById('erp-login-screen');
-  if(!el) return;
-  el.style.display='flex';
-
-  _erpPicked=null;
-  _erpAttempts=0;
-  erpGoStep(0);
-  erpRenderUserGrid();
-}
 
 // ── Render user cards ─────────────────────────────────────────
-function erpRenderUserGrid(){
-  var g=document.getElementById('erp-user-grid');
-  if(!g) return;
 
-  var companies=_erpAllCompanies();
-
-  // If no companies yet — show first-run hint + create default
-  if(companies.length===0){
-    var defId='co_'+Date.now();
-    var defCo={id:defId,name:'Quadra Pharm',type:'شركة دوائية',color:'22d3ee'};
-    localStorage.setItem('pharma_companies_v1',JSON.stringify([defCo]));
-    var defDB={appUsers:[{
-      id:1,username:'admin',name:'مدير النظام',role:'admin',
-      password:_authHash('admin123'),active:true,createdAt:Date.now()
-    }],_seq:{}};
-    localStorage.setItem('pharma_data_'+defId,JSON.stringify(defDB));
-    companies=[defCo];
-  }
-
-  var users=_erpAllUsers();
-
-  // First run — no users except auto-created admin
-  if(users.length===0){
-    g.innerHTML='<div style="text-align:center;padding:20px;font-size:13px;color:#78716c">'
-      +'<div style="font-size:32px;margin-bottom:8px">👤</div>'
-      +'لم يتم إنشاء أي مستخدمين بعد<br>'
-      +'<small style="color:#9ca3af">سيتم إنشاء حساب مدير تلقائياً</small></div>';
-    // auto pick admin
-    setTimeout(function(){
-      erpRenderUserGrid();
-    },500);
-    return;
-  }
-
-  var ROLE_COLORS={
-    admin:'#0e7490',finance:'#1d4ed8',production:'#059669',
-    sales:'#7c3aed',ra:'#b45309',warehouse:'#dc2626',viewer:'#6b7280'
-  };
-
-  g.innerHTML='';
-  users.forEach(function(u){
-    var ini=(u.name||u.username||'?').split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
-    var col=ROLE_COLORS[u.role]||'#6b7280';
-    var r=_ROLES[u.role]||{label:u.role,icon:'👤'};
-    var locked=u.active===false;
-    var lastIn=u.lastLogin?_erpFmtTime(u.lastLogin):'';
-    var card=document.createElement('div');
-    card.className='erp-user-card'+(locked?' erp-locked':'');
-    card.setAttribute('role','button');
-    card.setAttribute('tabindex', locked?'-1':'0');
-    card.setAttribute('aria-label', u.name+(locked?' — موقوف':'')+(u.role==='admin'?' — مدير النظام':''));
-    card.innerHTML=
-      '<div class="erp-u-badge erp-badge-'+(u.role==='admin'?'admin':locked?'locked':'role')+'">'
-        +(u.role==='admin'?'👑 مدير':locked?'🔒 موقوف':(r.icon||''))+' '+(locked?'':r.label)
-      +'</div>'
-      +'<div class="erp-u-av" style="background:'+col+'">'+ini+'</div>'
-      +'<div class="erp-u-name">'+_erpEsc(u.name||u.username)+'</div>'
-      +'<div class="erp-u-role">'+_erpEsc(r.label||u.role)+'</div>'
-      +(lastIn?'<div class="erp-u-last">🕐 '+lastIn+'</div>':'')
-      +'<div class="erp-u-co">'+_erpEsc(u._coName)+'</div>';
-    if(!locked){
-      (function(user,color){
-        card.addEventListener('click',function(){ _erpPickUser(user,color); });
-        card.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' ') _erpPickUser(user,color); });
-      })(u,col);
-    }
-    g.appendChild(card);
-  });
-}
-
-function _erpFmtTime(ts){
-  var diff=Math.floor((Date.now()-ts)/60000);
-  if(diff<1) return 'الآن';
-  if(diff<60) return 'منذ '+diff+' د';
-  var h=Math.floor(diff/60);
-  if(h<24) return 'منذ '+h+' س';
-  return 'منذ '+Math.floor(h/24)+' ي';
-}
 function _erpEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 // ── Pick a user → go to password screen ──────────────────────
-function _erpPickUser(user,color){
-  _erpPicked=user;
-  _erpAttempts=0;
-  var ini=(user.name||user.username||'?').split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
-  var r=_ROLES[user.role]||{label:user.role};
-  var av=document.getElementById('erp-sel-av');
-  var nm=document.getElementById('erp-sel-name');
-  var rl=document.getElementById('erp-sel-role');
-  if(av){ av.textContent=ini; av.style.background=color; }
-  if(nm) nm.textContent=user.name||user.username;
-  if(rl) rl.textContent=(r.label||user.role)+' · '+user._coName;
-  var pw=document.getElementById('erp-pw'); if(pw) pw.value='';
-  var err=document.getElementById('erp-pw-err');
-  if(err){ err.textContent=''; err.classList.remove('show'); }
-  var bar=document.getElementById('erp-att-bar');
-  if(bar) bar.style.display='none';
-  var btn=document.getElementById('erp-pw-btn');
-  if(btn) btn.disabled=false;
-  erpGoStep(1);
-  setTimeout(function(){ var p=document.getElementById('erp-pw'); if(p) p.focus(); },150);
-}
 
 // ── Verify password ───────────────────────────────────────────
-function erpDoLogin(){
-  if(!_erpPicked) return;
-  var pw=document.getElementById('erp-pw');
-  var err=document.getElementById('erp-pw-err');
-  var btn=document.getElementById('erp-pw-btn');
-  if(!pw||!err) return;
-  err.classList.remove('show');
-
-  var p=pw.value;
-  if(!p){ err.textContent='يرجى إدخال كلمة المرور'; err.classList.add('show'); return; }
-
-  _erpAttempts++;
-  var bar=document.getElementById('erp-att-bar');
-  var fill=document.getElementById('erp-att-fill');
-  if(_erpAttempts>=2&&bar){ bar.style.display='block'; if(fill) fill.style.width=Math.min(100,_erpAttempts/_ERP_MAX_ATT*100)+'%'; }
-
-  if(_erpAttempts>=_ERP_MAX_ATT){
-    err.textContent='تم تجاوز الحد المسموح به. تواصل مع المدير.';
-    err.classList.add('show');
-    if(btn) btn.disabled=true;
-    return;
-  }
-
-  var hash=_authHash(p);
-  var stored=_erpPicked.password||'';
-  var ok=(stored===hash)||(stored===p); // support plain + hashed
-
-  if(!ok){
-    var rem=_ERP_MAX_ATT-_erpAttempts;
-    err.textContent='كلمة المرور غير صحيحة'+(_erpAttempts>=3?' — '+rem+' محاولة متبقية':'');
-    err.classList.add('show');
-    pw.value=''; pw.focus();
-    return;
-  }
-
-  // ── Login success ──────────────────────────────────────────
-  // Update lastLogin in that company's DB
-  var d=_erpDataOf(_erpPicked._coId);
-  if(d.appUsers){
-    var idx=d.appUsers.findIndex(function(u){ return u.id===_erpPicked.id; });
-    if(idx>=0) d.appUsers[idx].lastLogin=Date.now();
-    _erpSaveDataOf(_erpPicked._coId,d);
-  }
-
-  // Set global auth state
-  var sess={
-    username:_erpPicked.username,
-    name:_erpPicked.name,
-    role:_erpPicked.role,
-    coId:_erpPicked._coId,
-    coName:_erpPicked._coName
-  };
-  _authUser=sess;
-  try{ sessionStorage.setItem('_erp_s',JSON.stringify(sess)); }catch(e){}
-
-  // Pre-load this company's data
-  var raw=localStorage.getItem('pharma_data_'+_erpPicked._coId)||'{}';
-  try{
-    DB=JSON.parse(raw);
-    if(!DB._seq) DB._seq={};
-    window._coActiveId=_erpPicked._coId;
-    setTimeout(seedChartOfAccounts,100);
-  }catch(e){ DB=Object.assign({},defaultDB); }
-
-  // Hide login, show central dashboard
-  var el=document.getElementById('erp-login-screen');
-  if(el) el.style.display='none';
-  erpShowCentral();
-}
 
 // ── Password reset via admin ──────────────────────────────────
-function erpDoReset(){
-  var adminPw=document.getElementById('erp-admin-pw');
-  var newPw=document.getElementById('erp-new-pw');
-  var err=document.getElementById('erp-reset-err');
-  if(!adminPw||!newPw||!err) return;
-  err.classList.remove('show');
-
-  if(!adminPw.value||!newPw.value){
-    err.textContent='يرجى تعبئة كلمة مرور المدير والكلمة الجديدة';
-    err.classList.add('show'); return;
-  }
-  if(newPw.value.length<6){
-    err.textContent='كلمة المرور الجديدة يجب أن تكون 6 أحرف على الأقل';
-    err.classList.add('show'); return;
-  }
-
-  // Find admin user across all companies
-  var companies=_erpAllCompanies();
-  var adminFound=false;
-  for(var i=0;i<companies.length;i++){
-    var d=_erpDataOf(companies[i].id);
-    var adminUser=(d.appUsers||[]).find(function(u){ return u.role==='admin'&&u.active!==false; });
-    if(adminUser&&(_authHash(adminPw.value)===adminUser.password||adminPw.value===adminUser.password)){
-      adminFound=true;
-      // Update target user's password in their company
-      if(_erpPicked){
-        var td=_erpDataOf(_erpPicked._coId);
-        var tidx=(td.appUsers||[]).findIndex(function(u){ return u.id===_erpPicked.id; });
-        if(tidx>=0){
-          td.appUsers[tidx].password=_authHash(newPw.value);
-          _erpSaveDataOf(_erpPicked._coId,td);
-          adminPw.value=''; newPw.value='';
-          alert('✓ تم تعيين كلمة المرور الجديدة بنجاح');
-          erpGoStep(1);
-          return;
-        }
-      }
-      break;
-    }
-  }
-  if(!adminFound){
-    err.textContent='كلمة مرور المدير غير صحيحة';
-    err.classList.add('show');
-  }
-}
 
 // ── Eye toggle ────────────────────────────────────────────────
-function erpToggleEye(){
-  var inp=document.getElementById('erp-pw');
-  var eye=document.getElementById('erp-eye');
-  if(!inp) return;
-  inp.type=inp.type==='password'?'text':'password';
-  if(eye) eye.textContent=inp.type==='password'?'👁':'🙈';
-}
 
-function erpClearPwErr(){
-  var e=document.getElementById('erp-pw-err');
-  if(e) e.classList.remove('show');
-}
 
 // ── Central Dashboard ─────────────────────────────────────────
 function erpShowCentral(){
@@ -10966,21 +10775,7 @@ function erpAddCompany(){
   erpRenderCentralGrid();
 }
 
-function erpLogout(){
-  _authUser=null;
-  try{ sessionStorage.removeItem('_erp_s'); }catch(e){}
-  _erpPicked=null;
-  var cd=document.getElementById('central-dashboard'); if(cd) cd.style.display='none';
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main'); if(mn) mn.style.display='none';
-  erpShowLogin();
-}
 
-function erpSwitchCompany(){
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main'); if(mn) mn.style.display='none';
-  erpShowCentral();
-}
 
 // ── Boot ──────────────────────────────────────────────────────
 (function(){
@@ -11739,268 +11534,31 @@ function loadLiabilitySummary(){}
 function renderDrugReg(el){if(window.renderDrugReg)window.renderDrugReg(el);}// ═══════════════════════════════════════════════════════════════
 // LOGIN — Clean rewrite
 // ═══════════════════════════════════════════════════════════════
-var _erpPicked=null, _erpAttempts=0, _ERP_MAX=5;
 
-var _ERP_ROLE_LBL={admin:'مدير النظام',finance:'مدير مالي',production:'مدير إنتاج',
-  ra:'مسؤول تسجيل',sales:'مبيعات',viewer:'عارض',quality:'جودة',warehouse:'مخازن'};
-var _ERP_ROLE_ICO={admin:'👑',finance:'💰',production:'🏭',ra:'📋',
-  sales:'📊',viewer:'👁',quality:'🔬',warehouse:'📦'};
-var _ERP_COLORS=['#0e7490','#7c3aed','#059669','#d97706','#dc2626','#2563eb','#0f766e','#9333ea'];
 
 // ── Step navigation ──────────────────────────────────────────────
-function erpGoStep(n){
-  ['erp-v-pick','erp-v-pass','erp-v-forgot'].forEach(function(id,i){
-    var el=document.getElementById(id);
-    if(el) el.className='erp-view'+(i===n?' act':'');
-  });
-  ['erp-d0','erp-d1','erp-d2'].forEach(function(id,i){
-    var el=document.getElementById(id);
-    if(el) el.className='erp-dot'+(i<n?' d':i===n?' a':'');
-  });
-  if(n===1) setTimeout(function(){var p=document.getElementById('erp-pw');if(p)p.focus();},150);
-}
 
 // ── Get all companies ────────────────────────────────────────────
-function _erpAllCompanies(){
-  try{ return JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]'); }
-  catch(e){ return []; }
-}
 
 // ── Get all users — DEDUPLICATED by username ─────────────────────
-function _erpAllUsers(){
-  var seen={};
-  var users=[];
-  _erpAllCompanies().forEach(function(c){
-    var d=_erpDataOf(c.id);
-    (d.appUsers||[]).forEach(function(u){
-      // Only add first occurrence of each username
-      if(!seen[u.username]){
-        seen[u.username]=true;
-        users.push(Object.assign({},u,{
-          _coId:c.id,
-          _coName:c.name,
-          _coColor:'#'+(c.color||'0284c7')
-        }));
-      }
-    });
-  });
-  return users;
-}
 
-function _erpDataOf(id){
-  try{ return JSON.parse(localStorage.getItem('pharma_data_'+id)||'{}'); }
-  catch(e){ return {}; }
-}
 
-function _erpFmtTime(ts){
-  if(!ts) return '';
-  var d=Math.floor((Date.now()-ts)/60000);
-  if(d<2) return 'الآن';
-  if(d<60) return 'منذ '+d+' د';
-  if(d<1440) return 'منذ '+Math.floor(d/60)+' س';
-  return 'منذ '+Math.floor(d/1440)+' يوم';
-}
 
 // ── Show login screen ────────────────────────────────────────────
-function erpShowLogin(){
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main'); if(mn) mn.style.display='none';
-  var cd=document.getElementById('central-dashboard'); if(cd) cd.style.display='none';
-  var el=document.getElementById('erp-login-screen');
-  if(!el) return;
-  el.style.display='flex';
-  _erpPicked=null; _erpAttempts=0;
-  erpGoStep(0);
-  erpRenderUserGrid();
-}
 
 // ── Render user grid ─────────────────────────────────────────────
-function erpRenderUserGrid(){
-  var g=document.getElementById('erp-user-grid');
-  if(!g) return;
-
-  // Seed default company + admin if nothing exists
-  var cos=_erpAllCompanies();
-  if(!cos.length){
-    var defId='co_default_'+Date.now();
-    cos=[{id:defId,name:'Quadra Pharm',type:'شركة دوائية',color:'0284c7'}];
-    localStorage.setItem('pharma_companies_v1',JSON.stringify(cos));
-    localStorage.setItem('pharma_data_'+defId,JSON.stringify({
-      appUsers:[{id:1,username:'admin',name:'مدير النظام',role:'admin',
-        password:_authHash('admin123'),active:true,createdAt:Date.now()}],_seq:{}
-    }));
-  }
-
-  var users=_erpAllUsers();
-  g.innerHTML='';
-
-  // First-run: show hint
-  if(!users.length){
-    g.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:20px;font-size:14px;color:#64748b">'+
-      '<div style="font-size:32px;margin-bottom:8px">👤</div>'+
-      'لا يوجد مستخدمون — جاري الإنشاء...</div>';
-    setTimeout(erpRenderUserGrid, 300);
-    return;
-  }
-
-  users.forEach(function(u,idx){
-    var ini=(u.name||u.username||'?').split(' ').map(function(w){return w[0]||'';}).join('').slice(0,2).toUpperCase();
-    var col=_ERP_COLORS[idx%_ERP_COLORS.length];
-    var lbl=_ERP_ROLE_LBL[u.role]||u.role||'';
-    var ico=_ERP_ROLE_ICO[u.role]||'👤';
-    var locked=u.active===false;
-    var isAdmin=u.role==='admin';
-
-    var card=document.createElement('div');
-    card.className='erp-user-card'+(locked?' erp-locked':'');
-    card.setAttribute('tabindex', locked?'-1':'0');
-
-    card.innerHTML=
-      '<div class="erp-u-badge '+(isAdmin?'erp-badge-admin':'erp-badge-role')+'">'+
-        (isAdmin?'👑 Admin':ico+' '+lbl)+'</div>'+
-      '<div class="erp-u-av" style="background:'+col+'">'+ini+'</div>'+
-      '<div class="erp-u-name">'+esc(u.name||u.username)+'</div>'+
-      '<div class="erp-u-role">'+esc(lbl)+'</div>'+
-      (u.lastLogin?'<div class="erp-u-last">'+_erpFmtTime(u.lastLogin)+'</div>':'');
-
-    if(!locked){
-      (function(usr,c,i){
-        card.addEventListener('click',function(){ _erpPickUser(usr,c,i); });
-        card.addEventListener('keydown',function(e){
-          if(e.key==='Enter'||e.key===' ') _erpPickUser(usr,c,i);
-        });
-      })(u,col,ini);
-    }
-    g.appendChild(card);
-  });
-}
 
 // ── Pick user ────────────────────────────────────────────────────
-function _erpPickUser(user,color,ini){
-  _erpPicked=user; _erpAttempts=0;
-  var av=document.getElementById('erp-sel-av');
-  var nm=document.getElementById('erp-sel-name');
-  var rl=document.getElementById('erp-sel-role');
-  if(av){av.textContent=ini; av.style.background=color;}
-  if(nm) nm.textContent=user.name||user.username;
-  if(rl) rl.textContent=user.username+' · '+(_ERP_ROLE_LBL[user.role]||user.role||'');
-  var pw=document.getElementById('erp-pw'); if(pw){pw.value='';pw.type='password';}
-  var err=document.getElementById('erp-pw-err'); if(err) err.classList.remove('show');
-  var bar=document.getElementById('erp-att-bar'); if(bar) bar.style.display='none';
-  var fill=document.getElementById('erp-att-fill'); if(fill) fill.style.width='0%';
-  var btn=document.getElementById('erp-pw-btn'); if(btn) btn.disabled=false;
-  var eye=document.getElementById('erp-eye'); if(eye) eye.textContent='👁';
-  erpGoStep(1);
-}
 
 // ── Login ────────────────────────────────────────────────────────
-function erpDoLogin(){
-  if(!_erpPicked) return;
-  var pw=(document.getElementById('erp-pw')||{}).value||'';
-  var err=document.getElementById('erp-pw-err');
-  if(err) err.classList.remove('show');
-  if(!pw){if(err){err.textContent='أدخل كلمة المرور';err.classList.add('show');} return;}
-
-  _erpAttempts++;
-  var bar=document.getElementById('erp-att-bar');
-  var fill=document.getElementById('erp-att-fill');
-  if(_erpAttempts>=2&&bar) bar.style.display='block';
-  if(fill) fill.style.width=Math.min(100,_erpAttempts/_ERP_MAX*100)+'%';
-
-  if(_erpAttempts>=_ERP_MAX){
-    if(err){err.textContent='تم قفل الحساب — تواصل مع المدير';err.classList.add('show');}
-    var btn=document.getElementById('erp-pw-btn'); if(btn) btn.disabled=true;
-    return;
-  }
-
-  var u=_erpPicked;
-  var hash=_authHash(pw);
-  var ok=(u.password===hash||u.password===pw);
-
-  if(ok){
-    // Update lastLogin
-    try{
-      var d=_erpDataOf(u._coId);
-      var idx=(d.appUsers||[]).findIndex(function(x){return x.username===u.username;});
-      if(idx>=0){d.appUsers[idx].lastLogin=Date.now();localStorage.setItem('pharma_data_'+u._coId,JSON.stringify(d));}
-    }catch(e){}
-    _authUser={username:u.username,name:u.name,role:u.role,id:u.id};
-    try{sessionStorage.setItem('_erp_s',JSON.stringify(_authUser));}catch(e){}
-    var loginEl=document.getElementById('erp-login-screen');
-    if(loginEl) loginEl.style.display='none';
-    erpShowCentral();
-  } else {
-    var rem=_ERP_MAX-_erpAttempts;
-    if(err){
-      err.textContent='كلمة المرور غير صحيحة'+(rem<=2?' — '+rem+' محاولة متبقية':'');
-      err.classList.add('show');
-    }
-    var pwEl=document.getElementById('erp-pw'); if(pwEl){pwEl.value='';pwEl.focus();}
-  }
-}
 
 // ── Eye toggle ───────────────────────────────────────────────────
-function erpToggleEye(){
-  var inp=document.getElementById('erp-pw');
-  var eye=document.getElementById('erp-eye');
-  if(!inp) return;
-  inp.type=inp.type==='password'?'text':'password';
-  if(eye) eye.textContent=inp.type==='password'?'👁':'🙈';
-  inp.focus();
-}
 
-function erpClearPwErr(){
-  var e=document.getElementById('erp-pw-err'); if(e) e.classList.remove('show');
-}
 
 // ── Forgot password ──────────────────────────────────────────────
-function erpDoReset(){
-  var ap=(document.getElementById('erp-admin-pw')||{}).value||'';
-  var np=(document.getElementById('erp-new-pw')||{}).value||'';
-  var err=document.getElementById('erp-reset-err');
-  if(err) err.classList.remove('show');
-  if(!ap||!np){if(err){err.textContent='يرجى تعبئة الحقول';err.classList.add('show');}return;}
-  if(np.length<4){if(err){err.textContent='كلمة المرور قصيرة جداً';err.classList.add('show');}return;}
-  // Verify admin password
-  var adminOk=false;
-  _erpAllCompanies().forEach(function(c){
-    var d=_erpDataOf(c.id);
-    (d.appUsers||[]).forEach(function(u){
-      if(u.role==='admin'&&u.active!==false){
-        var h=_authHash(ap);
-        if(u.password===h||u.password===ap) adminOk=true;
-      }
-    });
-  });
-  if(!adminOk){if(err){err.textContent='كلمة مرور المدير غير صحيحة';err.classList.add('show');}return;}
-  if(!_erpPicked||!_erpPicked._coId){if(err){err.textContent='لم يتم اختيار مستخدم';err.classList.add('show');}return;}
-  try{
-    var d2=_erpDataOf(_erpPicked._coId);
-    var i2=(d2.appUsers||[]).findIndex(function(u){return u.username===_erpPicked.username;});
-    if(i2>=0){
-      d2.appUsers[i2].password=_authHash(np);
-      localStorage.setItem('pharma_data_'+_erpPicked._coId,JSON.stringify(d2));
-    }
-  }catch(e){}
-  alert('✓ تم تعيين كلمة المرور الجديدة');
-  erpGoStep(1);
-}
 
 // ── Logout ───────────────────────────────────────────────────────
-function erpLogout(){
-  _authUser=null; _erpPicked=null;
-  try{sessionStorage.removeItem('_erp_s');}catch(e){}
-  var cd=document.getElementById('central-dashboard'); if(cd) cd.style.display='none';
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main'); if(mn) mn.style.display='none';
-  erpShowLogin();
-}
 
-function erpSwitchCompany(){
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main'); if(mn) mn.style.display='none';
-  erpShowCentral();
-}
 
 
 // ══════════════════════════════════════════════════════════════════
@@ -12008,20 +11566,8 @@ function erpSwitchCompany(){
 // Flow: First run → Create Company → Create Admin → Login
 //       After that → Login directly
 // ══════════════════════════════════════════════════════════════════
+ // which company we're logging into
 
-var _erpAttempts = 0;
-var _ERP_MAX_ATT = 5;
-var _loginCoId   = null; // which company we're logging into
-
-var _ERP_ROLE_LBL = {
-  admin:'مدير النظام', finance:'مدير مالي', production:'مدير إنتاج',
-  ra:'مسؤول تسجيل', sales:'مبيعات', viewer:'عارض',
-  quality:'جودة', warehouse:'مخازن'
-};
-var _ERP_ROLE_ICO = {
-  admin:'👑', finance:'💰', production:'🏭', ra:'📋',
-  sales:'📊', viewer:'👁', quality:'🔬', warehouse:'📦'
-};
 
 // ── Helpers ──────────────────────────────────────────────────────
 function _gvl(id){ var el=document.getElementById(id); return el?el.value.trim():''; }
@@ -12032,293 +11578,230 @@ function _getCoData(id){ try{return JSON.parse(localStorage.getItem('pharma_data
 function _saveCoData(id,d){ localStorage.setItem('pharma_data_'+id, JSON.stringify(d)); }
 
 // ── Step navigation ───────────────────────────────────────────────
-function erpGoStep(step){
-  var steps = ['erp-v-setup','erp-v-admin','erp-v-login','erp-v-forgot'];
-  steps.forEach(function(s){
-    var el = document.getElementById(s);
-    if(el) el.className = 'erp-view';
-  });
-  var target = document.getElementById('erp-v-'+step);
-  if(target) target.className = 'erp-view act';
-}
 
 // ── Show login screen ─────────────────────────────────────────────
+
+// ── Build login page with company info ───────────────────────────
+
+
+// ── SETUP: Pick color ─────────────────────────────────────────────
+
+// ── SETUP: Next to admin creation ────────────────────────────────
+
+// ── SETUP: Create company + admin ────────────────────────────────
+
+
+// ── LOGIN ────────────────────────────────────────────────────────
+
+
+// ── RESET PASSWORD ────────────────────────────────────────────────
+
+// ── LOGOUT ────────────────────────────────────────────────────────
+
+
+
+
+// ══════════════════════════════════════════════════════════════════
+// AUTH SYSTEM — Setup + Login
+// ══════════════════════════════════════════════════════════════════
+var _attCount = 0, _MAX_ATT = 5, _loginCoId = null;
+var _RLBL={admin:'مدير النظام',finance:'مدير مالي',production:'مدير إنتاج',ra:'مسؤول تسجيل',sales:'مبيعات',viewer:'عارض',quality:'جودة',warehouse:'مخازن'};
+
+function _gv(id){var el=document.getElementById(id);return el?el.value.trim():'';}
+function _showErr(id,msg){var el=document.getElementById(id);if(el){el.textContent=msg;el.classList.add('show');}}
+function _clearErr(id){var el=document.getElementById(id);if(el)el.classList.remove('show');}
+function _getCos(){try{return JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){return[];}}
+function _getCoDB(id){try{return JSON.parse(localStorage.getItem('pharma_data_'+id)||'{}');}catch(e){return{};}}
+function _saveCoDB(id,d){localStorage.setItem('pharma_data_'+id,JSON.stringify(d));}
+
+// ── Step navigation ───────────────────────────────────────────────
+function erpGoStep(step){
+  ['erp-v-setup','erp-v-admin','erp-v-login','erp-v-forgot'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.className='erp-view';
+  });
+  var t=document.getElementById('erp-v-'+step);
+  if(t) t.className='erp-view act';
+  if(step==='login') setTimeout(function(){var u=document.getElementById('login-user');if(u)u.focus();},150);
+}
+
+// ── Color picker ─────────────────────────────────────────────────
+function _setupColor(el,color){
+  document.querySelectorAll('#color-picker [data-color]').forEach(function(d){
+    d.style.boxShadow='none';d.style.border='none';
+  });
+  el.style.boxShadow='0 0 0 2px #fff,0 0 0 4px #'+color;
+  el.style.border='3px solid #'+color;
+  var inp=document.getElementById('setup-co-color');
+  if(inp) inp.value=color;
+}
+
+// ── Setup step 2 ─────────────────────────────────────────────────
+function _setupStep2(){
+  _clearErr('setup-co-err');
+  if(!_gv('setup-co-name')){_showErr('setup-co-err','يرجى إدخال اسم الشركة');return;}
+  erpGoStep('admin');
+  setTimeout(function(){var el=document.getElementById('setup-name');if(el)el.focus();},150);
+}
+
+// ── Create company + admin ────────────────────────────────────────
+function _setupCreate(){
+  _clearErr('setup-admin-err');
+  var name=_gv('setup-name'), user=_gv('setup-user');
+  var pw=_gv('setup-pw'), pw2=_gv('setup-pw2');
+  if(!name){_showErr('setup-admin-err','أدخل الاسم الكامل');return;}
+  if(!user){_showErr('setup-admin-err','أدخل اسم المستخدم');return;}
+  if(pw.length<4){_showErr('setup-admin-err','كلمة المرور قصيرة — 4 أحرف على الأقل');return;}
+  if(pw!==pw2){_showErr('setup-admin-err','كلمتا المرور غير متطابقتين');return;}
+  var coId='co_'+Date.now();
+  var cos=[{id:coId,name:_gv('setup-co-name'),type:_gv('setup-co-type'),color:_gv('setup-co-color')||'0284c7'}];
+  localStorage.setItem('pharma_companies_v1',JSON.stringify(cos));
+  var db=JSON.parse(JSON.stringify(typeof defaultDB!=='undefined'?defaultDB:{appUsers:[],_seq:{}}));
+  db.appUsers=[{id:1,username:user,name:name,role:'admin',password:_authHash(pw),active:true,createdAt:Date.now()}];
+  _saveCoDB(coId,db);
+  _authUser={username:user,name:name,role:'admin',id:1};
+  try{sessionStorage.setItem('_erp_s',JSON.stringify(_authUser));}catch(e){}
+  document.getElementById('erp-login-screen').style.display='none';
+  erpShowCentral();
+}
+
+// ── Show login ────────────────────────────────────────────────────
 function erpShowLogin(){
-  // Hide app
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main'); if(mn) mn.style.display='none';
-  var cd=document.getElementById('central-dashboard'); if(cd) cd.style.display='none';
-
-  var el=document.getElementById('erp-login-screen');
-  if(!el) return;
-  el.style.display='flex';
-
-  var cos = _getAllCompanies();
-
+  ['sidebar','#sidebar-overlay'].forEach(function(s){var el=document.querySelector(s)||document.getElementById(s.replace('#',''));if(el)el.style.display='none';});
+  var mn=document.querySelector('main');if(mn)mn.style.display='none';
+  var cd=document.getElementById('central-dashboard');if(cd)cd.style.display='none';
+  var ls=document.getElementById('erp-login-screen');if(!ls)return;
+  ls.style.display='flex';
+  var cos=_getCos();
   if(!cos.length){
-    // First run — show setup wizard
     erpGoStep('setup');
   } else {
-    // Show login page
     _buildLoginPage(cos);
     erpGoStep('login');
   }
 }
 
-// ── Build login page with company info ───────────────────────────
+// ── Build login page ──────────────────────────────────────────────
 function _buildLoginPage(cos){
-  _loginCoId = cos[0].id; // default to first company
-
-  // Update logo + name for first company
-  var logo = document.getElementById('login-co-logo');
-  var name = document.getElementById('login-co-name');
-  if(logo) logo.textContent = (cos[0].name||'Q')[0].toUpperCase();
-  if(logo) logo.style.background = 'linear-gradient(135deg,#'+(cos[0].color||'0284c7')+',#7c3aed)';
-  if(name) name.textContent = cos[0].name || 'Quadra Pharma ERP';
-
-  // Show company switcher if multiple companies
-  var switcher = document.getElementById('login-co-switcher');
-  var list = document.getElementById('login-co-list');
-  if(cos.length > 1 && switcher && list){
-    switcher.style.display = 'block';
-    list.innerHTML = cos.map(function(c){
-      var btnOnclick='_loginSelectCo("'+c.id+'")'; return '<button onclick="'+btnOnclick+'" style="'+
-        'display:flex;align-items:center;gap:10px;padding:8px 12px;'+
-        'background:'+(c.id===_loginCoId?'rgba(2,132,199,0.1)':'#f8fafc')+';'+
-        'border:1px solid rgba(2,132,199,'+(c.id===_loginCoId?'0.3':'0.12')+');'+
-        'border-radius:9px;cursor:pointer;font-family:var(--font);width:100%;text-align:right">'+
-        '<div style="width:28px;height:28px;border-radius:8px;background:#'+(c.color||'0284c7')+';'+
-        'display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px">'+
-        (c.name||'?')[0].toUpperCase()+'</div>'+
-        '<div style="font-size:13px;font-weight:600;color:#0f172a">'+esc(c.name)+'</div>'+
-        '</button>';
-    }).join('');
-  }
-
-  // Reset fields
-  var u=document.getElementById('login-username'); if(u) u.value='';
-  var p=document.getElementById('login-pass'); if(p) p.value='';
-  _loginClearErr('login-err');
-  _erpAttempts=0;
-  var bar=document.getElementById('erp-att-bar'); if(bar) bar.style.display='none';
-  var fill=document.getElementById('erp-att-fill'); if(fill) fill.style.width='0%';
-  var btn=document.getElementById('login-btn'); if(btn) btn.disabled=false;
-  setTimeout(function(){var u=document.getElementById('login-username');if(u)u.focus();},150);
-}
-
-function _loginSelectCo(id){
-  _loginCoId = id;
-  var cos = _getAllCompanies();
-  var co  = cos.find(function(c){return c.id===id;});
-  if(!co) return;
-  var logo=document.getElementById('login-co-logo');
-  var name=document.getElementById('login-co-name');
+  _loginCoId=cos[0].id;
+  var logo=document.getElementById('login-logo');
+  var title=document.getElementById('login-co-title');
+  var sub=document.getElementById('login-co-sub');
+  var co=cos[0];
   if(logo){logo.textContent=(co.name||'Q')[0].toUpperCase();logo.style.background='linear-gradient(135deg,#'+(co.color||'0284c7')+',#7c3aed)';}
-  if(name) name.textContent = co.name;
-  _buildLoginPage(cos); // refresh switcher styling
+  if(title) title.textContent=co.name||'Quadra ERP';
+  if(sub) sub.textContent='تسجيل الدخول';
+  // Company switcher
+  var sw=document.getElementById('co-switcher');
+  var sl=document.getElementById('co-switcher-list');
+  if(sw) sw.style.display=cos.length>1?'block':'none';
+  if(sl&&cos.length>1){
+    sl.innerHTML='';
+    cos.forEach(function(c){
+      var btn=document.createElement('button');
+      btn.style.cssText='display:flex;align-items:center;gap:10px;padding:8px 12px;background:#f8fafc;border:1px solid rgba(2,132,199,0.15);border-radius:8px;cursor:pointer;font-family:var(--font);width:100%;text-align:right;margin-bottom:6px';
+      btn.innerHTML='<div style="width:24px;height:24px;border-radius:7px;background:#'+(c.color||'0284c7')+';display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:12px">'+(c.name||'?')[0]+'</div>'+
+        '<span style="font-size:13px;font-weight:600;color:#0f172a">'+esc(c.name)+'</span>';
+      (function(cid,cc){
+        btn.onclick=function(){
+          _loginCoId=cid;
+          var logo2=document.getElementById('login-logo');
+          if(logo2){logo2.textContent=(cc.name||'Q')[0].toUpperCase();logo2.style.background='linear-gradient(135deg,#'+(cc.color||'0284c7')+',#7c3aed)';}
+          var title2=document.getElementById('login-co-title'); if(title2) title2.textContent=cc.name;
+        };
+      })(c.id,c);
+      sl.appendChild(btn);
+    });
+  }
+  // Reset
+  var u=document.getElementById('login-user');if(u)u.value='';
+  var p=document.getElementById('login-pw');if(p)p.value='';
+  _clearErr('login-err');
+  _attCount=0;
+  var bar=document.getElementById('erp-att-bar');if(bar)bar.style.display='none';
+  var fill=document.getElementById('erp-att-fill');if(fill)fill.style.width='0%';
+  var btn=document.getElementById('login-btn');if(btn)btn.disabled=false;
 }
 
-// ── SETUP: Pick color ─────────────────────────────────────────────
-function _setupPickColor(el, color){
-  document.querySelectorAll('[data-color]').forEach(function(d){
-    d.style.boxShadow='none'; d.style.border='none';
-  });
-  el.style.boxShadow = '0 0 0 2px #fff, 0 0 0 4px #'+color;
-  el.style.border = '3px solid #'+color;
-  var inp = document.getElementById('setup-co-color');
-  if(inp) inp.value = color;
-}
-
-// ── SETUP: Next to admin creation ────────────────────────────────
-function _setupNextToAdmin(){
-  _loginClearErr('setup-co-err');
-  var name = _gvl('setup-co-name');
-  if(!name){ _loginErr('setup-co-err','يرجى إدخال اسم الشركة'); return; }
-  erpGoStep('admin');
-  setTimeout(function(){var el=document.getElementById('setup-name');if(el)el.focus();},150);
-}
-
-// ── SETUP: Create company + admin ────────────────────────────────
-function _setupToggleEye(){
-  var inp=document.getElementById('setup-pass');
-  var eye=document.getElementById('setup-eye');
-  if(!inp) return;
-  inp.type=inp.type==='password'?'text':'password';
-  if(eye) eye.textContent=inp.type==='password'?'👁':'🙈';
-}
-
-function _setupCreateCompany(){
-  _loginClearErr('setup-admin-err');
-  var name     = _gvl('setup-name');
-  var username = _gvl('setup-username');
-  var pass     = _gvl('setup-pass');
-  var pass2    = _gvl('setup-pass2');
-
-  if(!name)     { _loginErr('setup-admin-err','يرجى إدخال الاسم الكامل'); return; }
-  if(!username) { _loginErr('setup-admin-err','يرجى إدخال اسم المستخدم'); return; }
-  if(pass.length < 4) { _loginErr('setup-admin-err','كلمة المرور قصيرة — 4 أحرف على الأقل'); return; }
-  if(pass !== pass2)  { _loginErr('setup-admin-err','كلمتا المرور غير متطابقتين'); return; }
-
-  var coName  = _gvl('setup-co-name');
-  var coType  = _gvl('setup-co-type');
-  var coColor = _gvl('setup-co-color') || '0284c7';
-  var coId    = 'co_'+Date.now();
-
-  // Create company
-  var cos = [{id:coId, name:coName, type:coType, color:coColor}];
-  localStorage.setItem('pharma_companies_v1', JSON.stringify(cos));
-
-  // Create admin user
-  var db = JSON.parse(JSON.stringify(typeof defaultDB!=='undefined'?defaultDB:{appUsers:[],_seq:{}}));
-  db.appUsers = [{
-    id: 1,
-    username: username,
-    name: name,
-    role: 'admin',
-    password: _authHash(pass),
-    active: true,
-    createdAt: Date.now()
-  }];
-  _saveCoData(coId, db);
-
-  // Auto login
-  _authUser = {username: username, name: name, role: 'admin', id: 1};
-  try{ sessionStorage.setItem('_erp_s', JSON.stringify(_authUser)); }catch(e){}
-
-  var loginEl = document.getElementById('erp-login-screen');
-  if(loginEl) loginEl.style.display = 'none';
+// ── Do login ──────────────────────────────────────────────────────
+function erpDoLogin(){
+  _clearErr('login-err');
+  var user=_gv('login-user'), pw=_gv('login-pw');
+  if(!user){_showErr('login-err','أدخل اسم المستخدم');return;}
+  if(!pw){_showErr('login-err','أدخل كلمة المرور');return;}
+  _attCount++;
+  var bar=document.getElementById('erp-att-bar');if(_attCount>=2&&bar)bar.style.display='block';
+  var fill=document.getElementById('erp-att-fill');if(fill)fill.style.width=Math.min(100,_attCount/_MAX_ATT*100)+'%';
+  if(_attCount>=_MAX_ATT){
+    _showErr('login-err','تم قفل الحساب — تواصل مع المدير');
+    var btn=document.getElementById('login-btn');if(btn)btn.disabled=true;
+    return;
+  }
+  if(!_loginCoId){var cos=_getCos();if(cos.length)_loginCoId=cos[0].id;}
+  var db=_getCoDB(_loginCoId);
+  var users=db.appUsers||[];
+  var u=users.find(function(x){return x.username===user;});
+  if(!u){_showErr('login-err','اسم المستخدم غير موجود');return;}
+  if(u.active===false){_showErr('login-err','الحساب موقوف — تواصل مع المدير');return;}
+  var hash=_authHash(pw);
+  if(u.password!==hash&&u.password!==pw){
+    var rem=_MAX_ATT-_attCount;
+    _showErr('login-err','كلمة المرور غير صحيحة'+(rem<=2?' — '+rem+' محاولة متبقية':''));
+    var pwEl=document.getElementById('login-pw');if(pwEl){pwEl.value='';pwEl.focus();}
+    return;
+  }
+  u.lastLogin=Date.now();_saveCoDB(_loginCoId,db);
+  _authUser={username:u.username,name:u.name,role:u.role,id:u.id};
+  try{sessionStorage.setItem('_erp_s',JSON.stringify(_authUser));}catch(e){}
+  document.getElementById('erp-login-screen').style.display='none';
   erpShowCentral();
 }
 
-// ── LOGIN ────────────────────────────────────────────────────────
-function _loginToggleEye(){
-  var inp=document.getElementById('login-pass');
-  var eye=document.getElementById('login-eye');
-  if(!inp) return;
+// ── Eye toggle ────────────────────────────────────────────────────
+function _loginTogEye(){
+  var inp=document.getElementById('login-pw');
+  if(!inp)return;
   inp.type=inp.type==='password'?'text':'password';
-  if(eye) eye.textContent=inp.type==='password'?'👁':'🙈';
   inp.focus();
 }
 
-function erpDoLogin(){
-  _loginClearErr('login-err');
-  var username = _gvl('login-username');
-  var pass     = _gvl('login-pass');
-  var btn      = document.getElementById('login-btn');
-
-  if(!username){ _loginErr('login-err','أدخل اسم المستخدم'); return; }
-  if(!pass)    { _loginErr('login-err','أدخل كلمة المرور'); return; }
-
-  _erpAttempts++;
-  var bar  = document.getElementById('erp-att-bar');
-  var fill = document.getElementById('erp-att-fill');
-  if(_erpAttempts >= 2 && bar) bar.style.display = 'block';
-  if(fill) fill.style.width = Math.min(100, _erpAttempts/_ERP_MAX_ATT*100)+'%';
-
-  if(_erpAttempts >= _ERP_MAX_ATT){
-    _loginErr('login-err','تم قفل الحساب مؤقتاً — تواصل مع المدير');
-    if(btn) btn.disabled = true;
-    return;
-  }
-
-  // Find user in selected company
-  if(!_loginCoId){
-    var cos = _getAllCompanies();
-    if(cos.length) _loginCoId = cos[0].id;
-  }
-
-  var db    = _getCoData(_loginCoId);
-  var users = db.appUsers || [];
-  var user  = users.find(function(u){ return u.username===username; });
-
-  if(!user){
-    _loginErr('login-err','اسم المستخدم غير موجود في هذه الشركة');
-    return;
-  }
-  if(user.active === false){
-    _loginErr('login-err','هذا الحساب موقوف — تواصل مع المدير');
-    return;
-  }
-
-  var hash = _authHash(pass);
-  if(user.password !== hash && user.password !== pass){
-    var rem = _ERP_MAX_ATT - _erpAttempts;
-    _loginErr('login-err','كلمة المرور غير صحيحة'+(rem<=2?' — '+rem+' محاولة متبقية':''));
-    var p=document.getElementById('login-pass'); if(p){p.value='';p.focus();}
-    return;
-  }
-
-  // Success
-  user.lastLogin = Date.now();
-  _saveCoData(_loginCoId, db);
-
-  _authUser = {username:user.username, name:user.name, role:user.role, id:user.id};
-  try{ sessionStorage.setItem('_erp_s', JSON.stringify(_authUser)); }catch(e){}
-
-  var loginEl = document.getElementById('erp-login-screen');
-  if(loginEl) loginEl.style.display = 'none';
-  erpShowCentral();
-}
-
-// ── RESET PASSWORD ────────────────────────────────────────────────
+// ── Reset password ────────────────────────────────────────────────
 function erpDoReset(){
-  _loginClearErr('reset-err');
-  var targetUser = _gvl('reset-username');
-  var adminPw    = _gvl('reset-admin-pw');
-  var newPw      = _gvl('reset-new-pw');
-
-  if(!targetUser||!adminPw||!newPw){ _loginErr('reset-err','يرجى تعبئة جميع الحقول'); return; }
-  if(newPw.length<4){ _loginErr('reset-err','كلمة المرور قصيرة — 4 أحرف على الأقل'); return; }
-
-  // Verify admin across all companies
-  var cos = _getAllCompanies();
-  var adminVerified = false;
-  var targetFound   = false;
-
-  cos.forEach(function(c){
-    var db    = _getCoData(c.id);
-    var users = db.appUsers||[];
-    // Verify admin password
-    var admin = users.find(function(u){ return u.role==='admin'&&u.active!==false; });
-    if(admin){
-      var h = _authHash(adminPw);
-      if(admin.password===h||admin.password===adminPw) adminVerified=true;
-    }
-    // Update target user
-    var idx = users.findIndex(function(u){ return u.username===targetUser; });
-    if(idx>=0){
-      targetFound=true;
-      if(adminVerified){
-        users[idx].password = _authHash(newPw);
-        _saveCoData(c.id, db);
-      }
-    }
+  _clearErr('reset-err');
+  var tu=_gv('reset-user'),ap=_gv('reset-admin-pw'),np=_gv('reset-new-pw');
+  if(!tu||!ap||!np){_showErr('reset-err','يرجى تعبئة جميع الحقول');return;}
+  if(np.length<4){_showErr('reset-err','كلمة المرور قصيرة');return;}
+  var adminOk=false,found=false,updatedCoId=null;
+  _getCos().forEach(function(c){
+    var db=_getCoDB(c.id);
+    var adm=(db.appUsers||[]).find(function(u){return u.role==='admin'&&u.active!==false;});
+    if(adm&&(adm.password===_authHash(ap)||adm.password===ap))adminOk=true;
   });
-
-  if(!adminVerified){ _loginErr('reset-err','كلمة مرور المدير غير صحيحة'); return; }
-  if(!targetFound)  { _loginErr('reset-err','اسم المستخدم غير موجود'); return; }
-
-  if(typeof showNotif==='function') showNotif('✓ تم تغيير كلمة المرور بنجاح','success');
+  if(!adminOk){_showErr('reset-err','كلمة مرور المدير غير صحيحة');return;}
+  _getCos().forEach(function(c){
+    var db=_getCoDB(c.id);
+    var idx=(db.appUsers||[]).findIndex(function(u){return u.username===tu;});
+    if(idx>=0){found=true;db.appUsers[idx].password=_authHash(np);_saveCoDB(c.id,db);}
+  });
+  if(!found){_showErr('reset-err','اسم المستخدم غير موجود');return;}
+  if(typeof showNotif==='function')showNotif('✓ تم تغيير كلمة المرور','success');
   erpGoStep('login');
 }
 
-// ── LOGOUT ────────────────────────────────────────────────────────
+// ── Logout ────────────────────────────────────────────────────────
 function erpLogout(){
-  _authUser=null;
+  _authUser=null;_attCount=0;
   try{sessionStorage.removeItem('_erp_s');}catch(e){}
-  var cd=document.getElementById('central-dashboard'); if(cd) cd.style.display='none';
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main'); if(mn) mn.style.display='none';
-  _erpAttempts=0;
+  var cd=document.getElementById('central-dashboard');if(cd)cd.style.display='none';
+  var sb=document.getElementById('sidebar');if(sb)sb.style.display='none';
+  var mn=document.querySelector('main');if(mn)mn.style.display='none';
   erpShowLogin();
 }
-
 function erpSwitchCompany(){
-  var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
-  var mn=document.querySelector('main'); if(mn) mn.style.display='none';
+  var sb=document.getElementById('sidebar');if(sb)sb.style.display='none';
+  var mn=document.querySelector('main');if(mn)mn.style.display='none';
   erpShowCentral();
 }
-
 </script>
 <script>
 (function(){
