@@ -3115,57 +3115,44 @@ function saveProduct(id){
 // MODALS — Materials
 // ═══════════════════════════════════════════════
 
-// ── Material Autocomplete Init ─────────────────────────────────
+// ── Material Active Ingredient Autocomplete ─────────────────────
 function initMaterialAutocomplete(){
   var inp  = document.getElementById('m-name');
   var list = document.getElementById('m-name-list');
-  if(!inp||!list) return;
-
-  // Combine APIS_DB + existing materials names
+  if(!inp || !list) return;
   var db = [];
-  if(typeof window.APIS_DB !== 'undefined') db = db.concat(window.APIS_DB);
-  if(typeof window.EXCIPIENTS_DB !== 'undefined') db = db.concat(window.EXCIPIENTS_DB);
-  // Add local materials
+  if(window.APIS_DB)      db = db.concat(window.APIS_DB);
+  if(window.EXCIPIENTS_DB) db = db.concat(window.EXCIPIENTS_DB);
   (getAll('materials')||[]).forEach(function(m){
     if(m.name && db.indexOf(m.name)<0) db.push(m.name);
   });
-
   function render(){
     var q = inp.value.trim().toLowerCase();
-    list.innerHTML='';
-    if(q.length<1){list.style.display='none';return;}
-    var hits = db.filter(function(item){
-      var n = (typeof item==='string'?item:(item.nameAr||item.name||'')).toLowerCase();
-      return n.startsWith(q)||n.includes(q);
-    }).slice(0,14);
-    if(!hits.length){list.style.display='none';return;}
-    hits.forEach(function(item){
-      var label = typeof item==='string'?item:(item.nameAr||item.name||'');
-      var en    = typeof item==='object'?(item.nameEn||''):'';
+    list.innerHTML = '';
+    if(!q){ list.style.display='none'; return; }
+    var hits = db.filter(function(n){
+      var s = n.toLowerCase();
+      return s.startsWith(q) || s.includes(q);
+    }).slice(0, 14);
+    if(!hits.length){ list.style.display='none'; return; }
+    hits.forEach(function(name){
       var row = document.createElement('div');
-      row.style.cssText='padding:10px 14px;cursor:pointer;border-bottom:1px solid rgba(2,132,199,.07);display:flex;align-items:center;justify-content:space-between;gap:8px';
-      row.innerHTML=
-        '<span style="font-size:14px;color:#0f172a;font-weight:600">'+esc(label)+'</span>'+
-        (en?'<span style="font-size:11px;color:#94a3b8">'+esc(en)+'</span>':'');
-      row.onmouseenter=function(){this.style.background='rgba(2,132,199,.06)';};
-      row.onmouseleave=function(){this.style.background='';};
-      row.onmousedown=function(e){
+      row.style.cssText = 'padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(2,132,199,.07);font-size:14px;color:#0f172a;font-weight:600';
+      row.textContent = name;
+      row.onmouseenter = function(){ this.style.background='rgba(2,132,199,.06)'; };
+      row.onmouseleave = function(){ this.style.background=''; };
+      row.onmousedown  = function(e){
         e.preventDefault();
-        inp.value=label;
-        list.style.display='none';
+        inp.value = name;
+        list.style.display = 'none';
       };
       list.appendChild(row);
     });
-    list.style.display='block';
+    list.style.cssText = 'display:block;position:absolute;background:#fff;border:1px solid rgba(2,132,199,.2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:9999;max-height:280px;overflow-y:auto;min-width:100%;right:0;top:calc(100% + 4px)';
   }
-
   inp.addEventListener('input', render);
   inp.addEventListener('focus', render);
-  inp.addEventListener('blur', function(){setTimeout(function(){list.style.display='none';},180);});
-  inp.addEventListener('keydown', function(e){
-    if(e.key==='Escape'){list.style.display='none';}
-    if(e.key==='ArrowDown'){var first=list.firstChild;if(first)first.focus();}
-  });
+  inp.addEventListener('blur', function(){ setTimeout(function(){ list.style.display='none'; },200); });
 }
 function addMaterial(type){
   showModal(modal(type==='raw_material'?'إضافة مادة خام جديدة':'إضافة مادة تغليف جديدة',materialForm({materialType:type})));
@@ -3174,9 +3161,7 @@ function addMaterial(type){
 function editMaterial(id){ const m=getById('materials',id); if(!m)return; showModal(modal('تعديل مادة',materialForm(m))); }
 function materialForm(m={}){
   return `
-    <div style="position:relative">
-      ${fg('اسم المادة / المادة الفعالة *','<input id="m-name" type="text" class="fi" value="'+(m.name||'')+'" placeholder="ابدأ الكتابة للبحث..." autocomplete="off" style="width:100%"><div id="m-name-list" style="display:none;position:absolute;z-index:999;background:#fff;border:1px solid rgba(2,132,199,.2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.1);max-height:260px;overflow-y:auto;min-width:100%;right:0;top:calc(100% + 2px)"></div>')}
-    </div>
+    <div style="position:relative">      ${fg('اسم المادة / المادة الفعالة *',\`<input id="m-name" type="text" class="fi" value="\${m.name||''}" placeholder="ابدأ الكتابة للبحث..." autocomplete="off" style="width:100%"><div id="m-name-list" style="display:none;position:absolute"></div>\`)}    </div>
     <div class="form-row">
       ${fg('نوع المادة',sel('m-type',[{v:'raw_material',l:'مادة خام'},{v:'packaging',l:'مادة تغليف'}],m.materialType||'raw_material'))}
       ${fg('وحدة القياس',sel('m-unit',UNITS,m.unit||'كجم'))}
@@ -10960,8 +10945,11 @@ function _getCoDB(id){try{return JSON.parse(localStorage.getItem('pharma_data_'+
 function _saveCoDB(id,d){localStorage.setItem('pharma_data_'+id,JSON.stringify(d));}
 
 function showCompaniesManager(){
+  var els=['erp-login-screen','central-dashboard','sidebar'];
+  els.forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+  var mn=document.querySelector('main');if(mn)mn.style.display='none';
   var sc=document.getElementById('companies-screen');
-  if(sc) sc.style.cssText='display:block!important;position:fixed;inset:0;z-index:99998;overflow-y:auto;background:linear-gradient(145deg,#f0f9ff,#e0f2fe 40%,#f8faff)';
+  if(sc) sc.style.display='block';
   _renderCoMgrGrid();
 }
 
@@ -11021,34 +11009,35 @@ function _renderCoMgrGrid(){
 }
 
 function _coMgrEnter(coId){
-  // Hide companies screen
-  var sc=document.getElementById('companies-screen');
-  if(sc) sc.style.display='none';
-  // Set active company in old system
   window._loginCoId=coId;
-  var cos=[];
-  try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}
+  var sc=document.getElementById('companies-screen');if(sc)sc.style.display='none';
+  var ls=document.getElementById('erp-login-screen');if(ls)ls.style.display='flex';
+  var cos=_getCos();
   var co=cos.find(function(c){return c.id===coId;});
   if(co){
-    // Load company data into DB for old system
-    try{
-      var d=JSON.parse(localStorage.getItem('pharma_data_'+coId)||'{}');
-      if(typeof DB!=='undefined') Object.assign(DB, d);
-    }catch(e){}
-    // Set S object for old system
-    if(typeof S!=='undefined'){
-      S.coCode=coId;
-      S.companyNameAr=co.name||'';
-    }
+    var logo=document.getElementById('login-logo');
+    var title=document.getElementById('login-co-title');
+    if(logo){logo.textContent=(co.name||'Q')[0].toUpperCase();logo.style.background='linear-gradient(135deg,#'+(co.color||'0284c7')+',#7c3aed)';}
+    if(title) title.textContent=co.name;
   }
-  // Use old login system
-  if(typeof _showLoginScreen==='function'){
-    _showLoginScreen();
-  } else if(typeof erpShowLogin==='function'){
-    erpGoStep('login');
-    var ls=document.getElementById('erp-login-screen');
-    if(ls) ls.style.display='flex';
+  var sub=document.getElementById('login-co-sub');
+  if(sub){
+    sub.innerHTML='';
+    var backBtn=document.createElement('button');
+    backBtn.style.cssText='background:none;border:none;color:#0284c7;font-family:var(--font);font-size:13px;cursor:pointer;padding:0';
+    backBtn.textContent='← العودة لقائمة الشركات';
+    backBtn.onclick=showCompaniesManager;
+    sub.appendChild(backBtn);
   }
+  var u=document.getElementById('login-user');if(u)u.value='';
+  var p=document.getElementById('login-pw');if(p){p.value='';p.type='password';}
+  window._attCount=0;
+  var bar=document.getElementById('erp-att-bar');if(bar)bar.style.display='none';
+  var fill=document.getElementById('erp-att-fill');if(fill)fill.style.width='0%';
+  var btn=document.getElementById('login-btn');if(btn)btn.disabled=false;
+  var err=document.getElementById('login-err');if(err)err.classList.remove('show');
+  erpGoStep('login');
+  setTimeout(function(){var u2=document.getElementById('login-user');if(u2)u2.focus();},150);
 }
 
 function _coMgrDelete(id){
@@ -11158,64 +11147,6 @@ function _coMgrImport(){
 function _erpAllCompanies(){ return _getCos(); }
 function _erpDataOf(id){ return _getCoDB(id); }
 
-
-// ══ NAV DEFINITION ══════════════════════════════════════════════
-var NAV=[
-  {sec:'الرئيسية'},
-  {id:'dashboard',   lbl:'لوحة التحكم',    ic:'📊'},
-  {sec:'الإنتاج'},
-  {id:'products',    lbl:'المنتجات',        ic:'💊'},
-  {id:'materials',   lbl:'المواد الخام',     ic:'🧪'},
-  {id:'production',  lbl:'أوامر الإنتاج',    ic:'🏭'},
-  {id:'inventory',   lbl:'المخزون',          ic:'📦'},
-  {sec:'المبيعات'},
-  {id:'distributors',lbl:'الموزعون',         ic:'🤝'},
-  {id:'deliveries',  lbl:'التسليمات',        ic:'🚚'},
-  {sec:'التنظيمية'},
-  {id:'registration',lbl:'التسجيلات',        ic:'📋'},
-  {sec:'المالية'},
-  {id:'expenses',   lbl:'المصروفات',        ic:'💰'},
-  {id:'employees',  lbl:'الموارد البشرية',   ic:'👥'},
-  {id:'budget',     lbl:'الميزانية',         ic:'📈'},
-  {sec:'أخرى'},
-  {id:'marketing',  lbl:'التسويق',           ic:'📣'},
-  {id:'reports',    lbl:'التقارير',           ic:'📄'},
-];
-
-// ══ AUTOCOMPLETE ════════════════════════════════════════════════
-function showAutocomplete(inputId,listId,db,onSelect){
-  var inp=document.getElementById(inputId);
-  var list=document.getElementById(listId);
-  if(!inp||!list)return;
-  function doSearch(){
-    var q=inp.value.trim().toLowerCase();
-    list.innerHTML='';
-    if(q.length<1){list.style.display='none';return;}
-    var matches=db.filter(function(item){
-      var name=(typeof item==='string'?item:(item.nameAr||item.name||'')).toLowerCase();
-      return name.startsWith(q)||name.includes(q);
-    }).slice(0,12);
-    if(!matches.length){list.style.display='none';return;}
-    matches.forEach(function(item){
-      var label=typeof item==='string'?item:(item.nameAr||item.name||'');
-      var sub=typeof item==='object'?(item.nameEn||item.cas||''):'';
-      var li=document.createElement('div');
-      li.style.cssText='padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(2,132,199,.08);display:flex;flex-direction:column;gap:2px';
-      li.innerHTML='<span style="font-size:14px;color:#0f172a;font-weight:600">'+esc(label)+'</span>'+(sub?'<span style="font-size:11px;color:#64748b">'+esc(sub)+'</span>':'');
-      li.onmousedown=function(e){e.preventDefault();inp.value=label;list.style.display='none';if(onSelect)onSelect(item);};
-      li.onmouseenter=function(){this.style.background='rgba(2,132,199,.06)';};
-      li.onmouseleave=function(){this.style.background='';};
-      list.appendChild(li);
-    });
-    list.style.cssText='display:block;position:absolute;background:#fff;border:1px solid rgba(2,132,199,.2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:9999;max-height:280px;overflow-y:auto;min-width:100%;right:0;top:calc(100% + 4px)';
-  }
-  inp.addEventListener('input',doSearch);
-  inp.addEventListener('focus',doSearch);
-  inp.addEventListener('blur',function(){setTimeout(function(){list.style.display='none';},200);});
-}
-// ══ END AUTOCOMPLETE ════════════════════════════════════════════
-
-function
 (function(){
   // Hide old co-screen and app immediately
   var sb=document.getElementById('sidebar'); if(sb) sb.style.display='none';
@@ -11258,7 +11189,7 @@ function
 
 // ══ RESTORED: Company Page + buildNav + saveTab ══
 function buildNav(){
-  var nav=document.getElementById('nav-menu')||document.getElementById('sb-nav');
+  var nav=document.getElementById('sb-nav')||document.getElementById('nav-menu');
   if(!nav)return;
   var html='';
   for(var i=0;i<NAV.length;i++){
@@ -12923,9 +12854,8 @@ var EXCIPIENTS_DB = [
   'Sodium Chloride','Glucose','Mannitol',
 ];
 
-// Expose to window for autocomplete
-window.APIS_DB = APIS_DB;
-window.EXCIPIENTS_DB = EXCIPIENTS_DB;
+window.APIS_DB=APIS_DB;
+window.EXCIPIENTS_DB=EXCIPIENTS_DB;
 
 // ══════════════════════════════════════════════════════════════
 // AUTOCOMPLETE ENGINE
