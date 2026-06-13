@@ -1394,8 +1394,6 @@ tbody td{font-size:14px !important}
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'><rect width='192' height='192' rx='32' fill='%230284c7'/><text x='96' y='130' font-size='100' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>Q</text></svg>">
 </head>
 <body><body>
-<div id="splash-screen" style="display:none"></div>
-
 
 <!-- ══ LOGIN SCREEN ══ -->
 <!-- ══ COMPANIES MANAGER ══ -->
@@ -10749,9 +10747,6 @@ function _erpEsc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&l
 
 // ── Central Dashboard ─────────────────────────────────────────
 function erpShowCentral(){
-  var sc2=document.getElementById('companies-screen');if(sc2)sc2.style.display='none';
-  var tb=document.querySelector('.topbar');if(tb)tb.style.display='';
-  var mn=document.querySelector('main');if(mn)mn.style.display='';
   var cd=document.getElementById('central-dashboard');
   if(!cd) return;
   cd.style.display='block';
