@@ -1628,7 +1628,7 @@ function addProduction(){
   showModal(modal('أمر إنتاج جديد',`
     <div class="form-row">${fg('المنتج *',sel('po-prod',pOpts))}${fg('المصنع *',sel('po-cmo',cOpts))}</div>
     <div class="form-row">${fg('رقم الأمر',inp('po-num'))}${fg('تاريخ الأمر',inp('po-date','date',today()))}</div>
-    <div class="form-row">${fg('الكمية *',inp('po-qty','number'))}${fg('تكلفة الوحدة (ج.م)',inp('po-ucost','number'))}</div>
+    <div class="form-row">${fg('الكمية *',inp('po-qty','number'))}${fg('حجم الدفعة (كجم)',inp('po-bsize','number','','مثال: 100'))}${fg('تكلفة الوحدة (ج.م)',inp('po-ucost','number'))}</div>
     <div class="form-row">${fg('تكلفة CMO (ج.م)',inp('po-tcost','number','','تكلفة المصنع فقط بدون المواد'))}${fg('الموعد المتوقع',inp('po-exp','date'))}</div>
     ${fg('الحالة',sel('po-status',[{v:'pending',l:'قيد الانتظار'},{v:'in_production',l:'في الإنتاج'},{v:'received',l:'مستلم'},{v:'cancelled',l:'ملغي'}],'pending'))}
     <div class="form-actions"><button class="btn btn-green" onclick="saveProduction()">💾 حفظ</button><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button></div>
@@ -1647,7 +1647,7 @@ function saveProduction(id){
   const qty=numVal('po-qty'); if(!qty) return alert('يرجى تحديد الكمية');
   if(!id&&(!numVal('po-prod')||!numVal('po-cmo'))) return alert('يرجى اختيار المنتج والمصنع');
   if(id) update('productionOrders',id,{quantity:qty,unitCost:val('po-ucost')||null,totalCost:val('po-tcost')||null,expectedDate:val('po-exp')||null,status:val('po-status')});
-  else insert('productionOrders',{productId:numVal('po-prod'),cmoId:numVal('po-cmo'),orderNumber:val('po-num')||null,quantity:qty,unitCost:val('po-ucost')||null,cmoBaseCost:val('po-tcost')||'0',totalCost:val('po-tcost')||null,orderDate:val('po-date')||null,expectedDate:val('po-exp')||null,status:val('po-status')});
+  else insert('productionOrders',{productId:numVal('po-prod'),cmoId:numVal('po-cmo'),orderNumber:val('po-num')||null,quantity:qty,batchSize:numVal('po-bsize')||null,unitCost:val('po-ucost')||null,cmoBaseCost:val('po-tcost')||'0',totalCost:val('po-tcost')||null,orderDate:val('po-date')||null,expectedDate:val('po-exp')||null,status:val('po-status')});
   closeModal(); go('production');
 }
 
@@ -3276,7 +3276,7 @@ PAGES.bom = function(){
             <h2>وصفة: ${p.name}</h2>
             <span class="text-blue fw7">تكلفة مواد الوحدة القياسية: ${fmt(totalPerUnit)} ج.م</span>
           </div>
-          ${tbl(['المادة','النوع','الوحدة','الكمية/وحدة منتج','السعر الحالي (ج.م)','تكلفة/وحدة منتج',''],
+          ${tbl(['المادة','النوع','الوحدة','التركيز','كمية/وحدة منتج','كمية الدفعة','السعر (ج.م)','تكلفة/وحدة',''],
             pBom.map(b => {
               const mat = getById('materials', b.materialId);
               const costPerUnit = Number(b.quantityPerUnit||0) * Number(mat?.unitCost||0);
@@ -3284,7 +3284,9 @@ PAGES.bom = function(){
                 `<strong>${mat?.name||b.materialName||'-'}</strong>`,
                 badge(mat?.materialType||'raw_material'),
                 mat?.unit||'-',
+                b.concentration ? `<span class="fw7 text-green">${b.concentration} ${b.concentrationUnit||'mg/g'}</span>` : '—',
                 `<span class="fw7">${fmtN(b.quantityPerUnit)}</span>`,
+                b.quantityPerBatch ? `<span class="fw7 text-blue">${fmtN(b.quantityPerBatch)} ${mat?.unit||'gm'}</span>` : '—',
                 mat?.unitCost ? `<span class="text-blue">${fmt(mat.unitCost)} ج.م</span>` : '—',
                 `<span class="text-red fw7">${fmt(costPerUnit)} ج.م</span>`,
                 `<button class="icon-btn del" onclick="if(confirm('حذف؟')){remove('productBOM',${b.id});go('bom')}">${ic.del}</button>`
@@ -3312,7 +3314,7 @@ function addBOMEntry(){
         <optgroup label="📦 مواد تغليف">${pkg.map(m=>`<option value="${m.id}" data-unit="${m.unit}" data-cost="${m.unitCost||0}">${m.name} (${m.unit})</option>`).join('')}</optgroup>
       </select>
     </div>
-    ${fg('الكمية لكل وحدة منتج *', inp('bom-qty','number','','مثال: 0.25 كجم لكل علبة'))}
+    ${fg('الكمية لكل وحدة منتج *', inp('bom-qty','number','','مثال: 0.25 كجم لكل علبة'))}${fg('الكمية لكل دفعة (Batch Qty)',inp('bom-batchqty','number','','مثال: 350 جم/100كجم'))}${fg('التركيز (لكل جم/مل منتج)',inp('bom-conc','number','','مثال: 3.5'))}${fg('وحدة التركيز',sel('bom-cunit',[{v:'mg/g',l:'مج/جم'},{v:'mg/ml',l:'مج/مل'},{v:'IU/g',l:'وحدة/جم'},{v:'%w/w',l:'% و/و'},{v:'%v/v',l:'% ح/ح'}],'mg/g'))}
     <div id="bom-cost-preview" style="font-size:12px;color:var(--muted);margin-top:-8px;margin-bottom:12px"></div>
     <div class="form-actions">
       <button class="btn btn-green" onclick="saveBOMEntry()">💾 حفظ</button>
@@ -3339,7 +3341,7 @@ function saveBOMEntry(){
   const prodId = numVal('bom-prod'), matId = numVal('bom-mat'), qty = numVal('bom-qty');
   if(!prodId||!matId||!qty) return alert('يرجى تعبئة كل الحقول');
   const mat = getById('materials', matId);
-  insert('productBOM',{productId:prodId,materialId:matId,materialName:mat?.name||'',quantityPerUnit:qty});
+  insert('productBOM',{productId:prodId,materialId:matId,materialName:mat?.name||'',quantityPerUnit:qty,quantityPerBatch:numVal('bom-batchqty')||null,concentration:numVal('bom-conc')||null,concentrationUnit:val('bom-cunit')||'mg/g'});
   closeModal(); go('bom');
 }
 
