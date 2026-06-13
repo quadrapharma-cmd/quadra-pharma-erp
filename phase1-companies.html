@@ -2534,6 +2534,8 @@ tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:rgba(34,2
   .main{margin-right:0}
   .fgrid{grid-template-columns:1fr}
 }
+
+.moverlay.on{display:flex;}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
@@ -2987,6 +2989,40 @@ function go(page){
 }
 
 
+
+// ══ Company Module Helper Functions ══════════════════════════════
+const _now=()=>new Date().toISOString();
+const set=(id,v)=>{const e=document.getElementById(id);if(e)e.value=v??'';};
+const uid=()=>crypto.randomUUID();
+const _origOpenModal=typeof showModal==='function'?showModal:null;
+function openModal(id){
+  if(id&&typeof id==='string'){
+    const el=document.getElementById(id);
+    if(el){el.classList.add('on');return;}
+  }
+}
+// closeModal override for modal-id system (keeps existing showModal/closeModal)
+function closeModalId(id){const el=document.getElementById(id);if(el)el.classList.remove('on');}
+// Patch closeModal to handle both systems
+const _origCloseModal=closeModal;
+closeModal=function(id){
+  if(id&&typeof id==='string'){
+    const el=document.getElementById(id);
+    if(el){el.classList.remove('on');return;}
+  }
+  _origCloseModal();
+};
+function toast(msg,type='info'){
+  const tc=document.getElementById('tc');
+  if(!tc){if(typeof showNotif==='function')showNotif(msg,type==='ok'?'success':type==='er'?'error':'info');return;}
+  const t=document.createElement('div');
+  t.className='toast '+(type==='ok'?'ok':type==='er'?'er':'info');
+  t.textContent=(type==='ok'?'✅ ':type==='er'?'❌ ':'ℹ️ ')+msg;
+  tc.appendChild(t);
+  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320);},3000);
+}
+// ═════════════════════════════════════════════════════════════════
+
 // ════════════════════════════════════════════════════════════════
 // COMPANY MODULE — بيانات الشركة
 // ════════════════════════════════════════════════════════════════
@@ -3158,7 +3194,7 @@ async function saveTab(tab){
   else if(tab==='eda'){u={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines'),edaAddress:val('cf-edaAddr')};}
   else if(tab==='tax'){u={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};}
   else if(tab==='persons'){u={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web')};}
-  Object.assign(co,u,{updatedAt:now()});
+  Object.assign(co,u,{updatedAt:_now()});
   _coSave(co);
   await saveHist(co.id,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'}[tab]);
   if(tab==='legal'){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr;document.getElementById('sb-coname2').textContent=co.nameAr;}
@@ -3186,7 +3222,7 @@ async function openEditPartner(id){const r=await dbGet('partners',id);if(!r)retu
 async function savePartner(){
   const name=val('mp-name'),pct=val('mp-pct');if(!name||!pct){toast('الاسم والنسبة مطلوبان','er');return}
   const eid=val('mp-id'),id=eid||uid();const existing=eid?await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_partners','readonly').objectStore('co_partners').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})}):null;
-  await new Promise(res=>_coIdbPut('co_partners',{...{...existing,id,companyId:_coId(),name,pct,nat:val('mp-nat'),shares:val('mp-shares'),val:val('mp-val'),createdAt:existing?.createdAt||now(),updatedAt:now()},companyId:_coId()},res));
+  await new Promise(res=>_coIdbPut('co_partners',{...{...existing,id,companyId:_coId(),name,pct,nat:val('mp-nat'),shares:val('mp-shares'),val:val('mp-val'),createdAt:existing?.createdAt||now(),updatedAt:_now()},companyId:_coId()},res));
   await saveHist(_coId(),eid?'تعديل شريك':'إضافة شريك',name);
   closeModal('modal-partner');toast('تم الحفظ','ok');loadPartnersTable();
 }
@@ -3209,7 +3245,7 @@ async function openEditFactory(id){const r=await dbGet('factories',id);if(!r)ret
 async function saveFactory(){
   const name=val('mf-name');if(!name){toast('اسم المصنع مطلوب','er');return}
   const eid=val('mf-id'),id=eid||uid();const existing=eid?await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_factories','readonly').objectStore('co_factories').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})}):null;
-  await new Promise(res=>_coIdbPut('co_factories',{...{...existing,id,companyId:_coId(),name,addr:val('mf-addr'),prods:val('mf-prods'),lic:val('mf-lic'),lines:val('mf-lines'),createdAt:existing?.createdAt||now(),updatedAt:now()},companyId:_coId()},res));
+  await new Promise(res=>_coIdbPut('co_factories',{...{...existing,id,companyId:_coId(),name,addr:val('mf-addr'),prods:val('mf-prods'),lic:val('mf-lic'),lines:val('mf-lines'),createdAt:existing?.createdAt||now(),updatedAt:_now()},companyId:_coId()},res));
   await saveHist(_coId(),eid?'تعديل مصنع':'إضافة مصنع',name);
   closeModal('modal-factory');toast('تم الحفظ','ok');loadFactoriesTable();
 }
@@ -3232,7 +3268,7 @@ async function openEditStorage(id){const r=await dbGet('storages',id);if(!r)retu
 async function saveStorage(){
   const name=val('ms-name');if(!name){toast('الاسم مطلوب','er');return}
   const eid=val('ms-id'),id=eid||uid();const existing=eid?await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_storages','readonly').objectStore('co_storages').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})}):null;
-  await new Promise(res=>_coIdbPut('co_storages',{...{...existing,id,companyId:_coId(),name,addr:val('ms-addr'),area:val('ms-area'),type:val('ms-type'),createdAt:existing?.createdAt||now(),updatedAt:now()},companyId:_coId()},res));
+  await new Promise(res=>_coIdbPut('co_storages',{...{...existing,id,companyId:_coId(),name,addr:val('ms-addr'),area:val('ms-area'),type:val('ms-type'),createdAt:existing?.createdAt||now(),updatedAt:_now()},companyId:_coId()},res));
   closeModal('modal-storage');toast('تم الحفظ','ok');loadStoragesTable();
 }
 
@@ -3254,7 +3290,7 @@ async function openEditDist(id){const r=await dbGet('distributors',id);if(!r)ret
 async function saveDist(){
   const name=val('md-name');if(!name){toast('الاسم مطلوب','er');return}
   const eid=val('md-id'),id=eid||uid();const existing=eid?await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_distributors','readonly').objectStore('co_distributors').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})}):null;
-  await new Promise(res=>_coIdbPut('co_distributors',{...{...existing,id,companyId:_coId(),name,addr:val('md-addr'),prods:val('md-prods'),createdAt:existing?.createdAt||now(),updatedAt:now()},companyId:_coId()},res));
+  await new Promise(res=>_coIdbPut('co_distributors',{...{...existing,id,companyId:_coId(),name,addr:val('md-addr'),prods:val('md-prods'),createdAt:existing?.createdAt||now(),updatedAt:_now()},companyId:_coId()},res));
   closeModal('modal-dist');toast('تم الحفظ','ok');loadDistsTable();
 }
 
@@ -3276,7 +3312,7 @@ async function uploadDoc(input){
     let data,type,size;
     if(file.type.startsWith('image/')){const c=await compressImg(file,900,.72);data=c.data;type='img';size=c.size;}
     else{data=await toB64(file);type='pdf';size=file.size;}
-    await new Promise(res=>_coIdbPut('co_documents',{...{id:uid(),companyId:_coId(),name,docType,type,data,size,createdAt:now()},companyId:_coId()},res));
+    await new Promise(res=>_coIdbPut('co_documents',{...{id:uid(),companyId:_coId(),name,docType,type,data,size,createdAt:_now()},companyId:_coId()},res));
     input.value='';set('doc-name','');toast('تم رفع المستند','ok');loadDocs();
   }catch(e){toast('خطأ: '+e.message,'er')}
 }
@@ -3345,6 +3381,7 @@ async function printCompany(){
   </div>
   <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-dist')">إلغاء</button><button class="btn btn-ok" onclick="saveDist()">حفظ</button></div>
 </div></div>
+<div id="tc" style="position:fixed;bottom:20px;left:20px;z-index:99999;display:flex;flex-direction:column;gap:8px"></div>
 </body></html>`);
 }
 
@@ -13380,6 +13417,14 @@ document.addEventListener('keydown',function(e){
   }
 });
 
+
+// Expose remaining functions to window
+window.applyFilters=applyFilters;
+window.filterAgency=filterAgency;
+window.filterStatus=filterStatus;
+window.sortBy=sortBy;
+window.nextPage=nextPage;
+window.prevPage=prevPage;
 })(); // end Registration Module IIFE
 
 })();
