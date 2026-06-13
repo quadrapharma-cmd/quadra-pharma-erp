@@ -2371,8 +2371,8 @@ function editContract(id){
 const _CO_KEY   = 'pharma_companies_v1';
 const _CO_COLORS = ['2ea043','388bfd','f85149','e3b341','bc8cff',
                     'ffa657','56d364','79c0ff','d2a8ff','ff7b72'];
-let _coActiveId  = null;
-let _coPicked    = _CO_COLORS[0];
+_coActiveId = null;  // already declared in IDB layer
+let _coPicked = _CO_COLORS[0];
 
 /* ── persistence ── */
 function _coGetAll(){ try{return JSON.parse(localStorage.getItem(_CO_KEY)||'[]');}catch(e){return[];} }
