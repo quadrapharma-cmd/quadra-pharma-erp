@@ -410,6 +410,67 @@ function loadDB(){
   }catch(e){}
   return {...defaultDB};
 }
+════════════════════════════════════════════
+// DATA LAYER — localStorage persistence
+// ═══════════════════════════════════════════════
+const STORE_KEY = 'pharma_erp_v2';
+
+const defaultDB = {
+  products:[], materials:[], materialReceipts:[], productBOM:[],
+  cmos:[], productionOrders:[], inventory:[], goodsReceipts:[],
+  registrations:[], distributors:[], deliveryOrders:[], deliveryItems:[],
+  expenses:[], employees:[], budgetLines:[], campaigns:[], salesTargets:[],
+  receivables:[], payrollRuns:[], purchaseOrders:[], qualityChecks:[],
+  returns:[], contracts:[], assets:[], eInvoices:[], taxLines:[], batchMaterials:[], productIngredients:[], partnerAccounts:[], partnerEntries:[], journalEntries:[], chartOfAccounts:[], historicalBalances:[], appUsers:[],
+  _seq:{}
+};
+
+let DB = loadDB();
+// Migration guard: ensure all tables exist
+['productIngredients','historicalBalances','appUsers','chartOfAccounts',
+ 'partnerAccounts','partnerEntries','journalEntries','receivables',
+ 'purchaseOrders','payrollRuns','qualityChecks','salesTargets'].forEach(function(t){
+  if(!Array.isArray(DB[t])) DB[t]=[];
+});
+if(!DB._seq) DB._seq={};
+
+
+// ── IndexedDB setup (unlimited storage) ──────────────────────────
+const _IDB_NAME = 'QuadraPharmaERP';
+const _IDB_VER  = 1;
+let   _idb      = null;
+
+function _openIDB(cb){
+  if(_idb){ cb(_idb); return; }
+  const req = indexedDB.open(_IDB_NAME, _IDB_VER);
+  req.onupgradeneeded = e => {
+    const db = e.target.result;
+    if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+  };
+  req.onsuccess = e => { _idb = e.target.result; cb(_idb); };
+  req.onerror   = ()  => { cb(null); };
+}
+
+function saveDB(){
+  const val = JSON.stringify(DB);
+  // Primary: IndexedDB (unlimited)
+  _openIDB(db => {
+    if(!db) return;
+    const tx  = db.transaction('kv','readwrite');
+    tx.objectStore('kv').put(val, STORE_KEY);
+  });
+  // Mirror: localStorage (fast boot fallback)
+  try{ localStorage.setItem(STORE_KEY, val); }catch(e){}
+}
+
+function loadDB(){
+  // Sync load from localStorage mirror (instant)
+  try{
+    const d = localStorage.getItem(STORE_KEY);
+    if(d) return JSON.parse(d);
+  }catch(e){}
+  return {...defaultDB};
+}
 
 // ── Wouncure Demo Seed ────────────────────────────────────────────
 (function(){
@@ -444,6 +505,32 @@ function _syncFromIDB(){
     };
   });
 }
+
+// ── Wouncure Demo Seed ──────────────────────────────────────────
+(function(){
+  try{
+    var CO_KEY  = 'pharma_companies_v1';
+    var coId    = 'co_quadra_demo';
+    var dataKey = 'pharma_data_' + coId;
+
+    // 1. Create company if not exists
+    var cos = [];
+    try{ cos = JSON.parse(localStorage.getItem(CO_KEY)||'[]'); }catch(e){}
+    if(!cos.find(function(c){return c.id===coId;})){
+      cos.push({"id": "co_quadra_demo", "name": "Quadra Pharma", "type": "شركة دوائية", "color": "2ea043"});
+      localStorage.setItem(CO_KEY, JSON.stringify(cos));
+    }
+
+    // 2. Seed company data if empty
+    var existing = null;
+    try{ existing = JSON.parse(localStorage.getItem(dataKey)||'null'); }catch(e){}
+    if(!existing || !existing.products || existing.products.length===0){
+      localStorage.setItem(dataKey, '{"products": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Wouncure 20gm Topical Powder", "scientificName": "Neomycin + Bacitracin + Cysteine + Glycine + Threonine", "code": "PT0285", "dosageForm": "Topical Powder", "strength": "20gm", "unit": "Bottle", "sellingPrice": 45, "status": "active"}], "materials": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9658", "name": "Neomycin Sulfate", "materialType": "raw_material", "unit": "gm", "unitCost": 850, "status": "active"}, {"id": 2, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9647", "name": "Bacitracin Zinc", "materialType": "raw_material", "unit": "gm", "unitCost": 1200, "status": "active"}, {"id": 3, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9656", "name": "Cysteine", "materialType": "raw_material", "unit": "gm", "unitCost": 320, "status": "active"}, {"id": 4, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9657", "name": "Glycine", "materialType": "raw_material", "unit": "gm", "unitCost": 45, "status": "active"}, {"id": 5, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9655", "name": "Threonine", "materialType": "raw_material", "unit": "gm", "unitCost": 180, "status": "active"}, {"id": 6, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9700", "name": "Maize Starch", "materialType": "raw_material", "unit": "kg", "unitCost": 28, "status": "active"}], "cmos": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Badr Pharma For Pharmaceutical Industries", "contactPerson": "Hani Abdallah", "licenseNumber": "FAC-BADR-001", "status": "active"}], "productBOM": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 1, "quantityPerBatch": 350, "unit": "gm"}, {"id": 2, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 2, "quantityPerBatch": 420, "unit": "gm"}, {"id": 3, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 3, "quantityPerBatch": 200, "unit": "gm"}, {"id": 4, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 4, "quantityPerBatch": 1000, "unit": "gm"}, {"id": 5, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 5, "quantityPerBatch": 100, "unit": "gm"}, {"id": 6, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 6, "quantityPerBatch": 97700, "unit": "gm"}], "productionOrders": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "cmoId": 1, "orderNumber": "BMR-2506001", "quantity": 5000, "orderDate": "2025-06-01", "expectedDate": "2025-06-15", "status": "in_production", "cmoBaseCost": 15000, "bprStatus": "draft"}], "materialReceipts": [], "productIngredients": [], "inventory": [], "goodsReceipts": [], "registrations": [], "distributors": [], "deliveryOrders": [], "deliveryItems": [], "expenses": [], "employees": [], "budgetLines": [], "campaigns": [], "salesTargets": [], "receivables": [], "payrollRuns": [], "purchaseOrders": [], "qualityChecks": [], "returns": [], "contracts": [], "assets": [], "eInvoices": [], "taxLines": [], "batchMaterials": [], "partnerAccounts": [], "partnerEntries": [], "journalEntries": [], "chartOfAccounts": [], "historicalBalances": [], "appUsers": [], "_seq": {"products": 1, "materials": 6, "cmos": 1, "productBOM": 6, "productionOrders": 1}}');
+    }
+  }catch(e){ console.error('Seed error:', e); }
+})();
+// ────────────────────────────────────────────────────────────────
+
 _syncFromIDB();
 
 function nextId(t){
