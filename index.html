@@ -379,10 +379,11 @@ function _openIDB(cb){
   if(_idbReady){ cb(_idb); return; }
   _idbQueue.push(cb);
   if(_idbQueue.length > 1) return;
-  const req = indexedDB.open(DB_NAME, DB_VER);
+  const req = indexedDB.open(DB_NAME, 4);
   req.onupgradeneeded = function(e){
     const db = e.target.result;
     if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+    ['co_partners','co_factories','co_distributors','co_storages','co_documents','co_history'].forEach(function(st){if(!db.objectStoreNames.contains(st)){var s=db.createObjectStore(st,{keyPath:'id',autoIncrement:false});s.createIndex('companyId','companyId',{unique:false});}});
   };
   req.onsuccess = function(e){
     _idb = e.target.result;
@@ -642,6 +643,7 @@ let currentPage='dashboard';
 
 const navItems=[
   {id:'dashboard',icon:'📊',label:'لوحة التحكم',sec:'الرئيسية'},
+  {id:'company',icon:'🏢',label:'بيانات الشركة',sec:'الشركة'},
   {id:'products',icon:'💊',label:'المنتجات',sec:'الإنتاج'},
   {id:'materials',icon:'🧪',label:'المواد الخام والتغليف',sec:'الإنتاج'},
   {id:'cmos',icon:'🏭',label:'المصانع (CMO)',sec:'الإنتاج'},
@@ -708,10 +710,382 @@ function go(page){
   },200);
 }
 
+
+// ════════════════════════════════════════════════════════════════
+// COMPANY MODULE — بيانات الشركة
+// ════════════════════════════════════════════════════════════════
+
+function _coIdbGetAll(store,companyId,cb){_openIDB(function(db){if(!db){cb([]);return;}try{var tx=db.transaction(store,'readonly');var req=tx.objectStore(store).index('companyId').getAll(companyId);req.onsuccess=function(){cb(req.result||[]);};req.onerror=function(){cb([]);};}catch(e){cb([]); }});}
+function _coIdbPut(store,obj,cb){_openIDB(function(db){if(!db){if(cb)cb(null);return;}try{if(!obj.id)obj.id=Date.now()+''+Math.random().toString(36).slice(2);var tx=db.transaction(store,'readwrite');var req=tx.objectStore(store).put(obj);req.onsuccess=function(){if(cb)cb(obj.id);};req.onerror=function(){if(cb)cb(null);};}catch(e){if(cb)cb(null);}});}
+function _coIdbDel(store,id,cb){_openIDB(function(db){if(!db){if(cb)cb();return;}try{var tx=db.transaction(store,'readwrite');tx.objectStore(store).delete(id);tx.oncomplete=function(){if(cb)cb();};}catch(e){if(cb)cb();}});}
+function _coId(){return _coActiveId||(window.S&&window.S.companyId)||'';}
+function _coData(){var cos=[];try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}return cos.find(function(c){return c.id===_coId();})||{id:_coId(),nameAr:'الشركة',companyType:'toll'};}
+function _coSave(co){var cos=[];try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}var idx=cos.findIndex(function(c){return c.id===co.id;});if(idx>=0)cos[idx]=co;else cos.push(co);localStorage.setItem('pharma_companies_v1',JSON.stringify(cos));}
+const expBadge=d=>{if(!d)return'';const diff=Math.ceil((new Date(d)-new Date())/864e5);if(diff<0)return' <span class="bdg bdg-r">منتهي</span>';if(diff<90)return` <span class="bdg bdg-a">${diff} يوم</span>`;return' <span class="bdg bdg-g">ساري</span>';};
+
+async function renderCompanyPage(c){
+  const coId=_coId();const co=_coData();
+  c.innerHTML=`
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
+    <div class="page-title" style="margin-bottom:0">🏢 بيانات الشركة <span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
+    <button class="btn btn-o btn-sm" onclick="printCompany()">🖨 طباعة</button>
+  </div>
+  <div class="cp-tabs" id="co-tabs">
+    <button class="cp-tab act" data-cpt="cpt-legal">القانونية</button>
+    <button class="cp-tab" data-cpt="cpt-eda">EDA والترخيص</button>
+    <button class="cp-tab" data-cpt="cpt-tax">الضرائب</button>
+    <button class="cp-tab" data-cpt="cpt-persons">المسؤولون</button>
+    <button class="cp-tab" data-cpt="cpt-partners">الشركاء</button>
+    <button class="cp-tab" data-cpt="cpt-factories">المصانع والموزعون</button>
+    <button class="cp-tab" data-cpt="cpt-docs">المستندات</button>
+    <button class="cp-tab" data-cpt="cpt-history">سجل التعديلات</button>
+  </div>
+
+  <div id="cpt-legal" class="cpt act">
+    <div class="pcard"><div class="ph"><div class="ptitle">📋 البيانات القانونية</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">الاسم بالعربي <span class="req">*</span></label><input class="fi" id="cf-nameAr" value="${esc(co.nameAr||'')}"></div>
+        <div class="fg"><label class="fl">الاسم بالإنجليزي</label><input class="fi" id="cf-nameEn" value="${esc(co.nameEn||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">نوع الكيان</label><select class="fi" id="cf-companyType"><option value="toll" ${(co.companyType||'toll')==='toll'?'selected':''}>شركة Toll</option><option value="factory" ${co.companyType==='factory'?'selected':''}>مصنع</option></select></div>
+        <div class="fg"><label class="fl">الشكل القانوني</label><select class="fi" id="cf-legalForm"><option value="">اختر...</option>${['شركة ذات مسؤولية محدودة (ش.ذ.م.م)','شركة توصية بسيطة','شركة مساهمة','شركة شخص واحد'].map(v=>`<option ${co.legalForm===v?'selected':''}>${v}</option>`).join('')}</select></div>
+        <div class="fg"><label class="fl">رقم السجل التجاري</label><input class="fi" id="cf-comRegNo" value="${esc(co.comRegNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">انتهاء السجل${expBadge(co.comRegExp)}</label><input class="fi" id="cf-comRegExp" type="date" value="${co.comRegExp||''}"></div>
+        <div class="fg"><label class="fl">الرقم القومي للمنشأة</label><input class="fi" id="cf-natNo" value="${esc(co.natNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">رأس المال (جنيه)</label><input class="fi" id="cf-capital" type="number" value="${co.capital||''}" dir="ltr"></div>
+        <div class="fg"><label class="fl">المدينة</label><input class="fi" id="cf-city" value="${esc(co.city||'')}"></div>
+        <div class="fg"><label class="fl">الدولة</label><input class="fi" id="cf-country" value="${esc(co.country||'Egypt')}"></div>
+        <div class="fg fw"><label class="fl">المقر الرئيسي</label><textarea class="fi" id="cf-addr" rows="2">${esc(co.addressAr||'')}</textarea></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('legal')">💾 حفظ البيانات القانونية</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-eda" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">${co.companyType==='factory'?'📋 رخصة مصنع — FM-LPM-02':'📋 قيد Toll لدى الغير — FM-LAD-15'}</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">${co.companyType==='factory'?'رقم رخصة المصنع':'رقم قيد Toll'}</label><input class="fi" id="cf-tollNo" value="${esc(co.tollNo||'')}" dir="ltr" placeholder="${co.companyType==='factory'?'00003/2017':'Toll/57'}"></div>
+        <div class="fg"><label class="fl">تاريخ الإصدار</label><input class="fi" id="cf-tollDate" type="date" value="${co.tollDate||''}"></div>
+        <div class="fg"><label class="fl">تاريخ الانتهاء${expBadge(co.tollExp)}</label><input class="fi" id="cf-tollExp" type="date" value="${co.tollExp||''}"></div>
+        <div class="fg"><label class="fl">كود EDA</label><input class="fi" id="cf-edaCode" value="${esc(co.edaCode||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">شهادة GMP</label><input class="fi" id="cf-gmp" value="${esc(co.gmp||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">انتهاء GMP${expBadge(co.gmpExp)}</label><input class="fi" id="cf-gmpExp" type="date" value="${co.gmpExp||''}"></div>
+        <div class="fg fw"><label class="fl">خطوط الإنتاج</label><input class="fi" id="cf-lines" value="${esc(co.lines||co.productionLines||'')}" placeholder="صلبة، كبسولات، سائل..."></div>
+        <div class="fg fw"><label class="fl">العنوان الرسمي لدى EDA</label><textarea class="fi" id="cf-edaAddr" rows="2">${esc(co.edaAddress||co.edaAddr||'')}</textarea></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('eda')">💾 حفظ بيانات EDA</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-tax" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">💰 البيانات الضريبية والمالية</div></div><div class="tab-body">
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رقم التسجيل الضريبي</label><input class="fi" id="cf-taxReg" value="${esc(co.taxReg||co.taxRegNo||'')}" dir="ltr" placeholder="204-999-359"></div>
+        <div class="fg"><label class="fl">رقم البطاقة الضريبية</label><input class="fi" id="cf-taxCard" value="${esc(co.taxCard||co.taxCardNo||'')}" dir="ltr" placeholder="509-999-204"></div>
+        <div class="fg"><label class="fl">تاريخ إصدار البطاقة</label><input class="fi" id="cf-taxDate" type="date" value="${co.taxDate||co.taxCardDate||''}"></div>
+        <div class="fg"><label class="fl">انتهاء البطاقة${expBadge(co.taxExp||co.taxCardExpiry)}</label><input class="fi" id="cf-taxExp" type="date" value="${co.taxExp||co.taxCardExpiry||''}"></div>
+        <div class="fg"><label class="fl">المأمورية الضريبية</label><input class="fi" id="cf-taxOfc" value="${esc(co.taxOfc||co.taxOffice||'')}" placeholder="الاستثمار"></div>
+        <div class="fg"><label class="fl">كود النشاط ISIC</label><input class="fi" id="cf-actCode" value="${esc(co.actCode||co.activityCode||'')}" dir="ltr" placeholder="4772"></div>
+        <div class="fg"><label class="fl">رقم التأمينات الاجتماعية</label><input class="fi" id="cf-socIns" value="${esc(co.socIns||co.socialInsuranceNo||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">ملف ضريبة الدخل</label><input class="fi" id="cf-incTax" value="${esc(co.incTax||co.incomeTaxNo||'')}" dir="ltr"></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('tax')">💾 حفظ البيانات الضريبية</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-persons" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">👤 المسؤولون وجهات الاتصال</div></div><div class="tab-body">
+      <div class="fsect">المسؤولون الرسميون</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">رئيس مجلس الإدارة / المدير</label><input class="fi" id="cf-chairman" value="${esc(co.chairman||'')}"></div>
+        <div class="fg"><label class="fl">صاحب الترخيص (EDA)</label><input class="fi" id="cf-licHolder" value="${esc(co.licHolder||co.licenseHolder||'')}"></div>
+        <div class="fg"><label class="fl">مدير الشركة</label><input class="fi" id="cf-mgr" value="${esc(co.mgr||co.companyManager||'')}"></div>
+        <div class="fg"><label class="fl">الاستشاري الفني</label><input class="fi" id="cf-tech" value="${esc(co.tech||co.technicalConsultant||'')}"></div>
+        <div class="fg"><label class="fl">مسؤول الجودة QC</label><input class="fi" id="cf-qc" value="${esc(co.qc||co.qcManager||'')}" placeholder="د. الاسم — رقم النقابة"></div>
+        <div class="fg"><label class="fl">مسؤول الإنتاج</label><input class="fi" id="cf-prod" value="${esc(co.prod||co.productionManager||'')}" placeholder="د. الاسم — رقم النقابة"></div>
+        <div class="fg fw"><label class="fl">مسؤول الشؤون التنظيمية RA</label><input class="fi" id="cf-ra" value="${esc(co.ra||co.raManager||'')}"></div>
+      </div>
+      <div class="fsect">جهات الاتصال</div>
+      <div class="fgrid">
+        <div class="fg"><label class="fl">الهاتف الرئيسي</label><input class="fi" id="cf-phone" value="${esc(co.phone||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">الفاكس</label><input class="fi" id="cf-fax" value="${esc(co.fax||'')}" dir="ltr"></div>
+        <div class="fg"><label class="fl">البريد الإلكتروني</label><input class="fi" id="cf-email" value="${esc(co.email||'')}" type="email" dir="ltr"></div>
+        <div class="fg"><label class="fl">الموقع الإلكتروني</label><input class="fi" id="cf-web" value="${esc(co.website||co.web||'')}" dir="ltr"></div>
+      </div>
+      <div class="save-bar"><button class="btn btn-ok" onclick="saveTab('persons')">💾 حفظ بيانات المسؤولين</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-partners" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">🤝 الشركاء وتوزيع الحصص</div><div class="pacts"><button class="btn btn-ok btn-sm" onclick="openAddPartner()">+ إضافة شريك</button></div></div>
+    <div id="partners-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">نسبة المشاركة المصرية</div></div>
+    <div class="tab-body">
+      <div class="fg"><label class="fl">نسبة المشاركة المصرية الإجمالية</label><input class="fi" id="cf-egyPct" value="${esc(co.egyPct||'')}" dir="ltr" placeholder="100%" style="max-width:200px"><div style="font-size:11px;color:var(--muted);margin-top:4px">يُطلب من هيئة الدواء والجهات الحكومية</div></div>
+      <div class="save-bar"><button class="btn btn-o btn-sm" onclick="saveEgyPct()">💾 حفظ</button></div>
+    </div></div>
+  </div>
+
+  <div id="cpt-factories" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">🏭 المصانع المتعاقد معها</div><button class="btn btn-ok btn-sm" onclick="openAddFactory()">+ إضافة مصنع</button></div><div id="factories-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🏪 أماكن التخزين المرخصة</div><button class="btn btn-ok btn-sm" onclick="openAddStorage()">+ إضافة مخزن</button></div><div id="storages-table"></div></div>
+    <div class="pcard" style="margin-top:14px"><div class="ph"><div class="ptitle">🚚 الموزعون المعتمدون</div><button class="btn btn-ok btn-sm" onclick="openAddDist()">+ إضافة موزع</button></div><div id="dists-table"></div></div>
+  </div>
+
+  <div id="cpt-docs" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📁 المستندات الرسمية</div></div>
+    <div style="padding:16px">
+      <div id="docs-list-co"></div>
+      <div class="doc-drop" onclick="document.getElementById('doc-inp').click()" style="margin-top:14px">
+        <div style="font-size:24px;margin-bottom:8px">📎</div>
+        <div style="font-size:13px;color:var(--muted)">اضغط لرفع PDF أو صورة</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:3px;opacity:.7">الصور تُضغط تلقائياً — الحد 5MB</div>
+      </div>
+      <input type="file" id="doc-inp" accept=".pdf,image/*" style="display:none" onchange="uploadDoc(this)">
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <input class="fi" id="doc-name" placeholder="اسم المستند..." style="flex:1">
+        <select class="fi" id="doc-type" style="width:170px">
+          <option>سجل تجاري</option><option>بطاقة ضريبية</option><option>ترخيص EDA</option>
+          <option>شهادة GMP</option><option>عقد تأسيس</option><option>صحيفة استثمار</option>
+          <option>عقد تصنيع</option><option>تأمينات اجتماعية</option><option>أخرى</option>
+        </select>
+      </div>
+    </div></div>
+  </div>
+
+  <div id="cpt-history" class="cpt">
+    <div class="pcard"><div class="ph"><div class="ptitle">📜 سجل التعديلات</div></div>
+    <div id="co-history-list"></div></div>
+  </div>
+
+  <div style="margin-top:12px;font-size:11px;color:var(--muted)">إنشاء: ${fmtDt(co.createdAt)} | آخر تحديث: ${fmtDt(co.updatedAt)}</div>`;
+
+  // Tab switching
+  document.querySelectorAll('[data-cpt]').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      document.querySelectorAll('.cp-tab').forEach(b=>b.classList.remove('act'));
+      document.querySelectorAll('.cpt').forEach(p=>p.classList.remove('act'));
+      btn.classList.add('act');
+      document.getElementById(btn.dataset.cpt)?.classList.add('act');
+    });
+  });
+
+  loadDocs();loadHistory();loadPartnersTable();loadFactoriesTable();loadStoragesTable();loadDistsTable();
+}
+
+async function saveTab(tab){
+  const co=_coData();
+  let u={};
+  if(tab==='legal'){const nameAr=val('cf-nameAr');if(!nameAr){toast('الاسم مطلوب','er');return}u={nameAr,nameEn:val('cf-nameEn'),companyType:val('cf-companyType'),legalForm:val('cf-legalForm'),comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),natNo:val('cf-natNo'),capital:val('cf-capital'),city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')};}
+  else if(tab==='eda'){u={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines'),edaAddress:val('cf-edaAddr')};}
+  else if(tab==='tax'){u={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};}
+  else if(tab==='persons'){u={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web')};}
+  Object.assign(co,u,{updatedAt:now()});
+  _coSave(co);
+  await saveHist(co.id,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'}[tab]);
+  if(tab==='legal'){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr;document.getElementById('sb-coname2').textContent=co.nameAr;}
+  toast('تم الحفظ بنجاح','ok');
+}
+
+async function saveEgyPct(){const co=_coData();co.egyPct=val('cf-egyPct');co.updatedAt=now();_coSave(co);toast('تم الحفظ','ok');}
+
+async function loadPartnersTable(){
+  const el=document.getElementById('partners-table');if(!el)return;
+  const rows=(await new Promise(res=>_coIdbGetAll('co_partners',_coId(),res))).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">🤝</div><p>لا يوجد شركاء — اضغط "+ إضافة شريك"</p></div>';return}
+  const total=rows.reduce((s,r)=>s+parseFloat(r.pct||0),0);
+  const ok=Math.abs(total-100)<0.01;
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الشريك</th><th>النسبة %</th><th>عدد الحصص</th><th>قيمة الحصة</th><th>الجنسية</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td><span class="bdg bdg-g">${esc(r.pct)}%</span></td><td>${esc(r.shares||'—')}</td><td>${r.val?esc(r.val)+' ج':'—'}</td><td>${esc(r.nat||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditPartner('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delPartner('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  <tr style="background:var(--card2)"><td colspan="2" style="font-weight:700">الإجمالي: <span class="bdg ${ok?'bdg-g':'bdg-r'}">${total.toFixed(2)}%</span></td><td colspan="4" style="font-size:12px;color:var(--muted)">${ok?'✅ صحيح':'⚠️ يجب أن يساوي 100%'}</td></tr>
+  </tbody></table></div>`;
+}
+
+function openAddPartner(){document.getElementById('mp-title').textContent='إضافة شريك جديد';['mp-id','mp-name','mp-pct','mp-nat','mp-shares','mp-val'].forEach(id=>set(id,''));openModal('modal-partner');}
+
+async function openEditPartner(id){const r=await dbGet('partners',id);if(!r)return;document.getElementById('mp-title').textContent='تعديل بيانات الشريك';set('mp-id',r.id);set('mp-name',r.name);set('mp-pct',r.pct);set('mp-nat',r.nat);set('mp-shares',r.shares);set('mp-val',r.val);openModal('modal-partner');}
+
+async function savePartner(){
+  const name=val('mp-name'),pct=val('mp-pct');if(!name||!pct){toast('الاسم والنسبة مطلوبان','er');return}
+  const eid=val('mp-id'),id=eid||uid();const existing=eid?await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_partners','readonly').objectStore('co_partners').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})}):null;
+  await new Promise(res=>_coIdbPut('co_partners',{...{...existing,id,companyId:_coId(),name,pct,nat:val('mp-nat'),shares:val('mp-shares'),val:val('mp-val'),createdAt:existing?.createdAt||now(),updatedAt:now()},companyId:_coId()},res));
+  await saveHist(_coId(),eid?'تعديل شريك':'إضافة شريك',name);
+  closeModal('modal-partner');toast('تم الحفظ','ok');loadPartnersTable();
+}
+
+async function delPartner(id){if(!confirm('حذف هذا الشريك؟'))return;const r=await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_partners','readonly').objectStore('co_partners').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})});if(!r)return;r.deletedAt=now();await dbPut('partners',r);await saveHist(_coId(),'حذف شريك',r.name);toast('تم الحذف');loadPartnersTable();}
+
+async function loadFactoriesTable(){
+  const el=document.getElementById('factories-table');if(!el)return;
+  const rows=(await new Promise(res=>_coIdbGetAll('co_factories',_coId(),res))).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏭</div><p>لا توجد مصانع متعاقد معها</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المصنع</th><th>العنوان</th><th>خطوط الإنتاج</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.lines||'—')}</td><td style="font-size:11px;color:var(--muted)">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditFactory('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delFactory('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function openAddFactory(){document.getElementById('mf-title').textContent='إضافة مصنع متعاقد';['mf-id','mf-name','mf-addr','mf-prods','mf-lic','mf-lines'].forEach(id=>set(id,''));openModal('modal-factory');}
+
+async function openEditFactory(id){const r=await dbGet('factories',id);if(!r)return;document.getElementById('mf-title').textContent='تعديل بيانات المصنع';set('mf-id',r.id);set('mf-name',r.name);set('mf-addr',r.addr);set('mf-prods',r.prods);set('mf-lic',r.lic);set('mf-lines',r.lines);openModal('modal-factory');}
+
+async function saveFactory(){
+  const name=val('mf-name');if(!name){toast('اسم المصنع مطلوب','er');return}
+  const eid=val('mf-id'),id=eid||uid();const existing=eid?await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_factories','readonly').objectStore('co_factories').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})}):null;
+  await new Promise(res=>_coIdbPut('co_factories',{...{...existing,id,companyId:_coId(),name,addr:val('mf-addr'),prods:val('mf-prods'),lic:val('mf-lic'),lines:val('mf-lines'),createdAt:existing?.createdAt||now(),updatedAt:now()},companyId:_coId()},res));
+  await saveHist(_coId(),eid?'تعديل مصنع':'إضافة مصنع',name);
+  closeModal('modal-factory');toast('تم الحفظ','ok');loadFactoriesTable();
+}
+
+async function delFactory(id){if(!confirm('حذف؟'))return;const r=await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_factories','readonly').objectStore('co_factories').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})});if(!r)return;r.deletedAt=now();await dbPut('factories',r);toast('تم الحذف');loadFactoriesTable();}
+
+async function loadStoragesTable(){
+  const el=document.getElementById('storages-table');if(!el)return;
+  const rows=(await new Promise(res=>_coIdbGetAll('co_storages',_coId(),res))).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏪</div><p>لا توجد أماكن تخزين</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المخزن</th><th>العنوان</th><th>المساحة</th><th>النوع</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td>${r.area?esc(r.area)+' م²':'—'}</td><td><span class="bdg bdg-m">${esc(r.type||'—')}</span></td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditStorage('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delStorage('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function openAddStorage(){document.getElementById('ms-title').textContent='إضافة مكان تخزين';['ms-id','ms-name','ms-addr','ms-area'].forEach(id=>set(id,''));set('ms-type','مخزن عادي');openModal('modal-storage');}
+
+async function openEditStorage(id){const r=await dbGet('storages',id);if(!r)return;document.getElementById('ms-title').textContent='تعديل';set('ms-id',r.id);set('ms-name',r.name);set('ms-addr',r.addr);set('ms-area',r.area);set('ms-type',r.type);openModal('modal-storage');}
+
+async function saveStorage(){
+  const name=val('ms-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('ms-id'),id=eid||uid();const existing=eid?await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_storages','readonly').objectStore('co_storages').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})}):null;
+  await new Promise(res=>_coIdbPut('co_storages',{...{...existing,id,companyId:_coId(),name,addr:val('ms-addr'),area:val('ms-area'),type:val('ms-type'),createdAt:existing?.createdAt||now(),updatedAt:now()},companyId:_coId()},res));
+  closeModal('modal-storage');toast('تم الحفظ','ok');loadStoragesTable();
+}
+
+async function delStorage(id){if(!confirm('حذف؟'))return;const r=await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_storages','readonly').objectStore('co_storages').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})});if(!r)return;r.deletedAt=now();await dbPut('storages',r);toast('تم الحذف');loadStoragesTable();}
+
+async function loadDistsTable(){
+  const el=document.getElementById('dists-table');if(!el)return;
+  const rows=(await new Promise(res=>_coIdbGetAll('co_distributors',_coId(),res))).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🚚</div><p>لا يوجد موزعون</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الموزع</th><th>العنوان</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditDist('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delDist('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
+
+function openAddDist(){document.getElementById('md-title').textContent='إضافة موزع معتمد';['md-id','md-name','md-addr','md-prods'].forEach(id=>set(id,''));openModal('modal-dist');}
+
+async function openEditDist(id){const r=await dbGet('distributors',id);if(!r)return;document.getElementById('md-title').textContent='تعديل الموزع';set('md-id',r.id);set('md-name',r.name);set('md-addr',r.addr);set('md-prods',r.prods);openModal('modal-dist');}
+
+async function saveDist(){
+  const name=val('md-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('md-id'),id=eid||uid();const existing=eid?await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_distributors','readonly').objectStore('co_distributors').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})}):null;
+  await new Promise(res=>_coIdbPut('co_distributors',{...{...existing,id,companyId:_coId(),name,addr:val('md-addr'),prods:val('md-prods'),createdAt:existing?.createdAt||now(),updatedAt:now()},companyId:_coId()},res));
+  closeModal('modal-dist');toast('تم الحفظ','ok');loadDistsTable();
+}
+
+async function delDist(id){if(!confirm('حذف؟'))return;const r=await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_distributors','readonly').objectStore('co_distributors').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})});if(!r)return;r.deletedAt=now();await dbPut('distributors',r);toast('تم الحذف');loadDistsTable();}
+
+async function loadDocs(){
+  const el=document.getElementById('docs-list-co');if(!el)return;
+  const docs=(await new Promise(res=>_coIdbGetAll('co_documents',_coId(),res))).filter(d=>!d.deletedAt);
+  if(!docs.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">لا توجد مستندات بعد</div>';return}
+  el.innerHTML=docs.map(d=>`<div class="doc-item"><div class="doc-icon" style="background:${d.type==='pdf'?'rgba(248,81,73,.15)':'rgba(56,139,253,.15)'};color:${d.type==='pdf'?'var(--red)':'var(--blue)'}">${d.type==='pdf'?'PDF':'IMG'}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div></div><button class="btn btn-o btn-sm" onclick="viewDoc('${d.id}')">عرض</button><button class="btn btn-x btn-sm" onclick="delDoc('${d.id}')">حذف</button></div>`).join('');
+}
+
+async function uploadDoc(input){
+  const file=input.files[0];if(!file)return;
+  if(file.size>5*1024*1024){toast('الملف أكبر من 5MB','er');return}
+  const name=val('doc-name')||file.name,docType=val('doc-type')||'أخرى';
+  toast('جاري المعالجة...','info');
+  try{
+    let data,type,size;
+    if(file.type.startsWith('image/')){const c=await compressImg(file,900,.72);data=c.data;type='img';size=c.size;}
+    else{data=await toB64(file);type='pdf';size=file.size;}
+    await new Promise(res=>_coIdbPut('co_documents',{...{id:uid(),companyId:_coId(),name,docType,type,data,size,createdAt:now()},companyId:_coId()},res));
+    input.value='';set('doc-name','');toast('تم رفع المستند','ok');loadDocs();
+  }catch(e){toast('خطأ: '+e.message,'er')}
+}
+
+async function viewDoc(id){const d=await dbGet('documents',id);if(!d)return;const w=window.open();w.document.write(d.type==='pdf'?`<iframe src="${d.data}" style="width:100%;height:100vh;border:none"></iframe>`:`<img src="${d.data}" style="max-width:100%">`);}
+
+async function delDoc(id){if(!confirm('حذف؟'))return;const d=await new Promise(res=>{_openIDB(function(db){if(!db){res(null);return;}try{var req=db.transaction('co_documents','readonly').objectStore('co_documents').get(id);req.onsuccess=function(){res(req.result||null);};req.onerror=function(){res(null);}}catch(e){res(null);}})});if(!d)return;d.deletedAt=now();await dbPut('documents',d);toast('تم الحذف');loadDocs();}
+
+async function loadHistory(){
+  const el=document.getElementById('co-history-list');if(!el)return;
+  const all=(await dbGetAll('history')).filter(h=>h.recordId===_coId()).reverse();
+  if(!all.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">📜</div><p>لا توجد تعديلات مسجلة بعد</p></div>';return}
+  el.innerHTML=all.map(h=>`<div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px"><div><span class="bdg bdg-b" style="margin-left:8px">${esc(h.action)}</span>${h.note?`<span style="font-size:12px;color:var(--muted)">${esc(h.note)}</span>`:''}</div><div style="font-size:11px;color:var(--muted);white-space:nowrap">${esc(h.userName||'—')} · ${fmtDt(h.at)}</div></div>`).join('');
+}
+
+async function printCompany(){
+  const co=_coData();
+  const partners=(await dbGetAll('partners','companyId',_coId())).filter(r=>!r.deletedAt);
+  const factories=(await dbGetAll('factories','companyId',_coId())).filter(r=>!r.deletedAt);
+  const pr=(l,v)=>v?`<tr><td style="color:#666;font-size:12px;width:200px;padding:6px 0">${l}</td><td style="font-size:13px;font-weight:500;padding:6px 0">${v}</td></tr>`:'';
+  const w=window.open();
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script><div class="moverlay" id="modal-partner"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="mp-title">إضافة شريك</span><button class="mclose" onclick="closeModal('modal-partner')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="mp-id">
+    <div class="fg"><label class="fl">اسم الشريك <span class="req">*</span></label><input class="fi" id="mp-name" placeholder="الاسم الرباعي الكامل"></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">نسبة الملكية % <span class="req">*</span></label><input class="fi" id="mp-pct" type="number" min="0" max="100" step="0.01" dir="ltr" placeholder="45.5"></div>
+      <div class="fg"><label class="fl">الجنسية</label><input class="fi" id="mp-nat" placeholder="مصري"></div>
+      <div class="fg"><label class="fl">عدد الحصص</label><input class="fi" id="mp-shares" type="number" dir="ltr"></div>
+      <div class="fg"><label class="fl">قيمة الحصة (جنيه)</label><input class="fi" id="mp-val" type="number" dir="ltr"></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-partner')">إلغاء</button><button class="btn btn-ok" onclick="savePartner()">حفظ</button></div>
+</div></div>
+<div class="moverlay" id="modal-factory"><div class="modal" style="max-width:480px">
+  <div class="mhdr"><span class="mtitle" id="mf-title">إضافة مصنع</span><button class="mclose" onclick="closeModal('modal-factory')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="mf-id">
+    <div class="fg"><label class="fl">اسم المصنع <span class="req">*</span></label><input class="fi" id="mf-name" placeholder="مثال: نرهادو إنترناشيونال"></div>
+    <div class="fg"><label class="fl">العنوان</label><input class="fi" id="mf-addr"></div>
+    <div class="fg"><label class="fl">المنتجات المصنّعة</label><textarea class="fi" id="mf-prods" rows="2" placeholder="Dramrin, Purified Water..."></textarea></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">رقم ترخيص المصنع</label><input class="fi" id="mf-lic" dir="ltr"></div>
+      <div class="fg"><label class="fl">خطوط الإنتاج</label><input class="fi" id="mf-lines" placeholder="صلبة، سائل..."></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-factory')">إلغاء</button><button class="btn btn-ok" onclick="saveFactory()">حفظ</button></div>
+</div></div>
+<div class="moverlay" id="modal-storage"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="ms-title">إضافة مكان تخزين</span><button class="mclose" onclick="closeModal('modal-storage')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="ms-id">
+    <div class="fg"><label class="fl">اسم المخزن <span class="req">*</span></label><input class="fi" id="ms-name"></div>
+    <div class="fg"><label class="fl">العنوان الكامل</label><textarea class="fi" id="ms-addr" rows="2"></textarea></div>
+    <div class="fgrid">
+      <div class="fg"><label class="fl">المساحة (م²)</label><input class="fi" id="ms-area" type="number" dir="ltr" placeholder="100"></div>
+      <div class="fg"><label class="fl">نوع التخزين</label><select class="fi" id="ms-type"><option>مخزن عادي</option><option>مخزن مبرد</option><option>مخزن خاص</option></select></div>
+    </div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-storage')">إلغاء</button><button class="btn btn-ok" onclick="saveStorage()">حفظ</button></div>
+</div></div>
+<div class="moverlay" id="modal-dist"><div class="modal" style="max-width:420px">
+  <div class="mhdr"><span class="mtitle" id="md-title">إضافة موزع</span><button class="mclose" onclick="closeModal('modal-dist')">✕</button></div>
+  <div class="mbody"><input type="hidden" id="md-id">
+    <div class="fg"><label class="fl">اسم الموزع <span class="req">*</span></label><input class="fi" id="md-name"></div>
+    <div class="fg"><label class="fl">العنوان</label><input class="fi" id="md-addr"></div>
+    <div class="fg"><label class="fl">المنتجات الموزَّعة</label><textarea class="fi" id="md-prods" rows="2"></textarea></div>
+  </div>
+  <div class="mftr"><button class="btn btn-o" onclick="closeModal('modal-dist')">إلغاء</button><button class="btn btn-ok" onclick="saveDist()">حفظ</button></div>
+</div></div>
+</body></html>`);
+}
+
+// ════ END COMPANY MODULE ════════════════════════════════════════
+
 // ═══════════════════════════════════════════════
 // PAGES
 // ═══════════════════════════════════════════════
 const PAGES={
+
+company(){
+  var m=document.getElementById('pg-content');
+  if(!m) return;
+  if(typeof renderCompanyPage==='function'){
+    renderCompanyPage(m);
+  } else {
+    m.innerHTML='<div class="es"><p>جاري التحميل...</p></div>';
+  }
+},
+
 
 dashboard(){
   const pr=getAll('products'), inv=getAll('inventory'), ex=getAll('expenses');
