@@ -373,11 +373,65 @@ let DB = loadDB();
 });
 if(!DB._seq) DB._seq={};
 
-function loadDB(){
-  try{ const d=localStorage.getItem(STORE_KEY); return d?JSON.parse(d):{...defaultDB}; }
-  catch(e){ return {...defaultDB}; }
+
+// ── IndexedDB setup (unlimited storage) ──────────────────────────
+const _IDB_NAME = 'QuadraPharmaERP';
+const _IDB_VER  = 1;
+let   _idb      = null;
+
+function _openIDB(cb){
+  if(_idb){ cb(_idb); return; }
+  const req = indexedDB.open(_IDB_NAME, _IDB_VER);
+  req.onupgradeneeded = e => {
+    const db = e.target.result;
+    if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+  };
+  req.onsuccess = e => { _idb = e.target.result; cb(_idb); };
+  req.onerror   = ()  => { cb(null); };
 }
-function saveDB(){ try{ localStorage.setItem(STORE_KEY,JSON.stringify(DB)); }catch(e){} }
+
+function saveDB(){
+  const val = JSON.stringify(DB);
+  // Primary: IndexedDB (unlimited)
+  _openIDB(db => {
+    if(!db) return;
+    const tx  = db.transaction('kv','readwrite');
+    tx.objectStore('kv').put(val, STORE_KEY);
+  });
+  // Mirror: localStorage (fast boot fallback)
+  try{ localStorage.setItem(STORE_KEY, val); }catch(e){}
+}
+
+function loadDB(){
+  // Sync load from localStorage mirror (instant)
+  try{
+    const d = localStorage.getItem(STORE_KEY);
+    if(d) return JSON.parse(d);
+  }catch(e){}
+  return {...defaultDB};
+}
+
+// Async: upgrade localStorage data from IDB on boot
+function _syncFromIDB(){
+  _openIDB(db => {
+    if(!db) return;
+    const req = db.transaction('kv','readonly').objectStore('kv').get(STORE_KEY);
+    req.onsuccess = () => {
+      if(!req.result) return;
+      try{
+        const d = JSON.parse(req.result);
+        // Only upgrade if IDB has more data
+        const idbSize = req.result.length;
+        const lsRaw   = localStorage.getItem(STORE_KEY)||'';
+        if(idbSize > lsRaw.length){
+          DB = d;
+          try{ localStorage.setItem(STORE_KEY, req.result); }catch(e){}
+        }
+      }catch(e){}
+    };
+  });
+}
+_syncFromIDB();
 
 function nextId(t){
   if(!DB._seq)DB._seq={};
