@@ -666,6 +666,307 @@ function go(page){
 // ═══════════════════════════════════════════════
 // PAGES
 // ═══════════════════════════════════════════════
+
+// ════════════════════════════════════════════════════════════════
+// BMR MODULE — أمر الإنتاج الكامل
+// ════════════════════════════════════════════════════════════════
+
+function calcDispensedQty(batchQty, assay, water, isBacitracin) {
+  if(!assay) return null;
+  const denom = assay * (100 - (water||0));
+  if(!denom) return null;
+  if(isBacitracin) return (batchQty * 100 * 74) / denom;
+  return (batchQty * 10000) / denom;
+}
+
+function showBMR(orderId) {
+  const o    = getById('productionOrders', orderId);
+  if(!o) return;
+  const prod = getById('products', o.productId);
+  const cmo  = getById('cmos', o.cmoId);
+  const bom  = (getAll('productBOM')||[]).filter(b=>b.productId===o.productId);
+  const mats = getAll('batchMaterials').filter(m=>m.productionOrderId===orderId);
+  const qcChecks = getAll('qualityChecks').filter(q=>
+    q.batchNumber===(o.orderNumber||'PO-'+orderId)||q.productionOrderId===orderId);
+  const qty = Number(o.quantity)||1;
+  const matCost = mats.reduce((s,m)=>s+Number(m.quantity||0)*Number(m.unitCostAtTime||0),0);
+  const cmoCost = Number(o.cmoBaseCost||0);
+  const total   = matCost + cmoCost;
+  const unitCost= total / qty;
+  const sellPrice = Number(prod?.sellingPrice||0);
+  const margin  = sellPrice>0 ? ((sellPrice-unitCost)/sellPrice*100) : 0;
+
+  const dispRows = bom.length ? bom.map(b => {
+    const mat = getById('materials', b.materialId);
+    const usedMat = mats.find(m=>m.materialId===b.materialId);
+    const isBaci = !!(mat?.name?.toLowerCase().includes('bacitracin'));
+    const dispensedQty = usedMat ? Number(usedMat.quantity) : 0;
+    const bqty = Number(b.quantityPerBatch||b.quantity||0);
+    return `<tr id="bom-row-${b.materialId}">
+      <td><span class="badge b-blue" style="font-size:10px">${mat?.code||''}</span></td>
+      <td><strong>${mat?.name||'—'}</strong></td>
+      <td class="text-center">${isBaci?'IU':'%'}</td>
+      <td class="text-center fw7">${bqty} ${mat?.unit||'gm'}</td>
+      <td><input type="number" id="assay1-${b.materialId}" step="0.01" placeholder="${isBaci?'IU':'%'}"
+        class="fi" style="width:85px;font-size:11px"
+        oninput="bmrCalcLot1(${b.materialId},${bqty},${isBaci?1:0})"></td>
+      <td><input type="number" id="water1-${b.materialId}" step="0.01" placeholder="%"
+        class="fi" style="width:65px;font-size:11px"
+        oninput="bmrCalcLot1(${b.materialId},${bqty},${isBaci?1:0})"></td>
+      <td id="r-lot1-${b.materialId}" class="fw7 text-blue">—</td>
+      <td><input type="number" id="avail1-${b.materialId}" step="0.01" placeholder="0"
+        class="fi" style="width:65px;font-size:11px"
+        oninput="bmrCalcLot2(${b.materialId},${bqty},${isBaci?1:0})"></td>
+      <td><input type="number" id="assay2-${b.materialId}" step="0.01"
+        class="fi" style="width:75px;font-size:11px"
+        oninput="bmrCalcLot2(${b.materialId},${bqty},${isBaci?1:0})"></td>
+      <td><input type="number" id="water2-${b.materialId}" step="0.01"
+        class="fi" style="width:65px;font-size:11px"
+        oninput="bmrCalcLot2(${b.materialId},${bqty},${isBaci?1:0})"></td>
+      <td id="r-lot2-${b.materialId}" class="text-amber fw7">—</td>
+      <td id="r-total-${b.materialId}" class="text-green fw7">—</td>
+      <td><input type="number" id="qty-dispensed-${b.materialId}" step="0.01"
+        value="${dispensedQty||''}" placeholder="0"
+        class="fi" style="width:80px;font-size:11px"></td>
+      <td><input type="text" id="lot-${b.materialId}" placeholder="LOT-"
+        value="${usedMat?.receiptBatch||''}"
+        class="fi" style="width:90px;font-size:11px"></td>
+      <td><input type="text" id="by-${b.materialId}" placeholder="الاسم"
+        class="fi" style="width:80px;font-size:11px"></td>
+    </tr>`;
+  }).join('') : `<tr><td colspan="15" class="text-center text-muted" style="padding:14px">لم يتم تحديد وصفة BOM — أضفها من صفحة وصفة الإنتاج</td></tr>`;
+
+  const clearanceItems = [
+    'المنطقة خالية من مخلفات التشغيلة السابقة',
+    'المستندات السابقة أُزيلت من المنطقة',
+    'المعدات نظيفة بصرياً (بعد التنظيف الكامل)',
+    'المنطقة نظيفة بصرياً (بعد التنظيف الكامل)',
+  ];
+
+  setPage(
+    `📋 BMR — ${o.orderNumber||'PO-'+orderId}`,
+    `${prod?.name||'—'} | ${cmo?.name||'—'} | ${fmtN(qty)} وحدة`,
+    `<div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-white" onclick="go('production')">← رجوع</button>
+      <button class="btn btn-white" onclick="window.print()">🖨️ طباعة</button>
+      <button class="btn btn-ghost btn-sm" onclick="bmrSaveAll(${orderId})">💾 حفظ كل البيانات</button>
+      <button class="btn btn-green" onclick="releaseBatch(${orderId})">✅ إفراج</button>
+      <button class="btn btn-ghost" style="color:var(--red);border-color:var(--red)" onclick="rejectBatch(${orderId})">❌ رفض</button>
+    </div>`,
+    `
+    <div class="card" style="padding:0;margin-bottom:14px;overflow:hidden">
+      <div style="background:var(--bg);border-bottom:1px solid var(--border);padding:14px 18px">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px">
+          <div>
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Batch Manufacturing Record</div>
+            <div style="font-size:20px;font-weight:700">${o.orderNumber||'PO-'+orderId}</div>
+            <div style="font-size:13px;color:var(--green-light)">${prod?.name||'—'} — ${prod?.dosageForm||''} ${prod?.strength||''}</div>
+          </div>
+          <span class="badge ${o.bprStatus==='released'?'b-green':o.bprStatus==='rejected'?'b-red':'b-gray'}" style="font-size:12px;padding:6px 14px">
+            ${{released:'مُفرَجة ✅',rejected:'مرفوضة ❌',draft:'مسودة'}[o.bprStatus||'draft']}
+          </span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0">
+        ${[['المصنع CMO',cmo?.name||'—'],['حجم الدفعة',fmtN(qty)+' وحدة'],['تاريخ الأمر',o.orderDate||'—'],['الموعد المتوقع',o.expectedDate||'—']].map(([l,v],i)=>`<div style="padding:10px 14px;${i>0?'border-right:1px solid var(--border)':''}"><div style="font-size:10px;color:var(--muted);margin-bottom:2px">${l}</div><div style="font-size:13px;font-weight:600">${v}</div></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head"><h2>⏱️ توقيت التصنيع</h2></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:14px">
+        <div class="fg"><label>تاريخ ووقت البداية</label><input type="datetime-local" id="bmr-start" class="fi" value="${o.mfgStart||''}"></div>
+        <div class="fg"><label>تاريخ ووقت النهاية</label><input type="datetime-local" id="bmr-end" class="fi" value="${o.mfgEnd||''}"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head"><h2>🔍 Line Clearance — فحص المنطقة</h2></div>
+      <div style="padding:14px;overflow-x:auto">
+        <table class="tbl" style="font-size:12px;min-width:600px">
+          <thead><tr><th>بند الفحص</th><th style="width:60px;text-align:center">نعم</th><th style="width:60px;text-align:center">لا</th><th>فحص بواسطة</th><th>اعتمد بواسطة</th></tr></thead>
+          <tbody>${clearanceItems.map((item,i)=>`<tr><td>${item}</td><td style="text-align:center"><input type="radio" name="cl-${i}" value="yes"></td><td style="text-align:center"><input type="radio" name="cl-${i}" value="no"></td><td><input type="text" class="fi" placeholder="الاسم" style="font-size:11px;width:100%"></td><td><input type="text" class="fi" placeholder="الاسم" style="font-size:11px;width:100%"></td></tr>`).join('')}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head">
+        <h2>🧪 التصريف وحساب الكميات — Dispensing with Assay Correction</h2>
+        <button class="btn btn-ghost btn-sm" onclick="bmrAutoFillBOM(${orderId})">⟳ تعبئة من BOM</button>
+      </div>
+      <div style="overflow-x:auto;padding:4px">
+        <table class="tbl" style="font-size:11px;min-width:1100px">
+          <thead>
+            <tr style="background:var(--bg)">
+              <th>كود</th><th>اسم المادة</th><th>نوع</th><th>كمية الدفعة</th>
+              <th style="background:rgba(56,139,253,.08)">Assay Lot1</th>
+              <th style="background:rgba(56,139,253,.08)">Water Lot1</th>
+              <th style="background:rgba(56,139,253,.12)">كمية Lot1</th>
+              <th>متاح Lot1</th>
+              <th style="background:rgba(227,179,65,.08)">Assay Lot2</th>
+              <th style="background:rgba(227,179,65,.08)">Water Lot2</th>
+              <th style="background:rgba(227,179,65,.12)">كمية Lot2</th>
+              <th style="background:rgba(46,160,67,.1)">الإجمالي</th>
+              <th>الكمية الفعلية</th><th>Lot Number</th><th>صرّف بواسطة</th>
+            </tr>
+          </thead>
+          <tbody>${dispRows}</tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head"><h2>📊 Manufacturing Yield — الإنتاجية الفعلية</h2></div>
+      <div style="padding:14px">
+        <div style="background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:var(--muted)">
+          Yield% = (الكمية الفعلية ÷ الكمية النظرية) × 100 — يجب أن تكون بين 95% و 100%
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;align-items:end">
+          <div class="fg"><label>الكمية النظرية (وحدة)</label><input type="number" id="yield-theo" class="fi" placeholder="e.g. 5000" value="${o.yieldTheo||''}" oninput="bmrCalcYield()"></div>
+          <div class="fg"><label>الكمية الفعلية المنتجة</label><input type="number" id="yield-actual" class="fi" placeholder="e.g. 4850" value="${o.yieldActual||''}" oninput="bmrCalcYield()"></div>
+          <div>
+            <div style="font-size:11px;color:var(--muted);margin-bottom:4px">Yield %</div>
+            <div id="yield-result" style="font-size:24px;font-weight:700;color:var(--green-light)">—</div>
+            <div id="yield-warn" style="font-size:11px;color:var(--red);margin-top:4px;display:none">⚠️ خارج النطاق 95-100% — يجب التحقيق</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stats-grid g4" style="margin-bottom:14px">
+      <div class="stat-card"><div class="lbl">تكلفة المواد</div><div class="val text-red">${fmt(matCost)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">تكلفة CMO</div><div class="val text-amber">${fmt(cmoCost)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">تكلفة الوحدة</div><div class="val text-blue">${fmt(unitCost)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">هامش الربح</div><div class="val ${margin>=20?'text-green':margin>=5?'text-amber':'text-red'}">${sellPrice?margin.toFixed(1)+'%':'—'}</div></div>
+    </div>
+
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-head"><h2>🔬 نتائج QC</h2><button class="btn btn-ghost btn-sm" onclick="go('quality')">+ إضافة</button></div>
+      ${qcChecks.length?`<div class="tbl-wrap"><table style="font-size:12px"><thead><tr><th>التاريخ</th><th>الكيميائي</th><th>النتيجة</th><th>ملاحظات</th></tr></thead><tbody>${qcChecks.map(q=>`<tr><td>${q.checkDate||'—'}</td><td>${q.analyst||'—'}</td><td><span class="${q.result==='ناجح'?'text-green fw7':'text-red fw7'}">${q.result}</span></td><td style="font-size:11px">${q.notes||'—'}</td></tr>`).join('')}</tbody></table></div>`:`<div class="empty">لم تُضف نتائج QC بعد</div>`}
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h2>✍️ إفراج الدفعة — Batch Release</h2></div>
+      <div style="padding:14px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+          <div class="fg"><label>مُعِدّ السجل / QA Specialist</label><input type="text" id="bpr-reviewer" class="fi" value="${o.bprReviewer||''}" placeholder="الاسم"></div>
+          <div class="fg"><label>تاريخ المراجعة</label><input type="date" id="bpr-review-date" class="fi" value="${o.bprReviewDate||today()}"></div>
+          <div class="fg"><label>مدير الإنتاج</label><input type="text" id="bpr-prod-mgr" class="fi" value="${o.bprProdMgr||''}" placeholder="الاسم"></div>
+          <div class="fg"><label>مدير الجودة QA</label><input type="text" id="bpr-approver" class="fi" value="${o.bprApprover||''}" placeholder="الاسم"></div>
+        </div>
+        <div class="fg" style="margin-bottom:14px"><label>ملاحظات / انحرافات Deviations</label>
+          <textarea id="bpr-notes" rows="3" class="fi" style="width:100%;resize:vertical">${o.bprNotes||''}</textarea>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          <button class="btn btn-ghost btn-sm" onclick="bmrSaveAll(${orderId})">💾 حفظ كل البيانات</button>
+          <button class="btn btn-green" onclick="releaseBatch(${orderId})">✅ إفراج عن الدفعة</button>
+          <button class="btn btn-ghost" style="color:var(--red);border-color:var(--red)" onclick="rejectBatch(${orderId})">❌ رفض الدفعة</button>
+        </div>
+      </div>
+    </div>`
+  );
+}
+
+function bmrCalcLot1(matId, batchQty, isBaci) {
+  const assay = parseFloat(document.getElementById('assay1-'+matId)?.value)||0;
+  const water = parseFloat(document.getElementById('water1-'+matId)?.value)||0;
+  const r1 = document.getElementById('r-lot1-'+matId);
+  if(!r1) return;
+  if(!assay) { r1.textContent='—'; return; }
+  const qty = isBaci ? (batchQty*100*74)/(assay*(100-water)) : (batchQty*10000)/(assay*(100-water));
+  r1.textContent = isFinite(qty) ? qty.toFixed(1)+' gm' : '—';
+  bmrCalcLot2(matId, batchQty, isBaci);
+}
+
+function bmrCalcLot2(matId, batchQty, isBaci) {
+  const assay1 = parseFloat(document.getElementById('assay1-'+matId)?.value)||0;
+  const water1 = parseFloat(document.getElementById('water1-'+matId)?.value)||0;
+  const avail  = parseFloat(document.getElementById('avail1-'+matId)?.value)||0;
+  const assay2 = parseFloat(document.getElementById('assay2-'+matId)?.value)||0;
+  const water2 = parseFloat(document.getElementById('water2-'+matId)?.value)||0;
+  const r2  = document.getElementById('r-lot2-'+matId);
+  const rt  = document.getElementById('r-total-'+matId);
+  const lot1txt = document.getElementById('r-lot1-'+matId)?.textContent||'';
+  const lot1 = parseFloat(lot1txt)||0;
+  if(!r2||!rt) return;
+  if(!avail || !assay2) { r2.textContent='—'; rt.textContent=lot1?lot1.toFixed(1)+' gm':'—'; return; }
+  const usedFraction = isBaci ? (avail*assay1*(100-water1))/(100*74) : (avail*assay1*(100-water1))/10000;
+  const needFromLot2 = batchQty - usedFraction;
+  const lot2 = isBaci ? (needFromLot2*100*74)/(assay2*(100-water2)) : (needFromLot2*10000)/(assay2*(100-water2));
+  if(isFinite(lot2) && lot2>0) {
+    r2.textContent = lot2.toFixed(1)+' gm';
+    rt.textContent = (avail+lot2).toFixed(1)+' gm';
+  } else {
+    r2.textContent = '—';
+    rt.textContent = lot1 ? lot1.toFixed(1)+' gm' : '—';
+  }
+}
+
+function bmrCalcYield() {
+  const theo   = parseFloat(document.getElementById('yield-theo')?.value)||0;
+  const actual = parseFloat(document.getElementById('yield-actual')?.value)||0;
+  const res  = document.getElementById('yield-result');
+  const warn = document.getElementById('yield-warn');
+  if(!res) return;
+  if(!theo) { res.textContent='—'; return; }
+  const pct = (actual/theo*100);
+  res.textContent = pct.toFixed(1)+'%';
+  const ok = pct>=95 && pct<=100;
+  res.style.color = ok ? 'var(--green-light)' : 'var(--red)';
+  if(warn) warn.style.display = ok ? 'none' : 'block';
+}
+
+function bmrSaveDispensing(orderId) {
+  const order = getById('productionOrders', orderId);
+  if(!order) return;
+  const bom = (getAll('productBOM')||[]).filter(b=>b.productId===order.productId);
+  let saved = 0;
+  bom.forEach(b => {
+    const qty = parseFloat(document.getElementById('qty-dispensed-'+b.materialId)?.value)||0;
+    const lot = document.getElementById('lot-'+b.materialId)?.value||'';
+    const by  = document.getElementById('by-'+b.materialId)?.value||'';
+    if(!qty) return;
+    const mat = getById('materials', b.materialId);
+    const existing = getAll('batchMaterials').find(m=>m.productionOrderId===orderId&&m.materialId===b.materialId);
+    const data = {productionOrderId:orderId,materialId:b.materialId,materialName:mat?.name||'',materialType:mat?.materialType||'raw_material',quantity:qty,unit:mat?.unit||'gm',unitCostAtTime:Number(mat?.unitCost||0),receiptBatch:lot,dispensedBy:by,recordedAt:new Date().toISOString()};
+    if(existing) update('batchMaterials',existing.id,data);
+    else insert('batchMaterials',data);
+    saved++;
+  });
+  updateProductionOrderCost(orderId);
+  if(typeof showNotif==='function') showNotif('تم حفظ تصريف '+saved+' مادة','success');
+}
+
+function bmrSaveAll(orderId) {
+  bmrSaveDispensing(orderId);
+  update('productionOrders', orderId, {
+    mfgStart: document.getElementById('bmr-start')?.value||null,
+    mfgEnd:   document.getElementById('bmr-end')?.value||null,
+    yieldTheo:   parseFloat(document.getElementById('yield-theo')?.value)||null,
+    yieldActual: parseFloat(document.getElementById('yield-actual')?.value)||null,
+    bprReviewer:  document.getElementById('bpr-reviewer')?.value||null,
+    bprReviewDate:document.getElementById('bpr-review-date')?.value||null,
+    bprProdMgr:   document.getElementById('bpr-prod-mgr')?.value||null,
+    bprApprover:  document.getElementById('bpr-approver')?.value||null,
+    bprNotes:     document.getElementById('bpr-notes')?.value||null,
+  });
+  if(typeof showNotif==='function') showNotif('تم حفظ بيانات BMR كاملة','success');
+}
+
+function bmrAutoFillBOM(orderId) {
+  const order = getById('productionOrders', orderId);
+  if(!order) return;
+  const bom = (getAll('productBOM')||[]).filter(b=>b.productId===order.productId);
+  bom.forEach(b => {
+    const inp = document.getElementById('qty-dispensed-'+b.materialId);
+    if(inp && !inp.value && (b.quantityPerBatch||b.quantity)) inp.value = b.quantityPerBatch||b.quantity;
+  });
+  if(typeof showNotif==='function') showNotif('تم تعبئة الكميات من BOM','info');
+}
+
+// ════ END BMR MODULE ════════════════════════════════════════════
+
 const PAGES={
 
 dashboard(){
@@ -811,7 +1112,7 @@ production(){
         o.unitCost?fmt(o.unitCost)+' ج.م':'-',
         o.totalCost?`<span class="text-red fw7">${fmt(o.totalCost)} ج.م</span>`:'-',
         o.orderDate||'-', o.expectedDate||'-', badge(o.status||'pending'),
-        `<div class="action-bar"><button class="icon-btn edit" onclick="editProduction(${o.id})">${ic.edit}</button><button class="icon-btn del" onclick="if(confirm('حذف؟')){remove('productionOrders',${o.id});go('production')}">${ic.del}</button></div>`
+        `<div class="action-bar"><button class="btn btn-ghost btn-sm" onclick="showBMR(${o.id})" style="font-size:11px;padding:3px 8px">📋 BMR</button><button class="icon-btn edit" onclick="editProduction(${o.id})">${ic.edit}</button><button class="icon-btn del" onclick="if(confirm('حذف؟')){remove('productionOrders',${o.id});go('production')}">${ic.del}</button></div>`
       ))
     )}</div>`);
 },
