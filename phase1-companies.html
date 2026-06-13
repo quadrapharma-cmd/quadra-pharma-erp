@@ -352,21 +352,29 @@ strong{font-weight:700;color:var(--text)}
 <div id="modal-root"></div>
 
 <script>
-(function(){
-  try{
-    var coId = "co_quadra_demo";
-    var cos = JSON.parse(localStorage.getItem("pharma_companies_v1")||"[]");
-    if(!cos.find(function(c){return c.id===coId;})){
-      cos.push({"id": "co_quadra_demo", "name": "Quadra Pharma", "type": "\u0634\u0631\u0643\u0629 \u062f\u0648\u0627\u0626\u064a\u0629", "color": "2ea043"});
-      localStorage.setItem("pharma_companies_v1",JSON.stringify(cos));
+
+// Wouncure seed
+window._loadWouncureSeed = function() {
+  try {
+    var coId = 'co_quadra_demo';
+    var CO_KEY = 'pharma_companies_v1';
+    var cos = [];
+    try { cos = JSON.parse(localStorage.getItem(CO_KEY) || '[]'); } catch(e) {}
+    if (!cos.find(function(c) { return c.id === coId; })) {
+      cos.push({id: coId, name: 'Quadra Pharma', type: 'Toll', color: '2ea043'});
+      localStorage.setItem(CO_KEY, JSON.stringify(cos));
     }
-    var dKey = "pharma_data_"+coId;
-    var ex = JSON.parse(localStorage.getItem(dKey)||"null");
-    if(!ex||!ex.products||!ex.products.length){
-      localStorage.setItem(dKey,JSON.stringify({"products": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Wouncure 20gm Topical Powder", "scientificName": "Neomycin + Bacitracin + Cysteine + Glycine + Threonine", "code": "PT0285", "dosageForm": "Topical Powder", "strength": "20gm", "unit": "Bottle", "sellingPrice": 45, "status": "active"}], "materials": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9658", "name": "Neomycin Sulfate", "materialType": "raw_material", "unit": "gm", "unitCost": 850, "status": "active"}, {"id": 2, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9647", "name": "Bacitracin Zinc", "materialType": "raw_material", "unit": "gm", "unitCost": 1200, "status": "active"}, {"id": 3, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9656", "name": "Cysteine", "materialType": "raw_material", "unit": "gm", "unitCost": 320, "status": "active"}, {"id": 4, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9657", "name": "Glycine", "materialType": "raw_material", "unit": "gm", "unitCost": 45, "status": "active"}, {"id": 5, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9655", "name": "Threonine", "materialType": "raw_material", "unit": "gm", "unitCost": 180, "status": "active"}, {"id": 6, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9700", "name": "Maize Starch", "materialType": "raw_material", "unit": "kg", "unitCost": 28, "status": "active"}], "cmos": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Badr Pharma For Pharmaceutical Industries", "contactPerson": "Hani Abdallah", "licenseNumber": "FAC-BADR-001", "status": "active"}], "productBOM": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 1, "quantityPerBatch": 350, "unit": "gm"}, {"id": 2, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 2, "quantityPerBatch": 420, "unit": "gm"}, {"id": 3, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 3, "quantityPerBatch": 200, "unit": "gm"}, {"id": 4, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 4, "quantityPerBatch": 1000, "unit": "gm"}, {"id": 5, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 5, "quantityPerBatch": 100, "unit": "gm"}, {"id": 6, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "materialId": 6, "quantityPerBatch": 97700, "unit": "gm"}], "productionOrders": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "productId": 1, "cmoId": 1, "orderNumber": "BMR-2506001", "quantity": 5000, "orderDate": "2025-06-01", "expectedDate": "2025-06-15", "status": "in_production", "cmoBaseCost": 15000, "bprStatus": "draft"}], "materialReceipts": [], "productIngredients": [], "inventory": [], "goodsReceipts": [], "registrations": [], "distributors": [], "deliveryOrders": [], "deliveryItems": [], "expenses": [], "employees": [], "budgetLines": [], "campaigns": [], "salesTargets": [], "receivables": [], "payrollRuns": [], "purchaseOrders": [], "qualityChecks": [], "returns": [], "contracts": [], "assets": [], "eInvoices": [], "taxLines": [], "batchMaterials": [], "partnerAccounts": [], "partnerEntries": [], "journalEntries": [], "chartOfAccounts": [], "historicalBalances": [], "appUsers": [], "_seq": {"products": 1, "materials": 6, "cmos": 1, "productBOM": 6, "productionOrders": 1}}));
+    var dKey = 'pharma_data_' + coId;
+    var ex = null;
+    try { ex = JSON.parse(localStorage.getItem(dKey) || 'null'); } catch(e) {}
+    if (!ex || !ex.products || !ex.products.length) {
+      localStorage.setItem(dKey, JSON.stringify({"products": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Wouncure 20gm Topical Powder", "scientificName": "Neomycin Sulfate + Bacitracin Zinc + Cysteine", "code": "PT0285", "dosageForm": "Topical Powder", "strength": "20gm", "unit": "Bottle", "sellingPrice": 45, "status": "active"}], "materials": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9658", "name": "Neomycin Sulfate", "materialType": "raw_material", "unit": "gm", "unitCost": 850, "status": "active"}, {"id": 2, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9647", "name": "Bacitracin Zinc", "materialType": "raw_material", "unit": "gm", "unitCost": 1200, "status": "active"}, {"id": 3, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9656", "name": "Cysteine", "materialType": "raw_material", "unit": "gm", "unitCost": 320, "status": "active"}, {"id": 4, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9657", "name": "Glycine", "materialType": "raw_material", "unit": "gm", "unitCost": 45, "status": "active"}, {"id": 5, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9655", "name": "Threonine", "materialType": "raw_material", "unit": "gm", "unitCost": 180, "status": "active"}, {"id": 6, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9700", "name": "Maize Starch", "materialType": "raw_material", "unit": "kg", "unitCost": 28, "status": "active"}], "cmos": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Badr Pharma", "status": "active"}], "productBOM": [{"id": 1, "productId": 1, "materialId": 1, "quantityPerBatch": 350, "unit": "gm"}, {"id": 2, "productId": 1, "materialId": 2, "quantityPerBatch": 420, "unit": "gm"}, {"id": 3, "productId": 1, "materialId": 3, "quantityPerBatch": 200, "unit": "gm"}, {"id": 4, "productId": 1, "materialId": 4, "quantityPerBatch": 1000, "unit": "gm"}, {"id": 5, "productId": 1, "materialId": 5, "quantityPerBatch": 100, "unit": "gm"}, {"id": 6, "productId": 1, "materialId": 6, "quantityPerBatch": 97700, "unit": "gm"}], "productionOrders": [{"id": 1, "productId": 1, "cmoId": 1, "orderNumber": "BMR-2506001", "quantity": 5000, "orderDate": "2025-06-01", "expectedDate": "2025-06-15", "status": "in_production", "cmoBaseCost": 15000, "bprStatus": "draft", "createdAt": "2024-01-01T00:00:00.000Z"}], "materialReceipts": [], "productIngredients": [], "inventory": [], "goodsReceipts": [], "registrations": [], "distributors": [], "deliveryOrders": [], "deliveryItems": [], "expenses": [], "employees": [], "budgetLines": [], "campaigns": [], "salesTargets": [], "receivables": [], "payrollRuns": [], "purchaseOrders": [], "qualityChecks": [], "returns": [], "contracts": [], "assets": [], "eInvoices": [], "taxLines": [], "batchMaterials": [], "partnerAccounts": [], "partnerEntries": [], "journalEntries": [], "chartOfAccounts": [], "historicalBalances": [], "appUsers": [], "_seq": {"products": 1, "materials": 6, "cmos": 1, "productBOM": 6, "productionOrders": 1}}));
     }
-  }catch(e){console.error("Seed error",e);}
-})();
+  } catch(e) { console.error('Seed error', e); }
+};
+
+
+setTimeout(window._loadWouncureSeed, 100);
 </script>
 <script>
 // ═══════════════════════════════════════════════
