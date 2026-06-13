@@ -350,9 +350,11 @@ strong{font-weight:700;color:var(--text)}
 
 <script>
 // ═══════════════════════════════════════════════
-// DATA LAYER — localStorage persistence
+// DATA LAYER — IndexedDB (unlimited storage)
 // ═══════════════════════════════════════════════
 const STORE_KEY = 'pharma_erp_v2';
+const DB_NAME   = 'QuadraPharmaERP';
+const DB_VER    = 1;
 
 const defaultDB = {
   products:[], materials:[], materialReceipts:[], productBOM:[],
@@ -360,29 +362,123 @@ const defaultDB = {
   registrations:[], distributors:[], deliveryOrders:[], deliveryItems:[],
   expenses:[], employees:[], budgetLines:[], campaigns:[], salesTargets:[],
   receivables:[], payrollRuns:[], purchaseOrders:[], qualityChecks:[],
-  returns:[], contracts:[], assets:[], eInvoices:[], taxLines:[], batchMaterials:[], productIngredients:[], partnerAccounts:[], partnerEntries:[], journalEntries:[], chartOfAccounts:[], historicalBalances:[], appUsers:[],
-  _seq:{}
+  returns:[], contracts:[], assets:[], eInvoices:[], taxLines:[],
+  batchMaterials:[], productIngredients:[], partnerAccounts:[],
+  partnerEntries:[], journalEntries:[], chartOfAccounts:[],
+  historicalBalances:[], appUsers:[], _seq:{}
 };
 
-let DB = loadDB();
-// Migration guard: ensure all tables exist
-['productIngredients','historicalBalances','appUsers','chartOfAccounts',
- 'partnerAccounts','partnerEntries','journalEntries','receivables',
- 'purchaseOrders','payrollRuns','qualityChecks','salesTargets'].forEach(function(t){
-  if(!Array.isArray(DB[t])) DB[t]=[];
-});
-if(!DB._seq) DB._seq={};
+let DB = {...defaultDB};
+let _idb = null;
+let _idbReady = false;
+let _idbQueue = [];
+let _coActiveId = null;
 
-function loadDB(){
-  try{ const d=localStorage.getItem(STORE_KEY); return d?JSON.parse(d):{...defaultDB}; }
-  catch(e){ return {...defaultDB}; }
+// ── Open IndexedDB ────────────────────────────────────────────────
+function _openIDB(cb){
+  if(_idbReady){ cb(_idb); return; }
+  _idbQueue.push(cb);
+  if(_idbQueue.length > 1) return;
+  const req = indexedDB.open(DB_NAME, DB_VER);
+  req.onupgradeneeded = function(e){
+    const db = e.target.result;
+    if(!db.objectStoreNames.contains('kv')) db.createObjectStore('kv');
+  };
+  req.onsuccess = function(e){
+    _idb = e.target.result;
+    _idbReady = true;
+    _idbQueue.forEach(function(fn){ fn(_idb); });
+    _idbQueue = [];
+  };
+  req.onerror = function(){
+    _idbReady = true;
+    _idbQueue.forEach(function(fn){ fn(null); });
+    _idbQueue = [];
+  };
 }
-function saveDB(){ try{ localStorage.setItem(STORE_KEY,JSON.stringify(DB)); }catch(e){} }
 
+// ── IDB primitives ────────────────────────────────────────────────
+function idbGet(key, cb){
+  _openIDB(function(db){
+    if(!db){ cb(null); return; }
+    const tx  = db.transaction('kv','readonly');
+    const req = tx.objectStore('kv').get(key);
+    req.onsuccess = function(){ cb(req.result !== undefined ? req.result : null); };
+    req.onerror   = function(){ cb(null); };
+  });
+}
+function idbSet(key, val, cb){
+  _openIDB(function(db){
+    if(!db){ if(cb)cb(); return; }
+    const tx  = db.transaction('kv','readwrite');
+    const req = tx.objectStore('kv').put(val, key);
+    req.onsuccess = function(){ if(cb)cb(); };
+    req.onerror   = function(){ if(cb)cb(); };
+  });
+}
+
+// ── Derive active data key ────────────────────────────────────────
+function _dbKey(){
+  return _coActiveId ? ('pharma_data_' + _coActiveId) : STORE_KEY;
+}
+
+// ── Load DB (sync wrapper — fills from IDB async on boot) ─────────
+function loadDB(){
+  const raw = localStorage.getItem(_dbKey());
+  if(raw){
+    try{
+      const d = JSON.parse(raw);
+      ['productIngredients','historicalBalances','appUsers','chartOfAccounts',
+       'partnerAccounts','partnerEntries','journalEntries','receivables',
+       'purchaseOrders','payrollRuns','qualityChecks','salesTargets'].forEach(function(t){
+        if(!Array.isArray(d[t])) d[t]=[];
+      });
+      if(!d._seq) d._seq={};
+      return d;
+    }catch(e){}
+  }
+  return {...defaultDB};
+}
+
+// ── Save DB — writes to IndexedDB + localStorage mirror ──────────
+function saveDB(){
+  const key = _dbKey();
+  const val = JSON.stringify(DB);
+  // IndexedDB (primary — unlimited)
+  idbSet(key, val);
+  // localStorage mirror (fast boot, max 5MB fallback)
+  try{ localStorage.setItem(key, val); }catch(e){}
+}
+
+// ── Boot: load from IDB if available, else localStorage ──────────
+function _loadFromIDB(cb){
+  const key = _dbKey();
+  idbGet(key, function(val){
+    if(val){
+      try{
+        const d = typeof val === 'string' ? JSON.parse(val) : val;
+        ['productIngredients','historicalBalances','appUsers','chartOfAccounts',
+         'partnerAccounts','partnerEntries','journalEntries','receivables',
+         'purchaseOrders','payrollRuns','qualityChecks','salesTargets'].forEach(function(t){
+          if(!Array.isArray(d[t])) d[t]=[];
+        });
+        if(!d._seq) d._seq={};
+        DB = d;
+        if(cb) cb();
+        return;
+      }catch(e){}
+    }
+    // fallback to localStorage
+    DB = loadDB();
+    if(cb) cb();
+  });
+}
+
+// ── CRUD helpers ──────────────────────────────────────────────────
 function nextId(t){
-  if(!DB._seq)DB._seq={};
-  const cur=DB._seq[t]||(DB[t]?.reduce((m,r)=>Math.max(m,r.id||0),0)||0);
-  DB._seq[t]=cur+1;
+  if(!DB._seq) DB._seq={};
+  const cur = DB._seq[t] || (DB[t]?.reduce((m,r)=>Math.max(m,r.id||0),0)||0);
+  DB._seq[t] = cur + 1;
   return DB._seq[t];
 }
 function insert(t,obj){ const row={...obj,id:nextId(t),createdAt:new Date().toISOString()}; DB[t].push(row); saveDB(); return row; }
@@ -390,6 +486,9 @@ function update(t,id,patch){ const i=DB[t].findIndex(r=>r.id===id); if(i>=0){DB[
 function remove(t,id){ DB[t]=DB[t].filter(r=>r.id!==id); saveDB(); }
 function getAll(t){ return DB[t]||[]; }
 function getById(t,id){ return (DB[t]||[]).find(r=>r.id===id); }
+
+// ── Initialize on page load ───────────────────────────────────────
+_loadFromIDB(null);
 
 // ═══════════════════════════════════════════════
 // HELPERS
@@ -1943,8 +2042,18 @@ function coEnter(c){
   _coActiveId = c.id;
   /* load that company's data */
   try{
-    const raw = localStorage.getItem(_coDataKey(c.id));
+    _coActiveId = c.id;
+    // Try IDB first
+    if(typeof _loadFromIDB==='function'){
+      _loadFromIDB(function(){
+        setTimeout(seedChartOfAccounts,100);
+      });
+    }
+    const raw = localStorage.getItem('pharma_data_'+c.id);
     DB = raw ? JSON.parse(raw) : {...defaultDB};
+    // Also trigger async IDB load for latest data
+    _coActiveId = c.id;
+    _loadFromIDB(null);
     if(!DB._seq) DB._seq = {};
   } catch(e){ DB = {...defaultDB}; }
   // Seed chart of accounts if new company
@@ -1980,6 +2089,7 @@ function coShowScreen(){
 function coDelete(id){
   if(!confirm('حذف هذه الشركة وكل بياناتها نهائياً؟ لا يمكن التراجع!')) return;
   localStorage.removeItem(_coDataKey(id));
+  if(typeof idbSet==='function') idbSet(_coDataKey(id), null);
   _coSetAll(_coGetAll().filter(c => c.id !== id));
   coRenderGrid();
 }
@@ -2029,7 +2139,8 @@ function coSaveNew(){
 const _origSaveDB = saveDB;
 function saveDB(){
   if(_coActiveId){
-    try{ localStorage.setItem(_coDataKey(_coActiveId), JSON.stringify(DB)); }catch(e){}
+    try{ idbSet(_coDataKey(_coActiveId), JSON.stringify(DB));
+    try{localStorage.setItem(_coDataKey(_coActiveId), JSON.stringify(DB));}catch(e){} }catch(e){}
   } else {
     _origSaveDB();
   }
@@ -9684,11 +9795,37 @@ var SEED=[
 ];
 
 function loadData(){
-  try{var s=localStorage.getItem(getKey());records=s?JSON.parse(s):JSON.parse(JSON.stringify(SEED));}
-  catch(e){records=JSON.parse(JSON.stringify(SEED));}
+  // Try IDB first via sync mirror in localStorage
+  try{
+    var key=getKey();
+    var s=localStorage.getItem(key);
+    if(s){ records=JSON.parse(s); }
+    else { records=JSON.parse(JSON.stringify(SEED)); }
+    // Also load from IDB async to get latest
+    if(typeof idbGet==='function'){
+      idbGet(key,function(val){
+        if(val){
+          try{
+            var d=typeof val==='string'?JSON.parse(val):val;
+            if(Array.isArray(d)&&d.length>0){
+              records=d;
+              if(typeof applyFilters==='function') applyFilters();
+            }
+          }catch(e){}
+        }
+      });
+    }
+  }catch(e){records=JSON.parse(JSON.stringify(SEED));}
   if(!records.length) records=JSON.parse(JSON.stringify(SEED));
 }
-function saveData(){localStorage.setItem(getKey(),JSON.stringify(records));}
+function saveData(){
+  var key=getKey();
+  var val=JSON.stringify(records);
+  // Save to IDB (unlimited)
+  if(typeof idbSet==='function') idbSet(key,val);
+  // Mirror in localStorage for fast load
+  try{localStorage.setItem(key,val);}catch(e){}
+}
 
 function daysLeft(d){if(!d)return null;return Math.floor((new Date(d)-Date.now())/864e5);}
 function computeStatus(r){
