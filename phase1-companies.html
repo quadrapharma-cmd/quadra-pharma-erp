@@ -2196,7 +2196,16 @@ function addPurchaseOrder(){
     <div class="form-row">${fg('المورد',inp('pur-sup'))}${fg('الكمية *',inp('pur-qty','number'))}</div>
     <div class="form-row">${fg('سعر الوحدة (ج.م)',inp('pur-price','number'))}${fg('تاريخ الطلب',inp('pur-date','date',today()))}</div>
     ${fg('الحالة',sel('pur-status',[{v:'معلق',l:'معلق'},{v:'مستلم',l:'مستلم'},{v:'ملغي',l:'ملغي'}],'معلق'))}
-    <div class="form-actions"><button class="btn btn-green" onclick="savePurchaseOrder()">💾 حفظ</button><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button></div>`));
+    <div class="form-actions"><button class="btn btn-green" onclick="saveSimplePO()">💾 حفظ</button><button class="btn btn-ghost" onclick="closeModal()">إلغاء</button></div>`));
+}
+
+function saveSimplePO(){
+  const matId=numVal('pur-mat'), sup=val('pur-sup'), qty=val('pur-qty'), price=val('pur-price');
+  if(!matId||!qty) return alert('يرجى تعبئة المادة والكمية');
+  const mat=getById('materials',matId);
+  const total=Number(qty)*Number(price||0);
+  insert('purchaseOrders',{materialId:matId,materialName:mat?.name||'',supplier:sup||null,quantity:qty,unitPrice:price||null,totalAmount:total.toFixed(2),orderDate:val('pur-date')||today(),status:val('pur-status')||'معلق',taxable:false});
+  closeModal(); go('purchasing');
 }
 function editPurchaseOrder(id){
   const o=getById('purchaseOrders',id);if(!o)return;
@@ -8432,20 +8441,24 @@ function contractForm(c={}){
 }
 
 function saveContract(id){
-  const title = document.getElementById('ct-title')?.value?.trim();
-  const party = document.getElementById('ct-party')?.value?.trim();
-  if(!title||!party) return alert('يرجى تعبئة عنوان العقد والطرف الآخر');
+  // Support both ct-* (edit modal) and con-* (add modal) field prefixes
+  const g = px => document.getElementById(px)?.value?.trim()||null;
+  const title = g('ct-title') || g('con-name');
+  const party = g('ct-party') || g('con-name');
+  if(!title) return alert('يرجى تعبئة اسم الطرف الآخر');
   const d={
-    title, contractType:document.getElementById('ct-type')?.value||'supply',
-    party, startDate:document.getElementById('ct-start')?.value||null,
-    endDate:document.getElementById('ct-end')?.value||null,
-    value:document.getElementById('ct-val')?.value||null,
-    paymentMethod:document.getElementById('ct-pay')?.value||null,
+    title: title,
+    contractType: g('ct-type')||g('con-type')||'supply',
+    party: party,
+    startDate:    g('ct-start')||g('con-start')||null,
+    endDate:      g('ct-end')||g('con-end')||null,
+    value:        g('ct-val')||g('con-val')||null,
+    paymentMethod:g('ct-pay')||null,
     distributorId:Number(document.getElementById('ct-dist')?.value||0)||null,
-    cmoId:Number(document.getElementById('ct-cmo')?.value||0)||null,
-    contractNumber:document.getElementById('ct-num')?.value||null,
-    status:document.getElementById('ct-status')?.value||'active',
-    notes:document.getElementById('ct-notes')?.value||null
+    cmoId:        Number(document.getElementById('ct-cmo')?.value||0)||null,
+    contractNumber:g('ct-num')||null,
+    status:       g('ct-status')||'active',
+    notes:        g('ct-notes')||null,
   };
   id?update('contracts',id,d):insert('contracts',d);
   closeModal(); go('contracts');
@@ -8639,6 +8652,11 @@ function savePurchaseOrder(id){
   const d={
     materialId:matId, materialName:mat?.name||'', supplier:sup,
     invoiceNumber:val('po-inv')||null, poNumber:val('po-num')||null,
+    productId:numVal('po-prod')||null,
+    cmoId:numVal('po-cmo')||null,
+    batchSize:numVal('po-bsize')||null,
+    unitCost:val('po-ucost')||null,
+    cmoBaseCost:val('po-tcost')||null,
     quantity:qty, unitPrice:price, vatPct,
     vatAmount:vatAmt.toFixed(2),
     totalAmount:(subtotal+vatAmt).toFixed(2),
