@@ -1725,7 +1725,7 @@ tbody td{font-size:14px !important}
 <!-- Sidebar overlay for mobile -->
 <div id="sidebar-overlay" onclick="closeMobSidebar()"></div>
 
-  <div class="topbar">
+  <div class="topbar" id="main-topbar">
     <!-- Hamburger (mobile only) -->
     <button id="mob-menu-btn" onclick="toggleMobSidebar()" aria-label="القائمة">☰</button>
 
@@ -1769,53 +1769,9 @@ tbody td{font-size:14px !important}
 <canvas id="particle-canvas" style="position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.6" aria-hidden="true"></canvas>
 <div class="tc" id="tc"></div>
 <script>
-// ══ IndexedDB shims for renderCompanyPage ════════════════════════
-async function dbGet(store, id){
-  if(store==='companies'){
-    var cos=[];try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}
-    return cos.find(function(c){return c.id===id;})||null;
-  }
-  return getById(store, id)||null;
-}
-async function dbPut(store, obj){
-  if(store==='companies'){
-    var cos=[];try{cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){}
-    var idx=cos.findIndex(function(c){return c.id===obj.id;});
-    if(idx>=0) cos[idx]=obj; else cos.push(obj);
-    localStorage.setItem('pharma_companies_v1',JSON.stringify(cos));
-    return obj;
-  }
-  if(obj.id) update(store,obj.id,obj); else insert(store,obj);
-  return obj;
-}
-async function dbGetAll(store, filterKey, filterVal){
-  var rows=getAll(store)||[];
-  if(filterKey&&filterVal!==undefined) rows=rows.filter(function(r){return r[filterKey]===filterVal;});
-  return rows;
-}
-async function dbDel(store, id){
-  remove(store, id);
-}
-// S.companyId shim
-if(typeof S==='undefined') var S={};
-Object.defineProperty(S,'companyId',{
-  get:function(){return window._coActiveId||null;},
-  set:function(v){window._coActiveId=v;},
-  configurable:true
-});
-// ══ END shims ════════════════════════════════════════════════════
-
 
 // ══════════════════════════════════════════════════════════════
-// INDEXEDDB STORAGE — Unlimited
-function toast(msg,type='info'){
-  const t=document.createElement('div');
-  t.className='toast '+(type==='ok'?'ok':type==='er'?'er':'info');
-  t.textContent=(type==='ok'?'✅ ':type==='er'?'❌ ':'ℹ️ ')+msg;
-  document.getElementById('tc').appendChild(t);
-  setTimeout(()=>{t.style.opacity='0';t.style.transition='opacity .3s';setTimeout(()=>t.remove(),320)},3000);
-}
- local storage
+// INDEXEDDB STORAGE — Unlimited local storage
 // Replaces localStorage with IndexedDB (GBs available)
 // ══════════════════════════════════════════════════════════════
 var _idb = null;
@@ -2273,22 +2229,55 @@ function initTabs(){
 // ═══════════════════════════════════════════════
 let currentPage='dashboard';
 
-const NAV=[
-  {sec:'الرئيسية'},
-  {id:'dashboard',lbl:'لوحة التحكم',ic:'📊'},
-  {sec:'الشركة'},
-  {id:'company',lbl:'بيانات الشركة',ic:'🏢'},
-  {id:'drug-reg',lbl:'EDA — أدوية بشرية',ic:'💊'},
-  {sec:'الإعدادات'},
-  {id:'users',lbl:'المستخدمون',ic:'👥'},
-  {id:'settings',lbl:'إعدادات النظام',ic:'⚙️'},
-  {sec:'الإنتاج'},
-  {id:'materials',lbl:'المواد الخام',ic:'🧪',soon:true},
-  {id:'products',lbl:'المنتجات',ic:'💊',soon:true},
-  {id:'production',lbl:'الإنتاج',ic:'🏭',soon:true},
+const navItems=[
+  {id:'dashboard',icon:'📊',label:'لوحة التحكم',sec:'الرئيسية'},
+  {id:'products',icon:'💊',label:'المنتجات',sec:'الإنتاج'},
+  {id:'materials',icon:'🧪',label:'المواد الخام والتغليف',sec:'الإنتاج'},
+  {id:'cmos',icon:'🏭',label:'المصانع (CMO)',sec:'الإنتاج'},
+  {id:'production',icon:'📋',label:'أوامر الإنتاج',sec:'الإنتاج'},
+  {id:'quality',icon:'🔬',label:'ضبط الجودة QC',sec:'الإنتاج'},
+  {id:'bom',icon:'📋',label:'وصفة الإنتاج (BOM)',sec:'الإنتاج'},
+  {id:'batchrecords',icon:'📊',label:'سجلات الدفعات (BPR)',sec:'الإنتاج'},
+  {id:'inventory',icon:'🏪',label:'المخزون',sec:'المخزون'},
+  {id:'expiry',icon:'📅',label:'صلاحية المنتجات',sec:'المخزون'},
+  {id:'registration',icon:'📑',label:'التسجيل الدوائي',sec:'المخزون'},
+  {id:'distributors',icon:'🏢',label:'الموزعون',sec:'المبيعات'},
+  {id:'deliveries',icon:'🚚',label:'التوريد والمبيعات',sec:'المبيعات'},
+  {id:'returns',icon:'🔄',label:'المرتجعات',sec:'المبيعات'},
+  {id:'receivables',icon:'💳',label:'الحسابات والذمم',sec:'المبيعات'},
+  {id:'salesvstarget',icon:'📊',label:'المبيعات vs الأهداف',sec:'المبيعات'},
+  {id:'purchasing',icon:'📦',label:'المشتريات',sec:'المالية'},
+  {id:'partners',icon:'🤝',label:'جاري الشركاء',sec:'المالية'},
+  {id:'shareholders',icon:'👥',label:'تحليل المساهمين',sec:'المالية'},
+  {id:'journal',icon:'📒',label:'اليومية الأمريكية',sec:'المالية'},
+  {id:'trialbalance',icon:'⚖️',label:'ميزان المراجعة',sec:'المالية'},
+  {id:'chartofaccounts',icon:'📑',label:'دليل الحسابات',sec:'المالية'},
+  {id:'historicalbalance',icon:'📜',label:'الموازين التاريخية',sec:'المالية'},
+  {id:'expenses',icon:'🧾',label:'المصروفات',sec:'المالية'},
+  {id:'employees',icon:'👥',label:'الموظفون',sec:'المالية'},
+  {id:'payroll',icon:'💼',label:'مسير الرواتب',sec:'المالية'},
+  {id:'budget',icon:'💰',label:'الميزانية',sec:'المالية'},
+  {id:'marketing',icon:'📢',label:'الدعاية والمبيعات',sec:'المالية'},
+  {id:'contracts',icon:'📝',label:'العقود',sec:'المالية'},
+  {id:'assets',icon:'🏗️',label:'الأصول الثابتة',sec:'المالية'},
+  {id:'costanalysis',icon:'📉',label:'تحليل التكلفة',sec:'المالية'},
+  {id:'reports',icon:'📈',label:'التقارير المالية',sec:'المالية'},
+  {id:'vat',icon:'🧾',label:'ضريبة القيمة المضافة',sec:'الضرائب'},
+  {id:'einvoice',icon:'📄',label:'الفواتير الإلكترونية',sec:'الضرائب'},
+  {id:'taxes',icon:'🏦',label:'الضرائب العامة',sec:'الضرائب'},
+  {id:'users',icon:'⚙️',label:'الإعدادات والمستخدمون',sec:'الإعدادات'},
 ];
 
-function renderNav(){ buildNav(); }
+function renderNav(){
+  let html=''; let lastSection='';
+  navItems.forEach(n=>{
+    if(n.section!==lastSection){ html+=`<div class="nav-section">${n.section}</div>`; lastSection=n.section; }
+    html+=('<div class="nav-item '+(currentPage===n.id?'active':'')+'" data-page="'+n.id+'">'+'<span class="icon">'+n.icon+'</span><span>'+n.label+'</span></div>');;
+  });
+  setHTML('nav-menu',html);
+  var _nm=document.getElementById('nav-menu');
+  if(_nm&&!_nm._d){_nm._d=1;_nm.addEventListener('click',function(e){var _t=e.target.closest('[data-page]');if(_t)go(_t.dataset.page);});}
+}
 
 function go(page){
   // Auth check
@@ -2299,7 +2288,6 @@ function go(page){
     }
   }
   currentPage=page;
-  if(page==='company'&&typeof renderCompanyPage==='function'){var m=document.getElementById('pg-content')||document.getElementById('main-content');if(m){renderCompanyPage(m);renderNav();return;}}
   renderNav();
   closeModal();
   (PAGES[page]||PAGES.dashboard)();
@@ -2314,120 +2302,7 @@ function go(page){
 // ═══════════════════════════════════════════════
 // PAGES
 // ═══════════════════════════════════════════════
-
-// ══ Company Page Helpers (from v8) ══
-function openEditPartner(id){const r=await dbGet('partners',id);if(!r)return;document.getElementById('mp-title').textContent='تعديل بيانات الشريك';set('mp-id',r.id);set('mp-name',r.name);set('mp-pct',r.pct);set('mp-nat',r.nat);set('mp-shares',r.shares);set('mp-val',r.val);openModal('modal-partner');}
-function delPartner(id){if(!confirm('حذف هذا الشريك؟'))return;const r=await dbGet('partners',id);if(!r)return;r.deletedAt=now();await dbPut('partners',r);await saveHist(S.companyId,'حذف شريك',r.name);toast('تم الحذف');loadPartnersTable();}
-function loadFactoriesTable(){
-  const el=document.getElementById('factories-table');if(!el)return;
-  const rows=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏭</div><p>لا توجد مصانع متعاقد معها</p></div>';return}
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المصنع</th><th>العنوان</th><th>خطوط الإنتاج</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.lines||'—')}</td><td style="font-size:11px;color:var(--muted)">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditFactory('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delFactory('${r.id}')">حذف</button></div></td></tr>`).join('')}
-  </tbody></table></div>`;
-}
-function openEditFactory(id){const r=await dbGet('factories',id);if(!r)return;document.getElementById('mf-title').textContent='تعديل بيانات المصنع';set('mf-id',r.id);set('mf-name',r.name);set('mf-addr',r.addr);set('mf-prods',r.prods);set('mf-lic',r.lic);set('mf-lines',r.lines);openModal('modal-factory');}
-function saveFactory(){
-  const name=val('mf-name');if(!name){toast('اسم المصنع مطلوب','er');return}
-  const eid=val('mf-id'),id=eid||uid();const existing=eid?await dbGet('factories',id):null;
-  await dbPut('factories',{...existing,id,companyId:S.companyId,name,addr:val('mf-addr'),prods:val('mf-prods'),lic:val('mf-lic'),lines:val('mf-lines'),createdAt:existing?.createdAt||now(),updatedAt:now()});
-  await saveHist(S.companyId,eid?'تعديل مصنع':'إضافة مصنع',name);
-  closeModal('modal-factory');toast('تم الحفظ','ok');loadFactoriesTable();
-}
-function loadStoragesTable(){
-  const el=document.getElementById('storages-table');if(!el)return;
-  const rows=(await dbGetAll('storages','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏪</div><p>لا توجد أماكن تخزين</p></div>';return}
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المخزن</th><th>العنوان</th><th>المساحة</th><th>النوع</th><th>إجراء</th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td>${r.area?esc(r.area)+' م²':'—'}</td><td><span class="bdg bdg-m">${esc(r.type||'—')}</span></td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditStorage('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delStorage('${r.id}')">حذف</button></div></td></tr>`).join('')}
-  </tbody></table></div>`;
-}
-function openEditStorage(id){const r=await dbGet('storages',id);if(!r)return;document.getElementById('ms-title').textContent='تعديل';set('ms-id',r.id);set('ms-name',r.name);set('ms-addr',r.addr);set('ms-area',r.area);set('ms-type',r.type);openModal('modal-storage');}
-function saveStorage(){
-  const name=val('ms-name');if(!name){toast('الاسم مطلوب','er');return}
-  const eid=val('ms-id'),id=eid||uid();const existing=eid?await dbGet('storages',id):null;
-  await dbPut('storages',{...existing,id,companyId:S.companyId,name,addr:val('ms-addr'),area:val('ms-area'),type:val('ms-type'),createdAt:existing?.createdAt||now(),updatedAt:now()});
-  closeModal('modal-storage');toast('تم الحفظ','ok');loadStoragesTable();
-}
-function loadDistsTable(){
-  const el=document.getElementById('dists-table');if(!el)return;
-  const rows=(await dbGetAll('distributors','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🚚</div><p>لا يوجد موزعون</p></div>';return}
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الموزع</th><th>العنوان</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditDist('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delDist('${r.id}')">حذف</button></div></td></tr>`).join('')}
-  </tbody></table></div>`;
-}
-function openEditDist(id){const r=await dbGet('distributors',id);if(!r)return;document.getElementById('md-title').textContent='تعديل الموزع';set('md-id',r.id);set('md-name',r.name);set('md-addr',r.addr);set('md-prods',r.prods);openModal('modal-dist');}
-function saveDist(){
-  const name=val('md-name');if(!name){toast('الاسم مطلوب','er');return}
-  const eid=val('md-id'),id=eid||uid();const existing=eid?await dbGet('distributors',id):null;
-  await dbPut('distributors',{...existing,id,companyId:S.companyId,name,addr:val('md-addr'),prods:val('md-prods'),createdAt:existing?.createdAt||now(),updatedAt:now()});
-  closeModal('modal-dist');toast('تم الحفظ','ok');loadDistsTable();
-}
-function loadDocs(){
-  const el=document.getElementById('docs-list-co');if(!el)return;
-  const docs=(await dbGetAll('documents','companyId',S.companyId)).filter(d=>!d.deletedAt);
-  if(!docs.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">لا توجد مستندات بعد</div>';return}
-  el.innerHTML=docs.map(d=>`<div class="doc-item"><div class="doc-icon" style="background:${d.type==='pdf'?'rgba(248,81,73,.15)':'rgba(56,139,253,.15)'};color:${d.type==='pdf'?'var(--red)':'var(--blue)'}">${d.type==='pdf'?'PDF':'IMG'}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div></div><button class="btn btn-o btn-sm" onclick="viewDoc('${d.id}')">عرض</button><button class="btn btn-x btn-sm" onclick="delDoc('${d.id}')">حذف</button></div>`).join('');
-}
-function delDoc(id){if(!confirm('حذف؟'))return;const d=await dbGet('documents',id);if(!d)return;d.deletedAt=now();await dbPut('documents',d);toast('تم الحذف');loadDocs();}
-function loadHistory(){
-  const el=document.getElementById('co-history-list');if(!el)return;
-  const all=(await dbGetAll('history')).filter(h=>h.recordId===S.companyId).reverse();
-  if(!all.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">📜</div><p>لا توجد تعديلات مسجلة بعد</p></div>';return}
-  el.innerHTML=all.map(h=>`<div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px"><div><span class="bdg bdg-b" style="margin-left:8px">${esc(h.action)}</span>${h.note?`<span style="font-size:12px;color:var(--muted)">${esc(h.note)}</span>`:''}</div><div style="font-size:11px;color:var(--muted);white-space:nowrap">${esc(h.userName||'—')} · ${fmtDt(h.at)}</div></div>`).join('');
-}
-function openEditUser(id){const u=await dbGet('users',id);if(!u)return;document.getElementById('mu-title').textContent='تعديل مستخدم';document.getElementById('u-ph').style.display='block';document.getElementById('u-pl').innerHTML='كلمة مرور جديدة';set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');set('u-user',u.username);set('u-pass','');set('u-role',u.role);set('u-dept',u.department||'');set('u-title-inp',u.jobTitle||'');set('u-phone',u.phone||'');set('u-email',u.email||'');openModal('modal-user');}
-function saveUser(){
-  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
-  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','er');return}
-  const btn=document.getElementById('btn-su');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
-  try{
-    if(id){const u=await dbGet('users',id);if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','er');return}u.passwordHash=await hashPw(pw)}Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});await dbPut('users',u);toast('تم التحديث','ok');}
-    else{if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف','er');return}const all=await dbGetAll('users','companyId',S.companyId);if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','er');return}await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});toast('تم الإضافة','ok');}
-    closeModal('modal-user');renderUsers(document.getElementById('main-content'));
-  }catch(e){toast('خطأ: '+e.message,'er')}
-  btn.innerHTML='حفظ';btn.disabled=false;
-}
-function renderSettings(c){
-  c.innerHTML=`<div class="page-title">⚙️ إعدادات النظام</div>
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
-    <div class="pcard"><div class="ph"><div class="ptitle">العرض</div></div><div class="tab-body">
-      <div class="fg"><label class="fl">حجم الخط</label><select class="fi" id="s-fs"><option value="13">صغير 13px</option><option value="14" selected>متوسط 14px</option><option value="15">كبير 15px</option></select></div>
-    </div></div>
-    <div class="pcard"><div class="ph"><div class="ptitle">الطباعة</div></div><div class="tab-body">
-      <div class="fg"><label class="fl">حجم الورق</label><select class="fi" id="s-paper"><option value="A4" selected>A4</option><option value="A5">A5</option></select></div>
-      <div class="fg"><label class="fl">هيدر الطباعة</label><input class="fi" id="s-header" placeholder="نص يظهر في رأس كل طباعة"></div>
-    </div></div>
-    <div class="pcard"><div class="ph"><div class="ptitle">💾 النسخ الاحتياطي</div></div><div class="tab-body" style="display:flex;gap:10px;flex-wrap:wrap">
-      <button class="btn btn-ok" onclick="exportBackup()">⬇ تصدير نسخة احتياطية</button>
-      <button class="btn btn-o" onclick="openModal('modal-backup')">⬆ استيراد نسخة</button>
-    </div></div>
-  </div>
-  <div style="margin-top:16px;display:flex;justify-content:flex-end">
-    <button class="btn btn-ok" onclick="toast('تم حفظ الإعدادات','ok');document.body.style.fontSize=val('s-fs')+'px'">💾 حفظ الإعدادات</button>
-  </div>`;
-}
-
-function loadPartnersTable(){
-  const el=document.getElementById('partners-table');if(!el)return;
-  const rows=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
-  if(!rows.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">🤝</div><p>لا يوجد شركاء — اضغط "+ إضافة شريك"</p></div>';return}
-  const total=rows.reduce((s,r)=>s+parseFloat(r.pct||0),0);
-  const ok=Math.abs(total-100)<0.01;
-  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الشريك</th><th>النسبة %</th><th>عدد الحصص</th><th>قيمة الحصة</th><th>الجنسية</th><th>إجراء</th></tr></thead><tbody>
-  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td><span class="bdg bdg-g">${esc(r.pct)}%</span></td><td>${esc(r.shares||'—')}</td><td>${r.val?esc(r.val)+' ج':'—'}</td><td>${esc(r.nat||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditPartner('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delPartner('${r.id}')">حذف</button></div></td></tr>`).join('')}
-  <tr style="background:var(--card2)"><td colspan="2" style="font-weight:700">الإجمالي: <span class="bdg ${ok?'bdg-g':'bdg-r'}">${total.toFixed(2)}%</span></td><td colspan="4" style="font-size:12px;color:var(--muted)">${ok?'✅ صحيح':'⚠️ يجب أن يساوي 100%'}</td></tr>
-  </tbody></table></div>`;
-}
 const PAGES={
-
-company(){
-  var m=document.getElementById('pg-content');
-  if(!m)m=document.getElementById('main-content');
-  if(m&&typeof renderCompanyPage==='function') renderCompanyPage(m);
-},
-
 
 dashboard(){
   const pr=getAll('products'), inv=getAll('inventory'), ex=getAll('expenses');
@@ -3240,44 +3115,34 @@ function saveProduct(id){
 // MODALS — Materials
 // ═══════════════════════════════════════════════
 
-// ── Material Active Ingredient Autocomplete ─────────────────────
 function initMaterialAutocomplete(){
-  var inp  = document.getElementById('m-name');
-  var list = document.getElementById('m-name-list');
-  if(!inp || !list) return;
-  var db = [];
-  if(window.APIS_DB)      db = db.concat(window.APIS_DB);
-  if(window.EXCIPIENTS_DB) db = db.concat(window.EXCIPIENTS_DB);
-  (getAll('materials')||[]).forEach(function(m){
-    if(m.name && db.indexOf(m.name)<0) db.push(m.name);
-  });
+  var inp=document.getElementById('m-name');
+  var list=document.getElementById('m-name-list');
+  if(!inp||!list)return;
+  var db=[];
+  if(window.APIS_DB) db=db.concat(window.APIS_DB);
+  if(window.EXCIPIENTS_DB) db=db.concat(window.EXCIPIENTS_DB);
+  (getAll('materials')||[]).forEach(function(m){if(m.name&&db.indexOf(m.name)<0)db.push(m.name);});
   function render(){
-    var q = inp.value.trim().toLowerCase();
-    list.innerHTML = '';
-    if(!q){ list.style.display='none'; return; }
-    var hits = db.filter(function(n){
-      var s = n.toLowerCase();
-      return s.startsWith(q) || s.includes(q);
-    }).slice(0, 14);
-    if(!hits.length){ list.style.display='none'; return; }
+    var q=inp.value.trim().toLowerCase();
+    list.innerHTML='';
+    if(!q){list.style.display='none';return;}
+    var hits=db.filter(function(n){var s=n.toLowerCase();return s.startsWith(q)||s.includes(q);}).slice(0,14);
+    if(!hits.length){list.style.display='none';return;}
     hits.forEach(function(name){
-      var row = document.createElement('div');
-      row.style.cssText = 'padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(2,132,199,.07);font-size:14px;color:#0f172a;font-weight:600';
-      row.textContent = name;
-      row.onmouseenter = function(){ this.style.background='rgba(2,132,199,.06)'; };
-      row.onmouseleave = function(){ this.style.background=''; };
-      row.onmousedown  = function(e){
-        e.preventDefault();
-        inp.value = name;
-        list.style.display = 'none';
-      };
+      var row=document.createElement('div');
+      row.style.cssText='padding:9px 14px;cursor:pointer;border-bottom:1px solid rgba(2,132,199,.07);font-size:14px;color:#0f172a;font-weight:600';
+      row.textContent=name;
+      row.onmouseenter=function(){this.style.background='rgba(2,132,199,.06)';};
+      row.onmouseleave=function(){this.style.background='';};
+      row.onmousedown=function(e){e.preventDefault();inp.value=name;list.style.display='none';};
       list.appendChild(row);
     });
-    list.style.cssText = 'display:block;position:absolute;background:#fff;border:1px solid rgba(2,132,199,.2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:9999;max-height:280px;overflow-y:auto;min-width:100%;right:0;top:calc(100% + 4px)';
+    list.style.cssText='display:block;position:absolute;background:#fff;border:1px solid rgba(2,132,199,.2);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,.1);z-index:9999;max-height:280px;overflow-y:auto;min-width:100%;right:0;top:calc(100% + 4px)';
   }
-  inp.addEventListener('input', render);
-  inp.addEventListener('focus', render);
-  inp.addEventListener('blur', function(){ setTimeout(function(){ list.style.display='none'; },200); });
+  inp.addEventListener('input',render);
+  inp.addEventListener('focus',render);
+  inp.addEventListener('blur',function(){setTimeout(function(){list.style.display='none';},200);});
 }
 function addMaterial(type){
   showModal(modal(type==='raw_material'?'إضافة مادة خام جديدة':'إضافة مادة تغليف جديدة',materialForm({materialType:type})));
@@ -3286,7 +3151,7 @@ function addMaterial(type){
 function editMaterial(id){ const m=getById('materials',id); if(!m)return; showModal(modal('تعديل مادة',materialForm(m))); }
 function materialForm(m={}){
   return `
-    <div style="position:relative">      ${fg('اسم المادة / المادة الفعالة *',\`<input id="m-name" type="text" class="fi" value="\${m.name||''}" placeholder="ابدأ الكتابة للبحث..." autocomplete="off" style="width:100%"><div id="m-name-list" style="display:none;position:absolute"></div>\`)}    </div>
+    <div style='position:relative'>${fg('اسم المادة / المادة الفعالة *',`<input id="m-name" type="text" class="fi" value="${m.name||''}" placeholder="ابدأ الكتابة..." autocomplete="off" style="width:100%"><div id="m-name-list" style="display:none;position:absolute"></div>`)}</div>
     <div class="form-row">
       ${fg('نوع المادة',sel('m-type',[{v:'raw_material',l:'مادة خام'},{v:'packaging',l:'مادة تغليف'}],m.materialType||'raw_material'))}
       ${fg('وحدة القياس',sel('m-unit',UNITS,m.unit||'كجم'))}
@@ -9359,12 +9224,22 @@ function partnerForm(p={}){
     </div>`;
 }
 
-function savePartner(){
-  const name=val('mp-name'),pct=val('mp-pct');if(!name||!pct){toast('الاسم والنسبة مطلوبان','er');return}
-  const eid=val('mp-id'),id=eid||uid();const existing=eid?await dbGet('partners',id):null;
-  await dbPut('partners',{...existing,id,companyId:S.companyId,name,pct,nat:val('mp-nat'),shares:val('mp-shares'),val:val('mp-val'),createdAt:existing?.createdAt||now(),updatedAt:now()});
-  await saveHist(S.companyId,eid?'تعديل شريك':'إضافة شريك',name);
-  closeModal('modal-partner');toast('تم الحفظ','ok');loadPartnersTable();
+function savePartner(id){
+  const name = document.getElementById('pt-name')?.value?.trim();
+  if(!name) return alert('يرجى كتابة اسم الشريك');
+  const d={
+    name,
+    role:document.getElementById('pt-role')?.value||'managing_partner',
+    type:document.getElementById('pt-type')?.value||'current',
+    ownershipPct:document.getElementById('pt-pct')?.value||null,
+    nationalId:document.getElementById('pt-id')?.value||null,
+    phone:document.getElementById('pt-phone')?.value||null,
+    email:document.getElementById('pt-email')?.value||null,
+    address:document.getElementById('pt-addr')?.value||null,
+    notes:document.getElementById('pt-notes')?.value||null
+  };
+  id?update('partnerAccounts',id,d):insert('partnerAccounts',d);
+  closeModal(); go('partners');
 }
 
 function addPartner(){ showModal(modal('شريك / مساهم جديد',partnerForm())); }
@@ -11303,7 +11178,6 @@ function _erpDataOf(id){ return _getCoDB(id); }
 })();
 
 // ══ RESTORED: Company Page + buildNav + saveTab ══
-function expBadge(d){if(!d)return'';const days=Math.floor((new Date(d)-new Date())/86400000);if(days<0)return'<span class="bdg bdg-r">منتهي</span>';if(days<90)return'<span class="bdg bdg-y">'+days+' يوم</span>';return'';}
 function buildNav(){
   var nav=document.getElementById('sb-nav')||document.getElementById('nav-menu');
   if(!nav)return;
@@ -11383,8 +11257,8 @@ async function renderDashboard(c){
 }
 
 // ══ COMPANY PAGE ══
-function renderCompanyPage(c){
-  const co=await dbGet('companies',S.companyId);
+async function renderCompanyPage(c){
+  var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
   c.innerHTML=`
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:10px">
     <div class="page-title" style="margin-bottom:0">🏢 بيانات الشركة <span class="bdg ${co.companyType==='factory'?'bdg-b':'bdg-g'}">${co.companyType==='factory'?'مصنع':'Toll'}</span></div>
@@ -11532,28 +11406,103 @@ function renderCompanyPage(c){
   loadDocs();loadHistory();loadPartnersTable();loadFactoriesTable();loadStoragesTable();loadDistsTable();
 }
 
-function saveTab(tab){
-  const co=await dbGet('companies',S.companyId);
+async function saveTab(tab){
+  var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
   let u={};
   if(tab==='legal'){const nameAr=val('cf-nameAr');if(!nameAr){toast('الاسم مطلوب','er');return}u={nameAr,nameEn:val('cf-nameEn'),companyType:val('cf-companyType'),legalForm:val('cf-legalForm'),comRegNo:val('cf-comRegNo'),comRegExp:val('cf-comRegExp'),natNo:val('cf-natNo'),capital:val('cf-capital'),city:val('cf-city'),country:val('cf-country'),addressAr:val('cf-addr')};}
   else if(tab==='eda'){u={tollNo:val('cf-tollNo'),tollDate:val('cf-tollDate'),tollExp:val('cf-tollExp'),edaCode:val('cf-edaCode'),gmp:val('cf-gmp'),gmpExp:val('cf-gmpExp'),lines:val('cf-lines'),edaAddress:val('cf-edaAddr')};}
   else if(tab==='tax'){u={taxReg:val('cf-taxReg'),taxCard:val('cf-taxCard'),taxDate:val('cf-taxDate'),taxExp:val('cf-taxExp'),taxOfc:val('cf-taxOfc'),actCode:val('cf-actCode'),socIns:val('cf-socIns'),incTax:val('cf-incTax')};}
   else if(tab==='persons'){u={chairman:val('cf-chairman'),licHolder:val('cf-licHolder'),mgr:val('cf-mgr'),tech:val('cf-tech'),qc:val('cf-qc'),prod:val('cf-prod'),ra:val('cf-ra'),phone:val('cf-phone'),fax:val('cf-fax'),email:val('cf-email'),website:val('cf-web')};}
   Object.assign(co,u,{updatedAt:now()});
-  await dbPut('companies',co);
-  await saveHist(co.id,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'}[tab]);
-  if(tab==='legal'){S.companyNameAr=co.nameAr;document.getElementById('sb-coname').textContent=co.nameAr;document.getElementById('sb-coname2').textContent=co.nameAr;}
+  var _coIdx=_cos.findIndex(function(c){return c.id===coId;});if(_coIdx>=0){_cos[_coIdx]=co;localStorage.setItem('pharma_companies_v1',JSON.stringify(_cos));}
+  if(typeof saveHist==='function') saveHist(coId,'تعديل '+{legal:'البيانات القانونية',eda:'EDA والترخيص',tax:'البيانات الضريبية',persons:'المسؤولون'}[tab]);
+  if(tab==='legal'&&typeof S!=='undefined'){try{S.companyNameAr=co.nameAr;}catch(e){}document.getElementById('sb-coname').textContent=co.nameAr;document.getElementById('sb-coname2').textContent=co.nameAr;}
   toast('تم الحفظ بنجاح','ok');
 }
-function saveEgyPct(){const co=await dbGet('companies',S.companyId);co.egyPct=val('cf-egyPct');co.updatedAt=now();await dbPut('companies',co);toast('تم الحفظ','ok');}
+async function saveEgyPct(){var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};co.egyPct=val('cf-egyPct');co.updatedAt=now();var _coIdx=_cos.findIndex(function(c){return c.id===coId;});if(_coIdx>=0){_cos[_coIdx]=co;localStorage.setItem('pharma_companies_v1',JSON.stringify(_cos));}toast('تم الحفظ','ok');}
+
+// ══ PARTNERS ══
+async function loadPartnersTable(){
+  const el=document.getElementById('partners-table');if(!el)return;
+  const rows=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">🤝</div><p>لا يوجد شركاء — اضغط "+ إضافة شريك"</p></div>';return}
+  const total=rows.reduce((s,r)=>s+parseFloat(r.pct||0),0);
+  const ok=Math.abs(total-100)<0.01;
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الشريك</th><th>النسبة %</th><th>عدد الحصص</th><th>قيمة الحصة</th><th>الجنسية</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td><span class="bdg bdg-g">${esc(r.pct)}%</span></td><td>${esc(r.shares||'—')}</td><td>${r.val?esc(r.val)+' ج':'—'}</td><td>${esc(r.nat||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditPartner('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delPartner('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  <tr style="background:var(--card2)"><td colspan="2" style="font-weight:700">الإجمالي: <span class="bdg ${ok?'bdg-g':'bdg-r'}">${total.toFixed(2)}%</span></td><td colspan="4" style="font-size:12px;color:var(--muted)">${ok?'✅ صحيح':'⚠️ يجب أن يساوي 100%'}</td></tr>
+  </tbody></table></div>`;
+}
 function openAddPartner(){document.getElementById('mp-title').textContent='إضافة شريك جديد';['mp-id','mp-name','mp-pct','mp-nat','mp-shares','mp-val'].forEach(id=>set(id,''));openModal('modal-partner');}
+async function openEditPartner(id){const r=await dbGet('partners',id);if(!r)return;document.getElementById('mp-title').textContent='تعديل بيانات الشريك';set('mp-id',r.id);set('mp-name',r.name);set('mp-pct',r.pct);set('mp-nat',r.nat);set('mp-shares',r.shares);set('mp-val',r.val);openModal('modal-partner');}
+async function delPartner(id){if(!confirm('حذف هذا الشريك؟'))return;const r=await dbGet('partners',id);if(!r)return;r.deletedAt=now();await dbPut('partners',r);await saveHist(S.companyId,'حذف شريك',r.name);toast('تم الحذف');loadPartnersTable();}
+
+// ══ FACTORIES ══
+async function loadFactoriesTable(){
+  const el=document.getElementById('factories-table');if(!el)return;
+  const rows=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏭</div><p>لا توجد مصانع متعاقد معها</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المصنع</th><th>العنوان</th><th>خطوط الإنتاج</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.lines||'—')}</td><td style="font-size:11px;color:var(--muted)">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditFactory('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delFactory('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
 function openAddFactory(){document.getElementById('mf-title').textContent='إضافة مصنع متعاقد';['mf-id','mf-name','mf-addr','mf-prods','mf-lic','mf-lines'].forEach(id=>set(id,''));openModal('modal-factory');}
-function delFactory(id){if(!confirm('حذف؟'))return;const r=await dbGet('factories',id);if(!r)return;r.deletedAt=now();await dbPut('factories',r);toast('تم الحذف');loadFactoriesTable();}
+async function openEditFactory(id){const r=await dbGet('factories',id);if(!r)return;document.getElementById('mf-title').textContent='تعديل بيانات المصنع';set('mf-id',r.id);set('mf-name',r.name);set('mf-addr',r.addr);set('mf-prods',r.prods);set('mf-lic',r.lic);set('mf-lines',r.lines);openModal('modal-factory');}
+async function saveFactory(){
+  const name=val('mf-name');if(!name){toast('اسم المصنع مطلوب','er');return}
+  const eid=val('mf-id'),id=eid||uid();const existing=eid?await dbGet('factories',id):null;
+  await dbPut('factories',{...existing,id,companyId:S.companyId,name,addr:val('mf-addr'),prods:val('mf-prods'),lic:val('mf-lic'),lines:val('mf-lines'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  await saveHist(S.companyId,eid?'تعديل مصنع':'إضافة مصنع',name);
+  closeModal('modal-factory');toast('تم الحفظ','ok');loadFactoriesTable();
+}
+async function delFactory(id){if(!confirm('حذف؟'))return;const r=await dbGet('factories',id);if(!r)return;r.deletedAt=now();await dbPut('factories',r);toast('تم الحذف');loadFactoriesTable();}
+
+// ══ STORAGES ══
+async function loadStoragesTable(){
+  const el=document.getElementById('storages-table');if(!el)return;
+  const rows=(await dbGetAll('storages','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🏪</div><p>لا توجد أماكن تخزين</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم المخزن</th><th>العنوان</th><th>المساحة</th><th>النوع</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td>${r.area?esc(r.area)+' م²':'—'}</td><td><span class="bdg bdg-m">${esc(r.type||'—')}</span></td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditStorage('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delStorage('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
 function openAddStorage(){document.getElementById('ms-title').textContent='إضافة مكان تخزين';['ms-id','ms-name','ms-addr','ms-area'].forEach(id=>set(id,''));set('ms-type','مخزن عادي');openModal('modal-storage');}
-function delStorage(id){if(!confirm('حذف؟'))return;const r=await dbGet('storages',id);if(!r)return;r.deletedAt=now();await dbPut('storages',r);toast('تم الحذف');loadStoragesTable();}
+async function openEditStorage(id){const r=await dbGet('storages',id);if(!r)return;document.getElementById('ms-title').textContent='تعديل';set('ms-id',r.id);set('ms-name',r.name);set('ms-addr',r.addr);set('ms-area',r.area);set('ms-type',r.type);openModal('modal-storage');}
+async function saveStorage(){
+  const name=val('ms-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('ms-id'),id=eid||uid();const existing=eid?await dbGet('storages',id):null;
+  await dbPut('storages',{...existing,id,companyId:S.companyId,name,addr:val('ms-addr'),area:val('ms-area'),type:val('ms-type'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  closeModal('modal-storage');toast('تم الحفظ','ok');loadStoragesTable();
+}
+async function delStorage(id){if(!confirm('حذف؟'))return;const r=await dbGet('storages',id);if(!r)return;r.deletedAt=now();await dbPut('storages',r);toast('تم الحذف');loadStoragesTable();}
+
+// ══ DISTRIBUTORS ══
+async function loadDistsTable(){
+  const el=document.getElementById('dists-table');if(!el)return;
+  const rows=(await dbGetAll('distributors','companyId',S.companyId)).filter(r=>!r.deletedAt);
+  if(!rows.length){el.innerHTML='<div class="es" style="padding:24px"><div class="ei">🚚</div><p>لا يوجد موزعون</p></div>';return}
+  el.innerHTML=`<div class="tw"><table><thead><tr><th>اسم الموزع</th><th>العنوان</th><th>المنتجات</th><th>إجراء</th></tr></thead><tbody>
+  ${rows.map(r=>`<tr><td style="font-weight:600">${esc(r.name)}</td><td style="font-size:12px;color:var(--muted)">${esc(r.addr||'—')}</td><td style="font-size:12px">${esc(r.prods||'—')}</td><td><div class="tbl-action"><button class="btn btn-o btn-sm" onclick="openEditDist('${r.id}')">تعديل</button><button class="btn btn-x btn-sm" onclick="delDist('${r.id}')">حذف</button></div></td></tr>`).join('')}
+  </tbody></table></div>`;
+}
 function openAddDist(){document.getElementById('md-title').textContent='إضافة موزع معتمد';['md-id','md-name','md-addr','md-prods'].forEach(id=>set(id,''));openModal('modal-dist');}
-function delDist(id){if(!confirm('حذف؟'))return;const r=await dbGet('distributors',id);if(!r)return;r.deletedAt=now();await dbPut('distributors',r);toast('تم الحذف');loadDistsTable();}
-function uploadDoc(input){
+async function openEditDist(id){const r=await dbGet('distributors',id);if(!r)return;document.getElementById('md-title').textContent='تعديل الموزع';set('md-id',r.id);set('md-name',r.name);set('md-addr',r.addr);set('md-prods',r.prods);openModal('modal-dist');}
+async function saveDist(){
+  const name=val('md-name');if(!name){toast('الاسم مطلوب','er');return}
+  const eid=val('md-id'),id=eid||uid();const existing=eid?await dbGet('distributors',id):null;
+  await dbPut('distributors',{...existing,id,companyId:S.companyId,name,addr:val('md-addr'),prods:val('md-prods'),createdAt:existing?.createdAt||now(),updatedAt:now()});
+  closeModal('modal-dist');toast('تم الحفظ','ok');loadDistsTable();
+}
+async function delDist(id){if(!confirm('حذف؟'))return;const r=await dbGet('distributors',id);if(!r)return;r.deletedAt=now();await dbPut('distributors',r);toast('تم الحذف');loadDistsTable();}
+
+// ══ DOCUMENTS ══
+async function loadDocs(){
+  const el=document.getElementById('docs-list-co');if(!el)return;
+  const docs=(await dbGetAll('documents','companyId',S.companyId)).filter(d=>!d.deletedAt);
+  if(!docs.length){el.innerHTML='<div style="text-align:center;padding:16px;color:var(--muted);font-size:13px">لا توجد مستندات بعد</div>';return}
+  el.innerHTML=docs.map(d=>`<div class="doc-item"><div class="doc-icon" style="background:${d.type==='pdf'?'rgba(248,81,73,.15)':'rgba(56,139,253,.15)'};color:${d.type==='pdf'?'var(--red)':'var(--blue)'}">${d.type==='pdf'?'PDF':'IMG'}</div><div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${esc(d.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(d.docType)} · ${fmt(d.createdAt)} · ${(d.size/1024).toFixed(0)}KB</div></div><button class="btn btn-o btn-sm" onclick="viewDoc('${d.id}')">عرض</button><button class="btn btn-x btn-sm" onclick="delDoc('${d.id}')">حذف</button></div>`).join('');
+}
+async function uploadDoc(input){
   const file=input.files[0];if(!file)return;
   if(file.size>5*1024*1024){toast('الملف أكبر من 5MB','er');return}
   const name=val('doc-name')||file.name,docType=val('doc-type')||'أخرى';
@@ -11568,16 +11517,54 @@ function uploadDoc(input){
 }
 const toB64=f=>new Promise((ok,fail)=>{const r=new FileReader();r.onload=e=>ok(e.target.result);r.onerror=()=>fail(new Error('فشل'));r.readAsDataURL(f)});
 const compressImg=(f,maxW,q)=>new Promise((ok,fail)=>{const img=new Image(),url=URL.createObjectURL(f);img.onload=()=>{URL.revokeObjectURL(url);let{width:w,height:h}=img;if(w>maxW){h=Math.round(h*maxW/w);w=maxW}const cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);const data=cv.toDataURL('image/jpeg',q);ok({data,size:Math.round(data.length*.75)})};img.onerror=()=>fail(new Error('فشل'));img.src=url;});
-function viewDoc(id){const d=await dbGet('documents',id);if(!d)return;const w=window.open();w.document.write(d.type==='pdf'?`<iframe src="${d.data}" style="width:100%;height:100vh;border:none"></iframe>`:`<img src="${d.data}" style="max-width:100%">`);}
+async function viewDoc(id){const d=await dbGet('documents',id);if(!d)return;const w=window.open();w.document.write(d.type==='pdf'?`<iframe src="${d.data}" style="width:100%;height:100vh;border:none"></iframe>`:`<img src="${d.data}" style="max-width:100%">`);}
+async function delDoc(id){if(!confirm('حذف؟'))return;const d=await dbGet('documents',id);if(!d)return;d.deletedAt=now();await dbPut('documents',d);toast('تم الحذف');loadDocs();}
+
+// ══ HISTORY ══
+async function loadHistory(){
+  const el=document.getElementById('co-history-list');if(!el)return;
+  const all=(await dbGetAll('history')).filter(h=>h.recordId===S.companyId).reverse();
+  if(!all.length){el.innerHTML='<div class="es" style="padding:28px"><div class="ei">📜</div><p>لا توجد تعديلات مسجلة بعد</p></div>';return}
+  el.innerHTML=all.map(h=>`<div style="padding:12px 18px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:12px"><div><span class="bdg bdg-b" style="margin-left:8px">${esc(h.action)}</span>${h.note?`<span style="font-size:12px;color:var(--muted)">${esc(h.note)}</span>`:''}</div><div style="font-size:11px;color:var(--muted);white-space:nowrap">${esc(h.userName||'—')} · ${fmtDt(h.at)}</div></div>`).join('');
+}
 
 // ══ PRINT ══
-function printCompany(){
-  const co=await dbGet('companies',S.companyId);
+async function printCompany(){
+  var coId=window._coActiveId||(window.S&&window.S.companyId)||null;if(!coId)return;var _cos=[];try{_cos=JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]');}catch(e){} var co=_cos.find(function(c){return c.id===coId;})||{};
   const partners=(await dbGetAll('partners','companyId',S.companyId)).filter(r=>!r.deletedAt);
   const factories=(await dbGetAll('factories','companyId',S.companyId)).filter(r=>!r.deletedAt);
   const pr=(l,v)=>v?`<tr><td style="color:#666;font-size:12px;width:200px;padding:6px 0">${l}</td><td style="font-size:13px;font-weight:500;padding:6px 0">${v}</td></tr>`:'';
   const w=window.open();
-  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script></body></html>`);
+  w.document.write(`<!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="UTF-8"><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet"><style>body{font-family:'Cairo',sans-serif;padding:24px;color:#1e293b;font-size:13px}h1{font-size:17px;margin-bottom:4px}.sec{margin-bottom:16px}.sec-title{font-size:11px;font-weight:700;text-transform:uppercase;color:#64748b;border-bottom:2px solid #e2e8f0;padding-bottom:5px;margin-bottom:10px}table{width:100%;border-collapse:collapse}th,td{padding:6px 10px;border:1px solid #e2e8f0;font-size:12px;text-align:right}th{background:#f8fafc;font-weight:700}@media print{body{padding:10px}}</style></head><body><h1>${esc(co.nameAr)}</h1><p style="color:#64748b;margin-bottom:16px">${co.companyType==='factory'?'مصنع':'Toll'} · ${esc(co.code)} · طباعة: ${new Date().toLocaleDateString('ar-EG')}</p><div class="sec"><div class="sec-title">البيانات القانونية</div><table>${pr('السجل التجاري',co.comRegNo)+pr('انتهاء السجل',fmt(co.comRegExp))+pr('الرقم القومي',co.natNo)+pr('رأس المال',co.capital?co.capital+' جنيه':'')+pr('المقر',co.addressAr)}</table></div><div class="sec"><div class="sec-title">بيانات EDA</div><table>${pr('رقم القيد/الرخصة',co.tollNo)+pr('الانتهاء',fmt(co.tollExp))+pr('GMP',co.gmp)+pr('انتهاء GMP',fmt(co.gmpExp))}</table></div><div class="sec"><div class="sec-title">الضرائب</div><table>${pr('التسجيل الضريبي',co.taxReg)+pr('البطاقة الضريبية',co.taxCard)+pr('المأمورية',co.taxOfc)}</table></div>${partners.length?`<div class="sec"><div class="sec-title">الشركاء</div><table><thead><tr><th>الاسم</th><th>النسبة</th><th>الجنسية</th></tr></thead><tbody>${partners.map(r=>`<tr><td>${esc(r.name)}</td><td>${esc(r.pct)}%</td><td>${esc(r.nat||'—')}</td></tr>`).join('')}</tbody></table></div>`:''}<script>window.onload=()=>window.print()<\/script>
+// ══════════════════════════════════════════════════════════════════
+// STANDALONE APP — Backup / Restore / Export / Import
+// ══════════════════════════════════════════════════════════════════
+
+// ── Full Backup ────────────────────────────────────────────────
+function exportFullBackup(){
+  var backup = {
+    version: 2,
+    date: new Date().toISOString(),
+    app: 'Quadra Pharma ERP',
+    companies: [],
+  };
+  var cos = [];
+  try{ cos = JSON.parse(localStorage.getItem('pharma_companies_v1')||'[]'); }catch(e){}
+  cos.forEach(function(c){
+    var d = {};
+    try{ d = JSON.parse(localStorage.getItem('pharma_data_'+c.id)||'{}'); }catch(e){}
+    backup.companies.push({ info: c, data: d });
+  });
+  var json = JSON.stringify(backup, null, 2);
+  var blob = new Blob([json], {type:'application/json'});
+  var url  = URL.createObjectURL(blob);
+  var a    = document.createElement('a');
+  var date = new Date().toISOString().slice(0,10);
+  a.href = url;
+  a.download = 'quadra-erp-backup-' + date + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  if(typeof showNotif==='function') showNotif('تم تصدير النسخة الاحتياطية بنجاح ✓','success');
 }
 
 // ── Full Restore ────────────────────────────────────────────────
@@ -11976,7 +11963,7 @@ function _coMgrImport(){
 
 // ══ USERS ══
 let usrQ='';
-function renderUsers(c){
+async function renderUsers(c){
   const all=await dbGetAll('users','companyId',S.companyId);
   const users=all.filter(u=>!u.deletedAt&&(!usrQ||u.nameAr.includes(usrQ)||u.username.includes(usrQ)));
   c.innerHTML=`<div class="page-title">👥 المستخدمون</div>
@@ -11998,10 +11985,43 @@ function renderUsers(c){
   </tbody></table></div></div>`;
 }
 function openAddUser(){document.getElementById('mu-title').textContent='إضافة مستخدم جديد';document.getElementById('u-ph').style.display='none';document.getElementById('u-pl').innerHTML='كلمة المرور <span class="req">*</span>';['u-id','u-name','u-name-en','u-user','u-pass','u-dept','u-title-inp','u-phone','u-email'].forEach(id=>set(id,''));set('u-role','user');openModal('modal-user');}
-function toggleUser(id){const u=await dbGet('users',id);if(!u)return;u.isActive=!u.isActive;u.updatedAt=now();await dbPut('users',u);toast(u.isActive?'تم التفعيل':'تم الإيقاف','ok');renderUsers(document.getElementById('main-content'));}
+async function openEditUser(id){const u=await dbGet('users',id);if(!u)return;document.getElementById('mu-title').textContent='تعديل مستخدم';document.getElementById('u-ph').style.display='block';document.getElementById('u-pl').innerHTML='كلمة مرور جديدة';set('u-id',u.id);set('u-name',u.nameAr);set('u-name-en',u.nameEn||'');set('u-user',u.username);set('u-pass','');set('u-role',u.role);set('u-dept',u.department||'');set('u-title-inp',u.jobTitle||'');set('u-phone',u.phone||'');set('u-email',u.email||'');openModal('modal-user');}
+async function saveUser(){
+  const id=val('u-id'),nameAr=val('u-name'),username=val('u-user'),pw=val('u-pass');
+  if(!nameAr||!username){toast('الاسم واسم المستخدم مطلوبان','er');return}
+  const btn=document.getElementById('btn-su');btn.innerHTML='<span class="spin"></span>';btn.disabled=true;
+  try{
+    if(id){const u=await dbGet('users',id);if(pw){if(pw.length<8){toast('كلمة المرور 8 أحرف','er');return}u.passwordHash=await hashPw(pw)}Object.assign(u,{nameAr,nameEn:val('u-name-en'),username,role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),updatedAt:now()});await dbPut('users',u);toast('تم التحديث','ok');}
+    else{if(!pw||pw.length<8){toast('كلمة المرور 8 أحرف','er');return}const all=await dbGetAll('users','companyId',S.companyId);if(all.find(u=>u.username===username&&!u.deletedAt)){toast('اسم المستخدم موجود','er');return}await dbPut('users',{id:uid(),companyId:S.companyId,nameAr,nameEn:val('u-name-en'),username,passwordHash:await hashPw(pw),role:val('u-role'),department:val('u-dept'),jobTitle:val('u-title-inp'),phone:val('u-phone'),email:val('u-email'),isActive:true,failedAttempts:0,createdBy:S.userId,createdAt:now(),updatedAt:now()});toast('تم الإضافة','ok');}
+    closeModal('modal-user');renderUsers(document.getElementById('main-content'));
+  }catch(e){toast('خطأ: '+e.message,'er')}
+  btn.innerHTML='حفظ';btn.disabled=false;
+}
+async function toggleUser(id){const u=await dbGet('users',id);if(!u)return;u.isActive=!u.isActive;u.updatedAt=now();await dbPut('users',u);toast(u.isActive?'تم التفعيل':'تم الإيقاف','ok');renderUsers(document.getElementById('main-content'));}
+
+// ══ SETTINGS ══
+function renderSettings(c){
+  c.innerHTML=`<div class="page-title">⚙️ إعدادات النظام</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px">
+    <div class="pcard"><div class="ph"><div class="ptitle">العرض</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الخط</label><select class="fi" id="s-fs"><option value="13">صغير 13px</option><option value="14" selected>متوسط 14px</option><option value="15">كبير 15px</option></select></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">الطباعة</div></div><div class="tab-body">
+      <div class="fg"><label class="fl">حجم الورق</label><select class="fi" id="s-paper"><option value="A4" selected>A4</option><option value="A5">A5</option></select></div>
+      <div class="fg"><label class="fl">هيدر الطباعة</label><input class="fi" id="s-header" placeholder="نص يظهر في رأس كل طباعة"></div>
+    </div></div>
+    <div class="pcard"><div class="ph"><div class="ptitle">💾 النسخ الاحتياطي</div></div><div class="tab-body" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-ok" onclick="exportBackup()">⬇ تصدير نسخة احتياطية</button>
+      <button class="btn btn-o" onclick="openModal('modal-backup')">⬆ استيراد نسخة</button>
+    </div></div>
+  </div>
+  <div style="margin-top:16px;display:flex;justify-content:flex-end">
+    <button class="btn btn-ok" onclick="toast('تم حفظ الإعدادات','ok');document.body.style.fontSize=val('s-fs')+'px'">💾 حفظ الإعدادات</button>
+  </div>`;
+}
 
 // ══ BACKUP ══
-function exportBackup(){
+async function exportBackup(){
   const stores=['companies','users','documents','partners','factories','distributors','storages'];
   const data={v:3,exportedAt:now()};
   for(const st of stores)data[st]=await dbGetAll(st);
@@ -12010,7 +12030,7 @@ function exportBackup(){
   a.download=`quadra-backup-${new Date().toISOString().slice(0,10)}.json`;
   a.click();toast('تم تنزيل النسخة الاحتياطية','ok');
 }
-function importBackup(input){
+async function importBackup(input){
   const file=input.files[0];if(!file)return;
   if(!confirm('سيتم استبدال جميع البيانات الحالية. هل أنت متأكد؟'))return;
   try{
