@@ -1530,7 +1530,25 @@ function productForm(p={}){
 function saveProduct(id){
   const name=val('p-name'), form=val('p-form');
   if(!name||!form||form==='اختر...') return alert('يرجى تعبئة الحقول الإلزامية');
-  const d={name,scientificName:val('p-sci')||null,dosageForm:form,strength:val('p-str')||null,unit:val('p-unit')||'علبة',sellingPrice:val('p-price')||null,status:val('p-status')};
+  const d={
+    name,
+    scientificName:    val('p-sci')||null,
+    dosageForm:        form,
+    strength:          val('p-str')||null,
+    unit:              val('p-unit')||'علبة',
+    sellingPrice:      val('p-price')||null,
+    packageSize:       val('p-size')||null,
+    productCode:       val('p-code')||null,
+    barcode:           val('p-barcode')||null,
+    category:          val('p-category')||null,
+    shelfLifeMonths:   val('p-shelf')||null,
+    storageCondition:  val('p-storage')||null,
+    specialInstructions: val('p-instructions')||null,
+    notes:             val('p-notes')||null,
+    registrationNo:    val('p-regno')||null,
+    registrationExpiry:val('p-regexp')||null,
+    status:            val('p-status'),
+  };
   id?update('products',id,d):insert('products',d);
   // Save pending ingredients for new product
   if(!id && window._pendingIngredients && window._pendingIngredients.length){
