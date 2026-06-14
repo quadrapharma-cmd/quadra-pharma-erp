@@ -368,7 +368,7 @@ window._loadWouncureSeed = function() {
     var ex = null;
     try { ex = JSON.parse(localStorage.getItem(dKey) || 'null'); } catch(e) {}
     if (!ex || !ex.products || !ex.products.length) {
-      localStorage.setItem(dKey, JSON.stringify({"products": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Wouncure 20gm Topical Powder", "scientificName": "Neomycin Sulfate + Bacitracin Zinc + Cysteine", "code": "PT0285", "dosageForm": "Topical Powder", "strength": "20gm", "unit": "Bottle", "sellingPrice": 45, "status": "active"}], "materials": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9658", "name": "Neomycin Sulfate", "materialType": "raw_material", "unit": "gm", "unitCost": 850, "status": "active"}, {"id": 2, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9647", "name": "Bacitracin Zinc", "materialType": "raw_material", "unit": "gm", "unitCost": 1200, "status": "active"}, {"id": 3, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9656", "name": "Cysteine", "materialType": "raw_material", "unit": "gm", "unitCost": 320, "status": "active"}, {"id": 4, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9657", "name": "Glycine", "materialType": "raw_material", "unit": "gm", "unitCost": 45, "status": "active"}, {"id": 5, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9655", "name": "Threonine", "materialType": "raw_material", "unit": "gm", "unitCost": 180, "status": "active"}, {"id": 6, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9700", "name": "Maize Starch", "materialType": "raw_material", "unit": "kg", "unitCost": 28, "status": "active"}], "cmos": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Badr Pharma", "status": "active"}], "productBOM": [{"id": 1, "productId": 1, "materialId": 1, "quantityPerBatch": 350, "unit": "gm"}, {"id": 2, "productId": 1, "materialId": 2, "quantityPerBatch": 420, "unit": "gm"}, {"id": 3, "productId": 1, "materialId": 3, "quantityPerBatch": 200, "unit": "gm"}, {"id": 4, "productId": 1, "materialId": 4, "quantityPerBatch": 1000, "unit": "gm"}, {"id": 5, "productId": 1, "materialId": 5, "quantityPerBatch": 100, "unit": "gm"}, {"id": 6, "productId": 1, "materialId": 6, "quantityPerBatch": 97700, "unit": "gm"}], "productionOrders": [{"id": 1, "productId": 1, "cmoId": 1, "orderNumber": "BMR-2506001", "quantity": 5000, "orderDate": "2025-06-01", "expectedDate": "2025-06-15", "status": "in_production", "cmoBaseCost": 15000, "bprStatus": "draft", "createdAt": "2024-01-01T00:00:00.000Z"}], "materialReceipts": [], "productIngredients": [], "inventory": [], "goodsReceipts": [], "registrations": [], "distributors": [], "deliveryOrders": [], "deliveryItems": [], "expenses": [], "employees": [], "budgetLines": [], "campaigns": [], "salesTargets": [], "receivables": [], "payrollRuns": [], "purchaseOrders": [], "qualityChecks": [], "returns": [], "contracts": [], "assets": [], "eInvoices": [], "taxLines": [], "batchMaterials": [], "partnerAccounts": [], "partnerEntries": [], "journalEntries": [], "chartOfAccounts": [], "historicalBalances": [], "appUsers": [], "_seq": {"products": 1, "materials": 6, "cmos": 1, "productBOM": 6, "productionOrders": 1}}));
+      localStorage.setItem(dKey, JSON.stringify({"products": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Wouncure 20gm Topical Powder", "scientificName": "Neomycin Sulfate + Bacitracin Zinc + Cysteine", "code": "PT0285", "dosageForm": "Topical Powder", "strength": "20gm", "unit": "Bottle", "sellingPrice": 34, "status": "active"}], "materials": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9658", "name": "Neomycin Sulfate", "materialType": "raw_material", "unit": "gm", "unitCost": 38, "status": "active"}, {"id": 2, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9647", "name": "Bacitracin Zinc", "materialType": "raw_material", "unit": "gm", "unitCost": 46, "status": "active"}, {"id": 3, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9656", "name": "Cysteine", "materialType": "raw_material", "unit": "gm", "unitCost": 8, "status": "active"}, {"id": 4, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9657", "name": "Glycine", "materialType": "raw_material", "unit": "gm", "unitCost": 1.5, "status": "active"}, {"id": 5, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9655", "name": "Threonine", "materialType": "raw_material", "unit": "gm", "unitCost": 9, "status": "active"}, {"id": 6, "createdAt": "2024-01-01T00:00:00.000Z", "code": "RM9700", "name": "Maize Starch", "materialType": "raw_material", "unit": "gm", "unitCost": 0.08, "status": "active"}], "cmos": [{"id": 1, "createdAt": "2024-01-01T00:00:00.000Z", "name": "Badr Pharma", "status": "active"}], "productBOM": [{"id": 1, "productId": 1, "materialId": 1, "quantityPerBatch": 350, "unit": "gm"}, {"id": 2, "productId": 1, "materialId": 2, "quantityPerBatch": 420, "unit": "gm"}, {"id": 3, "productId": 1, "materialId": 3, "quantityPerBatch": 200, "unit": "gm"}, {"id": 4, "productId": 1, "materialId": 4, "quantityPerBatch": 1000, "unit": "gm"}, {"id": 5, "productId": 1, "materialId": 5, "quantityPerBatch": 100, "unit": "gm"}, {"id": 6, "productId": 1, "materialId": 6, "quantityPerBatch": 97700, "unit": "gm"}], "productionOrders": [{"id": 1, "productId": 1, "cmoId": 1, "orderNumber": "BMR-2506001", "quantity": 5000, "unitCost": 8.5, "orderDate": "2025-06-01", "expectedDate": "2025-06-15", "status": "in_production", "cmoBaseCost": 15000, "bprStatus": "draft", "createdAt": "2024-01-01T00:00:00.000Z"}], "materialReceipts": [], "productIngredients": [], "inventory": [], "goodsReceipts": [], "registrations": [], "distributors": [], "deliveryOrders": [], "deliveryItems": [], "expenses": [], "employees": [], "budgetLines": [], "campaigns": [], "salesTargets": [], "receivables": [], "payrollRuns": [], "purchaseOrders": [], "qualityChecks": [], "returns": [], "contracts": [], "assets": [], "eInvoices": [], "taxLines": [], "batchMaterials": [], "partnerAccounts": [], "partnerEntries": [], "journalEntries": [], "chartOfAccounts": [], "historicalBalances": [], "appUsers": [], "_seq": {"products": 1, "materials": 6, "cmos": 1, "productBOM": 6, "productionOrders": 1}}));
     }
   } catch(e) { console.error('Seed error', e); }
 };
@@ -983,6 +983,55 @@ function bmrAutoFillBOM(orderId) {
 // Matches Wouncure Product Profitability Analysis spreadsheet
 // ════════════════════════════════════════════════════════════════
 
+
+function showProductCost(pid){
+  const p = getById('products', pid);
+  if(!p) return;
+  const boms = getAll('productBOM').filter(b=>b.productId===pid);
+  const mats = getAll('materials');
+  let total = 0;
+  const po = getAll('productionOrders').find(o=>o.productId===pid);
+  const batchUnits = Number(po?.quantity||po?.batchSize||0);
+  const rowsHtml = boms.length ? boms.map(b=>{
+    const m = mats.find(x=>x.id===b.materialId);
+    let qty = Number(b.quantityPerUnit||0);
+    if(!qty && b.quantityPerBatch && batchUnits>0) qty = Number(b.quantityPerBatch)/batchUnits;
+    const unitCost = Number(m?.unitCost||0);
+    const lineCost = qty*unitCost;
+    total += lineCost;
+    return `<tr>
+      <td><span class="badge b-blue" style="font-size:10px">${m?.code||''}</span></td>
+      <td><strong>${m?.name||b.materialName||'—'}</strong></td>
+      <td class="text-center">${fmtN(qty)} ${m?.unit||''}</td>
+      <td>${b.concentration?`<span class="text-green">${b.concentration} ${b.concentrationUnit||'mg/g'}</span>`:'—'}</td>
+      <td>${fmt(unitCost)} ج.م</td>
+      <td class="text-red fw7">${fmt(lineCost)} ج.م</td>
+    </tr>`;
+  }).join('') : '<tr><td colspan="6" class="text-center text-muted" style="padding:16px">لا توجد وصفة BOM لهذا المنتج</td></tr>';
+  const price = Number(p.sellingPrice||0);
+  const margin = price>0?((price-total)/price*100):0;
+  showModal(modal(`💰 جدول تكلفة — ${p.name}`, `
+    <div style="overflow-x:auto">
+      <table class="tbl" style="font-size:12px;width:100%">
+        <thead><tr><th>الكود</th><th>المادة</th><th>الكمية/وحدة</th><th>التركيز</th><th>سعر المادة</th><th>التكلفة</th></tr></thead>
+        <tbody>${rowsHtml}</tbody>
+        <tfoot>
+          <tr style="background:var(--bg);font-weight:700">
+            <td colspan="5">إجمالي تكلفة المواد لكل وحدة منتج</td>
+            <td class="text-red">${fmt(total)} ج.م</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+    <div class="stats-grid g3" style="margin-top:14px">
+      <div class="stat-card"><div class="lbl">تكلفة المواد</div><div class="val text-red">${fmt(total)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">سعر البيع</div><div class="val text-green">${fmt(price)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">هامش الربح</div><div class="val ${margin>=40?'text-green':margin>=20?'text-amber':'text-red'}">${price?margin.toFixed(1)+'%':'—'}</div></div>
+    </div>
+    <div class="form-actions"><button class="btn btn-ghost" onclick="closeModal()">إغلاق</button></div>
+  `));
+}
+
 function profitability(){
   const pos      = getAll('productionOrders');
   const products = getAll('products');
@@ -1193,25 +1242,72 @@ dashboard(){
 products(){
   const rows=getAll('products');
   const ings=getAll('productIngredients');
-  setPage('إدارة المنتجات',`${rows.length} منتج مسجل`,
+  const boms=getAll('productBOM');
+  const mats=getAll('materials');
+  const invs=getAll('inventory');
+  const pos=getAll('productionOrders');
+
+  // Helper: compute material cost per product unit from BOM
+  const prodCost = pid => {
+    const pb = boms.filter(b=>b.productId===pid);
+    // Find the batch size for this product (from its production orders)
+    const po = pos.find(o=>o.productId===pid);
+    const batchUnits = Number(po?.quantity||po?.batchSize||0);
+    return pb.reduce((s,b)=>{
+      const m = mats.find(x=>x.id===b.materialId);
+      // Per-unit qty: use quantityPerUnit if set, else derive from quantityPerBatch ÷ batch units
+      let perUnit = Number(b.quantityPerUnit||0);
+      if(!perUnit && b.quantityPerBatch && batchUnits>0){
+        perUnit = Number(b.quantityPerBatch)/batchUnits;
+      }
+      return s + perUnit*Number(m?.unitCost||0);
+    },0);
+  };
+  // Helper: current stock for product (from inventory linked by productId)
+  const prodStock = pid =>
+    invs.filter(i=>i.productId===pid).reduce((s,i)=>s+Number(i.quantity||0),0);
+  // Helper: total produced from production orders
+  const prodMade = pid =>
+    pos.filter(o=>o.productId===pid).reduce((s,o)=>s+Number(o.quantity||0),0);
+
+  // Totals for KPI
+  const totalStockValue = rows.reduce((s,p)=>s+prodStock(p.id)*Number(p.sellingPrice||0),0);
+  const totalCost = rows.reduce((s,p)=>s+prodCost(p.id),0);
+
+  setPage('إدارة المنتجات',`${rows.length} منتج · قيمة المخزون: ${fmt(totalStockValue)} ج.م`,
     `<button class="btn btn-green" onclick="addProduct()">${ic.plus} إضافة منتج</button>`,
-    `<div class="card">${tbl(['اسم المنتج','الاسم العلمي (LATIN)','الشكل','التركيز','الحجم','الفئة','سعر البيع','الحالة',''],
+    `
+    <div class="stats-grid g4" style="margin-bottom:16px">
+      <div class="stat-card"><div class="lbl">عدد المنتجات</div><div class="val">${rows.length}</div></div>
+      <div class="stat-card"><div class="lbl">قيمة المخزون (بسعر البيع)</div><div class="val text-green">${fmt(totalStockValue)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">إجمالي تكلفة المواد/وحدة</div><div class="val text-red">${fmt(totalCost)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">منتجات نشطة</div><div class="val">${rows.filter(p=>(p.status||'active')==='active').length}</div></div>
+    </div>
+    <div class="card">${tbl(['اسم المنتج','الشكل','الحجم','تكلفة المواد/وحدة','سعر البيع','هامش الربح','المخزون','المُنتَج','الحالة',''],
       rows.map(p=>{
         const pIngs=ings.filter(i=>i.productId===p.id);
         const activeIngs=pIngs.filter(i=>i.type==='active');
-        const catLabels={antibiotic:'مضاد حيوي',analgesic:'مسكن',antifungal:'مضاد فطريات',antiviral:'مضاد فيروسات',antiinflammatory:'مضاد التهاب',vitamin:'فيتامين',cardiac:'قلب',gi:'جهاز هضمي',derma:'جلدية',other:'أخرى'};
+        const cost=prodCost(p.id);
+        const price=Number(p.sellingPrice||0);
+        const margin=price>0?((price-cost)/price*100):0;
+        const stock=prodStock(p.id);
+        const made=prodMade(p.id);
+        const marginCls=margin>=40?'text-green':margin>=20?'text-amber':'text-red';
+        const stockCls=stock<=0?'text-red':stock<100?'text-amber':'text-green';
         return tr(
           `<div><strong>${p.name}</strong>${p.productCode?`<br><span style="font-size:10px;color:var(--muted)">${p.productCode}</span>`:''}
            ${activeIngs.length?`<br>${activeIngs.map(i=>`<span style="font-size:11px;color:var(--green-light)">${i.name} ${i.concentration}${i.unit}</span>`).join(', ')}`:''}</div>`,
-          p.scientificName||'-',
-          p.dosageForm,
-          p.strength||'-',
-          p.packageSize||'-',
-          p.category?`<span class="badge b-blue" style="font-size:10px">${catLabels[p.category]||p.category}</span>`:'—',
-          p.sellingPrice?`<span class="text-green fw7">${fmt(p.sellingPrice)} ج.م</span>`:'-',
+          p.dosageForm||'-',
+          p.packageSize||p.strength||'-',
+          cost>0?`<span class="text-red fw7">${fmt(cost)} ج.م</span>`:'—',
+          price?`<span class="text-green fw7">${fmt(price)} ج.م</span>`:'-',
+          price&&cost?`<span class="${marginCls} fw7">${margin.toFixed(1)}%</span>`:'—',
+          `<span class="${stockCls} fw7">${fmtN(stock)}</span>`,
+          `<span class="text-muted">${fmtN(made)}</span>`,
           badge(p.status||'active'),
           `<div class="action-bar">
-            <button class="icon-btn" style="color:var(--blue)" title="المكونات (${pIngs.length})" onclick="showProductIngredients(${p.id})" >🧬</button>
+            <button class="icon-btn" style="color:var(--blue)" title="المكونات (${pIngs.length})" onclick="showProductIngredients(${p.id})">🧬</button>
+            <button class="icon-btn" style="color:var(--green)" title="تكلفة المواد" onclick="showProductCost(${p.id})">💰</button>
             <button class="icon-btn edit" onclick="editProduct(${p.id})">${ic.edit}</button>
             <button class="icon-btn del" onclick="if(confirm('حذف؟')){remove('products',${p.id});go('products')}">${ic.del}</button>
           </div>`
