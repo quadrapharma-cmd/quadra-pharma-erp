@@ -995,17 +995,22 @@ function profitability(){
     const prod  = getById('products', po.productId) || {};
     const qty   = Number(po.quantity||0);
     const price = Number(po.sellingPrice || prod.sellingPrice || 0);
-    const unitCost = Number(po.unitCost || 0);
+    // Unit cost: prefer BMR-computed batch cost (materials + CMO) ÷ quantity
+    const batchMats = getAll('batchMaterials').filter(m=>m.productionOrderId===po.id);
+    const matTotal  = batchMats.reduce((s,m)=>s+Number(m.quantity||0)*Number(m.unitCostAtTime||0),0);
+    const cmoCost   = Number(po.cmoBaseCost||0);
+    const bmrUnitCost = qty>0 ? (matTotal+cmoCost)/qty : 0;
+    const unitCost = bmrUnitCost>0 ? bmrUnitCost : Number(po.unitCost||0);
 
-    const sales      = qty * price;
-    const revenues   = sales * (S.netPct/100);          // net revenue (45% of sales)
-    const cogs       = qty * unitCost;                  // cost of goods sold
-    const grossContr = revenues - cogs;                 // gross contribution = revenues − COGS
-    const tax        = revenues * (S.taxPct/100);       // 1% tax on revenues
-    const freeGoods  = revenues * (S.freeGoodsPct/100); // 5% free goods on revenues
-    const invoicing  = revenues - tax - freeGoods;      // net invoicing value
-    const productProfit = grossContr - tax - freeGoods; // net product profit
-    const grossMargin   = revenues>0 ? (grossContr/revenues*100) : 0; // contribution margin
+    const sales      = qty * price;                     // Quantity × Price
+    const revenues   = sales * (S.netPct/100);          // Sales × 45% (net revenue)
+    const cogs       = qty * unitCost;                  // Quantity × Unit Cost
+    const grossContr = revenues - cogs;                 // Revenues − COGS
+    const tax        = revenues * (S.taxPct/100);       // Revenues × 1%
+    const freeGoods  = revenues * (S.freeGoodsPct/100); // Revenues × 5%
+    const invoicing  = revenues - tax - freeGoods;      // Revenues − Tax − Free Goods
+    const productProfit = grossContr - tax - freeGoods; // = Invoicing − COGS
+    const grossMargin   = revenues>0 ? (productProfit/revenues*100) : 0; // Profit ÷ Revenues
 
     return {po, prod, qty, price, unitCost, sales, revenues, cogs,
             grossContr, tax, freeGoods, invoicing, productProfit, grossMargin};
@@ -1018,7 +1023,7 @@ function profitability(){
     freeGoods:a.freeGoods+r.freeGoods, invoicing:a.invoicing+r.invoicing,
     productProfit:a.productProfit+r.productProfit
   }), {qty:0,sales:0,revenues:0,cogs:0,grossContr:0,tax:0,freeGoods:0,invoicing:0,productProfit:0});
-  const totalMargin = T.sales>0 ? (T.productProfit/T.sales*100) : 0;
+  const totalMargin = T.revenues>0 ? (T.productProfit/T.revenues*100) : 0;
 
   const marginClass = m => m>=40?'text-green':m>=25?'text-amber':'text-red';
 
