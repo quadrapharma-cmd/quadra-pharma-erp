@@ -637,6 +637,7 @@ const navItems=[
   {id:'assets',icon:'🏗️',label:'الأصول الثابتة',sec:'المالية'},
   {id:'costanalysis',icon:'📉',label:'تحليل التكلفة',sec:'المالية'},
   {id:'reports',icon:'📈',label:'التقارير المالية',sec:'المالية'},
+  {id:'profitability',icon:'💰',label:'تحليل الربحية',sec:'المالية'},
   {id:'vat',icon:'🧾',label:'ضريبة القيمة المضافة',sec:'الضرائب'},
   {id:'einvoice',icon:'📄',label:'الفواتير الإلكترونية',sec:'الضرائب'},
   {id:'taxes',icon:'🏦',label:'الضرائب العامة',sec:'الضرائب'},
@@ -976,7 +977,162 @@ function bmrAutoFillBOM(orderId) {
 
 // ════ END BMR MODULE ════════════════════════════════════════════
 
+
+// ════════════════════════════════════════════════════════════════
+// PROFITABILITY ANALYSIS — تحليل الربحية
+// Matches Wouncure Product Profitability Analysis spreadsheet
+// ════════════════════════════════════════════════════════════════
+
+function profitability(){
+  const pos      = getAll('productionOrders');
+  const products = getAll('products');
+
+  // Settings (editable defaults from spreadsheet logic)
+  const S = (typeof DB!=='undefined' && DB._profitSettings) || {netPct:45, taxPct:1, freeGoodsPct:5};
+
+  // Build a row per production order (= per batch)
+  const rows = pos.map(po => {
+    const prod  = getById('products', po.productId) || {};
+    const qty   = Number(po.quantity||0);
+    const price = Number(po.sellingPrice || prod.sellingPrice || 0);
+    const unitCost = Number(po.unitCost || 0);
+
+    const sales      = qty * price;
+    const revenues   = sales * (S.netPct/100);          // net revenue (45% of sales)
+    const cogs       = qty * unitCost;                  // cost of goods sold
+    const grossContr = revenues - cogs;                 // gross contribution = revenues − COGS
+    const tax        = revenues * (S.taxPct/100);       // 1% tax on revenues
+    const freeGoods  = revenues * (S.freeGoodsPct/100); // 5% free goods on revenues
+    const invoicing  = revenues - tax - freeGoods;      // net invoicing value
+    const productProfit = grossContr - tax - freeGoods; // net product profit
+    const grossMargin   = revenues>0 ? (grossContr/revenues*100) : 0; // contribution margin
+
+    return {po, prod, qty, price, unitCost, sales, revenues, cogs,
+            grossContr, tax, freeGoods, invoicing, productProfit, grossMargin};
+  });
+
+  // Totals
+  const T = rows.reduce((a,r)=>({
+    qty:a.qty+r.qty, sales:a.sales+r.sales, revenues:a.revenues+r.revenues,
+    cogs:a.cogs+r.cogs, grossContr:a.grossContr+r.grossContr, tax:a.tax+r.tax,
+    freeGoods:a.freeGoods+r.freeGoods, invoicing:a.invoicing+r.invoicing,
+    productProfit:a.productProfit+r.productProfit
+  }), {qty:0,sales:0,revenues:0,cogs:0,grossContr:0,tax:0,freeGoods:0,invoicing:0,productProfit:0});
+  const totalMargin = T.sales>0 ? (T.productProfit/T.sales*100) : 0;
+
+  const marginClass = m => m>=40?'text-green':m>=25?'text-amber':'text-red';
+
+  setPage(
+    '📈 تحليل الربحية',
+    `${rows.length} دفعة · صافي الربح: ${fmt(T.productProfit)} ج.م · هامش: ${totalMargin.toFixed(1)}%`,
+    `<div style="display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="profitSettings()">⚙️ إعدادات النسب</button>
+      <button class="btn btn-white" onclick="window.print()">🖨️ طباعة</button>
+    </div>`,
+    `
+    <!-- KPI cards -->
+    <div class="stats-grid g4" style="margin-bottom:16px">
+      <div class="stat-card"><div class="lbl">إجمالي المبيعات</div><div class="val text-blue">${fmt(T.sales)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">صافي الإيرادات (${S.netPct}%)</div><div class="val">${fmt(T.revenues)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">صافي ربح المنتج</div><div class="val text-green">${fmt(T.productProfit)} ج.م</div></div>
+      <div class="stat-card"><div class="lbl">متوسط الهامش</div><div class="val ${marginClass(totalMargin)}">${totalMargin.toFixed(1)}%</div></div>
+    </div>
+
+    <!-- Assumptions bar -->
+    <div class="card" style="margin-bottom:16px;padding:12px 16px;background:var(--bg)">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;font-size:13px">
+        <span><strong>الافتراضات:</strong></span>
+        <span>صافي الإيراد: <strong class="text-blue">${S.netPct}%</strong> من المبيعات</span>
+        <span>الضريبة: <strong class="text-amber">${S.taxPct}%</strong></span>
+        <span>عينات مجانية: <strong class="text-red">${S.freeGoodsPct}%</strong></span>
+      </div>
+    </div>
+
+    <!-- Main table -->
+    <div class="card">
+      <div class="card-head"><h2>تفصيل الربحية لكل دفعة</h2></div>
+      <div style="overflow-x:auto">
+        <table class="tbl" style="font-size:12px;min-width:1200px">
+          <thead>
+            <tr>
+              <th>التاريخ</th><th>رقم الدفعة</th><th>الحجم</th>
+              <th>الكمية</th><th>السعر</th><th>التكلفة/وحدة</th>
+              <th>المبيعات</th><th>صافي الإيراد</th><th>COGS</th>
+              <th>المساهمة الإجمالية</th><th>ضريبة ${S.taxPct}%</th>
+              <th>عينات ${S.freeGoodsPct}%</th><th>قيمة الفوترة</th>
+              <th>ربح المنتج</th><th>الهامش</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.length ? rows.map(r=>`<tr>
+              <td>${r.po.orderDate||'—'}</td>
+              <td><span class="badge b-blue" style="font-size:10px">${r.po.orderNumber||'—'}</span></td>
+              <td class="text-center">${r.prod.strength||r.po.batchSize||'—'}</td>
+              <td class="text-center fw7">${fmtN(r.qty)}</td>
+              <td>${fmt(r.price)}</td>
+              <td>${fmt(r.unitCost)}</td>
+              <td class="fw7">${fmt(r.sales)}</td>
+              <td>${fmt(r.revenues)}</td>
+              <td class="text-red">${fmt(r.cogs)}</td>
+              <td class="text-blue fw7">${fmt(r.grossContr)}</td>
+              <td class="text-amber">${fmt(r.tax)}</td>
+              <td class="text-amber">${fmt(r.freeGoods)}</td>
+              <td>${fmt(r.invoicing)}</td>
+              <td class="text-green fw7">${fmt(r.productProfit)}</td>
+              <td class="fw7 ${marginClass(r.grossMargin)}">${r.grossMargin.toFixed(1)}%</td>
+            </tr>`).join('') : `<tr><td colspan="15" class="text-center text-muted" style="padding:20px">لا توجد أوامر إنتاج — أضف أمر إنتاج أولاً</td></tr>`}
+          </tbody>
+          ${rows.length ? `<tfoot>
+            <tr style="background:var(--bg);font-weight:700;border-top:2px solid var(--border)">
+              <td colspan="3">الإجمالي</td>
+              <td class="text-center">${fmtN(T.qty)}</td>
+              <td></td><td></td>
+              <td>${fmt(T.sales)}</td>
+              <td>${fmt(T.revenues)}</td>
+              <td class="text-red">${fmt(T.cogs)}</td>
+              <td class="text-blue">${fmt(T.grossContr)}</td>
+              <td class="text-amber">${fmt(T.tax)}</td>
+              <td class="text-amber">${fmt(T.freeGoods)}</td>
+              <td>${fmt(T.invoicing)}</td>
+              <td class="text-green">${fmt(T.productProfit)}</td>
+              <td class="${marginClass(totalMargin)}">${totalMargin.toFixed(1)}%</td>
+            </tr>
+          </tfoot>` : ''}
+        </table>
+      </div>
+    </div>`
+  );
+}
+
+function profitSettings(){
+  const S = (typeof DB!=='undefined' && DB._profitSettings) || {netPct:45, taxPct:1, freeGoodsPct:5};
+  showModal(modal('إعدادات نسب الربحية', `
+    ${fg('صافي الإيراد (% من المبيعات)', inp('ps-net','number','',String(S.netPct)))}
+    ${fg('نسبة الضريبة (%)', inp('ps-tax','number','',String(S.taxPct)))}
+    ${fg('نسبة العينات المجانية (%)', inp('ps-free','number','',String(S.freeGoodsPct)))}
+    <div class="form-actions">
+      <button class="btn btn-green" onclick="saveProfitSettings()">💾 حفظ</button>
+      <button class="btn btn-ghost" onclick="closeModal()">إلغاء</button>
+    </div>
+  `));
+}
+
+function saveProfitSettings(){
+  if(typeof DB==='undefined') return;
+  DB._profitSettings = {
+    netPct:       Number(val('ps-net'))||40,
+    taxPct:       Number(val('ps-tax'))||1,
+    freeGoodsPct: Number(val('ps-free'))||5,
+  };
+  saveDB();
+  closeModal();
+  go('profitability');
+}
+// ════ END PROFITABILITY ═════════════════════════════════════════
+
 const PAGES={
+
+  profitability,
 
 dashboard(){
   const pr=getAll('products'), inv=getAll('inventory'), ex=getAll('expenses');
